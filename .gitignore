@@ -1,0 +1,34 @@
+# Raw and staging data are never committed (design spec §10: publish code and
+# derived aggregates, never restricted raw extracts).
+data/raw/
+data/staging/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.env
+
+# R / renv — library is local, renv.lock IS committed
+renv/library/
+renv/staging/
+.Rproj.user/
+.Rhistory
+
+# dbt
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+
+# Local machine inventory and agent tooling — deliberately NOT published.
+# TOOLING.md describes this workstation (host, user, drives, env paths) and carries
+# security notes about exposed credentials; `.agents/` is harness boilerplate, not project code.
+# Remove these two lines if you do want them public.
+TOOLING.md
+.agents/

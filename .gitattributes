@@ -1,0 +1,22 @@
+# Normalise line endings. This repo is authored on Windows but the phase plan schedules the
+# pipeline on Linux GitHub Actions runners, so the index stores LF and checkouts follow it.
+* text=auto eol=lf
+
+# Explicit for the file types that get executed or sourced cross-platform.
+*.py  text eol=lf
+*.R   text eol=lf
+*.r   text eol=lf
+*.sh  text eol=lf
+*.sql text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.lock text eol=lf
+
+# Binary payloads must never be touched.
+*.png binary
+*.jpg binary
+*.pdf binary
+*.parquet binary
+*.gz binary
+*.zip binary

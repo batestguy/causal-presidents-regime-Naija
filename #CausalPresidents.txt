@@ -1,0 +1,526 @@
+Nigeria Presidential Performance Dashboard — Final README
+Version: 1.0
+Scope: Free-tier-only build. No paid service required at any layer.
+Audience: Build agent. This document is the complete specification. Where decisions are marked [LOCKED], do not change them. Where marked [OPEN], confirm with the user before proceeding.
+
+1. Purpose and Intent
+Build a live, monthly-refreshed dashboard comparing national-level outcomes across Nigerian presidential administrations (1999–present) on health, education, security, and economic metrics. Overlaid indexed trend lines, colored by party or president, with portraits anchored under each tenure. A confounding-adjustment layer so that party and tenure effects can be argued rather than asserted. A natural-language Q&A layer grounded in the dashboard's own data and methodology.
+
+The dashboard is not a causal-claim engine. It is a transparent, reproducible, regularly updated platform for forming and defending estimates. Every visual and methodological choice serves this intent.
+
+Central tension, stated openly: presidential influence on Nigerian outcomes is heavily mediated by state governments, oil price cycles, donor funding, and inherited conditions. The dashboard shows these confounders rather than hiding them.
+
+2. Non-Goals (v1)
+No state-level or LGA-level breakdowns
+
+No cross-country comparison
+
+No causal claims — adjusted associations only, with confidence intervals
+
+No sub-monthly refresh; monthly batch is the target
+
+No user accounts, comments, or social features
+
+No mobile-optimized layout
+
+3. Language Split [LOCKED]
+Layer	Language	Rationale
+Ingestion (API calls, Prefect flows)	Python	Prefect is Python-native; API clients are Python-first
+Transformation (dbt models)	SQL	dbt is SQL-first regardless of language choice
+Dashboard (Streamlit + Plotly)	Python	One deployment surface, one runtime
+Portrait processing	Python	Trivial batch job at ingest
+Econometric adjustment (VECM, ARDL, DiD, SCM)	R	Reference implementations; better-documented than Python equivalents
+NLP Q&A orchestration	Python	Integrates directly with Streamlit
+R–Python boundary: R runs as a batch job in the monthly pipeline. It reads from a Postgres staging table and writes adjusted estimates back to an analytics table. Python never calls R at request time. The dashboard reads only pre-computed values. This keeps end-user latency at zero and keeps econometrics reproducible as standalone scripts.
+
+4. Free-Tier Stack [LOCKED]
+Layer	Tool	Free Tier	Limitation to Watch
+Warehouse	Neon PostgreSQL	0.5 GB, 100 projects, never paused	Compute suspends if hours exhausted
+Object storage	Cloudflare R2	10 GB, zero egress	—
+Orchestration	Prefect Cloud Hobby	5 deployments, 500 serverless min/mo	1 concurrent flow run
+Transformation	dbt Core	Open source	Runs via GitHub Actions
+CI/CD	GitHub Actions	Unlimited on public repos	—
+Dashboard hosting	Streamlit Community Cloud	Free for public apps	Shared compute
+Monitoring	Grafana Cloud	10K metric series, 50 GB logs	—
+Error tracking	GlitchTip	3K events/mo	Or self-host unlimited
+LLM inference	Groq	Model-specific daily limits (Llama 3.3 70B: ~1,000 req/day)	Rate limits
+Embeddings	sentence-transformers	Local, CPU, 80 MB model	No API dependency
+Vector store	pgvector on Neon	Shares 0.5 GB with existing data	Same as warehouse
+RAG framework	LlamaIndex	Open source	Preferred for document-heavy RAG
+RAG evaluation	RAGAS	Open source	Run in CI on test set
+Verified rejections: Railway (no recurring free tier since 2023), Fly.io (no free tier), Supabase (pauses at 500 MB idle), Pinecone/Qdrant (unnecessary at this data scale).
+
+Migration target if outgrown: Oracle Cloud Always Free (4 ARM cores, 24 GB RAM, permanent) — same stack, no shared compute.
+
+5. Data Sources (All Free)
+Economic
+World Bank Indicators API — keyless; GDP growth, inflation, debt, population
+
+IMF DataMapper API — keyless; macro cross-checks
+
+FRED API — free key; Brent crude (DCOILBRENTEU)
+
+NBS — manual download (no API); GDP, CPI, unemployment
+
+CBN — manual download; FX, external reserves
+
+FAAC / OAGF — manual download; federal allocations to states
+
+Health
+DHIS2 Web API — Nigeria national HMIS; immunisation, maternal health
+
+DHS Program / NDHS — free with registration; under-5 mortality, MMR, skilled birth
+
+MICS (UNICEF) — free; complementary survey indicators
+
+UN IGME — free; modelled child mortality estimates
+
+Education
+UNESCO Institute for Statistics — free API; literacy, completion
+
+NEMIS / NEDI — manual portal access
+
+Security
+ACLED — free with registration; data older than 12 months
+
+UCDP GED — free download; battle deaths with uncertainty ranges
+
+Shock Context
+Brent crude via FRED
+
+FAAC allocations via OAGF
+
+NGN/USD via CBN or World Bank
+
+6. Metric Catalog [OPEN — confirm completeness]
+Direction labels are mandatory. On an indexed chart, falling under-5 mortality looks like failure unless labeled "↓ better."
+
+Health
+ID	Label	Unit	Direction	Frequency	Source
+u5mr	Under-5 mortality rate	per 1,000 live births	↓ better	annual (interpolated)	NDHS / UN IGME
+mmr	Maternal mortality ratio	per 100,000 births	↓ better	annual	NDHS / WHO
+immun_penta3	Penta3 immunisation coverage	% surviving infants	↑ better	monthly	DHIS2
+skilled_birth	Skilled birth attendance	% of births	↑ better	annual	NDHS / MICS
+Education
+ID	Label	Unit	Direction	Frequency	Source
+literacy_youth	Youth literacy (15–24)	%	↑ better	annual	NBS / UNESCO
+primary_completion	Primary completion rate	%	↑ better	annual	NEMIS / World Bank
+ner_primary	Net enrolment rate, primary	%	↑ better	annual	NEMIS
+Security
+ID	Label	Unit	Direction	Frequency	Source
+fatalities	Reported security fatalities	count	↓ better	monthly	ACLED
+incidents	Reported security incidents	count	↓ better	monthly	ACLED
+Economy
+ID	Label	Unit	Direction	Frequency	Source
+gdp_growth	Real GDP growth (y/y)	%	↑ better	quarterly	NBS
+cpi_yoy	Headline inflation (y/y)	%	↓ better	monthly	NBS
+unemp	Unemployment rate	%	↓ better	quarterly	NBS
+7. Administration Dimension (the spine) [LOCKED]
+admin_id	President	Party	Start	End	Notes
+1	Olusegun Obasanjo	PDP	1999-05-29	2007-05-29	Two terms
+2	Umaru Musa Yar'Adua	PDP	2007-05-29	2010-05-05	Died in office
+3	Goodluck Jonathan	PDP	2010-05-06	2015-05-29	Acting from 2010-02-09
+4	Muhammadu Buhari	APC	2015-05-29	2023-05-29	Two terms
+5	Bola Ahmed Tinubu	APC	2023-05-29	incumbent	—
+Edge case: Yar'Adua → Jonathan is same party, different president. Party color mode: line runs continuous through 2010-05. President color mode: line breaks. Both must work.
+
+Additional field: oil_price_at_start (Brent crude, USD/barrel) — used in adjustment context and tooltips.
+
+8. Chart Specification [LOCKED]
+Type: Single overlaid-line panel. No subplots.
+
+Normalization: Index to 100 at January 2000. Fixed anchor, not window start. Store both value and value_indexed. Tooltips show raw values, not indexed. Subtitle must state "Indexed to 100 at January 2000."
+
+Color channel: Party (default) or president (toggle).
+
+PDP: #1B8A3E
+
+APC: #0B5FA5
+
+President variants: lighter shades within party family
+
+Second channel (metric identity): Dash pattern. Cap at 5 metrics.
+
+solid
+
+dash
+
+dot
+
+dashdot
+
+longdash
+
+Sixth selection trims to five and shows warning banner. Never error.
+
+Portraits: Above each tenure span. Circular, party-colored ring, transparent PNG. Pre-processed with Pillow at ingest. Placement uses layout images anchored to date axis, not styled at render.
+
+Shock bands (shaded on every view):
+
+Period	Label
+2014-06 → 2016-12	Oil crash & recession
+2020-03 → 2020-12	COVID-19
+2023-06 → 2023-12	Fuel subsidy removal & naira float
+Callback rules: Trim to 5 if more selected. Coerce portrait toggle (list) to bool. Index recomputation happens in the query layer, not the callback.
+
+9. Confounding Adjustment Framework [LOCKED — Tier 1 default]
+Five tiers. Default view is Tier 1. Each tier adds rigor at cost of transparency.
+
+Tier 1 — Raw indexed comparison
+Baseline. No adjustment. Matches the user's example (Yar'Adua rise, then fall after party transition).
+
+Tier 2 — Inherited-conditions flag
+First 8–12 quarters of each administration flagged. Rationale: outcomes in the first two years are shaped by inherited policy and conditions. Toggle to include or exclude from scoring.
+
+Tier 3 — Oil-price and fiscal-space adjustment (VECM / ARDL)
+The core adjustment for Nigerian confounding. Include:
+
+Brent crude (logged)
+
+FAAC allocation to states
+
+NGN/USD exchange rate
+
+Lagged outcome variables (up to 4 lags)
+
+Party dummy
+
+Linear and quadratic time trend
+
+Specification: Error-correction model. Test for cointegration first (Johansen). Fall back to ARDL bounds testing if series are not integrated of the same order.
+
+Output: Long-run multiplier for party effect, with confidence intervals.
+
+Interaction requirement: Interact oil price with administration dummies so the model estimates whether presidents responded differently to the same shock. Do not partial out oil as a nuisance — it is the dominant exogenous feature of Nigerian political economy.
+
+Tier 4 — Difference-in-Differences with state alignment
+Deferred to v2. User has stated national-level only.
+
+Tier 5 — Synthetic control for tenure effects
+Deferred to v2. Five administrations gives too small a donor pool. Cross-country comparison introduces incompatible institutional contexts.
+
+Party vs. tenure interaction [LOCKED]
+Present party effects stratified by tenure (PDP first term, PDP second term, APC first term, APC second term) rather than aggregating. Literature suggests first- and second-term effects differ systematically.
+
+Sample-size constraint [LOCKED — acknowledge openly]
+Five administrations, ~26 annual observations. VECM with oil price, FAAC, FX, and party dummies consumes degrees of freedom quickly. Expect wide confidence intervals. Never present a point estimate without its interval.
+
+10. Statistical Packages (All Free)
+R — adjustment layer
+Package	Purpose
+vars	VAR, SVAR, VECM, Johansen cointegration test
+urca	Unit-root tests (ADF, KPSS, PP), cointegration
+dynlm	Dynamic linear models, ARDL
+lmtest	Diagnostic tests
+sandwich	Heteroskedasticity/autocorrelation-consistent SEs
+fixest	Fast two-way fixed effects; DiD with covariates
+did	Callaway & Sant'Anna staggered DiD
+nonabsdid	Heterogeneity-robust DiD for non-absorbing treatments
+Synth / coresynth / scpi	Synthetic control (v2)
+MatchIt / cobalt	Propensity score matching (if needed)
+Version pinning: renv.lock committed to repo.
+
+Python — pipeline and dashboard
+Package	Purpose
+statsmodels	Fallback for VECM/ARDL if R not desired in CI
+pyfixest / linearmodels	Panel FE regressions
+prefect	Orchestration
+dbt-core + dbt-postgres	Transformations
+streamlit	Dashboard
+plotly	Charts
+pillow	Portrait processing
+pandas, requests	Data wrangling and API calls
+sentence-transformers	Local embeddings
+llama-index	RAG pipeline
+ragas	RAG evaluation
+openai (client)	Groq is OpenAI-compatible; use standard client
+GUI alternatives (for users without code)
+Tool	What it does
+gretl	Free econometrics GUI: VECM, unit root, cointegration
+JASP	Free regression, ANOVA, Bayesian methods
+jamovi	Free, R-backed, easier modules than JASP
+11. NLP Q&A Component [LOCKED — RAG approach]
+Purpose: Natural-language question answering grounded strictly in the dashboard's data and methodology.
+
+Architecture:
+
+User question (Streamlit chat input)
+
+Embed question locally (sentence-transformers, all-MiniLM-L6-v2)
+
+Retrieve top-5 chunks from pgvector on Neon
+
+Build prompt: system instruction + retrieved chunks + question
+
+Call Groq (Llama 3.3 70B) or Gemini fallback
+
+Parse response, extract citations, display with source links
+
+Latency budget: embedding (~50 ms local) + vector query (~10 ms) + LLM (~500 ms on Groq) = under one second.
+
+Corpus to index:
+
+Metric catalog — one chunk per metric (label, unit, direction, source, frequency)
+
+Methodology page — one chunk per adjustment tier
+
+Data dictionary — column definitions, imputation methods, vintage notes
+
+Shock annotations — one chunk per shock
+
+Administration table — one chunk per president
+
+Limitations section — chunked so the LLM can retrieve and cite caveats
+
+Critical constraint [LOCKED]: The LLM must be instructed to say "I don't have data on that" when retrieval returns nothing relevant. A RAG system that hallucinates is worse than no RAG system.
+
+Evaluation: RAGAS in CI on a small test set of question-answer pairs. Measures faithfulness, answer relevance, context precision, context recall.
+
+UI additions:
+
+Sidebar tab "Ask the data"
+
+Chat input and message history
+
+Source citations as expandable blocks
+
+Starter question buttons: "What was under-5 mortality under Yar'Adua?", "Which president had the highest inflation?", "How did the 2016 recession affect security metrics?", "Compare PDP and APC on immunisation."
+
+12. Architecture
+text
+DATA SOURCES (APIs + manual NBS/CBN/FAAC downloads)
+        │
+        ▼
+INGESTION — Prefect flows (Python) → raw schema (Neon Postgres)
+        │
+        ▼
+TRANSFORMATION — dbt Core (SQL) → staging → analytics
+        │
+        ├──▶ ADJUSTMENT — R scripts (VECM, DiD) → adjusted metrics table
+        │
+        ├──▶ RAG INDEX — embeddings (local) → pgvector on Neon
+        │
+        ▼
+DASHBOARD — Streamlit + Plotly (Python)
+        │
+        ├──▶ Charts: overlaid indexed lines
+        ├──▶ Chat: RAG Q&A grounded in dashboard data
+        └──▶ Methodology page: adjustment tiers, limitations, CIs
+13. Monthly Refresh Schedule
+Prefect flows on the 1st of each month:
+
+Time (UTC)	Flow	Purpose
+06:00	ingest-dhis2	Health monthly rollup
+06:15	ingest-worldbank	Economic series
+06:30	ingest-acled	Security events
+06:45	ingest-fred	Brent crude
+07:00	ingest-manual	NBS, CBN, FAAC parsed CSVs
+07:30	write-vintage	Insert with today's vintage date
+08:00	dbt-run	Rebuild staging and analytics
+08:45	run-adjustment	R VECM/DiD scripts
+09:00	refresh-materialized-views	Postgres refresh concurrently
+09:15	rebuild-rag-index	Re-embed changed chunks into pgvector
+09:30	render-portraits	Only if administration table changed
+Data-quality gates between ingest and dbt: flag any metric with >3-month gap; flag any >50% month-over-month move as likely data error.
+
+14. Dashboard Layout
+text
+┌────────────────────────────────────────────────────────────┐
+│  Nigeria National Indicators by Administration             │
+│  Indexed to 100 at January 2000 · colour = party           │
+├────────────────────────────────────────────────────────────┤
+│  [Metrics ▼ max 5]  [Color: Party | President]             │
+│  [Portraits: on/off]  [Window: date picker]                │
+├────────────────────────────────────────────────────────────┤
+│  Portrait band:  OBJ · YA · GJ · MB · BAT                  │
+│                                                            │
+│  Overlaid indexed lines, shock bands, inauguration lines   │
+│  Color = party/president · Dash = metric                   │
+│                                                            │
+│  Legend: dash + metric + ↓/↑ better                        │
+├────────────────────────────────────────────────────────────┤
+│  Sidebar tab: "Ask the data" (RAG chat)                    │
+│  Footnote · Last updated · Sources · Methodology link      │
+└────────────────────────────────────────────────────────────┘
+15. Methodology Page [LOCKED — required]
+Every view links to a methodology page explaining:
+
+Each adjustment tier and what it controls for
+
+What it does not capture
+
+Cointegration test results for each metric
+
+Sample size and degrees-of-freedom constraints
+
+Confidence intervals for all adjusted estimates
+
+Explicit statement that adjusted estimates are associations, not causal effects
+
+RAG system scope: what it can answer, what it refuses, evaluation scores
+
+16. Honesty Layer [LOCKED — non-negotiable]
+Footnote on every chart: colors indicate office, not causation
+
+Direction labels per metric in legend
+
+Data-vintage timestamp visible
+
+Imputation flags rendering dashed segments
+
+Confidence intervals alongside all adjusted point estimates
+
+Methodology page linked from every view
+
+RAG system refuses to answer outside its data scope
+
+17. Build Order
+Phase 1 — Foundation
+
+Seed administration table (five rows)
+
+Build metric dimension, fact table, anchor table
+
+Extract two smoke-test metrics: u5mr (annual), gdp_growth (quarterly)
+
+Phase 2 — Chart
+
+Verify Yar'Adua → Jonathan boundary under both color modes
+
+Build chart with two metrics, no portraits; get color breaks right
+
+Add portraits, then dropdown, then shock bands
+
+Phase 3 — Pipeline
+
+Wire Prefect monthly schedule
+
+Add data-quality gates
+
+Configure GitHub Actions CI with dbt tests
+
+Phase 4 — Adjustment
+
+Add Tier 3 R adjustment scripts (VECM with oil/FAAC/FX covariates)
+
+Add confidence interval forest plot view
+
+Phase 5 — RAG
+
+Build pgvector extension and index corpus
+
+Wire LlamaIndex + Groq pipeline
+
+Add RAGAS evaluation to CI
+
+Add chat UI to Streamlit
+
+Phase 6 — Documentation and polish
+
+Methodology page
+
+Data dictionary
+
+Blog post
+
+Demo video (90 sec)
+
+Portfolio README refresh with architecture diagram and CI badge
+
+Defer Tier 4/5 to v2.
+
+18. Reproducibility Rules [LOCKED]
+All pipelines and R scripts versioned in git
+
+dbt models documented per-model; dbt docs site hosted on GitHub Pages
+
+Every dashboard view reproducible from vintage_date + anchor config alone
+
+Anchor value changes (e.g., NDHS revision) logged in metric_anchor table with new vintage
+
+Adjusted estimates stored as tables, never computed at render time
+
+R session pinned via renv.lock
+
+Python environment pinned via requirements.txt or pyproject.toml
+
+19. Portfolio Positioning
+The project is engineered to signal four things to hiring managers:
+
+End-to-end ownership — API ingestion → orchestration → warehouse → dbt → econometric adjustment → RAG → dashboard → monitoring
+
+Methodological rigor — cointegration tests, CIs, RAGAS evaluation, explicit limitations
+
+Engineering discipline — Prefect orchestration, dbt tests, CI/CD, vintage tracking, monitoring
+
+Domain knowledge — Nigerian political economy, oil-price transmission, federal-state dynamics
+
+README structure for the portfolio repo:
+
+One-sentence pitch + live demo link + screenshot
+
+Architecture diagram
+
+The hard question (why naive comparison fails)
+
+Methodology summary (3 bullets, link to full page)
+
+Stack table with CI badge
+
+Key findings with confidence intervals
+
+Limitations (longer than findings)
+
+What would come next
+
+How to run locally
+
+What to emphasize by role:
+
+Role	Lead with	Downplay
+Data Engineer	Prefect, dbt, Postgres, CI, monitoring, vintage tracking	Dashboard aesthetics, econometrics
+Analytics Engineer	dbt structure, docs site, data dictionary, layering	R scripts, styling
+Data Scientist	Confounding adjustment, cointegration, CIs, RAGAS	Infrastructure details
+BI / Product Analyst	Dashboard UX, chat interface, footnotes, starter questions	Backend complexity
+What to avoid: over-claiming causality; apologizing for free-tier; burying methodology under pretty charts; letting the repo go stale.
+
+Differentiator: the methodology page. Most portfolios plot public data and call it analysis. This one explains why the naive answer is wrong and what can and cannot be said. That is the signal.
+
+20. Open Questions Before Build
+Metric catalog — is §6 complete? Add poverty rate, electricity access, road fatalities?
+
+Shock list — is §8 exhaustive? Any missing events (2016 Niger Delta militancy, 2019 election violence)?
+
+Portrait assets — sourcing and licensing (public domain preferred)?
+
+Default adjustment tier — Tier 1 raw as landing view, or Tier 3 adjusted?
+
+Tenure stratification — expose first-term vs. second-term splits in v1, or v2?
+
+Hosting — Streamlit Community Cloud confirmed, or Render for more control?
+
+RAG framework — LlamaIndex (own the code) or Agentset Cloud (ship faster)?
+
+Blog post platform — Medium, Substack, personal site, or dev.to?
+
+21. Final Stack Summary
+Layer	Tool	Language	Cost
+Warehouse	Neon Postgres	SQL	$0
+Object storage	Cloudflare R2	—	$0
+Orchestration	Prefect Cloud Hobby	Python	$0
+Transformation	dbt Core	SQL	$0
+Adjustment	VECM/DiD via vars, urca, fixest, did	R	$0
+Dashboard	Streamlit Community Cloud	Python	$0
+Charts	Plotly	Python	$0
+Portraits	Pillow	Python	$0
+LLM	Groq (Llama 3.3 70B)	API	$0
+Embeddings	sentence-transformers	Python	$0
+Vector store	pgvector on Neon	SQL	$0
+RAG framework	LlamaIndex	Python	$0
+RAG evaluation	RAGAS	Python	$0
+CI/CD	GitHub Actions	YAML	$0
+Monitoring	Grafana Cloud	—	$0
+Error tracking	GlitchTip	—	$0
+Three languages, each doing what it does best, all free.
+
+End of README v1.0. Agent should confirm §20 before beginning construction.
