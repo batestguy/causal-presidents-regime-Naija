@@ -11,10 +11,10 @@ able to reproduce every aggregate.
 |---|---|---|---|---|---|
 | World Bank Indicators | keyless API | CC-BY 4.0 | **Yes**, with attribution | ✅ 200 | Attribution required on derived figures |
 | IMF DataMapper | keyless API | IMF terms; attribution required | Likely yes — **confirm** | ⚠️ 403 to scripts, 200 via relay | Blocks non-browser clients |
-| FRED (Brent `DCOILBRENTEU`) | free key | FRED terms; series may carry upstream restrictions | **Confirm before publishing** | 🔑 400 without key | Brent originates with the US EIA — check the EIA terms too |
-| NBS (GDP, CPI, unemployment, state IGR, FAAC reports) | manual download | Nigerian government publication | Public documents; cite NBS | ✅ 200 | No API; PDF/HTML parsing |
+| FRED (Brent `DCOILBRENTEU`) | free key — **key registered 2026-10-11** | FRED terms; series may carry upstream restrictions | **Confirm before publishing** | ✅ 200 with key (was 🔑 400) | Brent originates with the US EIA — check the EIA terms too. The key is stored in a gitignored `.env` and redacted from every manifest (I-07) |
+| NBS (GDP, CPI, unemployment, state IGR, FAAC reports) | manual download | Nigerian government publication | Public documents; cite NBS | ✅ 200 | No API; PDF/HTML parsing. **FAAC republication landed 2026-10-16** (91 monthly XLSX reports, 2016-12 → 2024-07) |
 | CBN (FX, reserves) | manual download | Nigerian government publication | Public documents; cite CBN | ✅ 200 | No API |
-| ~~OAGF / Open Treasury (FAAC per state)~~ | ~~open portal~~ | — | — | ❌ **unreachable** | Source substitution required (see decision X-01) |
+| OAGF — Office of the Accountant General of the Federation (FAAC per state) | free, no key | Nigerian government publication | Public documents; cite OAGF | ✅ **reachable 2026-10-16** — 83 monthly PDFs crawled (2019-04 → 2026-06) | **Corrected**: the Open Treasury portal is unreachable, but the OAGF's own site publishes the monthly workbooks under `/wp-content/uploads/`. This is D1's primary source, so no substitution was needed. The payloads are the publishers' own documents and are cited rather than redistributed wholesale |
 | DHS / NDHS | registration | DHS terms of use | **No** — republication prohibited | — not probed (account) | Aggregate indicators only; no cluster/microdata |
 | MICS (UNICEF) | free | UNICEF terms | Confirm per dataset | — not probed | |
 | UN IGME | free | UN terms; **modelled** estimates | Likely yes — confirm | — not probed | Modelled ≠ observed; label as such |

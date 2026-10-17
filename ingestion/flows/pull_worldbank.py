@@ -54,6 +54,17 @@ INDICATORS = [
     ("literacy_youth", "SE.ADT.1524.LT.ZS", "Literacy rate, youth total (% ages 15-24)", "8 obs across 34 years, 11-year hole — base-spec §6 metric, retained for completeness"),
     # --- security (World Bank-hosted proxy; ACLED/UCDP remain the real sources) ---
     ("homicides", "VC.IHR.PSRC.P5", "Intentional homicides (per 100,000 people)", "3 obs to 2023 — proxy only"),
+    # --- added 2026-10-11: variables the causal-graph layer requires ---
+    # Selected on evidence from probe_missing_variables.py: the DAG layer names these nodes and
+    # the catalogue names these outcomes, but nothing had a source. All keyless World Bank.
+    ("mmr", "SH.STA.MMRT", "Maternal mortality ratio (per 100,000 live births)", "39 obs to 2023, density 1.00 — modelled (UN MMEIG), replaces the 5-yearly NDHS series"),
+    ("skilled_birth", "SH.STA.BRTC.ZS", "Births attended by skilled health staff (% of total)", "9 obs / 33y — SPARSE survey series; must render as flagged points, never a smooth annual line"),
+    ("immun_penta3", "SH.IMM.IDPT", "Immunization, DPT (% of children ages 12-23 months)", "41 obs to 2024 — annual national proxy for the DHIS2 penta3 series, which is credential-blocked"),
+    ("unemp", "SL.UEM.TOTL.ZS", "Unemployment, total (% of labor force, modelled ILO estimate)", "35 obs to 2025 — modelled, but at least one definition (NBS breaks twice)"),
+    # --- DAG covariates (not outcomes): nodes the graphs name that nothing sourced ---
+    ("fx", "PA.NUS.FCRF", "Official exchange rate (LCU per US$, period average)", "DAG node 'fx' (Design B). 66 obs to 2025; the monthly series still needs CBN"),
+    ("donor_oda", "DT.ODA.ALLD.CD", "Net official development assistance received (current US$)", "DAG node 'donor' (Designs A and B) — had no source at all"),
+    ("oil_rents", "NY.GDP.PETR.RT.ZS", "Oil rents (% of GDP)", "oil-channel proxy for DAG node 'common' (Design C donor screening)"),
 ]
 
 # Provisional gate thresholds (Stage 3 will own these).

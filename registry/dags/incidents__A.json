@@ -1,0 +1,187 @@
+{
+  "dag_id": "incidents__A",
+  "schema_version": "0.2.0",
+  "vintage_date": "2026-10-16",
+  "generated_at": "2026-10-17T03:45:10+0100",
+  "generator": {
+    "script": "analysis/R/01_build_dags.R",
+    "git_sha": "b16743f"
+  },
+  "outcome": {
+    "id": "incidents",
+    "label": "Reported security incidents",
+    "short": "Security incidents",
+    "domain": "security",
+    "unit": "count",
+    "direction": "down",
+    "frequency": "monthly",
+    "source": "ACLED",
+    "coverage_status": "blocked",
+    "coverage_note": "Depends entirely on ACLED (OAuth + 12-month embargo); not yet wired."
+  },
+  "design": {
+    "id": "A",
+    "name": "State dose-response DiD",
+    "short": "DiD",
+    "unit": "state-month (36 states + FCT)",
+    "estimand": "ATT of a federal policy shift, with state exposure intensity as the dose",
+    "estimator": "Callaway & Sant'Anna group-time ATT (did); fixest TWFE cross-check",
+    "exposure_node": "dose",
+    "outcome_node": "Y",
+    "adjustment_criterion": "backdoor",
+    "design_controls": ["State fixed effects absorb time-invariant state characteristics", "Time fixed effects absorb common national shocks (including the oil price)", "Permutation inference over treatment-date reassignment"]
+  },
+  "nodes": [
+    {
+      "id": "oil",
+      "label": "Brent crude shock",
+      "short": "Oil shock",
+      "role": "confounder",
+      "observed": true,
+      "source": "FRED DCOILBRENTEU (Brent crude, daily) via ingestion/flows/pull_fred.py",
+      "source_status": "acquired"
+    },
+    {
+      "id": "inherit",
+      "label": "Inherited state conditions",
+      "short": "Inherited conditions",
+      "role": "confounder",
+      "observed": true,
+      "source": "Derived: the outcome's value at the start of each tenure",
+      "source_status": "derived"
+    },
+    {
+      "id": "statefe",
+      "label": "State fixed effect",
+      "short": "State FE",
+      "role": "confounder",
+      "observed": true,
+      "source": "Design construct: state fixed effects",
+      "source_status": "construct"
+    },
+    {
+      "id": "timefe",
+      "label": "Time fixed effect",
+      "short": "Time FE",
+      "role": "confounder",
+      "observed": true,
+      "source": "Design construct: time fixed effects",
+      "source_status": "construct"
+    },
+    {
+      "id": "dose",
+      "label": "Policy exposure dose (D1, FAAC per capita)",
+      "short": "Exposure dose (D1)",
+      "role": "exposure",
+      "observed": true,
+      "source": "NBS FAAC disbursement reports + state population (D1)",
+      "source_status": "gap"
+    },
+    {
+      "id": "Y",
+      "label": "Reported security incidents",
+      "short": "Security incidents",
+      "role": "outcome",
+      "observed": true,
+      "source": "ACLED",
+      "source_status": "gap"
+    },
+    {
+      "id": "u_st",
+      "label": "Unmeasured state-by-time shock",
+      "short": "Unmeasured state-time shock",
+      "role": "confounder",
+      "observed": false,
+      "source": "Unobserved: assumed absent by the parallel-trends assumption",
+      "source_status": "unobserved"
+    }
+  ],
+  "edges": [
+    {
+      "from": "oil",
+      "to": "dose"
+    },
+    {
+      "from": "oil",
+      "to": "Y"
+    },
+    {
+      "from": "inherit",
+      "to": "dose"
+    },
+    {
+      "from": "inherit",
+      "to": "Y"
+    },
+    {
+      "from": "statefe",
+      "to": "dose"
+    },
+    {
+      "from": "statefe",
+      "to": "Y"
+    },
+    {
+      "from": "timefe",
+      "to": "dose"
+    },
+    {
+      "from": "timefe",
+      "to": "Y"
+    },
+    {
+      "from": "dose",
+      "to": "Y"
+    },
+    {
+      "from": "u_st",
+      "to": "dose"
+    },
+    {
+      "from": "u_st",
+      "to": "Y"
+    }
+  ],
+  "adjustment_set": ["inherit", "oil", "statefe", "timefe"],
+  "adjustment_sets": [
+    ["inherit", "oil", "statefe", "timefe"]
+  ],
+  "assumption_required": ["u_st"],
+  "identifying_assumption": "Parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths. Formally, no unmeasured state-by-time confounder affects both the dose and the outcome (the unobserved node is absent).",
+  "cannot_rule_out": ["Anticipation: states may adjust behaviour before the formal policy date.", "SUTVA violations through cross-state spillovers (trade, migration, security).", "Compositional or definitional change in state accounts over the window.", "The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures."],
+  "dagitty_full": "dag {\n  oil [pos = \"0,2.6\"]\n  inherit [pos = \"0,1.4\"]\n  statefe [pos = \"0,0.2\"]\n  timefe [pos = \"0,-1.0\"]\n  dose [pos = \"1.8,0.8\", exposure]\n  Y [pos = \"3.6,0.2\", outcome]\n  u_st [pos = \"1.8,-1.4\", unobserved]\n  oil -> dose\n  oil -> Y\n  inherit -> dose\n  inherit -> Y\n  statefe -> dose\n  statefe -> Y\n  timefe -> dose\n  timefe -> Y\n  dose -> Y\n  u_st -> dose\n  u_st -> Y\n}",
+  "dagitty_assumed": "dag {\n  oil [pos = \"0,2.6\"]\n  inherit [pos = \"0,1.4\"]\n  statefe [pos = \"0,0.2\"]\n  timefe [pos = \"0,-1.0\"]\n  dose [pos = \"1.8,0.8\", exposure]\n  Y [pos = \"3.6,0.2\", outcome]\n  oil -> dose\n  oil -> Y\n  inherit -> dose\n  inherit -> Y\n  statefe -> dose\n  statefe -> Y\n  timefe -> dose\n  timefe -> Y\n  dose -> Y\n}",
+  "diagnostics": {
+    "status": "fail",
+    "checks": [
+      {
+        "id": "dose_variation",
+        "verdict": "flag",
+        "detail": "the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built"
+      },
+      {
+        "id": "state_outcome_attribution",
+        "verdict": "fail",
+        "detail": "no state-attributed outcome has landed — the security series are credential-blocked and the health and education outcomes are national"
+      },
+      {
+        "id": "parallel_trends_precheck",
+        "verdict": "not_run",
+        "detail": "the nominal dose could group states by exposure, but the estimand is written on the per-capita axis, so a trends test on the nominal dose would be a sensitivity check at Stage 6 rather than this pre-check"
+      }
+    ],
+    "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+    "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+    "coverage_status": "blocked",
+    "vintage": "2026-10-16",
+    "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+  },
+  "assets": {
+    "svg": "registry/dags/incidents__A.svg"
+  },
+  "estimate": {
+    "status": "not_estimated",
+    "model_card_ref": null,
+    "note": "Estimates are attached at Stages 6-7; a card without an interval does not ship (docs/decisions.md M-02)."
+  }
+}

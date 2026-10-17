@@ -1,0 +1,181 @@
+# Outcome registry for the causal-graph (DAG) layer.
+#
+# Every outcome the v1 registry models, taken from the base spec's metric catalogue
+# (#CausalPresidents.txt section 6). One node carries an outcome label per graph; this file
+# is the single place the app reads an outcome's identity from, so a label cannot differ
+# between the DAG, the model card and the chart.
+#
+# `coverage_status` is grounded in the Stage-1 access/coverage probe, recorded in
+# docs/decisions.md (A-01..A-09, C-01..C-16) and PROGRESS.md section 5. It is not a guess:
+#   ok           - an open, reachable series reaches the 2015+ administrations
+#   partial      - usable, but sparse / interpolated / defined by a break
+#   declared_gap - no outcome data for part of the study window. Recorded as a gap, never as
+#                  a null result ("we found no effect" != "we had no data")
+#   blocked      - source not yet reachable or credentialed; status will change
+#
+# direction follows base-spec section 6: up = higher is better, down = lower is better.
+# It is mandatory on the chart legend and travels onto the DAG card.
+
+meta:
+  catalogue: "#CausalPresidents.txt section 6 (metric catalog)"
+  coverage_basis: "docs/decisions.md A-01..A-09, C-01..C-16; PROGRESS.md section 5"
+  probe_date: "2026-10-10"
+
+outcomes:
+  - id: u5mr
+    label: "Under-5 mortality rate"
+    short: "Under-5 mortality"
+    domain: health
+    unit: "per 1,000 live births"
+    direction: down
+    frequency: annual
+    source: "NDHS / UN IGME"
+    coverage_status: partial
+    coverage_note: >-
+      World Bank u5mr: 61 observations to 2024, no gaps — but the annual series is largely
+      interpolation across a 5-yearly NDHS cycle, so it renders as a flagged segment.
+
+  - id: mmr
+    label: "Maternal mortality ratio"
+    short: "Maternal mortality"
+    domain: health
+    unit: "per 100,000 births"
+    direction: down
+    frequency: annual
+    source: "World Bank SH.STA.MMRT (UN MMEIG estimates)"
+    coverage_status: ok
+    coverage_note: >-
+      Acquired 2026-10-11: 39 observations to 2023, density 1.00. These are modelled estimates
+      (UN MMEIG), not observations — annual but not independent year to year. Replaces the
+      5-yearly NDHS series as the modelling input.
+
+  - id: immun_penta3
+    label: "Penta3 immunisation coverage"
+    short: "Penta3 coverage"
+    domain: health
+    unit: "% surviving infants"
+    direction: up
+    frequency: annual
+    source: "World Bank SH.IMM.IDPT (DPT3, WHO/UNICEF WUENIC)"
+    coverage_status: partial
+    coverage_note: >-
+      Acquired 2026-10-11: 41 observations to 2024 — the annual national series, used as the
+      stand-in for penta3 because DHIS2 (the monthly source) is credential-blocked. DPT3 and
+      penta3 are not identical antigens; the monthly window the 2023 shock needs is still
+      unavailable, so the frequency drops from monthly to annual.
+
+  - id: skilled_birth
+    label: "Skilled birth attendance"
+    short: "Skilled birth attendance"
+    domain: health
+    unit: "% of births"
+    direction: up
+    frequency: annual
+    source: "World Bank SH.STA.BRTC.ZS (survey-based)"
+    coverage_status: partial
+    coverage_note: >-
+      Probed and acquired 2026-10-11: 9 observations across 33 years (density 0.27). This is a
+      survey series, NOT an annual one — it must render as flagged survey points and cannot
+      carry a lagged time-series design. Recorded rather than interpolated into a smooth line.
+
+  - id: literacy_youth
+    label: "Youth literacy (15-24)"
+    short: "Youth literacy"
+    domain: education
+    unit: "%"
+    direction: up
+    frequency: annual
+    source: "NBS / UNESCO UIS"
+    coverage_status: declared_gap
+    coverage_note: >-
+      UNESCO UIS returned 404 on every path including the API root (C-11) and NEMIS timed out
+      (C-12). adult_literacy has only 6 points. No APC-era education outcome exists on an open
+      source — a declared gap, not a null result.
+
+  - id: primary_completion
+    label: "Primary completion rate"
+    short: "Primary completion"
+    domain: education
+    unit: "%"
+    direction: up
+    frequency: annual
+    source: "NEMIS / World Bank"
+    coverage_status: declared_gap
+    coverage_note: >-
+      Every World Bank education outcome series stops in 2010-2011 (C-07), so it cannot see the
+      APC tenures at all; NEMIS is unreachable (C-12). Declared gap.
+
+  - id: ner_primary
+    label: "Net enrolment rate, primary"
+    short: "Net enrolment (primary)"
+    domain: education
+    unit: "%"
+    direction: up
+    frequency: annual
+    source: "NEMIS"
+    coverage_status: declared_gap
+    coverage_note: "Same 2010 break as primary_completion (C-03, C-07); NEMIS unreachable."
+
+  - id: fatalities
+    label: "Reported security fatalities"
+    short: "Security fatalities"
+    domain: security
+    unit: "count"
+    direction: down
+    frequency: monthly
+    source: "ACLED (UCDP substitute)"
+    coverage_status: blocked
+    coverage_note: >-
+      No usable World Bank security series (homicides: 3 observations, C-10). ACLED requires an
+      OAuth app and withholds the most recent 12 months (C-13); UCDP needs a free token (C-14).
+      Security depends entirely on these two.
+
+  - id: incidents
+    label: "Reported security incidents"
+    short: "Security incidents"
+    domain: security
+    unit: "count"
+    direction: down
+    frequency: monthly
+    source: "ACLED"
+    coverage_status: blocked
+    coverage_note: "Depends entirely on ACLED (OAuth + 12-month embargo); not yet wired."
+
+  - id: gdp_growth
+    label: "Real GDP growth (y/y)"
+    short: "GDP growth (y/y)"
+    domain: economy
+    unit: "%"
+    direction: up
+    frequency: quarterly
+    source: "NBS / World Bank"
+    coverage_status: ok
+    coverage_note: >-
+      Strong coverage on the World Bank backbone, but the 2014 rebasing is a definitional break
+      that must be annotated rather than smoothed over.
+
+  - id: cpi_yoy
+    label: "Headline inflation (y/y)"
+    short: "Inflation (y/y)"
+    domain: economy
+    unit: "%"
+    direction: down
+    frequency: monthly
+    source: "NBS / World Bank"
+    coverage_status: ok
+    coverage_note: "66 observations, no gaps — the anchor outcome for the 2023 subsidy window."
+
+  - id: unemp
+    label: "Unemployment rate"
+    short: "Unemployment rate"
+    domain: economy
+    unit: "%"
+    direction: down
+    frequency: quarterly
+    source: "World Bank SL.UEM.TOTL.ZS (ILO modelled)"
+    coverage_status: partial
+    coverage_note: >-
+      Acquired 2026-10-11: 35 observations to 2025, modelled ILO estimates under one definition.
+      Kept at `partial` because it is a model, not Nigeria's published series: NBS methodology
+      changed in 2014 and again in 2023, and that definitional break remains an exclusion axis
+      in the specification curve.

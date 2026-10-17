@@ -1,0 +1,304 @@
+# Stage 5 pre-analysis diagnostics specification.
+#
+# PHASES.md Stage 5 establishes what the data can support *before* anything is estimated, so that a
+# design which cannot be identified is dropped here, on the record, rather than after its estimate
+# looked inconvenient. This file declares every parameter, threshold and fallback rule the
+# diagnostics use; `analysis/R/02_diagnostics.R` implements them and `tests/verify_stage5.py`
+# recomputes the headline results independently (in Python, from numpy/scipy, re-deriving the test
+# statistics rather than trusting the R library's verdict).
+#
+# The two documents this stage answers to:
+#   base spec §9       — cointegration first (Johansen), ARDL bounds as the declared fallback
+#   design spec §5.1   — dose validation; §5.2 the DoF cost; §5.3 pre-treatment fit for the SCM
+#
+# Nothing here may be changed after seeing an estimate. A threshold is a pre-registration.
+
+meta:
+  stage: 5
+  answers: "PHASES.md Stage 5; base spec section 9; design spec sections 5.1, 5.2, 5.3, 15"
+  output: "registry/diagnostics/<vintage>/diagnostics.json + report.md, and docs/design-memo.md"
+
+# ---------------------------------------------------------------------------------------------
+# The grain the tests run on (S5-01)
+# ---------------------------------------------------------------------------------------------
+# This is the decision that makes the rest of the stage meaningful. The analytical base is a
+# monthly spine in which **10.1% of rows are observed** (775 of 7,682; C-30). Running a unit-root
+# test on an interpolated monthly series would test the interpolator, not the data: linear
+# interpolation induces near-perfect serial correlation by construction, so ADF would fail to
+# reject stationarity for a series that could be strongly mean-reverting, and Johansen would find
+# rank in a system of straight lines.
+#
+# Every test therefore runs on the **native grain** — the annual observation the source actually
+# published — read from `fact_observation_native`, never from `fact_metric`'s monthly spine.
+grain:
+  primary: native
+  source_table: fact_observation_native
+  monthly_series: native_too   # oil is genuinely monthly; test it at its own grain
+  annual_aggregation_of_monthly: mean_of_months
+  annual_aggregation_reason: >-
+    The one monthly series used on the annual side (Brent) is averaged over the calendar year. That
+    is the same rule Stage 3 froze for daily->monthly, applied one grain coarser, and it is frozen
+    here before any oil-adjusted estimate exists (C-23).
+  forbidden: fact_metric_monthly_spine
+  forbidden_reason: >-
+    Tests on interpolated rows would report the interpolation method's properties as if they were
+    the data's.
+
+# ---------------------------------------------------------------------------------------------
+# Unit-root tests
+# ---------------------------------------------------------------------------------------------
+unit_root:
+  tests: [adf, kpss, pp]
+  alpha: 0.05
+  max_lags: 4
+  min_observations: 12
+  adf:
+    function: urca::ur.df
+    types: [drift, trend]
+    selectlags: AIC
+    reject_unit_root_when: teststat_below_5pct_cval
+  kpss:
+    function: urca::ur.kpss
+    type: mu
+    lags: short
+    reject_stationarity_when: teststat_above_5pct_cval
+  pp:
+    function: urca::ur.pp
+    type: Z-tau
+    model: constant
+    lags: short
+    reject_unit_root_when: teststat_below_5pct_cval
+  max_order: 2
+  rule: >-
+    A series is I(0) when all three tests call the level stationary; I(1) when all three call the
+    level a unit root and all three call the first difference stationary; I(2) when the first
+    difference itself satisfies the same three-test unit-root rule. Requiring agreement at *both*
+    steps is what keeps a single level-regime break (Brent 2008, the naira 2016 and 2023) from being
+    read as a second unit root. Any other combination is reported as `inconclusive` rather than
+    resolved by preference — with ~27 annual observations a disagreement is informative, not noise
+    to be averaged away.
+  adf_primary_type: drift
+  adf_secondary_type: trend
+  adf_secondary_role: >-
+    Reported for the reader, not used in the verdict: with a trending series the power of a
+    drift-only ADF is low, and a reader checking the result needs to see that variant too.
+  inconclusive_consequence: >-
+    The series is carried into the cointegration step as if I(1) (the conservative branch, which can
+    only make the reported rank smaller) and the outcome's card records the inconclusiveness.
+
+# ---------------------------------------------------------------------------------------------
+# Cointegration — base spec section 9: the estimator follows the test, not preference
+# ---------------------------------------------------------------------------------------------
+cointegration:
+  # ca.jo lives in urca; vars stopped re-exporting it at vars >= 1.6, so the package is named
+  # exactly rather than assumed (found the hard way: the first run reported 'not exported' for
+  # every outcome).
+  function: urca::ca.jo
+  package: urca
+  # The Tier-3 system in the base spec is Y + log Brent + FAAC + FX + lags + trend. **FAAC is not
+  # landed** (it is not in the metric catalogue at all; see harmonisation.yml declared_gaps
+  # state_dose_d1), so the system that can actually be tested is the reduced one below. The
+  # deviation is recorded on every Design B card rather than papered over by dropping a variable
+  # silently.
+  system:
+    - "Y"
+    - "log_oil"
+    - "fx"
+  absent_from_system:
+    - {node: faac, reason: "no landed series; NBS FAAC parser still required"}
+  K: 2
+  ecdet: const
+  spec_types: [trace, eigen]
+  alpha: 0.05
+  min_observations: 20
+  verdict_rule: >-
+    Rank is taken from the trace statistic at the declared alpha, cross-checked against the maximum
+    eigenvalue statistic. Agreement -> that rank. Disagreement -> the smaller rank (again the
+    conservative branch). Rank 0 means no cointegration: the declared fallback is ARDL bounds
+    testing (dynlm), which is what base spec section 9 specifies for series not integrated of the
+    same order.
+  on_rank_zero: ardl_bounds
+  on_rank_positive: vecm
+  on_rank_full: var_in_levels
+  on_rank_full_reason: >-
+    A rank equal to the system's dimension means the trace test rejected every rank below it, so the
+    system reads as stationary. Calling that "cointegrated" would dress a stationary system up as a
+    long-run relationship; a VAR in levels is the honest reading and the card says so.
+  on_insufficient_observations: not_run
+
+# ---------------------------------------------------------------------------------------------
+# Shock-window visibility — PHASES.md: "confirm the 2016, 2020 and 2023 windows are visible in the
+# data rather than assumed"
+# ---------------------------------------------------------------------------------------------
+shock_visibility:
+  windows_from: dim_shock
+  min_observed_in_band: 3
+  min_observed_fraction: 0.25
+  rule: >-
+    A window is `visible` on a metric when at least `min_observed_in_band` observed months AND at
+    least `min_observed_fraction` of the window's months are observed. It is `single_anchor` when
+    the window contains exactly one observed month (the July anchor of an annual series). It is
+    `not_visible` when it contains none. Fractions of a window covered by interpolation are counted
+    but never treated as observation.
+  single_anchor_consequence: >-
+    Recorded as visible-on-Brent, single-anchor-on-outcomes: the shock is real and monthly in the
+    exogenous series, but on an annual outcome the window is measured by one point. Any claim about
+    what happened *inside* such a window is a claim about that one anchor month.
+
+# ---------------------------------------------------------------------------------------------
+# Dose validation (design spec section 5.1; PHASES.md risk table)
+# ---------------------------------------------------------------------------------------------
+# "A dose with near-zero cross-state variance cannot support a dose-response design, and no
+# estimator fixes that."
+dose:
+  table: state_panel
+  # The axis the design spec's estimand is actually written on. A dose can be present on *some* axis and
+  # still not be the one Family A needs, so the verdict that decides the family is this one; the other
+  # axes are measured and reported alongside it rather than allowed to turn the gate green by proxy.
+  specified_axis: D1
+  dose_columns:
+    # Base spec section 5 names D1 as "FAAC allocation per capita", so this stays the axis the estimand
+    # is written on. It is empty because the state population denominator is an unmade decision (X-09),
+    # not because the numerator is missing.
+    - {id: D1, column: d1_faac_per_capita, label: "FAAC allocation per capita"}
+    # The nominal dose: the same series before the per-capita division. It landed 2026-10-16 (174
+    # documents, 114 months x 36 states) and was Stage 3 gated 2026-10-17, so this axis is *present and
+    # checked* while D1 is not -- which is exactly the distinction the family verdict has to keep.
+    - {id: D1_nominal, column: faac_gross_total_naira, label: "FAAC gross allocation, nominal naira"}
+    - {id: D2, column: d2_faac_share_of_state_revenue, label: "FAAC share of state revenue"}
+    - {id: D3, column: null, label: "FX / import intensity of the consumption basket",
+       reason: "constructed; not built, and flagged constructed by design spec section 5.1"}
+  outcome_columns: [fatalities, incidents]
+  min_non_null_rows: 1
+  min_states_with_dose: 2
+  min_dose_months_per_state: 12
+  min_between_state_variance_share: 0.10
+  min_distinct_dose_values: 24
+  unit_root_and_collinearity_require: dose_present
+
+# ---------------------------------------------------------------------------------------------
+# Parallel trends / pre-treatment fit
+# ---------------------------------------------------------------------------------------------
+pretrend:
+  family_a:
+    status_when_dose_absent: not_run
+    blocked_by: dose
+    would_test: >-
+      Whether states with high and low exposure were on parallel outcome paths before the shift.
+      The test needs the dose; with no dose there is no high-exposure group to compare against
+      low-exposure states, so this is not_run rather than passed or failed.
+  family_c:
+    # The gate is solved as a quadratic program over the simplex, which gives the GLOBAL optimum for
+    # the pre-treatment path. That choice is deliberate and it is what lets this gate say "no convex
+    # combination of the donors can track Nigeria" rather than "the optimiser did not find one".
+    gate_solver: quadprog::solve.QP (simplex-constrained least squares)
+    gate_objective: pre_treatment_path_rmspe
+    estimator_crosscheck: Synth::synth
+    estimator_crosscheck_role: >-
+      Recorded, not used for the gate. Synth is the estimator design spec section 11 names for
+      Family C, but its default V search (a nested optimisation over one weight per predictor plus
+      one per pre-period) returned a solution worse than the best single donor on every window
+      tested here. That is recorded as a finding for Stage 6 rather than silently relied on.
+    predictor_aggregation: mean_over_pre_period
+    min_pre_years: 8
+    min_post_years: 2
+    min_donors: 5
+    pre_rmse_threshold_frac_of_sd: 0.10
+    rule: >-
+      The treated window is credible when the best achievable simplex fit reproduces Nigeria's
+      pre-treatment outcome path to within `pre_rmse_threshold_frac_of_sd` of the pre-period outcome
+      standard deviation. Above that, PHASES.md's Stage 5 gate applies: report infeasibility rather
+      than ship a weak fit. The gate is necessary but not sufficient — it bounds what the donor pool
+      could do, and a passing window still has to survive Stage 6's estimator and placebos.
+    reported_alongside: [best_single_donor_rmse, treated_outside_donor_mean_interval, level_gap,
+                         ratio_on_differences, synth_v_optimized_rmse]
+    placebos_deferred_to: stage_6
+
+# ---------------------------------------------------------------------------------------------
+# Degrees of freedom and the detectable effect (PHASES.md: "write it down before seeing any
+# estimate")
+# ---------------------------------------------------------------------------------------------
+dof_power:
+  alpha: 0.05
+  power: 0.80
+  z_alpha_two_sided: 1.959964
+  z_power: 0.8416212
+  baseline_model: "Y ~ log_oil + trend"     # supplies the residual variance only
+  baseline_model_reason: >-
+    The residual SD has to come from somewhere, and taking it from the headline specification would
+    mean the power calculation had seen the estimate it is meant to precede. The baseline is a
+    deliberately thin model whose job is to measure the noise scale, not the effect.
+  tier3_lag_max: 4
+  tier3_terms:
+    - intercept
+    - party_tenure_dummies
+    - log_oil
+    - oil_by_admin
+    - lagged_outcome
+    - trend_linear
+    - trend_quadratic
+  min_dof: 3
+  rule: >-
+    The minimum detectable effect for each tenure stratum is
+    (z_alpha + z_power) * sigma * sqrt(((X'X)^-1)_jj), reported in the outcome's own units and again
+    in units of the residual SD, for the specified Tier-3 design matrix. A specification whose
+    parameter count leaves fewer than `min_dof` residual degrees of freedom is reported as
+    `infeasible` — it cannot be fit, so no estimate from it could be interpretable.
+  reduced_design: >-
+    The same reckoning is repeated on the same rows with the oil-by-tenure interactions dropped, so
+    the report can separate the cost of the design matrix from the cost of the data. Keeping the
+    interactions in both would have made the comparison meaningless; dropping them isolates the
+    single feature that dominates the width.
+  report_strata: [pdp_first, pdp_second, apc_first, apc_second]
+
+# ---------------------------------------------------------------------------------------------
+# Collinearity
+# ---------------------------------------------------------------------------------------------
+collinearity:
+  vif_flag: 10
+  vif_fail: 30
+  dose_axes: [D1, D2, D3]
+  rule: >-
+    VIF is computed for every column of the Tier-3 design matrix. The check that matters here is the
+    one PHASES.md names: the party-by-tenure dummies are functions of the calendar, so with five
+    administrations over ~27 years the dummies, the linear trend and the quadratic trend compete for
+    the same variation. A dummy whose VIF passes `vif_fail` is flagged as identified off the trend
+    terms rather than off the administration, which is a statement about the *design*, not the data.
+  dose_axes_rule: >-
+    VIF across D1/D2/D3 needs the doses, so when they are absent the check is reported as
+    not_computable with the blocker named rather than passed.
+
+# ---------------------------------------------------------------------------------------------
+# Candidate treated windows
+# ---------------------------------------------------------------------------------------------
+windows:
+  administrations_from: dim_administration_term
+  include_shock_bands: true
+  shock_bands_from: dim_shock
+  candidate_treated_windows:
+    - {id: obasanjo, from: 1999-05-29, to: 2007-05-29, node: admin}
+    - {id: yaradua, from: 2007-05-29, to: 2010-05-05, node: admin}
+    - {id: jonathan, from: 2010-05-06, to: 2015-05-29, node: admin}
+    - {id: buhari, from: 2015-05-29, to: 2023-05-29, node: admin}
+    - {id: tinubu, from: 2023-05-29, to: null, node: admin}
+  shock_windows:
+    - {id: oil_crash, from: 2014-06-01, to: 2016-12-01}
+    - {id: covid, from: 2020-03-01, to: 2020-12-01}
+    - {id: subsidy_2023, from: 2023-06-01, to: 2023-12-01}
+
+# ---------------------------------------------------------------------------------------------
+# What each design must pass to survive the stage
+# ---------------------------------------------------------------------------------------------
+design_gates:
+  A:
+    requires: [dose_variation, state_outcome_attribution]
+    on_fail: dropped_on_the_record
+    note: >-
+      PHASES.md risk table: "Dose D1 fails the variation check -> the whole Family A collapses to a
+      level comparison."
+  B:
+    requires: [integration_order, cointegration_rank, dof_minimum, collinearity]
+    on_fail: dropped_or_degraded_on_the_record
+  C:
+    requires: [pretreatment_fit, donor_pool_coverage]
+    on_fail: infeasible_reported_not_estimated

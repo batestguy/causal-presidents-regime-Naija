@@ -1,0 +1,44 @@
+# dbt project — causal-presidents analytical base (PHASES.md Stage 4).
+#
+# Language split is [LOCKED] (decisions.md D-05): transformation in SQL/dbt, never in Python and
+# never at render time (base spec section 18). The warehouse is DuckDB, a single local file, because
+# every layer of this project is free-tier only and the analytical base is ~20k rows — nothing here
+# is a compute problem (PHASES.md governing principle).
+#
+# Run from the repository root:
+#     conda run -p "C:/Users/TOSHIBA/ds-general" dbt build --project-dir dbt --profiles-dir dbt
+#
+# `raw_root` and `registry_root` are relative to the repository root, so the project must be invoked
+# from there. They are vars, not hard-coded paths, so a test run can point at a scratch vintage.
+name: causal_presidents
+version: "1.0.0"
+profile: causal_presidents
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+clean-targets: ["target", "dbt_packages"]
+
+# `staging_root` is where the Stage 2 parsers write their tidy tables (`data/staging`) — documents that
+# are not JSON, because their source is a PDF or a spreadsheet, are parsed to CSV and typed here rather
+# than being made to look like a payload. The parse step records each row's source sha256, so a staging
+# table is traceable to the payload it came from without the base having to re-parse anything.
+vars:
+  raw_root: "data/raw"
+  registry_root: "registry"
+  staging_root: "data/staging"
+
+seeds:
+  causal_presidents:
+    +schema: staging
+    +quote_columns: false
+
+models:
+  causal_presidents:
+    staging:
+      +schema: staging
+      +materialized: view
+    analytics:
+      +schema: analytics
+      +materialized: table

@@ -1,0 +1,256 @@
+{
+  "dag_id": "ner_primary__B",
+  "schema_version": "0.2.0",
+  "vintage_date": "2026-10-16",
+  "generated_at": "2026-10-17T03:45:10+0100",
+  "generator": {
+    "script": "analysis/R/01_build_dags.R",
+    "git_sha": "b16743f"
+  },
+  "outcome": {
+    "id": "ner_primary",
+    "label": "Net enrolment rate, primary",
+    "short": "Net enrolment (primary)",
+    "domain": "education",
+    "unit": "%",
+    "direction": "up",
+    "frequency": "annual",
+    "source": "NEMIS",
+    "coverage_status": "declared_gap",
+    "coverage_note": "Same 2010 break as primary_completion (C-03, C-07); NEMIS unreachable."
+  },
+  "design": {
+    "id": "B",
+    "name": "National VECM / ARDL time series",
+    "short": "Time series",
+    "unit": "national-month (annual cross-check)",
+    "estimand": "long-run multiplier for the administration effect, oil-interacted",
+    "estimator": "VECM (vars + urca Johansen), ARDL (dynlm) fallback per the cointegration test",
+    "exposure_node": "admin",
+    "outcome_node": "Y",
+    "adjustment_criterion": "backdoor",
+    "design_controls": ["Lagged outcome captures persistence (error-correction form)", "Linear and quadratic time trend absorb secular drift", "Oil price is interacted with administration, never partialled out (base spec section 9)"]
+  },
+  "nodes": [
+    {
+      "id": "oil",
+      "label": "Brent crude price (logged)",
+      "short": "Oil price shock",
+      "role": "confounder",
+      "observed": true,
+      "source": "FRED DCOILBRENTEU (Brent crude, daily) via ingestion/flows/pull_fred.py",
+      "source_status": "acquired"
+    },
+    {
+      "id": "lagY",
+      "label": "Lagged outcome",
+      "short": "Lagged outcome",
+      "role": "confounder",
+      "observed": true,
+      "source": "Derived: lagged value of the outcome",
+      "source_status": "derived"
+    },
+    {
+      "id": "trend",
+      "label": "Linear and quadratic time trend",
+      "short": "Time trend",
+      "role": "confounder",
+      "observed": true,
+      "source": "Design construct: linear and quadratic trend",
+      "source_status": "construct"
+    },
+    {
+      "id": "donor",
+      "label": "Donor funding",
+      "short": "Donor funding",
+      "role": "confounder",
+      "observed": true,
+      "source": "World Bank DT.ODA.ALLD.CD (net ODA received)",
+      "source_status": "acquired"
+    },
+    {
+      "id": "u_t",
+      "label": "Omitted time-varying determinant",
+      "short": "Omitted time-varying factor",
+      "role": "confounder",
+      "observed": false,
+      "source": "Unobserved: assumed absent by the conditional-exogeneity assumption",
+      "source_status": "unobserved"
+    },
+    {
+      "id": "admin",
+      "label": "Administration (party x tenure)",
+      "short": "Administration",
+      "role": "exposure",
+      "observed": true,
+      "source": "Administration spine (base spec section 7)",
+      "source_status": "acquired"
+    },
+    {
+      "id": "oilxadmin",
+      "label": "Oil x administration (effect modification)",
+      "short": "Oil x Administration",
+      "role": "modifier",
+      "observed": true,
+      "source": "Derived: oil x administration interaction",
+      "source_status": "derived"
+    },
+    {
+      "id": "faac",
+      "label": "FAAC allocation / fiscal space",
+      "short": "FAAC / fiscal space",
+      "role": "mediator",
+      "observed": true,
+      "source": "NBS FAAC disbursement reports",
+      "source_status": "gap"
+    },
+    {
+      "id": "fx",
+      "label": "NGN/USD exchange rate",
+      "short": "NGN/USD",
+      "role": "mediator",
+      "observed": true,
+      "source": "World Bank PA.NUS.FCRF (annual); CBN needed for monthly",
+      "source_status": "acquired"
+    },
+    {
+      "id": "Y",
+      "label": "Net enrolment rate, primary",
+      "short": "Net enrolment (primary)",
+      "role": "outcome",
+      "observed": true,
+      "source": "NEMIS",
+      "source_status": "gap"
+    }
+  ],
+  "edges": [
+    {
+      "from": "oil",
+      "to": "admin"
+    },
+    {
+      "from": "oil",
+      "to": "oilxadmin"
+    },
+    {
+      "from": "oil",
+      "to": "faac"
+    },
+    {
+      "from": "oil",
+      "to": "fx"
+    },
+    {
+      "from": "oil",
+      "to": "Y"
+    },
+    {
+      "from": "admin",
+      "to": "oilxadmin"
+    },
+    {
+      "from": "admin",
+      "to": "faac"
+    },
+    {
+      "from": "admin",
+      "to": "fx"
+    },
+    {
+      "from": "admin",
+      "to": "Y"
+    },
+    {
+      "from": "oilxadmin",
+      "to": "Y"
+    },
+    {
+      "from": "faac",
+      "to": "Y"
+    },
+    {
+      "from": "fx",
+      "to": "Y"
+    },
+    {
+      "from": "lagY",
+      "to": "Y"
+    },
+    {
+      "from": "trend",
+      "to": "faac"
+    },
+    {
+      "from": "trend",
+      "to": "fx"
+    },
+    {
+      "from": "trend",
+      "to": "Y"
+    },
+    {
+      "from": "donor",
+      "to": "Y"
+    },
+    {
+      "from": "u_t",
+      "to": "admin"
+    },
+    {
+      "from": "u_t",
+      "to": "Y"
+    }
+  ],
+  "adjustment_set": ["oil"],
+  "adjustment_sets": [
+    ["oil"]
+  ],
+  "assumption_required": ["u_t"],
+  "identifying_assumption": "Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).",
+  "cannot_rule_out": ["FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.", "Only ~26 annual observations and five administrations — the interval is wide by construction.", "Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.", "Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove."],
+  "dagitty_full": "dag {\n  oil [pos = \"0,2.8\"]\n  lagY [pos = \"0,1.6\"]\n  trend [pos = \"0,0.4\"]\n  donor [pos = \"0,-0.8\"]\n  u_t [pos = \"0,-2.0\", unobserved]\n  admin [pos = \"1.8,2.4\", exposure]\n  oilxadmin [pos = \"1.8,1.0\"]\n  faac [pos = \"1.8,-0.2\"]\n  fx [pos = \"1.8,-1.4\"]\n  Y [pos = \"3.6,0.6\", outcome]\n  oil -> admin\n  oil -> oilxadmin\n  oil -> faac\n  oil -> fx\n  oil -> Y\n  admin -> oilxadmin\n  admin -> faac\n  admin -> fx\n  admin -> Y\n  oilxadmin -> Y\n  faac -> Y\n  fx -> Y\n  lagY -> Y\n  trend -> faac\n  trend -> fx\n  trend -> Y\n  donor -> Y\n  u_t -> admin\n  u_t -> Y\n}",
+  "dagitty_assumed": "dag {\n  oil [pos = \"0,2.8\"]\n  lagY [pos = \"0,1.6\"]\n  trend [pos = \"0,0.4\"]\n  donor [pos = \"0,-0.8\"]\n  admin [pos = \"1.8,2.4\", exposure]\n  oilxadmin [pos = \"1.8,1.0\"]\n  faac [pos = \"1.8,-0.2\"]\n  fx [pos = \"1.8,-1.4\"]\n  Y [pos = \"3.6,0.6\", outcome]\n  oil -> admin\n  oil -> oilxadmin\n  oil -> faac\n  oil -> fx\n  oil -> Y\n  admin -> oilxadmin\n  admin -> faac\n  admin -> fx\n  admin -> Y\n  oilxadmin -> Y\n  faac -> Y\n  fx -> Y\n  lagY -> Y\n  trend -> faac\n  trend -> fx\n  trend -> Y\n  donor -> Y\n}",
+  "diagnostics": {
+    "status": "not_attempted",
+    "checks": [
+      {
+        "id": "integration_order",
+        "verdict": "not_run",
+        "detail": "only 9 native observations in the window (minimum 12) — not tested"
+      },
+      {
+        "id": "cointegration_rank",
+        "verdict": "not_run",
+        "detail": "9 annual observations (minimum 20)"
+      },
+      {
+        "id": "dof_power",
+        "verdict": "not_run",
+        "detail": "9 annual observations — too few to fit the Tier-3 design"
+      },
+      {
+        "id": "collinearity",
+        "verdict": "not_run",
+        "detail": "9 annual observations"
+      },
+      {
+        "id": "faac_in_tier3_system",
+        "verdict": "deviation",
+        "detail": "the base-spec Tier-3 system includes FAAC, which has no metric-catalogue entry (the monthly state panel landed 2026-10-16 and is Stage 3 gated, but it has no declared monthly-to-annual aggregation and no outcome decision); the system is reduced to {Y, log(oil), fx}"
+      }
+    ],
+    "blocker": "no usable series for this outcome (declared_gap)",
+    "note": "No pre-check could run: this outcome has no series over the window.",
+    "coverage_status": "declared_gap",
+    "vintage": "2026-10-16",
+    "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+  },
+  "assets": {
+    "svg": "registry/dags/ner_primary__B.svg"
+  },
+  "estimate": {
+    "status": "not_estimated",
+    "model_card_ref": null,
+    "note": "Estimates are attached at Stages 6-7; a card without an interval does not ship (docs/decisions.md M-02)."
+  }
+}

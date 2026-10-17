@@ -1,0 +1,283 @@
+# Stage 4 harmonisation specification — the analytical base's declared rules.
+#
+# PHASES.md Stage 4 turns the gated raw layer into one analytical base table that the models and
+# the app both read, with nothing computed at render time. Every choice that could otherwise be a
+# magic number inside a dbt model is declared here, and `tests/verify_harmonisation.py`
+# independently recomputes the base from the raw payloads and fails if the built tables and this
+# spec disagree.
+#
+# This file is the *declaration*; the SQL is the implementation. Where the two could drift, the
+# verifier is the tie-breaker — the same arrangement Stage 3 uses for its gates.
+#
+# ---------------------------------------------------------------------------------------------
+# The spine
+# ---------------------------------------------------------------------------------------------
+# One row per (metric, month). The spine is monthly because the base spec needs the 2023 subsidy
+# window (2023-06 -> 2023-12) to be visible, and a quarterly spine cannot show it.
+spine:
+  grain: month
+  start: "1999-01-01"
+  end: last_observed_month
+  start_reason: >-
+    The study window's floor, reusing the Stage 3 decision (quality.yml `study_window.start`)
+    rather than re-choosing it. Data before 1999 describes a different exchange-rate and fiscal
+    regime and cannot inform any estimate this project makes.
+  end_reason: >-
+    The latest anchor month available across all spine metrics. The spine never runs past the data:
+    a month with no possible observation is not a month to be filled.
+  reason: >-
+    Monthly is the native grain of the two series the 2023 window needs (Brent, and the monthly NBS
+    CPI the app is built for) and the grain the base spec's chart spec assumes.
+
+# ---------------------------------------------------------------------------------------------
+# Frequency alignment — how a value at another grain lands on the monthly spine
+# ---------------------------------------------------------------------------------------------
+# Two rules, both chosen so that no value is invented:
+#
+#   1. An observation is placed at the **midpoint of the period it describes** — July for an annual
+#      value, the first of the month for a monthly value. An annual average is not a January fact
+#      and not a December fact; July is the only month that is not a claim about a specific month.
+#   2. Months strictly between two adjacent observations are **linearly interpolated**, and are
+#      marked as such. Months outside the observed span are left null — never extrapolated.
+#
+# The gap rule is the one that matters. Stage 3 flagged 108-month and 48-month holes in several
+# series. Interpolating across a hole would manufacture nine years of fake data and hand it to a
+# model as if it were observed, so interpolation is refused across any gap: it applies only where
+# two observations are exactly one grain apart (12 months for annual series).
+alignment:
+  annual:
+    anchor_rule: period_midpoint
+    anchor_month: 7 # July, the midpoint of January..December
+    step_months: 12
+    reason: >-
+      An annual average describes the year, so its midpoint is July. Placing it at January or
+      December would state something about a specific month that the source does not say.
+  monthly:
+    anchor_rule: period_start
+    step_months: 1
+  quarterly:
+    anchor_rule: period_midpoint
+    anchor_month_offset: 1 # mid-quarter month: Feb, May, Aug, Nov
+    step_months: 3
+    status: declared_not_yet_used
+    reason: >-
+      No quarterly series is landed: NBS quarterly GDP and the quarterly state IGR series need the
+      manual-download parser (X-01/X-02). The rule is declared so the first quarterly series to
+      arrive cannot be silently smoothed into the monthly spine as if it were monthly. PHASES.md
+      requires quarterly series to be *labelled as such rather than smoothed into monthly pretence*.
+
+interpolation:
+  method: linear_between_adjacent_observations
+  max_span_months: 12 # 12 = adjacent annual observations; anything wider is a gap, not a spacing
+  across_gap: refused
+  across_gap_reason: >-
+    Interpolation is bounded by what the gap gate already refused to bless. adult_literacy has a
+    108-month hole; drawing a straight line through it would put nine years of unobserved values on
+    the chart looking exactly like observed ones.
+  extrapolation: forbidden
+  extrapolation_reason: >-
+    Nothing is ever extended before the first or after the last observation. A back-filled value is
+    a fabricated value, and the models would treat it as data.
+
+observation_type:
+  vocabulary:
+    observed: "the anchor month of a real observation"
+    interpolated: "a month strictly between two adjacent observations, linearly interpolated"
+    unobserved: "no value exists: outside the observed span, or inside a declared gap"
+  rule: >-
+    Every spine row carries one of these three values. The app renders `interpolated` dashed and
+    Stage 7 excludes it on a robustness axis (PHASES.md: "imputation is always visible").
+
+# ---------------------------------------------------------------------------------------------
+# The index anchor
+# ---------------------------------------------------------------------------------------------
+# Base spec section 8 [LOCKED]: index to 100 at January 2000, fixed anchor (not window start),
+# store both value and value_indexed, tooltips show raw values, subtitle must state the anchor.
+index:
+  anchor_period: "2000-01-01"
+  fallback: first_available_month_at_or_after_anchor
+  fallback_reason: >-
+    Not every metric exists in January 2000. A series that begins later (or in 2000 itself, whose
+    first anchor month is July) has no value at the fixed anchor, and rebasing it to its own first
+    observation *without saying so* is how a chart quietly lies. The fallback is therefore applied
+    and recorded per metric in `metric_anchor`, not hidden.
+  store_both: true
+  formula: "value_indexed = value / anchor_value * 100"
+  subtitle_text: "Indexed to 100 at January 2000."
+  null_rule: >-
+    value_indexed is null wherever value is null. An index value computed from a missing value
+    would be an invented observation.
+
+# ---------------------------------------------------------------------------------------------
+# Study window and gap inheritance
+# ---------------------------------------------------------------------------------------------
+window:
+  floor: "1999-01-01"
+  inherits: "analysis/specs/quality.yml study_window"
+  rule: >-
+    The spine starts at the floor. Rows before a metric's first observation are `unobserved` with a
+    null value — present in the spine so the app can render a lead gap, never filled.
+gaps:
+  inherits: "analysis/specs/quality.yml thresholds.gap_max_months"
+  rule: >-
+    A hole the Stage 3 gap gate flagged stays a hole at Stage 4. The gate's finding is carried, not
+    re-litigated: quality_status, the gap result and every definition break travel from
+    registry/quality/<vintage>/report.json into dim_metric.
+quality:
+  report_glob: "registry/quality/*/report.json"
+  carried_columns: [quality_status, quality_vintage, n_observed_in_window, first_observed, last_observed]
+  reason: >-
+    PHASES.md: "every published series carries a quality status field that travels with it into the
+    app". Stage 4 is where it is attached.
+
+# ---------------------------------------------------------------------------------------------
+# The FAAC state dose — the exposure Family A's estimand is written on
+# ---------------------------------------------------------------------------------------------
+# Base spec section 5 names exposure metric D1 as the FAAC allocation to a state. The documents are the
+# monthly disbursement workbook, published twice: as PDF by the Office of the Accountant General of the
+# Federation and as XLSX by the NBS. `ingestion/parsers/faac_disbursement.py` reads both and
+# `dbt/models/analytics/faac_state_allocation.sql` applies the rules below.
+faac_dose:
+  source_artifact: "data/raw/faac/<vintage>/"
+  parsed_artifact: "data/staging/faac_state_allocation.csv"
+  parse_report: "data/staging/faac_parse_report.json"
+  grain: state_month
+  unit_of_analysis: "the 36 states that Table III distributes to; the FCT is funded from the federal share and has no dose"
+  publisher_rule:
+    primary: oagf
+    fallback: nbs
+    fallback_when: "the primary carries no document for that month"
+    recorded_as: "faac_state_allocation.publisher"
+    reason: >-
+      The workbook originates in the OAGF, the office base spec section 5 names for D1, and it is the
+      longer of the two series. The NBS payload is a republication of the same document rather than a
+      second measurement, so it is a cross-check first and a fallback second — and which of the two
+      supplied a given row is carried on the row instead of being implied by the preference order.
+  dose_column: gross_total
+  dose_definition: "statutory allocation + the 13% derivation share of the month's revenue"
+  dose_reason: >-
+    gross_total is the only per-state figure all 174 documents publish in the same place under the same
+    name. It is gross rather than net because the state-specific federal charges that produce net
+    allocation are themselves outcomes of the state's own borrowing, and netting them out would put part
+    of the response on the left-hand side. `total_net_amount` is carried for the robustness axis.
+  rejected_alternatives:
+    total_gross_amount: >-
+      Exists only from 2024 and its column-number row does not survive extraction on every layout
+      (2024-01 extracts a duplicated Gross VAT Allocation column), so reading it back was wrong by
+      hundreds of millions on several months rather than failing outright.
+    sum_of_named_gross_channels: >-
+      Short by a different amount on the same months, which is the signature of a channel the header row
+      does not name at all.
+  period_convention: accrual_month
+  period_reason: >-
+    `period_month` is the month the revenue accrued, not the month it was shared: a document titled "for
+    the month of January 2024 shared in February 2024" is January. Both publishers label consistently,
+    which was checked rather than assumed.
+  excluded_beneficiary: 37th_line
+  excluded_beneficiary_reason: >-
+    Table III totals 37 lines in some eras. The 37th label is not stable — `FCT ABUJA` in the 2026
+    documents, `SOKU` in the 2024 ones — and a label that differs between publications is not an
+    identity. It is returned for reconciliation (the document's own Total row includes it) and kept out
+    of the state table.
+  cross_check:
+    rule: compare_the_two_publications_per_state_month
+    tolerance_naira: 1.0
+    recorded_as: [is_cross_checked, other_publisher, other_gross_total, cross_check_rel_diff]
+    finding: >-
+      The check does not fail the build, because the disagreement it finds is a fact about the sources
+      rather than a defect in the base: 2,124 of 2,160 overlapping state-months (98.3%) agree to within
+      a naira and 59 of the 60 overlapping months agree at every state. The one month that does not is
+      2023-04, where the NBS workbook carries roughly 1.8x the OAGF allocation for every one of the 36
+      states while each document reconciles against its own published Total row. That month is
+      publisher-dependent and the publisher choice is therefore a robustness axis, not a constant.
+  item_set_caveat: >-
+    The table is long rather than wide because item absence must mean "the document did not carry it"
+    rather than "it was zero". That claim is bounded by a measured limit: across the 174 documents the
+    parser resolves 11-18 items each and 541 header cells (136 distinct) do not resolve, enumerated per
+    document in `data/staging/faac_parse_report.json` `unmapped_header_cells`. Most are group headings
+    (`DEDUCTIONS`, 148x) or era-specific channels folded into the documents' own totals. One class is a
+    genuine loss: the PDF text layer interleaves a header with the neighbouring line, so e.g.
+    `13% SHAR(EN OEFT D)ERIVATION` is `13% SHARE OF DERIVATION (NET)` and does not resolve, which makes
+    `derivation_13pct` absent for all 11 OAGF months of 2022 although the column exists.
+  dose_is_not_affected_by_the_item_limit: >-
+    `gross_total` resolves in all 174 documents and every document reconciles against its own published
+    Total row, so the dose is complete even though the decomposition is not. Any use of the derivation,
+    ecology or exchange-gain columns must consult the parse report for the months it covers, and no
+    model may read an absent decomposition item as a zero.
+  gating: gated
+  gating_note: >-
+    The FAAC series has been through the Stage 3 gates: one result per state series and one for the
+    national aggregate, 37 in all, declared as a **document source** in `quality.yml` because the series
+    only exists after the parser reads the PDF/XLSX documents. Every one of the 37 comes back `flagged`,
+    and the flag is honest rather than incidental — the dose moves more than 50 % in a month nine or ten
+    times per state, and most of those months fire at all 36 states at once, which is a movement of the
+    distribution rather than a per-state extraction error (the documents each reconcile against their own
+    Total row). `state_panel` carries the result per row as `dose_gated` / `dose_gate_status`, read from
+    the report itself rather than set by hand.
+  still_open_after_gating: >-
+    A metric-catalogue entry is still **not** made, and it is now a different question from gating: the
+    dose is a state panel whose months begin 2016-12, so putting it on the national metric spine would
+    need a declared aggregation and an outcome decision, not a fetch. S4-17's blocker is therefore
+    narrowed rather than removed: `faac_gated_but_too_short_at_outcome_grain`.
+
+# ---------------------------------------------------------------------------------------------
+# Resampling — reuse, never re-choose
+# ---------------------------------------------------------------------------------------------
+resample:
+  inherits: "analysis/specs/quality.yml resample_rules"
+  rule: mean_of_daily_observations
+  reason: >-
+    PHASES.md Stage 2: freeze the Brent daily->monthly rule before any oil-adjusted estimate,
+    "because changing it later changes every adjusted estimate". Stage 3 froze it as a declared
+    input; Stage 4 reuses it and the verifier checks the built monthly series against an
+    independent recomputation under the same rule.
+
+# ---------------------------------------------------------------------------------------------
+# Declared gaps at this stage
+# ---------------------------------------------------------------------------------------------
+# Declared gaps are legitimate; silent holes are not (Stage 1 exit criterion). These are the inputs
+# the analytical base would need and does not have, recorded here rather than left as absent tables.
+declared_gaps:
+  - id: state_dose_d1
+    what: "FAAC allocation per state-month (base spec X-01, the primary exposure)"
+    blocks: "Family A — state dose-response DiD"
+    status: resolved_in_part
+    landed: >-
+      174 documents parsed (2016-12 -> 2026-06), 36 states per month, each reconciled against its own
+      document's Total row. `state_panel.faac_gross_total_naira` carries the nominal dose and
+      `faac_share_of_state_pool` the share of the 36 states' pool.
+    still_missing: >-
+      A per-capita form of the dose, which needs the population denominator below. The nominal dose is
+      populated **and gated** (see `faac_dose.gating`), so this gap no longer blocks the panel from
+      existing or the dose from being used; it blocks the per-capita specification of the dose.
+  - id: state_dose_d1_coverage
+    what: "FAAC coverage before 2016-12"
+    blocks: "Any FAAC dose for the PDP tenures (1999-2015) and therefore any pre-2016 dose-response"
+    status: open
+    needs: >-
+      The OAGF archive begins 2019-04 and the NBS elibrary 2016-12; neither publishes the PDP era
+      online. A monthly FAAC series reaching 1999 would need a different archive (printed gazettes or a
+      paid database), so Family A's dose is an APC-era exposure unless that changes. This is why the
+      dose's span is a design constraint and not a fetching problem.
+  - id: state_dose_d2
+    what: "FAAC share of state total revenue (base spec X-02)"
+    blocks: "Family A's secondary dose"
+    needs: "The same FAAC parser plus the NBS quarterly state IGR series"
+  - id: state_population_denominator
+    what: "One consistent per-state population denominator, 1999-present"
+    blocks: "Any per-capita dose (D1)"
+    status: OPEN
+    needs: >-
+      A decision, not data alone: NBS projections and World Bank population diverge, so which single
+      series is used must be chosen and recorded (base spec X-09). No dose is computed until then.
+  - id: security_outcomes
+    what: "ACLED/UCDP fatalities and incidents, with state attribution"
+    blocks: "The security domain on every design"
+    needs: "A free UCDP token or an ACLED OAuth app (PROGRESS.md section 8A)"
+  - id: education_outcomes
+    what: "Any education outcome series reaching 2015+"
+    blocks: "The education domain on every design"
+    status: declared_gap
+    needs: >-
+      No open source reaches the APC tenures (C-07, C-11, C-12). Recorded as a gap, never as a
+      null result.

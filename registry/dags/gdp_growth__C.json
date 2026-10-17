@@ -1,0 +1,185 @@
+{
+  "dag_id": "gdp_growth__C",
+  "schema_version": "0.2.0",
+  "vintage_date": "2026-10-16",
+  "generated_at": "2026-10-17T03:45:10+0100",
+  "generator": {
+    "script": "analysis/R/01_build_dags.R",
+    "git_sha": "b16743f"
+  },
+  "outcome": {
+    "id": "gdp_growth",
+    "label": "Real GDP growth (y/y)",
+    "short": "GDP growth (y/y)",
+    "domain": "economy",
+    "unit": "%",
+    "direction": "up",
+    "frequency": "quarterly",
+    "source": "NBS / World Bank",
+    "coverage_status": "ok",
+    "coverage_note": "Strong coverage on the World Bank backbone, but the 2014 rebasing is a definitional break that must be annotated rather than smoothed over."
+  },
+  "design": {
+    "id": "C",
+    "name": "Synthetic control (cross-country)",
+    "short": "Synthetic control",
+    "unit": "country-year (Nigeria treated; West African neighbours + oil exporters)",
+    "estimand": "treatment gap: Nigeria outcome minus synthetic Nigeria",
+    "estimator": "Synth / coresynth / scpi, donor pool screened by pre-treatment fit",
+    "exposure_node": "treat",
+    "outcome_node": "Y",
+    "adjustment_criterion": "backdoor",
+    "design_controls": ["Donor weights chosen to reproduce Nigeria's pre-treatment outcome path and predictors", "In-space placebo across every donor; in-time placebo; leave-one-donor-out sweep", "Pool composition treated as a robustness axis, not a fixed choice"]
+  },
+  "nodes": [
+    {
+      "id": "common",
+      "label": "Common factors (global oil / commodity cycle)",
+      "short": "Common factors (oil cycle)",
+      "role": "confounder",
+      "observed": true,
+      "source": "Derived from the donor-panel paths and the FRED Brent crude cycle (node 'oil')",
+      "source_status": "derived"
+    },
+    {
+      "id": "countryfe",
+      "label": "Country fixed effects",
+      "short": "Country FE",
+      "role": "confounder",
+      "observed": true,
+      "source": "Design construct: country fixed effects",
+      "source_status": "construct"
+    },
+    {
+      "id": "donors",
+      "label": "Donor-pool outcome paths (synthetic weights)",
+      "short": "Donor-pool paths",
+      "role": "confounder",
+      "observed": true,
+      "source": "Donor panel: 13 countries x 5 predictors (World Bank)",
+      "source_status": "acquired"
+    },
+    {
+      "id": "treat",
+      "label": "Nigeria under administration X (treated)",
+      "short": "Nigeria treated (tenure)",
+      "role": "exposure",
+      "observed": true,
+      "source": "Administration spine (base spec section 7)",
+      "source_status": "acquired"
+    },
+    {
+      "id": "Y",
+      "label": "Real GDP growth (y/y)",
+      "short": "GDP growth (y/y)",
+      "role": "outcome",
+      "observed": true,
+      "source": "NBS / World Bank",
+      "source_status": "acquired"
+    },
+    {
+      "id": "u_ng",
+      "label": "Nigeria-specific shock coinciding with treatment",
+      "short": "Nigeria-specific shock",
+      "role": "confounder",
+      "observed": false,
+      "source": "Unobserved: assumed absent by the synthetic-control assumption",
+      "source_status": "unobserved"
+    }
+  ],
+  "edges": [
+    {
+      "from": "common",
+      "to": "treat"
+    },
+    {
+      "from": "common",
+      "to": "donors"
+    },
+    {
+      "from": "common",
+      "to": "Y"
+    },
+    {
+      "from": "countryfe",
+      "to": "donors"
+    },
+    {
+      "from": "countryfe",
+      "to": "Y"
+    },
+    {
+      "from": "donors",
+      "to": "Y"
+    },
+    {
+      "from": "treat",
+      "to": "Y"
+    },
+    {
+      "from": "u_ng",
+      "to": "treat"
+    },
+    {
+      "from": "u_ng",
+      "to": "Y"
+    }
+  ],
+  "adjustment_set": ["common"],
+  "adjustment_sets": [
+    ["common"]
+  ],
+  "assumption_required": ["u_ng"],
+  "identifying_assumption": "The synthetic control reproduces Nigeria's outcome path absent treatment: donor-weighted common factors (above all the global oil and commodity cycle) stand in for Nigeria's counterfactual, and no Nigeria-specific shock coincides with the treatment (the unobserved node is absent).",
+  "cannot_rule_out": ["Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).", "Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.", "Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.", "Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared."],
+  "dagitty_full": "dag {\n  common [pos = \"0,1.8\"]\n  countryfe [pos = \"0,0.6\"]\n  donors [pos = \"0,-0.8\"]\n  treat [pos = \"1.8,1.8\", exposure]\n  Y [pos = \"3.6,0.6\", outcome]\n  u_ng [pos = \"1.8,-0.9\", unobserved]\n  common -> treat\n  common -> donors\n  common -> Y\n  countryfe -> donors\n  countryfe -> Y\n  donors -> Y\n  treat -> Y\n  u_ng -> treat\n  u_ng -> Y\n}",
+  "dagitty_assumed": "dag {\n  common [pos = \"0,1.8\"]\n  countryfe [pos = \"0,0.6\"]\n  donors [pos = \"0,-0.8\"]\n  treat [pos = \"1.8,1.8\", exposure]\n  Y [pos = \"3.6,0.6\", outcome]\n  common -> treat\n  common -> donors\n  common -> Y\n  countryfe -> donors\n  countryfe -> Y\n  donors -> Y\n  treat -> Y\n}",
+  "diagnostics": {
+    "status": "fail",
+    "checks": [
+      {
+        "id": "pretreatment_fit:obasanjo",
+        "verdict": "not_run",
+        "detail": "needs >= 8 pre and >= 2 post years"
+      },
+      {
+        "id": "pretreatment_fit:yaradua",
+        "verdict": "weak_fit",
+        "detail": "pre-RMSPE 2.833 vs 0.10 x pre SD 4.175 (ratio 0.678), 8 pre years, 4 donors with weight"
+      },
+      {
+        "id": "pretreatment_fit:jonathan",
+        "verdict": "weak_fit",
+        "detail": "pre-RMSPE 2.788 vs 0.10 x pre SD 3.512 (ratio 0.794), 11 pre years, 3 donors with weight"
+      },
+      {
+        "id": "pretreatment_fit:buhari",
+        "verdict": "weak_fit",
+        "detail": "pre-RMSPE 2.418 vs 0.10 x pre SD 2.993 (ratio 0.808), 16 pre years, 3 donors with weight"
+      },
+      {
+        "id": "pretreatment_fit:tinubu",
+        "verdict": "weak_fit",
+        "detail": "pre-RMSPE 2.44 vs 0.10 x pre SD 4.221 (ratio 0.578), 24 pre years, 4 donors with weight"
+      },
+      {
+        "id": "donor_pool_coverage",
+        "verdict": "computed",
+        "detail": "13 donors x 5 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
+      }
+    ],
+    "blocker": "no candidate treated window lets any convex combination of the donors track Nigeria's pre-treatment path: best pre-RMSPE exceeds 0.10 x the pre-period outcome SD",
+    "note": "Reported infeasible rather than estimated, per PHASES.md's Stage 5 gate",
+    "coverage_status": "ok",
+    "vintage": "2026-10-16",
+    "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+  },
+  "assets": {
+    "svg": "registry/dags/gdp_growth__C.svg"
+  },
+  "estimate": {
+    "status": "not_estimated",
+    "model_card_ref": null,
+    "note": "Estimates are attached at Stages 6-7; a card without an interval does not ship (docs/decisions.md M-02)."
+  }
+}

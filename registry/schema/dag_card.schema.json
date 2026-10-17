@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/causal-presidents-regime-Naija/registry/schema/dag_card.schema.json",
+  "title": "Causal DAG card",
+  "description": "One identification design instantiated for one outcome. The app reads these cards to let a visitor pick an outcome, pick a causal model, and see the assumption the estimate would rest on, together with the adjustment set the graph itself implies. A card carries no estimate until Stages 6-7 fill the estimate block.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "dag_id",
+    "schema_version",
+    "vintage_date",
+    "generated_at",
+    "generator",
+    "outcome",
+    "design",
+    "nodes",
+    "edges",
+    "adjustment_set",
+    "adjustment_sets",
+    "assumption_required",
+    "identifying_assumption",
+    "cannot_rule_out",
+    "dagitty_full",
+    "dagitty_assumed",
+    "diagnostics",
+    "assets",
+    "estimate"
+  ],
+  "properties": {
+    "dag_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+__(A|B|C)$",
+      "description": "<outcome_id>__<design_id>"
+    },
+    "schema_version": { "type": "string" },
+    "vintage_date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "generated_at": { "type": "string" },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["script", "git_sha"],
+      "properties": {
+        "script": { "type": "string" },
+        "git_sha": { "type": ["string", "null"] }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "short", "domain", "unit", "direction", "frequency", "source", "coverage_status"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "short": { "type": "string" },
+        "domain": { "type": "string", "enum": ["health", "education", "security", "economy"] },
+        "unit": { "type": "string" },
+        "direction": { "type": "string", "enum": ["up", "down"], "description": "up = higher is better, down = lower is better" },
+        "frequency": { "type": "string" },
+        "source": { "type": "string" },
+        "coverage_status": {
+          "type": "string",
+          "enum": ["ok", "partial", "declared_gap", "blocked"]
+        },
+        "coverage_note": { "type": "string" }
+      }
+    },
+    "design": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "short", "unit", "estimand", "estimator", "exposure_node", "outcome_node", "adjustment_criterion", "design_controls"],
+      "properties": {
+        "id": { "type": "string", "enum": ["A", "B", "C"] },
+        "name": { "type": "string" },
+        "short": { "type": "string" },
+        "unit": { "type": "string" },
+        "estimand": { "type": "string" },
+        "estimator": { "type": "string" },
+        "exposure_node": { "type": "string" },
+        "outcome_node": { "type": "string" },
+        "adjustment_criterion": { "type": "string", "enum": ["backdoor"] },
+        "design_controls": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label", "short", "role", "observed", "source", "source_status"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "short": { "type": "string" },
+          "role": { "type": "string", "enum": ["exposure", "outcome", "confounder", "mediator", "modifier"] },
+          "observed": {
+            "type": "boolean",
+            "description": "false = a node the estimate requires to be absent; drawn on the graph, listed in assumption_required, and dropped from the graph used to compute the adjustment set"
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Where this variable's data comes from (Stage 1 exit criterion: every variable maps to a named source or a declared gap)"
+          },
+          "source_status": {
+            "type": "string",
+            "enum": ["acquired", "gap", "derived", "construct", "unobserved"],
+            "description": "acquired = a landing flow exists and the series has been pulled; gap = no usable source yet (recorded, never silently absent); derived = computed from other nodes; construct = a design artefact such as a fixed effect; unobserved = the node the estimate assumes absent"
+          }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from", "to"],
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" }
+        }
+      }
+    },
+    "adjustment_set": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "The minimal backdoor adjustment set, computed by dagitty on the assumed graph (unobserved nodes removed). Empty means no open backdoor path."
+    },
+    "adjustment_sets": {
+      "type": "array",
+      "items": { "type": "array", "items": { "type": "string" } },
+      "description": "Every valid adjustment set dagitty returned, for transparency when more than one exists."
+    },
+    "assumption_required": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Node ids the estimate requires to be absent (the identifying assumption in graph form)"
+    },
+    "identifying_assumption": { "type": "string", "minLength": 20 },
+    "cannot_rule_out": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "dagitty_full": {
+      "type": "string",
+      "description": "The displayed graph as a dagitty DAG string, including unobserved nodes"
+    },
+    "dagitty_assumed": {
+      "type": "string",
+      "description": "The graph the adjustment set was computed from: unobserved nodes and their edges removed"
+    },
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "checks", "blocker", "note", "coverage_status", "vintage", "source"],
+      "description": "Stage 5 pre-analysis diagnostics for this (outcome, design) pair, attached by analysis/R/01_build_dags.R from registry/diagnostics/<vintage>/diagnostics.json. A card whose status is not `pass` must name the blocker: PHASES.md Stage 6 forbids a card rendered with a gap.",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["pass", "degraded", "fail", "not_attempted"],
+          "description": "pass = every pre-check passed; degraded = estimable but not as specified; fail = a pre-check failed, so this design is dropped for this outcome; not_attempted = the outcome has no usable series, so no pre-check could run"
+        },
+        "checks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "verdict", "detail"],
+            "properties": {
+              "id": { "type": "string" },
+              "verdict": {
+                "type": "string",
+                "enum": ["pass", "computed", "flag", "inconclusive", "deviation", "fail", "not_run", "weak_fit"]
+              },
+              "detail": { "type": "string" }
+            }
+          }
+        },
+        "blocker": {
+          "type": ["string", "null"],
+          "description": "What stops this card passing. Required (non-null) whenever status is not `pass`."
+        },
+        "note": { "type": "string" },
+        "coverage_status": {
+          "type": "string",
+          "enum": ["ok", "partial", "declared_gap", "blocked"]
+        },
+        "vintage": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+        "source": { "type": "string" }
+      }
+    },
+    "assets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["svg"],
+      "properties": {
+        "svg": { "type": "string" }
+      }
+    },
+    "estimate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "model_card_ref", "note"],
+      "properties": {
+        "status": { "type": "string", "enum": ["not_estimated", "estimated"] },
+        "model_card_ref": { "type": ["string", "null"] },
+        "note": { "type": "string" }
+      },
+      "description": "Filled by the estimation stages (6-7). While status is not_estimated the app must show the assumption and the adjustment set with no number."
+    }
+  }
+}

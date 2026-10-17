@@ -1,0 +1,275 @@
+version: 2
+
+models:
+  - name: dim_metric
+    description: >
+      The metric dimension: label, unit, direction, domain, catalogue vs landed frequency, source, and
+      the Stage 3 quality status carried alongside.
+    columns:
+      - name: metric_id
+        tests:
+          - unique
+          - not_null
+      - name: label
+        tests:
+          - not_null
+      - name: unit
+        tests:
+          - not_null
+      - name: direction
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["up", "down", "none"]
+      - name: domain
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["health", "education", "security", "economy", "context"]
+      - name: catalogue_frequency
+        tests:
+          - accepted_values:
+              arguments:
+                values: ["annual", "quarterly", "monthly"]
+      - name: native_frequency
+        tests:
+          - accepted_values:
+              arguments:
+                values: ["annual", "monthly"]
+
+  - name: fact_metric
+    description: >
+      The analytical base table. One row per (metric, month) from the study floor to the last observed
+      month, with observed/interpolated/unobserved marked, the fixed index, and the tenure strata.
+    columns:
+      - name: metric_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_metric')
+                field: metric_id
+      - name: period_month
+        tests:
+          - not_null
+      - name: observation_type
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["observed", "interpolated", "unobserved"]
+      - name: native_frequency
+        tests:
+          - accepted_values:
+              arguments:
+                values: ["annual", "monthly"]
+      - name: tenure_stratum
+        tests:
+          - accepted_values:
+              arguments:
+                values: ["PDP_first", "PDP_second", "APC_first", "APC_second"]
+      - name: source
+        tests:
+          - accepted_values:
+              arguments:
+                values: ["worldbank", "fred"]
+
+  - name: metric_anchor
+    description: One index-anchor row per metric, naming the rule that produced its anchor.
+    columns:
+      - name: metric_id
+        tests:
+          - unique
+          - not_null
+      - name: anchor_period
+        tests:
+          - not_null
+      - name: anchor_value
+        tests:
+          - not_null
+      - name: anchor_rule
+        tests:
+          - accepted_values:
+              arguments:
+                values: ["fixed_2000_01", "first_available_after_2000_01"]
+
+  - name: dim_administration
+    description: Base spec section 7 administration spine, five rows, with half-open effective spans.
+    columns:
+      - name: admin_id
+        tests:
+          - unique
+          - not_null
+      - name: party
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["PDP", "APC"]
+      - name: start_date
+        tests:
+          - not_null
+
+  - name: dim_administration_term
+    description: Term-level spans carrying the party-by-tenure strata base spec section 9 requires.
+    columns:
+      - name: term_id
+        tests:
+          - unique
+          - not_null
+      - name: tenure_stratum
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["PDP_first", "PDP_second", "APC_first", "APC_second"]
+
+  - name: dim_shock
+    description: The base spec section 8 shock bands, with machine-readable month bounds.
+    columns:
+      - name: shock_id
+        tests:
+          - unique
+          - not_null
+      - name: start_month
+        tests:
+          - not_null
+      - name: end_month
+        tests:
+          - not_null
+
+  - name: dim_state
+    description: The 37 state-level units (36 states plus the FCT).
+    columns:
+      - name: state_id
+        tests:
+          - unique
+          - not_null
+      - name: state_name
+        tests:
+          - unique
+          - not_null
+
+  - name: state_panel
+    description: >
+      37 units x spine months. The FAAC nominal dose is populated where a publisher covers the month;
+      the per-capita, IGR-share and security columns are typed and empty by declaration, each with the
+      reason in `dose_note`. `dose_status` is per row (observed / not_covered / declared_gap).
+      `dose_gated`/`dose_gate_status` are read from the Stage 3 report, so the dose's gate result travels
+      with the dose; every FAAC state series is flagged (monthly distribution spikes), never silently `ok`.
+    columns:
+      - name: state_id
+        tests:
+          - not_null
+      - name: period_month
+        tests:
+          - not_null
+      - name: dose_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["observed", "not_covered", "declared_gap"]
+      - name: dose_gated
+        tests:
+          - not_null
+      - name: dose_gate_status
+        tests:
+          - accepted_values:
+              arguments:
+                values: ["ok", "flagged", "empty"]
+
+  - name: faac_state_allocation
+    description: >
+      The state x month FAAC dose: `gross_total` (statutory + 13% derivation) from the primary publisher
+      where it has a document, the republication where it does not, with the cross-publisher difference
+      carried on every month both carry.
+    columns:
+      - name: state_id
+        tests:
+          - not_null
+      - name: period_month
+        tests:
+          - not_null
+      - name: publisher
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["oagf", "nbs"]
+      - name: gross_total
+        tests:
+          - not_null
+      - name: share_of_state_pool
+        tests:
+          - not_null
+      - name: source_sha256
+        tests:
+          - not_null
+      - name: n_beneficiaries
+        tests:
+          - not_null
+
+  - name: faac_national_monthly
+    description: >
+      The national monthly FAAC allocation to the 36 states — the fiscal transfer channel as a national
+      series. Built, reconciled and Stage 3 gated (it is the `national` scope of the FAAC gate); it is
+      still not on the metric spine, because putting it there needs a metric-catalogue entry and an
+      outcome decision, not a fetch.
+    columns:
+      - name: period_month
+        tests:
+          - unique
+          - not_null
+      - name: gross_total_naira
+        tests:
+          - not_null
+      - name: n_beneficiaries
+        tests:
+          - not_null
+
+  - name: fact_observation_native
+    description: Native-grain observations with the anchor month each series' alignment rule assigns.
+    columns:
+      - name: metric_id
+        tests:
+          - not_null
+      - name: anchor_month
+        tests:
+          - not_null
+      - name: native_frequency
+        tests:
+          - accepted_values:
+              arguments:
+                values: ["annual", "monthly"]
+
+  - name: fact_donor_panel
+    description: Country-year donor-pool paths for synthetic control; kept off the national spine.
+    columns:
+      - name: country_iso3
+        tests:
+          - not_null
+      - name: period_year
+        tests:
+          - not_null
+
+  - name: dim_definition_break
+    description: >
+      Declared definition breaks carried from the Stage 3 report, so a level shift is annotated rather
+      than read as a finding.
+    columns:
+      - name: metric_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_metric')
+                field: metric_id
+      - name: break_date
+        tests:
+          - not_null
+      - name: label
+        tests:
+          - not_null

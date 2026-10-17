@@ -1,0 +1,138 @@
+version: 2
+
+models:
+  - name: stg_raw_manifest
+    description: >
+      One row per landed retrieval for the current vintage of each source. The single place the
+      analytical base decides which vintage it reads.
+    columns:
+      - name: source
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["worldbank", "worldbank_donors", "fred", "faac"]
+      - name: metric_id
+        tests:
+          - not_null
+      - name: dataset_id
+        tests:
+          - not_null
+      - name: vintage_date
+        tests:
+          - not_null
+      - name: payload_sha256
+        tests:
+          - not_null
+      - name: http_status
+        tests:
+          - not_null
+
+  - name: stg_raw_payload
+    description: >
+      One row per payload file belonging to a current vintage, with its bytes. Joined to the manifest
+      by (source, vintage, dataset_id) parsed from the file path.
+    columns:
+      - name: payload_path
+        tests:
+          - unique
+          - not_null
+      - name: metric_id
+        tests:
+          - not_null
+      - name: content
+        tests:
+          - not_null
+
+  - name: stg_worldbank_observation
+    description: National annual observations at the source's native grain, typed, unfilled.
+    columns:
+      - name: metric_id
+        tests:
+          - not_null
+      - name: country_iso3
+        tests:
+          - not_null
+
+  - name: stg_fred_daily
+    description: Daily Brent crude observations, typed, missing markers mapped to NULL.
+    columns:
+      - name: observation_date
+        tests:
+          - not_null
+      - name: metric_id
+        tests:
+          - accepted_values:
+              arguments:
+                values: ["oil"]
+
+  - name: stg_fred_monthly
+    description: >
+      Daily Brent resampled to monthly by the rule Stage 3 froze (mean_of_daily_observations).
+    columns:
+      - name: period_month
+        tests:
+          - not_null
+          - unique
+      - name: n_daily_observations
+        tests:
+          - not_null
+
+  - name: stg_donor_observation
+    description: Country-year screening predictors for the Design C donor pool.
+    columns:
+      - name: country_iso3
+        tests:
+          - not_null
+      - name: metric_id
+        tests:
+          - not_null
+
+  - name: stg_faac_allocation
+    description: >
+      Per-state FAAC allocation rows from the parsed disbursement documents, long by item, with both
+      publishers kept and the source sha256 carried. Nothing here decides which publisher is the series.
+    columns:
+      - name: state_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_state')
+                field: state_id
+      - name: period_month
+        tests:
+          - not_null
+      - name: publisher
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["oagf", "nbs"]
+      - name: item
+        tests:
+          - not_null
+      - name: value_source
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["document"]
+      - name: source_sha256
+        tests:
+          - not_null
+
+  - name: stg_quality_series
+    description: >
+      The latest Stage 3 vintage quality report, one row per gated series. How a quality status
+      travels into the analytical base.
+    columns:
+      - name: metric_id
+        tests:
+          - not_null
+      - name: quality_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["ok", "flagged", "empty"]

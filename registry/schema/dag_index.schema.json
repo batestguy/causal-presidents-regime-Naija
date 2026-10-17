@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/causal-presidents-regime-Naija/registry/schema/dag_index.schema.json",
+  "title": "Causal DAG registry index",
+  "description": "The matrix the app reads first: which outcomes exist, which identification designs exist, and one entry per (outcome, design) DAG. Also carries the honest gap list — every variable a design needs that has no usable source yet.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "layer",
+    "vintage_date",
+    "generated_at",
+    "generator",
+    "counts",
+    "diagnostics",
+    "designs",
+    "outcomes",
+    "dags",
+    "variables_still_missing"
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "layer": { "type": "string" },
+    "vintage_date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "generated_at": { "type": "string" },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["script", "git_sha"],
+      "properties": {
+        "script": { "type": "string" },
+        "git_sha": { "type": ["string", "null"] }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcomes", "designs", "dags"],
+      "properties": {
+        "outcomes": { "type": "integer", "minimum": 1 },
+        "designs": { "type": "integer", "minimum": 1 },
+        "dags": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "designs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "short", "unit", "estimand"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "short": { "type": "string" },
+          "unit": { "type": "string" },
+          "estimand": { "type": "string" }
+        }
+      }
+    },
+    "outcomes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label", "domain", "direction", "coverage_status"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "domain": { "type": "string", "enum": ["health", "education", "security", "economy"] },
+          "direction": { "type": "string", "enum": ["up", "down"] },
+          "coverage_status": { "type": "string", "enum": ["ok", "partial", "declared_gap", "blocked"] }
+        }
+      }
+    },
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vintage", "source", "spec", "design_verdicts", "status_counts"],
+      "description": "Stage 5's answer, carried on the index so the app can report which causal models survive their pre-checks without reading 36 cards. The per-card detail stays on the cards. Added in schema 0.2.0.",
+      "properties": {
+        "vintage": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+        "source": { "type": "string" },
+        "spec": { "type": "string" },
+        "design_verdicts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": true,
+            "required": ["design_id", "status"],
+            "properties": {
+              "design_id": { "type": "string", "enum": ["A", "B", "C"] },
+              "status": {
+                "type": "string",
+                "enum": ["candidate", "degraded", "dropped", "infeasible", "not_attempted"]
+              }
+            }
+          }
+        },
+        "status_counts": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 },
+          "description": "How many of the 36 cards carry each pre-check status"
+        }
+      }
+    },
+    "dags": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["dag_id", "outcome_id", "design_id", "svg", "adjustment_set", "assumption_required", "diagnostics_status", "diagnostics_blocker"],
+        "properties": {
+          "dag_id": { "type": "string", "pattern": "^[a-z0-9_]+__(A|B|C)$" },
+          "outcome_id": { "type": "string" },
+          "design_id": { "type": "string", "enum": ["A", "B", "C"] },
+          "svg": { "type": "string" },
+          "adjustment_set": { "type": "array", "items": { "type": "string" } },
+          "assumption_required": { "type": "array", "items": { "type": "string" } },
+          "diagnostics_status": {
+            "type": "string",
+            "enum": ["pass", "degraded", "fail", "not_attempted"]
+          },
+          "diagnostics_blocker": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "variables_still_missing": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Every node whose source_status is 'gap' across the whole registry — the honest answer to 'what are we missing', machine-readable"
+    }
+  }
+}

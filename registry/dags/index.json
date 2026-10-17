@@ -1,0 +1,588 @@
+{
+  "schema_version": "0.2.0",
+  "layer": "causal DAGs (assumption layer) - no estimates attached",
+  "vintage_date": "2026-10-16",
+  "generated_at": "2026-10-17T03:45:10+0100",
+  "generator": {
+    "script": "analysis/R/01_build_dags.R",
+    "git_sha": "b16743f"
+  },
+  "diagnostics": {
+    "vintage": "2026-10-16",
+    "source": "registry/diagnostics/2026-10-16/diagnostics.json",
+    "spec": "analysis/specs/diagnostics.yml",
+    "design_verdicts": {
+      "A": {
+        "design_id": "A",
+        "status": "dropped",
+        "gates": {
+          "dose_variation": {
+            "passed": false,
+            "detail": "D1: 0 of 12358 panel values across 37 states — other axes present: D1_nominal"
+          },
+          "state_outcome_attribution": {
+            "passed": false,
+            "detail": "0 of 12358 state outcome values present"
+          }
+        },
+        "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+        "dropped_because": "the FAAC dose has landed and is Stage 3 gated, but on the **nominal** axis: the estimand is written on D1 (per capita), which needs the state population denominator decision (X-09). The family is also missing a state-attributed outcome, so a dose alone does not free it",
+        "diagnostics_that_decide": [
+          "dose_variation",
+          "state_outcome_attribution"
+        ],
+        "next_step": "the state population denominator decision (X-09), which is what the specified axis D1 waits on, plus a state-attributed outcome — the human-security series are the route and they are credential-blocked (C-13/C-14)",
+        "card_status_counts": {
+          "fail": 12
+        },
+        "n_outcomes_pass": 0,
+        "n_outcomes_attempted": 12,
+        "status_basis": "computed from the 12 cards: fail=12"
+      },
+      "B": {
+        "design_id": "B",
+        "status": "degraded",
+        "gates": {
+          "integration_order": {
+            "passed": null,
+            "detail": "26 series tested at native grain"
+          },
+          "cointegration_rank": {
+            "passed": null,
+            "detail": "4 outcomes tested"
+          },
+          "dof_minimum": {
+            "passed": null,
+            "detail": "0 outcomes infeasible at 3 residual DoF"
+          },
+          "collinearity": {
+            "passed": null,
+            "detail": "0 outcomes fail VIF >= 30"
+          }
+        },
+        "blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly",
+        "degraded_because": "base spec section 9 specifies oil + FAAC + FX + lags + trend at monthly grain; the testable system is {Y, log(oil), fx} at annual grain",
+        "diagnostics_that_decide": [
+          "integration_order",
+          "cointegration_rank",
+          "dof_minimum",
+          "collinearity"
+        ],
+        "next_step": "a metric-catalogue entry for the FAAC panel (landed and gated, but with no declared monthly-to-annual aggregation), and a decision on whether an annual-grain estimate is worth publishing",
+        "card_status_counts": {
+          "degraded": 7,
+          "not_attempted": 5
+        },
+        "n_outcomes_pass": 0,
+        "n_outcomes_attempted": 7,
+        "status_basis": "computed from the 12 cards: degraded=7, not_attempted=5"
+      },
+      "C": {
+        "design_id": "C",
+        "status": "infeasible",
+        "gates": {
+          "pretreatment_fit": {
+            "passed": null,
+            "detail": "0 outcomes pass the pre-fit threshold of 0.10 x pre-period SD"
+          },
+          "donor_pool_coverage": {
+            "passed": true,
+            "detail": "13 donor countries x 5 predictors"
+          }
+        },
+        "blocker": "no candidate treated window lets any convex combination of the donors track Nigeria's pre-treatment path: best pre-RMSPE exceeds 0.10 x the pre-period outcome SD",
+        "diagnostics_that_decide": "pretreatment_fit",
+        "next_step": "either a wider donor pool, or an estimand the pool can support (the fit on first differences is far better than on levels for u5mr, which is a different question)",
+        "card_status_counts": {
+          "fail": 3,
+          "not_attempted": 9
+        },
+        "n_outcomes_pass": 0,
+        "n_outcomes_attempted": 3,
+        "status_basis": "computed from the 12 cards: fail=3, not_attempted=9"
+      }
+    },
+    "status_counts": {
+      "degraded": 7,
+      "fail": 15,
+      "not_attempted": 14
+    }
+  },
+  "counts": {
+    "outcomes": 12,
+    "designs": 3,
+    "dags": 36
+  },
+  "designs": [
+    {
+      "id": "A",
+      "name": "State dose-response DiD",
+      "short": "DiD",
+      "unit": "state-month (36 states + FCT)",
+      "estimand": "ATT of a federal policy shift, with state exposure intensity as the dose"
+    },
+    {
+      "id": "B",
+      "name": "National VECM / ARDL time series",
+      "short": "Time series",
+      "unit": "national-month (annual cross-check)",
+      "estimand": "long-run multiplier for the administration effect, oil-interacted"
+    },
+    {
+      "id": "C",
+      "name": "Synthetic control (cross-country)",
+      "short": "Synthetic control",
+      "unit": "country-year (Nigeria treated; West African neighbours + oil exporters)",
+      "estimand": "treatment gap: Nigeria outcome minus synthetic Nigeria"
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "u5mr",
+      "label": "Under-5 mortality rate",
+      "domain": "health",
+      "direction": "down",
+      "coverage_status": "partial"
+    },
+    {
+      "id": "mmr",
+      "label": "Maternal mortality ratio",
+      "domain": "health",
+      "direction": "down",
+      "coverage_status": "ok"
+    },
+    {
+      "id": "immun_penta3",
+      "label": "Penta3 immunisation coverage",
+      "domain": "health",
+      "direction": "up",
+      "coverage_status": "partial"
+    },
+    {
+      "id": "skilled_birth",
+      "label": "Skilled birth attendance",
+      "domain": "health",
+      "direction": "up",
+      "coverage_status": "partial"
+    },
+    {
+      "id": "literacy_youth",
+      "label": "Youth literacy (15-24)",
+      "domain": "education",
+      "direction": "up",
+      "coverage_status": "declared_gap"
+    },
+    {
+      "id": "primary_completion",
+      "label": "Primary completion rate",
+      "domain": "education",
+      "direction": "up",
+      "coverage_status": "declared_gap"
+    },
+    {
+      "id": "ner_primary",
+      "label": "Net enrolment rate, primary",
+      "domain": "education",
+      "direction": "up",
+      "coverage_status": "declared_gap"
+    },
+    {
+      "id": "fatalities",
+      "label": "Reported security fatalities",
+      "domain": "security",
+      "direction": "down",
+      "coverage_status": "blocked"
+    },
+    {
+      "id": "incidents",
+      "label": "Reported security incidents",
+      "domain": "security",
+      "direction": "down",
+      "coverage_status": "blocked"
+    },
+    {
+      "id": "gdp_growth",
+      "label": "Real GDP growth (y/y)",
+      "domain": "economy",
+      "direction": "up",
+      "coverage_status": "ok"
+    },
+    {
+      "id": "cpi_yoy",
+      "label": "Headline inflation (y/y)",
+      "domain": "economy",
+      "direction": "down",
+      "coverage_status": "ok"
+    },
+    {
+      "id": "unemp",
+      "label": "Unemployment rate",
+      "domain": "economy",
+      "direction": "down",
+      "coverage_status": "partial"
+    }
+  ],
+  "dags": [
+    {
+      "dag_id": "u5mr__A",
+      "outcome_id": "u5mr",
+      "design_id": "A",
+      "svg": "registry/dags/u5mr__A.svg",
+      "adjustment_set": ["donor", "inherit", "oil", "statefe", "timefe"],
+      "assumption_required": ["u_st"],
+      "diagnostics_status": "fail",
+      "diagnostics_blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+    },
+    {
+      "dag_id": "u5mr__B",
+      "outcome_id": "u5mr",
+      "design_id": "B",
+      "svg": "registry/dags/u5mr__B.svg",
+      "adjustment_set": ["oil"],
+      "assumption_required": ["u_t"],
+      "diagnostics_status": "degraded",
+      "diagnostics_blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly"
+    },
+    {
+      "dag_id": "u5mr__C",
+      "outcome_id": "u5mr",
+      "design_id": "C",
+      "svg": "registry/dags/u5mr__C.svg",
+      "adjustment_set": ["common"],
+      "assumption_required": ["u_ng"],
+      "diagnostics_status": "fail",
+      "diagnostics_blocker": "no candidate treated window lets any convex combination of the donors track Nigeria's pre-treatment path: best pre-RMSPE exceeds 0.10 x the pre-period outcome SD"
+    },
+    {
+      "dag_id": "mmr__A",
+      "outcome_id": "mmr",
+      "design_id": "A",
+      "svg": "registry/dags/mmr__A.svg",
+      "adjustment_set": ["donor", "inherit", "oil", "statefe", "timefe"],
+      "assumption_required": ["u_st"],
+      "diagnostics_status": "fail",
+      "diagnostics_blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+    },
+    {
+      "dag_id": "mmr__B",
+      "outcome_id": "mmr",
+      "design_id": "B",
+      "svg": "registry/dags/mmr__B.svg",
+      "adjustment_set": ["oil"],
+      "assumption_required": ["u_t"],
+      "diagnostics_status": "degraded",
+      "diagnostics_blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly"
+    },
+    {
+      "dag_id": "mmr__C",
+      "outcome_id": "mmr",
+      "design_id": "C",
+      "svg": "registry/dags/mmr__C.svg",
+      "adjustment_set": ["common"],
+      "assumption_required": ["u_ng"],
+      "diagnostics_status": "not_attempted",
+      "diagnostics_blocker": "outcome mmr is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    },
+    {
+      "dag_id": "immun_penta3__A",
+      "outcome_id": "immun_penta3",
+      "design_id": "A",
+      "svg": "registry/dags/immun_penta3__A.svg",
+      "adjustment_set": ["donor", "inherit", "oil", "statefe", "timefe"],
+      "assumption_required": ["u_st"],
+      "diagnostics_status": "fail",
+      "diagnostics_blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+    },
+    {
+      "dag_id": "immun_penta3__B",
+      "outcome_id": "immun_penta3",
+      "design_id": "B",
+      "svg": "registry/dags/immun_penta3__B.svg",
+      "adjustment_set": ["oil"],
+      "assumption_required": ["u_t"],
+      "diagnostics_status": "degraded",
+      "diagnostics_blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly"
+    },
+    {
+      "dag_id": "immun_penta3__C",
+      "outcome_id": "immun_penta3",
+      "design_id": "C",
+      "svg": "registry/dags/immun_penta3__C.svg",
+      "adjustment_set": ["common"],
+      "assumption_required": ["u_ng"],
+      "diagnostics_status": "not_attempted",
+      "diagnostics_blocker": "outcome immun_penta3 is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    },
+    {
+      "dag_id": "skilled_birth__A",
+      "outcome_id": "skilled_birth",
+      "design_id": "A",
+      "svg": "registry/dags/skilled_birth__A.svg",
+      "adjustment_set": ["donor", "inherit", "oil", "statefe", "timefe"],
+      "assumption_required": ["u_st"],
+      "diagnostics_status": "fail",
+      "diagnostics_blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+    },
+    {
+      "dag_id": "skilled_birth__B",
+      "outcome_id": "skilled_birth",
+      "design_id": "B",
+      "svg": "registry/dags/skilled_birth__B.svg",
+      "adjustment_set": ["oil"],
+      "assumption_required": ["u_t"],
+      "diagnostics_status": "degraded",
+      "diagnostics_blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly"
+    },
+    {
+      "dag_id": "skilled_birth__C",
+      "outcome_id": "skilled_birth",
+      "design_id": "C",
+      "svg": "registry/dags/skilled_birth__C.svg",
+      "adjustment_set": ["common"],
+      "assumption_required": ["u_ng"],
+      "diagnostics_status": "not_attempted",
+      "diagnostics_blocker": "outcome skilled_birth is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    },
+    {
+      "dag_id": "literacy_youth__A",
+      "outcome_id": "literacy_youth",
+      "design_id": "A",
+      "svg": "registry/dags/literacy_youth__A.svg",
+      "adjustment_set": ["donor", "inherit", "oil", "statefe", "timefe"],
+      "assumption_required": ["u_st"],
+      "diagnostics_status": "fail",
+      "diagnostics_blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+    },
+    {
+      "dag_id": "literacy_youth__B",
+      "outcome_id": "literacy_youth",
+      "design_id": "B",
+      "svg": "registry/dags/literacy_youth__B.svg",
+      "adjustment_set": ["oil"],
+      "assumption_required": ["u_t"],
+      "diagnostics_status": "not_attempted",
+      "diagnostics_blocker": "no usable series for this outcome (declared_gap)"
+    },
+    {
+      "dag_id": "literacy_youth__C",
+      "outcome_id": "literacy_youth",
+      "design_id": "C",
+      "svg": "registry/dags/literacy_youth__C.svg",
+      "adjustment_set": ["common"],
+      "assumption_required": ["u_ng"],
+      "diagnostics_status": "not_attempted",
+      "diagnostics_blocker": "outcome literacy_youth is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    },
+    {
+      "dag_id": "primary_completion__A",
+      "outcome_id": "primary_completion",
+      "design_id": "A",
+      "svg": "registry/dags/primary_completion__A.svg",
+      "adjustment_set": ["donor", "inherit", "oil", "statefe", "timefe"],
+      "assumption_required": ["u_st"],
+      "diagnostics_status": "fail",
+      "diagnostics_blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+    },
+    {
+      "dag_id": "primary_completion__B",
+      "outcome_id": "primary_completion",
+      "design_id": "B",
+      "svg": "registry/dags/primary_completion__B.svg",
+      "adjustment_set": ["oil"],
+      "assumption_required": ["u_t"],
+      "diagnostics_status": "not_attempted",
+      "diagnostics_blocker": "no usable series for this outcome (declared_gap)"
+    },
+    {
+      "dag_id": "primary_completion__C",
+      "outcome_id": "primary_completion",
+      "design_id": "C",
+      "svg": "registry/dags/primary_completion__C.svg",
+      "adjustment_set": ["common"],
+      "assumption_required": ["u_ng"],
+      "diagnostics_status": "not_attempted",
+      "diagnostics_blocker": "outcome primary_completion is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    },
+    {
+      "dag_id": "ner_primary__A",
+      "outcome_id": "ner_primary",
+      "design_id": "A",
+      "svg": "registry/dags/ner_primary__A.svg",
+      "adjustment_set": ["donor", "inherit", "oil", "statefe", "timefe"],
+      "assumption_required": ["u_st"],
+      "diagnostics_status": "fail",
+      "diagnostics_blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+    },
+    {
+      "dag_id": "ner_primary__B",
+      "outcome_id": "ner_primary",
+      "design_id": "B",
+      "svg": "registry/dags/ner_primary__B.svg",
+      "adjustment_set": ["oil"],
+      "assumption_required": ["u_t"],
+      "diagnostics_status": "not_attempted",
+      "diagnostics_blocker": "no usable series for this outcome (declared_gap)"
+    },
+    {
+      "dag_id": "ner_primary__C",
+      "outcome_id": "ner_primary",
+      "design_id": "C",
+      "svg": "registry/dags/ner_primary__C.svg",
+      "adjustment_set": ["common"],
+      "assumption_required": ["u_ng"],
+      "diagnostics_status": "not_attempted",
+      "diagnostics_blocker": "outcome ner_primary is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    },
+    {
+      "dag_id": "fatalities__A",
+      "outcome_id": "fatalities",
+      "design_id": "A",
+      "svg": "registry/dags/fatalities__A.svg",
+      "adjustment_set": ["inherit", "oil", "statefe", "timefe"],
+      "assumption_required": ["u_st"],
+      "diagnostics_status": "fail",
+      "diagnostics_blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+    },
+    {
+      "dag_id": "fatalities__B",
+      "outcome_id": "fatalities",
+      "design_id": "B",
+      "svg": "registry/dags/fatalities__B.svg",
+      "adjustment_set": ["oil"],
+      "assumption_required": ["u_t"],
+      "diagnostics_status": "not_attempted",
+      "diagnostics_blocker": "no usable series for this outcome (blocked)"
+    },
+    {
+      "dag_id": "fatalities__C",
+      "outcome_id": "fatalities",
+      "design_id": "C",
+      "svg": "registry/dags/fatalities__C.svg",
+      "adjustment_set": ["common"],
+      "assumption_required": ["u_ng"],
+      "diagnostics_status": "not_attempted",
+      "diagnostics_blocker": "outcome fatalities is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    },
+    {
+      "dag_id": "incidents__A",
+      "outcome_id": "incidents",
+      "design_id": "A",
+      "svg": "registry/dags/incidents__A.svg",
+      "adjustment_set": ["inherit", "oil", "statefe", "timefe"],
+      "assumption_required": ["u_st"],
+      "diagnostics_status": "fail",
+      "diagnostics_blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+    },
+    {
+      "dag_id": "incidents__B",
+      "outcome_id": "incidents",
+      "design_id": "B",
+      "svg": "registry/dags/incidents__B.svg",
+      "adjustment_set": ["oil"],
+      "assumption_required": ["u_t"],
+      "diagnostics_status": "not_attempted",
+      "diagnostics_blocker": "no usable series for this outcome (blocked)"
+    },
+    {
+      "dag_id": "incidents__C",
+      "outcome_id": "incidents",
+      "design_id": "C",
+      "svg": "registry/dags/incidents__C.svg",
+      "adjustment_set": ["common"],
+      "assumption_required": ["u_ng"],
+      "diagnostics_status": "not_attempted",
+      "diagnostics_blocker": "outcome incidents is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    },
+    {
+      "dag_id": "gdp_growth__A",
+      "outcome_id": "gdp_growth",
+      "design_id": "A",
+      "svg": "registry/dags/gdp_growth__A.svg",
+      "adjustment_set": ["inherit", "oil", "statefe", "timefe"],
+      "assumption_required": ["u_st"],
+      "diagnostics_status": "fail",
+      "diagnostics_blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+    },
+    {
+      "dag_id": "gdp_growth__B",
+      "outcome_id": "gdp_growth",
+      "design_id": "B",
+      "svg": "registry/dags/gdp_growth__B.svg",
+      "adjustment_set": ["oil"],
+      "assumption_required": ["u_t"],
+      "diagnostics_status": "degraded",
+      "diagnostics_blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly"
+    },
+    {
+      "dag_id": "gdp_growth__C",
+      "outcome_id": "gdp_growth",
+      "design_id": "C",
+      "svg": "registry/dags/gdp_growth__C.svg",
+      "adjustment_set": ["common"],
+      "assumption_required": ["u_ng"],
+      "diagnostics_status": "fail",
+      "diagnostics_blocker": "no candidate treated window lets any convex combination of the donors track Nigeria's pre-treatment path: best pre-RMSPE exceeds 0.10 x the pre-period outcome SD"
+    },
+    {
+      "dag_id": "cpi_yoy__A",
+      "outcome_id": "cpi_yoy",
+      "design_id": "A",
+      "svg": "registry/dags/cpi_yoy__A.svg",
+      "adjustment_set": ["inherit", "oil", "statefe", "timefe"],
+      "assumption_required": ["u_st"],
+      "diagnostics_status": "fail",
+      "diagnostics_blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+    },
+    {
+      "dag_id": "cpi_yoy__B",
+      "outcome_id": "cpi_yoy",
+      "design_id": "B",
+      "svg": "registry/dags/cpi_yoy__B.svg",
+      "adjustment_set": ["oil"],
+      "assumption_required": ["u_t"],
+      "diagnostics_status": "degraded",
+      "diagnostics_blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly"
+    },
+    {
+      "dag_id": "cpi_yoy__C",
+      "outcome_id": "cpi_yoy",
+      "design_id": "C",
+      "svg": "registry/dags/cpi_yoy__C.svg",
+      "adjustment_set": ["common"],
+      "assumption_required": ["u_ng"],
+      "diagnostics_status": "fail",
+      "diagnostics_blocker": "no candidate treated window lets any convex combination of the donors track Nigeria's pre-treatment path: best pre-RMSPE exceeds 0.10 x the pre-period outcome SD"
+    },
+    {
+      "dag_id": "unemp__A",
+      "outcome_id": "unemp",
+      "design_id": "A",
+      "svg": "registry/dags/unemp__A.svg",
+      "adjustment_set": ["inherit", "oil", "statefe", "timefe"],
+      "assumption_required": ["u_st"],
+      "diagnostics_status": "fail",
+      "diagnostics_blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+    },
+    {
+      "dag_id": "unemp__B",
+      "outcome_id": "unemp",
+      "design_id": "B",
+      "svg": "registry/dags/unemp__B.svg",
+      "adjustment_set": ["oil"],
+      "assumption_required": ["u_t"],
+      "diagnostics_status": "degraded",
+      "diagnostics_blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly"
+    },
+    {
+      "dag_id": "unemp__C",
+      "outcome_id": "unemp",
+      "design_id": "C",
+      "svg": "registry/dags/unemp__C.svg",
+      "adjustment_set": ["common"],
+      "assumption_required": ["u_ng"],
+      "diagnostics_status": "not_attempted",
+      "diagnostics_blocker": "outcome unemp is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    }
+  ],
+  "variables_still_missing": ["FAAC allocation / fiscal space [NBS FAAC disbursement reports]", "Net enrolment rate, primary [NEMIS]", "Policy exposure dose (D1, FAAC per capita) [NBS FAAC disbursement reports + state population (D1)]", "Primary completion rate [NEMIS / World Bank]", "Reported security fatalities [ACLED (UCDP substitute)]", "Reported security incidents [ACLED]", "Youth literacy (15-24) [NBS / UNESCO UIS]"]
+}

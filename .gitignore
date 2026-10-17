@@ -3,11 +3,27 @@
 data/raw/
 data/staging/
 
+# The analytical base is a build artifact, not source: reproducible from data/raw/ plus the
+# declared rules in analysis/specs/. Committing the DuckDB file would ship a binary that can
+disagree with the specs without anyone noticing.
+data/*.duckdb
+data/*.duckdb.wal
+
 # Python
 __pycache__/
 *.py[cod]
 .venv/
 .env
+.ruff_cache/
+
+# Scratch probes. Reconnaissance scripts and downloaded pages used to answer one question; they are
+# not evidence and must not become part of the record by accident. Kept on disk, never committed.
+.probe/
+
+# Browser-automation session artifacts (playwright-cli). These hold page snapshots, and a
+# snapshot of a credential-issuing page holds the credential — one such file captured the FRED
+# API key on 2026-10-11. Never commit them.
+.playwright-cli/
 
 # R / renv — library is local, renv.lock IS committed
 renv/library/
@@ -19,6 +35,8 @@ renv/staging/
 dbt/target/
 dbt/logs/
 dbt/dbt_packages/
+# dbt writes this itself: a machine-local anonymous usage id, not project config.
+dbt/.user.yml
 
 # Editors / OS
 .vscode/

@@ -1,0 +1,314 @@
+# Stage 3 quality-gate configuration.
+#
+# PHASES.md Stage 3 applies five gates to every landed series before it can reach Stage 4:
+#   gap · spike · revision · definition-drift · provenance
+# The first two come from base spec §13; the rest are this project's upgrade.
+#
+# Everything that could otherwise be a magic number or a silent assumption is declared here, so a
+# gate result can be reproduced from the spec plus the raw payload — nothing is decided inside the
+# gate code. `tests/verify_quality.py` re-derives the results independently and fails if the report
+# and the payloads disagree.
+#
+# ---------------------------------------------------------------------------------------------
+# The study window (decided 2026-10-11)
+# ---------------------------------------------------------------------------------------------
+# Gates are evaluated **inside the study window only**. This is the fix for C-06 and C-21: the
+# provisional gate in `pull_worldbank.py` scanned each series' entire history and fired on
+# 1961->1962 (+2039%) in `gdp_growth`, on the 1962->1963 reversal, and on pre-1999 volatility in
+# five series. None of that is inside the question. Flagging it is noise, and noise in a quality
+# report is worse than no gate at all, because it trains the reader to ignore the flags.
+study_window:
+  start: "1999-01-01"
+  end: null # open — the last observed period, whatever it is
+  reason: >-
+    The first administration under study begins 1999-05-29 (Obasanjo). Data before that describes a
+    different exchange-rate and fiscal regime and cannot inform any estimate this project makes.
+  outside_window: >-
+    Data outside the window is still landed and still gated for provenance, but it is not gated for
+    gaps or spikes: it is retained for pre-trend inspection and for the synthetic-control
+    pre-treatment fit, not analysed as an outcome.
+
+# ---------------------------------------------------------------------------------------------
+# Gate thresholds
+# ---------------------------------------------------------------------------------------------
+thresholds:
+  # Gate 1 — a run of more than this many consecutive fully-missing months flags the series.
+  # Expressed in months so it means the same thing at annual, monthly and daily grain: one missing
+  # year is twelve missing months, so any hole in an annual series trips it.
+  gap_max_months: 3
+  # Gate 2 — |period-over-period change| above this percentage is flagged for review. The period is
+  # the series' own grain (year for the World Bank series, month for the resampled Brent series).
+  # Applies to the `relative` measure only; see `spike_measure` below.
+  spike_pct: 50.0
+  # Gate 2, `points` measure — a swing of more than this many percentage points is flagged.
+  spike_points: 10.0
+  # Gate 3 — a value that differs from the previous vintage's value for the same period by more than
+  # BOTH of these is a revision event.
+  revision_tolerance_pct: 1.0
+  revision_tolerance_abs: 1.0e-6
+
+# ---------------------------------------------------------------------------------------------
+# Native grain per source, as landed
+# ---------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
+# Gate 5 — declared imputation
+# ---------------------------------------------------------------------------------------------
+# PHASES.md gate 5: "every interpolated or extrapolated value carries its method, so imputation can
+# be rendered as dashed and excluded in robustness".
+#
+# The raw layer performs no transformation at all (the Stage 2 contract — the sha256 provenance
+# chain depends on it), so at Stage 3 this list is **empty by construction** and the gate must find
+# zero imputed values. It is declared anyway, with its required shape, so Stage 4 has a place to
+# record imputation that the gate will *enforce* — rather than a mechanism that would first appear
+# as a bug report. Any entry missing a `method` trips the gate.
+#
+# Required shape per entry:
+#   metric_id: the series imputed
+#   method:    the named method (linear interpolation, carry-forward, spline, …)
+#   periods:   the periods affected, so the app renders them dashed and robustness excludes them
+#
+# This key was missing on the first run, which made the gate's failure branch unreachable and its
+# semantics undocumented. Declared here so the interface the gate reads actually exists.
+imputation: []
+
+grains:
+  worldbank: { period: annual, label: year }
+  worldbank_donors: { period: annual, label: year }
+  fred: { period: daily, label: day }
+  faac: { period: monthly, label: month }
+
+# ---------------------------------------------------------------------------------------------
+# Document sources — gated from their parsed artifact, not from the payload
+# ---------------------------------------------------------------------------------------------
+# A JSON payload can be gated directly, because the gates know how to parse it. A PDF or a spreadsheet
+# cannot: the series only exists after `ingestion/parsers/` has read the document, so the gate reads the
+# **parsed** artifact — the same file Stage 4 reads — instead of deriving the series a second time.
+#
+# This exists because the FAAC landing broke the alternative. Walking `data/raw/` and assuming every
+# page file is JSON worked while every source was an API, and the moment a document source landed the
+# Stage 3 flow and its verifier both died on a PDF decode rather than reporting a gate result. Declaring
+# the document sources here is what lets the raw-layer walk skip them deliberately rather than trap.
+#
+# `publisher_rule` names where the publisher preference is declared — in `harmonisation.yml`, which the
+# base also applies — so the gate and the base cannot select different values for the same month.
+document_sources:
+  faac:
+    staging: "data/staging/faac_state_allocation.csv"
+    parse_report: "data/staging/faac_parse_report.json"
+    metric_id: "faac_gross_total"
+    series_key: state_name
+    value_item: gross_total
+    value_field: amount_naira
+    publisher_field: publisher
+    publisher_rule:
+      spec: "analysis/specs/harmonisation.yml"
+      path: [faac_dose, publisher_rule]
+    national_scope: national
+    why: >-
+      The dose Family A's estimand is written on. It is gated per state rather than only in national
+      aggregate because the panel is the artifact Stage 4 reads: a national series that passes while
+      one state's column is broken would leave the dose ungated exactly where it is used.
+
+# ---------------------------------------------------------------------------------------------
+# Gate 2 — which measure of "a spike" applies to which series
+# ---------------------------------------------------------------------------------------------
+# Found by running the gate, not by reasoning ahead: with a single 50%-relative rule applied to all
+# 88 series, 52 came back flagged, and the flags were artefacts. Ecuador's GDP growth tripped 18
+# times in 27 years and Senegal's inflation 18 times, because a *growth rate* moving from 0.5% to
+# 3.0% is a 500% relative change and a 2.5-point move — nothing whatsoever is wrong with the data.
+#
+# The relative rule is meaningful for a **level** series (a price, a population) and is a category
+# error for a series already expressed as a percentage, where the comparable statistic is the change
+# in percentage points. Applying the wrong one does not just over-flag; it hides the real problems in
+# the flood, which is the failure mode a quality gate exists to prevent.
+#
+# Units are taken from `analysis/specs/outcomes.yml` where an outcome declares them; the covariate
+# ids that are not outcomes were classified from the World Bank indicator definition and are listed
+# here so the assignment is auditable rather than inferred.
+spike_measure:
+  # |delta / value| > spike_pct  — level series
+  default: relative
+  # |delta| > spike_points  — series already measured in percent
+  points: 10.0
+  percentage_point_series:
+    # outcomes, unit "%" per outcomes.yml
+    - cpi_yoy
+    - gdp_growth
+    - unemp
+    - literacy_youth
+    - primary_completion
+    - ner_primary
+    # outcomes, unit "% of births" / "% surviving infants"
+    - skilled_birth
+    - immun_penta3
+    # covariates measured as a share
+    - oil_rents # % of GDP
+    - educ_spend_gdp # % of GDP
+    - health_spend_gdp # % of GDP
+    - adult_literacy # % of population 15+
+    - measles_imm # % of children 12-23m
+
+# ---------------------------------------------------------------------------------------------
+# Resampling, declared before use
+# ---------------------------------------------------------------------------------------------
+# PHASES.md Stage 2 requires the Brent daily->monthly rule to be frozen, "because changing it later
+# changes every adjusted estimate". It is frozen here as a *declared input*: Stage 3 applies it and
+# records which rule produced the report, and Stage 4 must reuse it rather than re-choosing.
+#
+# A change to this rule is a new decision, not an edit — it produces a different quality report and,
+# downstream, different estimates for every oil-adjusted model.
+resample_rules:
+  - source: fred
+    dataset_id: DCOILBRENTEU
+    metric_id: oil
+    to: monthly
+    rule: mean_of_daily_observations
+    missing_markers: [".", ""]
+    declared: "2026-10-11"
+    reason: >-
+      The mean of the days actually quoted in a month. Chosen over month-end (an arbitrary single
+      day, and the month-end quote is exactly what is missing on a holiday) and over the sum (which
+      would scale with the number of trading days rather than the price level). The series is a
+      price, so a level-preserving central tendency is the correct aggregation. All 474 months in
+      the span carry at least one quote, so the rule never has to average zero observations.
+    caveat: >-
+      A monthly mean of a daily price still understates within-month volatility, which is precisely
+      what a 2023 naira-float shock window contains. Stages 5-6 must treat the monthly series as an
+      approximation of the daily path, and the model card must say so.
+
+# ---------------------------------------------------------------------------------------------
+# Gate 4 — declared definition breaks (annotations, not failures)
+# ---------------------------------------------------------------------------------------------
+# A definition change makes a series discontinuous without making it wrong. Each break is carried as
+# an annotation onto every affected card and into the limitations section, so a level shift is never
+# read as a finding. Dates are the effective month where one is documented.
+definition_breaks:
+  - metric_id: gdp_growth
+    breaks:
+      - date: "2014-04-06"
+        label: "GDP rebasing"
+        note: >-
+          Nigeria rebased GDP to a 2010 base year, roughly doubling measured nominal GDP and shifting
+          the level of the series. Level comparisons across April 2014 are not meaningful.
+  - metric_id: gdp_per_capita
+    breaks:
+      - date: "2014-04-06"
+        label: "GDP rebasing"
+        note: "Same rebasing as gdp_growth; the per-capita level shifts with the denominator."
+  - metric_id: fx
+    breaks:
+      - date: "2016-06-20"
+        label: "Naira floated"
+        note: >-
+          The CBN abandoned the pegged rate for a managed float. The official rate series steps, and
+          the premium over the parallel rate narrows sharply. A single official series understates
+          the effective rate before this date.
+      - date: "2023-06-14"
+        label: "FX unification"
+        note: >-
+          Multiple official windows were collapsed into a single rate, producing an immediate large
+          step. Classified as a definitional break rather than a data error, which is why it is
+          annotated here and not merely flagged by the spike gate.
+  - metric_id: unemp
+    breaks:
+      - date: "2014-01-01"
+        label: "Labour-force methodology change"
+        note: >-
+          NBS moved to the ILO-aligned definition, lifting measured unemployment substantially. The
+          series is not comparable across this date.
+      - date: "2023-03-01"
+        label: "Methodology revision"
+        note: "NBS revised the definition again; the level steps down."
+  - metric_id: oil
+    breaks:
+      - date: "2020-04-01"
+        label: "WTI negative-price episode"
+        note: >-
+          Brent is quoted here, not WTI, so no negative print reaches this series. The annotation is
+          carried because the two benchmarks are routinely conflated when the 2020 window is discussed.
+  - metric_id: cpi_yoy
+    breaks:
+      # NOT in the original list. The spike gate flagged 2024 -> 2025 at -10.23 points, which is the
+      # largest in-window move in this series, and the cause was not a data error but an undeclared
+      # methodology change. The gate found a gap in its own spec, which is the best evidence that the
+      # gate is doing work rather than rubber-stamping.
+      - date: "2025-01-01"
+        label: "CPI rebasing (2024 base year)"
+        note: >-
+          The NBS rebased the Consumer Price Index in January 2025 — the first rebasing since 2009 —
+          on a new 2024 base year with an updated basket. Headline inflation fell from 34.80% in
+          December 2024 to 24.48% in January 2025, largely because of the rebasing rather than a
+          change in prices (Reuters, 2025-02-18; NBS release). The World Bank's annual averages
+          inherit this: 33.24% for 2024 against 23.01% for 2025. Comparison across January 2025 mixes
+          disinflation with a measurement change and must be annotated, not smoothed.
+
+# ---------------------------------------------------------------------------------------------
+# Gate 2 — spike adjudications
+# ---------------------------------------------------------------------------------------------
+# The spike gate cannot distinguish a data error from a real event, and it must not pretend to. A
+# flagged period is therefore *adjudicated* here, on the record, against one of four verdicts:
+#
+#   accepted_as_real_event       a documented market or policy event; the flag stands, explained
+#   accounting_artefact          a real event recorded in a way that distorts the series as a measure
+#                                of what the model treats it as
+#   explained_by_definition_break a methodology change; see `definition_breaks` above
+#   probable_data_error          no documented cause; the value is quarantined from analysis
+#
+# An **unadjudicated** flag is printed as such in the report. Nothing is dropped silently, and the
+# list below is deliberately partial: the immunisation and primary-completion swings are left
+# unadjudicated because no documented cause was found for them, and inventing six plausible-sounding
+# reasons would defeat the purpose of having the field.
+#
+# Populated from the periods the gate actually flagged on 2026-10-11, not from guesses.
+spike_adjudications:
+  - metric_id: oil
+    period: "2020-05"
+    verdict: accepted_as_real_event
+    reason: >-
+      Brent for the month averaged $18.38 in April 2020 and $29.38 in May — the COVID-19 demand
+      collapse and its first rebound. The largest in-window move in the series and entirely real.
+
+  - metric_id: cpi_yoy
+    period: "2025"
+    verdict: explained_by_definition_break
+    reason: "The January 2025 CPI rebasing; see `definition_breaks` for cpi_yoy."
+
+  - metric_id: fx
+    period: "2023"
+    verdict: explained_by_definition_break
+    reason: "The 2023-06-14 FX unification; the official rate steps as multiple windows collapse."
+
+  - metric_id: fx
+    period: "2024"
+    verdict: explained_by_definition_break
+    reason: >-
+      The second leg of the same unification: the annual average for 2024 (+129%) reflects a full
+      year at the unified rate against a 2023 average that was mostly pegged.
+
+  # Recorded because it bears directly on a covariate the designs assume into their adjustment set:
+  # `donor` (World Bank DT.ODA.ALLD.CD) appears in designs A and B for every health and education
+  # outcome, and roughly a tenth of its in-window variation is a debt-relief book entry, not aid.
+  - metric_id: donor_oda
+    period: "2005"
+    verdict: accounting_artefact
+    reason: >-
+      Net ODA to Nigeria rose 1006% in one year ($0.58bn -> $6.4bn) because Paris Club debt relief is
+      recorded as ODA. The OECD attributes the 2005 global ODA peak to "large Paris Club debt relief
+      operations (notably for Iraq and Nigeria)"; UNCTAD records the same. Nigeria's US$18bn deal was
+      announced October 2005 and completed April 2006.
+    consequence: >-
+      The series measures aid *received* including debt forgiveness, not donor effort. Any design that
+      conditions on it is partially conditioning on a debt restructuring. Flagged for Stage 5; the
+      card must state this rather than report the covariate as a clean control.
+
+  - metric_id: donor_oda
+    period: "2006"
+    verdict: accounting_artefact
+    reason: "Second year of the same debt-relief entry, on the flow basis the series uses."
+
+  - metric_id: donor_oda
+    period: "2007"
+    verdict: accounting_artefact
+    reason: >-
+      The -82.9% reversal is the same artefact unwinding: with the relief booked in 2005-06, the 2007
+      flow returns to the underlying level.

@@ -77,10 +77,11 @@ API / free key / manual download) · credentials needed · licence · metrics it
 |---|---|---|---|---|
 | World Bank Indicators | keyless API | GDP, inflation, population, health, education | ✅ **works keyless** — real paginated JSON (66 NG u5mr records, 29,544 indicators) | Revision cycles; rebasing breaks |
 | IMF DataMapper | keyless API | macro cross-checks | ⚠️ **403 to scripted clients, 200 via `read_url`** | Blocks non-browser UA; needs browser-like headers or the relay |
-| FRED `DCOILBRENTEU` | free key | Brent crude | 🔑 **400 without key** (`api_key is not set`) | Free key required; **daily** → freeze the resample rule here |
+| FRED `DCOILBRENTEU` | free key | Brent crude | ✅ **landed 2026-10-11** — key registered, HTTP 200, 10,275 daily obs 1987→2026, provenance verified (C-23) | **Daily** → freeze the daily→monthly resample rule here before any oil-adjusted estimate |
 | NBS | manual download | GDP, CPI, unemployment, **state IGR (quarterly)**, **FAAC disbursement reports** | ✅ reachable (HTML, 200) | No API — PDF/HTML parsing; definitional changes |
 | CBN | manual download | FX, external reserves | ✅ reachable (HTML, 200) | No API; broken series across FX regimes |
-| ~~OAGF / Open Treasury~~ | ~~open portal~~ | ~~state FAAC allocation (monthly)~~ | ❌ **unreachable — 20s timeout on both curl and the read_url service** | **Primary source for D1 is gone** — see substitution below |
+| OAGF (`oagf.gov.ng`) | free, no key | state FAAC allocation (monthly) | ✅ **corrected 2026-10-16: reachable** — 83 monthly PDFs crawled (2019-04 → 2026-06), provenance verified | The *Open Treasury portal* is still unreachable (20s timeout); the OAGF's own site publishes the monthly workbooks from `/wp-content/uploads/`. **D1's primary source was recovered, not substituted** (C-39/C-41) |
+| ~~Open Treasury~~ | ~~open portal~~ | ~~state FAAC allocation~~ | ❌ **unreachable — 20s timeout on both curl and the read_url service** | Its OAGF function is covered by the row above; nothing else here was needed |
 | DHIS2 (Nigeria HMIS) | verify credentials | immunisation (penta3) | ⚠️ host reachable (302→login); **Nigeria tenant access unverified** | Institutional credentials; not guaranteed |
 | DHS / NDHS | registration | u5mr, MMR, skilled birth | — not probed (needs account) | 5-yearly cycles (2003/2008/2013/2018/2023-24); **no redistribution** |
 | MICS, UN IGME | free | complementary / modelled child mortality | — not probed | Modelled series ≠ observed |
@@ -91,12 +92,16 @@ API / free key / manual download) · credentials needed · licence · metrics it
 
 **Exposure metric decision (delegated, resolved here).** The "open and free sources" constraint selects it:
 
-- **D1 (primary) — FAAC allocation per capita.** Monthly, state-level. **Source substitution required:**
-  the planned OAGF / Open Treasury portal is unreachable from here (see the table above), so D1 must come
-  from the NBS FAAC disbursement reports (reachable) and the Federation Account Allocation Committee
-  summaries, with the Nigeria Governors' Forum / BudgIT *State of States* tables as a cross-check. If none
-  of those yield monthly per-state figures back to 1999, D1 is a **declared gap** for the early years and
-  the panel starts when the series does — do not back-fill it.
+- **D1 (primary) — FAAC allocation per capita.** Monthly, state-level. **Landed 2026-10-16** — both
+  publications of the monthly workbook are acquired: the OAGF's own PDFs (the primary, 2019-04 → 2026-06)
+  and the NBS republication (2016-12 → 2024-07), 174 documents in total, 114 months × 36 states, every
+  document reconciled to its own published Total row. The Open Treasury portal is still unreachable and no
+  longer matters: the OAGF publishes the workbooks itself. As predicted here, the series does not reach
+  1999, so **  the panel starts when the series does and the earlier years are a declared gap, not
+  back-filled** — `state_panel.dose_status` says `declared_gap` for every month before 2016-12. The
+  nominal dose is **Stage 3 gated** (2026-10-17: 37 series, all `flagged` on distribution-cycle spikes —
+  C-43) and the panel carries that result per row; the per-capita form still needs the population
+  denominator decision (X-09).
 - **D2 (secondary) — FAAC share of state total revenue** = FAAC ÷ (FAAC + NBS state IGR). Measures
   *exposure* (dependence on federal transfers), computable from two open sources.
 - **D3 (optional, flagged constructed) — FX/import intensity of the state consumption basket.** Needed for
@@ -143,6 +148,14 @@ changes every adjusted estimate.
 
 ## Stage 3 — Validation and quality gates (the honesty chokepoint)
 
+**STATUS: BUILT 2026-10-11 · RE-RUN 2026-10-17 over the FAAC document source.** 125 series gated
+(60 ok, 65 flagged, 0 empty) → `registry/quality/<vintage>/`. Config in
+`analysis/specs/quality.yml`, gates in `ingestion/quality/gates.py`, runner
+`ingestion/flows/check_quality.py`, independent verifier `tests/verify_quality.py`. Exit criteria met:
+every series has a gate result, enforced in code — including the 37 that only exist after a parser reads
+a document, which is what the 2026-10-17 re-run had to add (C-42). See decisions Q-01…Q-08, S4-19,
+C-26…C-29, C-42, C-43.
+
 **Purpose.** This is where "rigorous enough" is actually earned. Stage 8's limitations section is mostly
 written from this stage's output.
 
@@ -160,12 +173,38 @@ written from this stage's output.
 **Output.** A machine-readable vintage quality report plus a human-readable page. Every published series
 carries a quality status field that travels with it into the app.
 
+**Two implementations notes, learned by running it.** (a) A single 50%-relative spike rule flagged 52 of
+88 series, because a *growth rate* moving 0.5%→3.0% is a 500% relative change and a 2.5-point move; the
+measure is now declared per series type (relative for levels, percentage points for series already in
+percent). (b) Only adjacent periods are compared — the earlier zip over consecutive *observed* periods
+reported a multi-year level change across a hole as a one-year "spike".
+
+**Third implementation note — the one that cost a re-run (2026-10-17).** The flow and its verifier both
+walked `data/raw` and assumed every page file was JSON, which held while every source was an API. The
+FAAC landing put 174 PDFs and spreadsheets in that directory, and `tests/verify_quality.py` then died on
+the first byte of a PDF while the report on disk still read 88 series — the gate had no result for the
+raw layer's newest source and nothing said so (C-42). Document sources are now declared in `quality.yml`
+and gated from their **parsed** artifact, so the gate reads the same series Stage 4 reads. With FAAC in,
+the report is **125 series — ok 60, flagged 65, empty 0**, and the dose plus its gate status is on the
+panel. See S4-19, C-42, C-43.
+
 **Exit criteria.** No series reaches Stage 4 without a gate result; the quality report is published with
 the vintage timestamp.
 
 ---
 
 ## Stage 4 — Harmonisation: the analytical base
+
+**STATUS: BUILT 2026-10-11.** `fact_metric` holds **7,682 rows = 23 metrics × 334 months
+(1999-01 → 2026-10)**, built by dbt into a local DuckDB (`data/analytics.duckdb`, gitignored and
+reproducible). Rules declared in `analysis/specs/harmonisation.yml`, models under `dbt/models/`, seeds
+under `dbt/seeds/` (administration spine, metric catalogue, shock bands, the 37 state units), and a build
+of 144 nodes — 4 seeds, 22 models and 118 tests, 19 of them singular — independent verifier
+`tests/verify_harmonisation.py`, and every column documented in `docs/data-dictionary.md`. Exit criteria met: one analytical base table, every column
+documented, reproducible from the vintage plus the anchor config — with **20 break-tests** showing each
+new guard can fail. What the stage *measured* is the important part: **10.1 % of the base is observed**
+(775 of 7,682 rows), because every open source here is annual, so the 2023 subsidy window is not
+monthly-visible on the landed CPI (C-30). See decisions S4-01…S4-12, M-11, C-30…C-32.
 
 **Purpose.** One table that the models and the app both read, with nothing computed at render time.
 
@@ -184,8 +223,11 @@ the vintage timestamp.
   boundary must be a single decided date, logged: acting from 2010-02-09, sworn in 2010-05-06.
 - **Tenure stratification columns:** `PDP_first`, `PDP_second`, `APC_first`, `APC_second` — base spec §9
   requires party effects stratified by term, not aggregated.
-- **State panel:** 37 units × month; joins FAAC (D1), state IGR (D2), ACLED/UCDP state attribution, and
-  whichever health/education series survive Stage 1.
+- **State panel:** 37 units × month; joins FAAC (D1 — **landed 2026-10-16 as the nominal dose** and
+  **gated 2026-10-17**, so `dose_gated`/`dose_gate_status` are read from the Stage 3 report rather than
+  set by hand; the per-capita form waits on X-09), state IGR (D2), ACLED/UCDP state attribution, and
+  whichever health/education series survive Stage 1. Built 2026-10-11 and populated without a schema
+  change.
 
 **Exit criteria.** A single analytical base table, every column documented, reproducible from
 `vintage_date` + anchor config alone (base spec §18).
@@ -198,6 +240,39 @@ ACLED geocoding quality determines how many events can be attributed to a state.
 ---
 
 ## Stage 5 — Pre-analysis diagnostics and design validation
+
+**STATUS: BUILT 2026-10-11 · RE-RUN at vintage 2026-10-16 (2026-10-17).** The memo is
+`docs/design-memo.md`; the machine-readable result is
+`registry/diagnostics/<vintage>/diagnostics.json` + `report.md`, attached to all 36 cards. Config in
+`analysis/specs/diagnostics.yml`, engine in `analysis/R/02_diagnostics.R`, independent verifier
+`tests/verify_stage5.py`. Exit criteria met: **every one of the 36 (outcome × design) cards carries a
+pre-check verdict, and none passes** — 15 fail, 7 degraded, 14 not attempted, 0 pass.
+
+**What the re-run changed, and why it was not optional.** The 2026-10-11 verdicts were computed against a
+base that no longer exists: Family A read "dropped — 0 of 12,358 dose values present" and Family B read
+"FAAC is absent". The dose has since landed and been Stage 3 gated, so the *reasons* were wrong even where
+the verdicts were not, and `tests/verify_stage5.py` was failing rather than tolerating the drift. Two
+substantive changes came out of it:
+
+- **The dose is now measured on the axis the estimand is written on, separately from the other axes**
+  (`dose.specified_axis: D1`). The nominal FAAC column landed and passes its variance checks; D1 is per
+  capita and still waits on the population denominator (X-09). Family A therefore stays **dropped, for a
+  different and stated reason** — `specified_dose_axis_absent:D1 and no_state_attributed_outcome` — and a
+  present-but-unspecified axis can no longer turn the gate green by proxy (S5-10).
+- **The Family A card text is derived from the dose block, not written as prose next to it.** The earlier
+  version hard-coded "no dose series has landed", which was true when written and false by the time it
+  mattered; the card could not notice its own premise changing (C-44).
+
+See decisions S5-01…S5-10 and C-44.
+
+> **Two of those three reasons expired between 2026-10-16 and 2026-10-17, and the re-run above is what
+> recorded it.** The FAAC dose is landed and gated, so "0 of 12,358 dose values" and "FAAC absent" no
+> longer describe the base: `state_panel` now carries 4,104 dose values and `faac_national_monthly` is a
+> real monthly fiscal series. The verdicts above are the current ones — 0 of 36 pass, with the reasons
+> recomputed. What has *not* changed is the grain: the dose begins 2016-12, so the Tier-3 system is 10
+> years long at the annual grain the outcomes are on, against the ~20-observation floor Johansen needs
+> (C-41). And what the re-run refused to do is quietly convert a nominal dose into the per-capita one the
+> estimand needs: that is X-09, a decision.
 
 **Purpose.** Establish what the data can support **before** estimating anything. This stage is why the
 project is defensible, and it is the one most likely to be skipped under enthusiasm.

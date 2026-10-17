@@ -1,0 +1,26 @@
+metric_id,label,short_label,unit,direction,domain,is_outcome,coverage_status,catalogue_frequency,source_label,source_dataset_id,note
+u5mr,Under-5 mortality rate,Under-5 mortality,"per 1,000 live births",down,health,true,partial,annual,NDHS / UN IGME,SH.DYN.MORT,"61 obs to 2024, no gaps — but the annual series is largely interpolation across a 5-yearly NDHS cycle"
+mmr,Maternal mortality ratio,Maternal mortality,"per 100,000 births",down,health,true,ok,annual,World Bank (UN MMEIG estimates),SH.STA.MMRT,"39 obs to 2023; modelled estimates, not independent year-to-year observations"
+immun_penta3,Penta3 immunisation coverage,Penta3 coverage,% surviving infants,up,health,true,partial,annual,DHIS2 / WUENIC,SH.IMM.IDPT,"DHIS2 is monthly but credential-blocked; the landed series is the annual DPT3 stand-in, so catalogue frequency is annual, not the base spec's monthly"
+skilled_birth,Skilled birth attendance,Skilled birth attendance,% of births,up,health,true,partial,annual,NDHS / MICS,SH.STA.BRTC.ZS,"survey series — 9 obs in 33 years; renders as flagged points and cannot carry a lagged design"
+literacy_youth,Youth literacy (15-24),Youth literacy,%,up,education,true,declared_gap,annual,NBS / UNESCO UIS,SE.ADT.1524.LT.ZS,"8 obs across 34 years with an 11-year hole; declared_gap for the APC tenures"
+primary_completion,Primary completion rate,Primary completion,%,up,education,true,declared_gap,annual,NEMIS / World Bank,SE.PRM.CMPT.ZS,"every World Bank education outcome stops in 2010-2011 — cannot see the APC tenures"
+ner_primary,"Net enrolment rate, primary",Net enrolment (primary),%,up,education,true,declared_gap,annual,NEMIS / World Bank,SE.PRM.NENR,"same 2010 break as primary_completion"
+fatalities,Reported security fatalities,Security fatalities,count,down,security,true,blocked,monthly,ACLED,,"not landed — needs a UCDP token or an ACLED OAuth app (PROGRESS.md section 8A)"
+incidents,Reported security incidents,Security incidents,count,down,security,true,blocked,monthly,ACLED,,"not landed — depends entirely on ACLED"
+gdp_growth,Real GDP growth (y/y),GDP growth (y/y),%,up,economy,true,ok,quarterly,NBS / World Bank,NY.GDP.MKTP.KD.ZG,"landed series is annual; the 2014 rebasing is a definition break that must be annotated"
+cpi_yoy,Headline inflation (y/y),Inflation (y/y),%,down,economy,true,ok,monthly,NBS / World Bank,FP.CPI.TOTL.ZG,"landed series is annual; monthly NBS CPI needs the manual-download parser. Anchor outcome for the 2023 subsidy window"
+unemp,Unemployment rate,Unemployment rate,%,down,economy,true,partial,quarterly,NBS / World Bank (ILO modelled),SL.UEM.TOTL.ZS,"modelled ILO estimates; NBS changed methodology in 2014 and 2023"
+neonatal_mr,Neonatal mortality rate,Neonatal mortality,"per 1,000 live births",down,health,false,,annual,World Bank,SH.DYN.NMRT,58 obs to 2024
+measles_imm,"Measles immunisation coverage","Measles coverage","% of children 12-23m",up,health,false,,annual,World Bank,SH.IMM.MEAS,41 obs to 2024
+health_spend_gdp,Current health expenditure,Health spending,% of GDP,up,health,false,,annual,World Bank,SH.XPD.CHEX.GD.ZS,"24 obs 2000-2023 — a policy input, not an outcome"
+life_expectancy,Life expectancy at birth,Life expectancy,years,up,health,false,,annual,World Bank,SP.DYN.LE00.IN,65 obs no gaps
+adult_literacy,Adult literacy (15+),Adult literacy,%,up,education,false,,annual,World Bank,SE.ADT.LITR.ZS,"6 obs only, with a 108-month hole 2006-2016 — the widest gap Stage 3 found"
+educ_spend_gdp,Government expenditure on education,Education spending,% of GDP,up,education,false,,annual,World Bank,SE.XPD.TOTL.GD.ZS,"14 obs to 2023 — a policy input, not an outcome"
+homicides,Intentional homicides,Intentional homicides,"per 100,000 people",down,security,false,,annual,World Bank,VC.IHR.PSRC.P5,"3 obs to 2023 — a proxy only; the real security sources are ACLED/UCDP"
+gdp_per_capita,"GDP per capita (constant)","GDP per capita",constant US$,up,economy,false,,annual,World Bank,NY.GDP.PCAP.KD,denominator/control; shares the 2014 rebasing break
+population,"Population, total",Population,persons,none,economy,false,,annual,World Bank,SP.POP.TOTL,"denominator for per-capita doses; not an outcome, so direction is none"
+fx,Official exchange rate,Exchange rate,NGN per US$,none,economy,false,,annual,World Bank (CBN for monthly),PA.NUS.FCRF,"annual landed; the monthly series needs CBN. Two definition breaks: 2016-06 float, 2023-06 unification"
+donor_oda,Net official development assistance received,Net ODA,current US$,none,context,false,,annual,World Bank (OECD DAC),DT.ODA.ALLD.CD,"contaminated: Paris Club debt relief is recorded as ODA (+1006% in 2005). Sits in the adjustment set for designs A and B on health and education"
+oil_rents,Oil rents,Oil rents,% of GDP,none,context,false,,annual,World Bank,NY.GDP.PETR.RT.ZS,oil-channel proxy for the Design C donor screening predictor
+oil,Brent crude spot price,Brent crude,USD per barrel,none,context,false,,monthly,FRED (Brent crude),DCOILBRENTEU,"landed daily 1987-2026 and resampled to monthly by the rule Stage 3 froze (mean_of_daily_observations)"

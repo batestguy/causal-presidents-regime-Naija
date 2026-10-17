@@ -1,0 +1,190 @@
+# Identification designs as causal graphs (DAGs).
+#
+# One template per design family. A template is instantiated once per outcome: the node with
+# id `Y` takes the outcome's label and short label, and any node carrying `when_domain` is
+# included only for outcomes in the listed domains. Everything else is shared, so the three
+# graphs for a given outcome differ only in the causal model they encode.
+#
+# The point of the layer: a visitor picks an outcome, then picks which causal model to believe,
+# and the graph's adjustment set determines which estimate they are looking at. The graphs are
+# not decoration — analysis/R/01_build_dags.R reads these node/edge lists, validates acyclicity,
+# and computes the backdoor adjustment set with dagitty from the graph itself.
+#
+# Field notes
+#   role        exposure | outcome | confounder | mediator | modifier
+#   observed    false marks a node the estimate *requires to be absent*. These nodes are drawn
+#               on the graph and listed as `assumption_required` on the card; the adjustment
+#               set is computed on the subgraph with them removed, because that is the working
+#               assumption the estimator actually leans on.
+#   pos         deterministic dagitty coordinates (x,y) so layout is reproducible. Columns are
+#               spaced at x = 0 / 1.8 / 3.6.
+#   short       the text drawn inside the node; `label` is the full name carried in the JSON.
+#   source      where this node's data comes from. Closes Stage 1's exit criterion: every variable
+#               required by a design maps to a named source, or is recorded as a declared gap.
+#   source_status  acquired | gap | derived | construct | unobserved
+#               - acquired   a landing flow exists and the series has been pulled
+#               - gap        no usable source yet (recorded, never silently absent)
+#               - derived    computed from other nodes, not fetched
+#               - construct  a design artefact (a fixed effect or trend), not data
+#               - unobserved the node the estimate assumes absent
+#               The outcome node's source comes from analysis/specs/outcomes.yml, not from here.
+#
+# Assumption text and `cannot_rule_out` are quoted on the model card *before* any number, per
+# the assumption-first answer shape (docs/decisions.md R-03).
+
+meta:
+  designs_ref: "#CausalPresidents.txt section 9; nigeria-causal-inference-spec.md section 5"
+  layer: "Assumption layer — one DAG per (outcome, design). No estimates attached yet."
+  node_vocabulary: "docs/dags.md"
+
+designs:
+  # ----------------------------------------------------------------------------------------
+  # A — State dose-response / staggered DiD on a federal policy shift
+  # ----------------------------------------------------------------------------------------
+  - id: A
+    name: "State dose-response DiD"
+    short: "DiD"
+    unit: "state-month (36 states + FCT)"
+    estimand: "ATT of a federal policy shift, with state exposure intensity as the dose"
+    estimator: "Callaway & Sant'Anna group-time ATT (did); fixest TWFE cross-check"
+    exposure: dose
+    outcome: "Y"
+    adjustment_criterion: "backdoor"
+    design_controls:
+      - "State fixed effects absorb time-invariant state characteristics"
+      - "Time fixed effects absorb common national shocks (including the oil price)"
+      - "Permutation inference over treatment-date reassignment"
+    identifying_assumption: >-
+      Parallel trends: absent the policy shift, states with different exposure intensities would
+      have followed parallel outcome paths. Formally, no unmeasured state-by-time confounder
+      affects both the dose and the outcome (the unobserved node is absent).
+    cannot_rule_out:
+      - "Anticipation: states may adjust behaviour before the formal policy date."
+      - "SUTVA violations through cross-state spillovers (trade, migration, security)."
+      - "Compositional or definitional change in state accounts over the window."
+      - "The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures."
+    nodes:
+      - {id: oil, label: "Brent crude shock", short: "Oil shock", role: confounder, observed: true, pos: "0,2.6", source: "FRED DCOILBRENTEU (Brent crude, daily) via ingestion/flows/pull_fred.py", source_status: acquired}
+      - {id: inherit, label: "Inherited state conditions", short: "Inherited conditions", role: confounder, observed: true, pos: "0,1.4", source: "Derived: the outcome's value at the start of each tenure", source_status: derived}
+      - {id: statefe, label: "State fixed effect", short: "State FE", role: confounder, observed: true, pos: "0,0.2", source: "Design construct: state fixed effects", source_status: construct}
+      - {id: timefe, label: "Time fixed effect", short: "Time FE", role: confounder, observed: true, pos: "0,-1.0", source: "Design construct: time fixed effects", source_status: construct}
+      - {id: donor, label: "Donor-funded programmes", short: "Donor funding", role: confounder, observed: true, pos: "0,-2.2", when_domain: [health, education], source: "World Bank DT.ODA.ALLD.CD (net ODA received)", source_status: acquired}
+      - {id: dose, label: "Policy exposure dose (D1, FAAC per capita)", short: "Exposure dose (D1)", role: exposure, observed: true, pos: "1.8,0.8", source: "NBS FAAC disbursement reports + state population (D1)", source_status: gap}
+      - {id: "Y", label: "{{outcome_label}}", short: "{{outcome_short}}", role: outcome, observed: true, pos: "3.6,0.2", source: "{{outcome_source}}", source_status: acquired}
+      - {id: u_st, label: "Unmeasured state-by-time shock", short: "Unmeasured state-time shock", role: confounder, observed: false, pos: "1.8,-1.4", source: "Unobserved: assumed absent by the parallel-trends assumption", source_status: unobserved}
+    edges:
+      - {from: oil, to: dose}
+      - {from: oil, to: "Y"}
+      - {from: inherit, to: dose}
+      - {from: inherit, to: "Y"}
+      - {from: statefe, to: dose}
+      - {from: statefe, to: "Y"}
+      - {from: timefe, to: dose}
+      - {from: timefe, to: "Y"}
+      - {from: donor, to: dose}
+      - {from: donor, to: "Y"}
+      - {from: dose, to: "Y"}
+      - {from: u_st, to: dose}
+      - {from: u_st, to: "Y"}
+
+  # ----------------------------------------------------------------------------------------
+  # B — National VECM / ARDL time series (base spec section 9, Tier 3 upgraded)
+  # ----------------------------------------------------------------------------------------
+  - id: B
+    name: "National VECM / ARDL time series"
+    short: "Time series"
+    unit: "national-month (annual cross-check)"
+    estimand: "long-run multiplier for the administration effect, oil-interacted"
+    estimator: "VECM (vars + urca Johansen), ARDL (dynlm) fallback per the cointegration test"
+    exposure: admin
+    outcome: "Y"
+    adjustment_criterion: "backdoor"
+    design_controls:
+      - "Lagged outcome captures persistence (error-correction form)"
+      - "Linear and quadratic time trend absorb secular drift"
+      - "Oil price is interacted with administration, never partialled out (base spec section 9)"
+    identifying_assumption: >-
+      Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and
+      the trend, the administration dummy is unrelated to any remaining time-varying determinant of
+      the outcome (the unobserved node is absent).
+    cannot_rule_out:
+      - >-
+        FAAC and the exchange rate are downstream of the administration, so conditioning on them
+        identifies a *direct* effect net of the fiscal and FX channel, not the total effect.
+      - "Only ~26 annual observations and five administrations — the interval is wide by construction."
+      - "Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends."
+      - "Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove."
+    nodes:
+      - {id: oil, label: "Brent crude price (logged)", short: "Oil price shock", role: confounder, observed: true, pos: "0,2.8", source: "FRED DCOILBRENTEU (Brent crude, daily) via ingestion/flows/pull_fred.py", source_status: acquired}
+      - {id: lagY, label: "Lagged outcome", short: "Lagged outcome", role: confounder, observed: true, pos: "0,1.6", source: "Derived: lagged value of the outcome", source_status: derived}
+      - {id: trend, label: "Linear and quadratic time trend", short: "Time trend", role: confounder, observed: true, pos: "0,0.4", source: "Design construct: linear and quadratic trend", source_status: construct}
+      - {id: donor, label: "Donor funding", short: "Donor funding", role: confounder, observed: true, pos: "0,-0.8", when_domain: [health, education], source: "World Bank DT.ODA.ALLD.CD (net ODA received)", source_status: acquired}
+      - {id: u_t, label: "Omitted time-varying determinant", short: "Omitted time-varying factor", role: confounder, observed: false, pos: "0,-2.0", source: "Unobserved: assumed absent by the conditional-exogeneity assumption", source_status: unobserved}
+      - {id: admin, label: "Administration (party x tenure)", short: "Administration", role: exposure, observed: true, pos: "1.8,2.4", source: "Administration spine (base spec section 7)", source_status: acquired}
+      - {id: oilxadmin, label: "Oil x administration (effect modification)", short: "Oil x Administration", role: modifier, observed: true, pos: "1.8,1.0", source: "Derived: oil x administration interaction", source_status: derived}
+      - {id: faac, label: "FAAC allocation / fiscal space", short: "FAAC / fiscal space", role: mediator, observed: true, pos: "1.8,-0.2", source: "NBS FAAC disbursement reports", source_status: gap}
+      - {id: fx, label: "NGN/USD exchange rate", short: "NGN/USD", role: mediator, observed: true, pos: "1.8,-1.4", source: "World Bank PA.NUS.FCRF (annual); CBN needed for monthly", source_status: acquired}
+      - {id: "Y", label: "{{outcome_label}}", short: "{{outcome_short}}", role: outcome, observed: true, pos: "3.6,0.6", source: "{{outcome_source}}", source_status: acquired}
+    edges:
+      - {from: oil, to: admin}
+      - {from: oil, to: oilxadmin}
+      - {from: oil, to: faac}
+      - {from: oil, to: fx}
+      - {from: oil, to: "Y"}
+      - {from: admin, to: oilxadmin}
+      - {from: admin, to: faac}
+      - {from: admin, to: fx}
+      - {from: admin, to: "Y"}
+      - {from: oilxadmin, to: "Y"}
+      - {from: faac, to: "Y"}
+      - {from: fx, to: "Y"}
+      - {from: lagY, to: "Y"}
+      - {from: trend, to: faac}
+      - {from: trend, to: fx}
+      - {from: trend, to: "Y"}
+      - {from: donor, to: "Y"}
+      - {from: u_t, to: admin}
+      - {from: u_t, to: "Y"}
+
+  # ----------------------------------------------------------------------------------------
+  # C — Synthetic control with a pre-fit-screened mixed donor pool
+  # ----------------------------------------------------------------------------------------
+  - id: C
+    name: "Synthetic control (cross-country)"
+    short: "Synthetic control"
+    unit: "country-year (Nigeria treated; West African neighbours + oil exporters)"
+    estimand: "treatment gap: Nigeria outcome minus synthetic Nigeria"
+    estimator: "Synth / coresynth / scpi, donor pool screened by pre-treatment fit"
+    exposure: treat
+    outcome: "Y"
+    adjustment_criterion: "backdoor"
+    design_controls:
+      - "Donor weights chosen to reproduce Nigeria's pre-treatment outcome path and predictors"
+      - "In-space placebo across every donor; in-time placebo; leave-one-donor-out sweep"
+      - "Pool composition treated as a robustness axis, not a fixed choice"
+    identifying_assumption: >-
+      The synthetic control reproduces Nigeria's outcome path absent treatment: donor-weighted common
+      factors (above all the global oil and commodity cycle) stand in for Nigeria's counterfactual,
+      and no Nigeria-specific shock coincides with the treatment (the unobserved node is absent).
+    cannot_rule_out:
+      - "Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency)."
+      - "Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual."
+      - "Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap."
+      - "Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared."
+    nodes:
+      - {id: common, label: "Common factors (global oil / commodity cycle)", short: "Common factors (oil cycle)", role: confounder, observed: true, pos: "0,1.8", source: "Derived from the donor-panel paths and the FRED Brent crude cycle (node 'oil')", source_status: derived}
+      - {id: countryfe, label: "Country fixed effects", short: "Country FE", role: confounder, observed: true, pos: "0,0.6", source: "Design construct: country fixed effects", source_status: construct}
+      - {id: donors, label: "Donor-pool outcome paths (synthetic weights)", short: "Donor-pool paths", role: confounder, observed: true, pos: "0,-0.8", source: "Donor panel: 13 countries x 5 predictors (World Bank)", source_status: acquired}
+      - {id: treat, label: "Nigeria under administration X (treated)", short: "Nigeria treated (tenure)", role: exposure, observed: true, pos: "1.8,1.8", source: "Administration spine (base spec section 7)", source_status: acquired}
+      - {id: "Y", label: "{{outcome_label}}", short: "{{outcome_short}}", role: outcome, observed: true, pos: "3.6,0.6", source: "{{outcome_source}}", source_status: acquired}
+      - {id: u_ng, label: "Nigeria-specific shock coinciding with treatment", short: "Nigeria-specific shock", role: confounder, observed: false, pos: "1.8,-0.9", source: "Unobserved: assumed absent by the synthetic-control assumption", source_status: unobserved}
+    edges:
+      - {from: common, to: treat}
+      - {from: common, to: donors}
+      - {from: common, to: "Y"}
+      - {from: countryfe, to: donors}
+      - {from: countryfe, to: "Y"}
+      - {from: donors, to: "Y"}
+      - {from: treat, to: "Y"}
+      - {from: u_ng, to: treat}
+      - {from: u_ng, to: "Y"}

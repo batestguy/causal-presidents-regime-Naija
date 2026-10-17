@@ -1,0 +1,4 @@
+shock_id,start_date,end_date,label,note
+1,2014-06-01,2016-12-01,Oil crash & recession,"Base spec §8 shock band. The 2014 collapse in Brent and the recession it produced."
+2,2020-03-01,2020-12-01,COVID-19,"Base spec §8 shock band. The pandemic demand collapse; Brent averaged $18.38 in April 2020."
+3,2023-06-01,2023-12-01,Fuel subsidy removal & naira float,"Base spec §8 shock band. The 2023-06 FX unification and the subsidy removal; the window the monthly spine exists to see."

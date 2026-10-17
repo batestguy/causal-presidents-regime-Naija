@@ -1,0 +1,23 @@
+# dbt connection profile — committed deliberately, and safe to commit.
+#
+# There is no credential here: DuckDB is a local file, not a service. The base spec's original
+# target was Neon Postgres (base spec section 12), but a hosted warehouse would put the analytical
+# base behind a login for no benefit at this scale, and this project is free-tier only
+# (PROGRESS.md section 9). A local file also means a reader can reproduce the base without an
+# account, which is the reproducibility claim the project makes.
+#
+# The database file is gitignored: it is a build artifact, reproducible from `data/raw/` plus the
+# specs in `analysis/specs/`, and committing a binary would defeat the audit trail.
+#
+# `path` is relative to the **invocation directory**, not to the dbt project directory — verified the
+# hard way: `../data/analytics.duckdb` from the repo root resolved to `D:\data\analytics.duckdb` and
+# failed. It is therefore written relative to the repository root, the same convention as the
+# `raw_root` var, and every documented command runs from there.
+causal_presidents:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "data/analytics.duckdb"
+      schema: main
+      threads: 4

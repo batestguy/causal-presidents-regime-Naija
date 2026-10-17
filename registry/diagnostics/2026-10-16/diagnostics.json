@@ -1,0 +1,4899 @@
+{
+  "schema_version": "0.1.0",
+  "stage": 5,
+  "layer": "pre-analysis diagnostics and design validation",
+  "vintage": "2026-10-16",
+  "generated_at": "2026-10-17T03:41:33+0100",
+  "generator": {
+    "script": "analysis/R/02_diagnostics.R",
+    "git_sha": "b16743f",
+    "r_version": "R version 4.5.2 (2025-10-31 ucrt)"
+  },
+  "spec": "analysis/specs/diagnostics.yml",
+  "inputs": {
+    "base": "data/analytics.duckdb",
+    "quality_report": "registry/quality/2026-10-16/report.json",
+    "grain": "native observations (fact_observation_native), study window floor 1999-01-01"
+  },
+  "grain_decision": {
+    "primary": "native",
+    "forbidden": "fact_metric monthly spine",
+    "reason": "Tests on interpolated rows would report the interpolation method's properties as if they were the data's."
+  },
+  "series": {
+    "adult_literacy": {
+      "metric_id": "adult_literacy",
+      "series_label": "adult_literacy",
+      "label": "Adult literacy (15+)",
+      "native_frequency": "annual",
+      "n_observations": 5,
+      "first_year": 2003,
+      "last_year": 2024,
+      "order_of_integration": null,
+      "decisive": null,
+      "note": "only 5 native observations in the window (minimum 12) — not tested",
+      "tests": []
+    },
+    "cpi_yoy": {
+      "metric_id": "cpi_yoy",
+      "series_label": "cpi_yoy",
+      "label": "Headline inflation (y/y)",
+      "native_frequency": "annual",
+      "n_observations": 27,
+      "first_year": 1999,
+      "last_year": 2025,
+      "order_of_integration": 1,
+      "decisive": false,
+      "note": "the three tests did not agree at the level or at the first difference; carried as I(1) (the conservative branch in diagnostics.yml)",
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 27,
+          "teststat": -1.851585,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 27,
+          "teststat": -2.546314,
+          "cval": -3.5,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 27,
+          "teststat": 0.461244,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 27,
+          "teststat": -2.186755,
+          "cval": -2.979775,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 26,
+          "teststat": -4.156039,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 26,
+          "teststat": 0.073072,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 26,
+          "teststat": -5.446282,
+          "cval": -2.984996,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        }
+      }
+    },
+    "donor_oda": {
+      "metric_id": "donor_oda",
+      "series_label": "donor_oda",
+      "label": "Net official development assistance received",
+      "native_frequency": "annual",
+      "n_observations": 25,
+      "first_year": 1999,
+      "last_year": 2023,
+      "order_of_integration": 0,
+      "decisive": true,
+      "note": null,
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 25,
+          "teststat": -3.914456,
+          "cval": -3,
+          "lags": 4,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 25,
+          "teststat": -3.778908,
+          "cval": -3.6,
+          "lags": 4,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 25,
+          "teststat": 0.194406,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 25,
+          "teststat": -2.99343,
+          "cval": -2.990697,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 24,
+          "teststat": -4.510413,
+          "cval": -3,
+          "lags": 4,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 24,
+          "teststat": 0.059768,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 24,
+          "teststat": -5.081089,
+          "cval": -2.996947,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        }
+      }
+    },
+    "educ_spend_gdp": {
+      "metric_id": "educ_spend_gdp",
+      "series_label": "educ_spend_gdp",
+      "label": "Government expenditure on education",
+      "native_frequency": "annual",
+      "n_observations": 12,
+      "first_year": 2012,
+      "last_year": 2023,
+      "order_of_integration": 1,
+      "decisive": false,
+      "note": "the three tests did not agree at the level or at the first difference; carried as I(1) (the conservative branch in diagnostics.yml)",
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 12,
+          "teststat": -0.926168,
+          "cval": -3,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 12,
+          "teststat": null,
+          "cval": -3.6,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 12,
+          "teststat": 0.49434,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 12,
+          "teststat": -1.81526,
+          "cval": -3.1801,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 11,
+          "teststat": null,
+          "cval": -3,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 11,
+          "teststat": 0.217041,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 11,
+          "teststat": -3.190388,
+          "cval": -3.2195,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        }
+      }
+    },
+    "fatalities": {
+      "metric_id": "fatalities",
+      "series_label": "fatalities",
+      "label": "Reported security fatalities",
+      "native_frequency": null,
+      "n_observations": 0,
+      "first_year": null,
+      "last_year": null,
+      "order_of_integration": null,
+      "decisive": null,
+      "note": "only 0 native observations in the window (minimum 12) — not tested",
+      "tests": []
+    },
+    "fx": {
+      "metric_id": "fx",
+      "series_label": "fx",
+      "label": "Official exchange rate",
+      "native_frequency": "annual",
+      "n_observations": 27,
+      "first_year": 1999,
+      "last_year": 2025,
+      "order_of_integration": 1,
+      "decisive": false,
+      "note": "the three tests did not agree at the level or at the first difference; carried as I(1) (the conservative branch in diagnostics.yml)",
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 27,
+          "teststat": 3.735129,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 27,
+          "teststat": 1.913569,
+          "cval": -3.5,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 27,
+          "teststat": 0.632558,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 27,
+          "teststat": 2.401221,
+          "cval": -2.979775,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 26,
+          "teststat": 0.163852,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 26,
+          "teststat": 0.406896,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 26,
+          "teststat": -3.816889,
+          "cval": -2.984996,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        }
+      }
+    },
+    "gdp_growth": {
+      "metric_id": "gdp_growth",
+      "series_label": "gdp_growth",
+      "label": "Real GDP growth (y/y)",
+      "native_frequency": "annual",
+      "n_observations": 27,
+      "first_year": 1999,
+      "last_year": 2025,
+      "order_of_integration": 1,
+      "decisive": true,
+      "note": null,
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 27,
+          "teststat": -1.987084,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 27,
+          "teststat": -2.365273,
+          "cval": -3.5,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 27,
+          "teststat": 0.501261,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 27,
+          "teststat": -2.86669,
+          "cval": -2.979775,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 26,
+          "teststat": -4.378138,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 26,
+          "teststat": 0.119535,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 26,
+          "teststat": -7.285759,
+          "cval": -2.984996,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        }
+      }
+    },
+    "gdp_per_capita": {
+      "metric_id": "gdp_per_capita",
+      "series_label": "gdp_per_capita",
+      "label": "GDP per capita (constant)",
+      "native_frequency": "annual",
+      "n_observations": 27,
+      "first_year": 1999,
+      "last_year": 2025,
+      "order_of_integration": 2,
+      "decisive": true,
+      "note": null,
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 27,
+          "teststat": -2.306152,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 27,
+          "teststat": -1.769904,
+          "cval": -3.5,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 27,
+          "teststat": 0.719679,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 27,
+          "teststat": -2.498792,
+          "cval": -2.979775,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 26,
+          "teststat": -2.364644,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 26,
+          "teststat": 0.480852,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 26,
+          "teststat": -2.798989,
+          "cval": -2.984996,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        }
+      }
+    },
+    "health_spend_gdp": {
+      "metric_id": "health_spend_gdp",
+      "series_label": "health_spend_gdp",
+      "label": "Current health expenditure",
+      "native_frequency": "annual",
+      "n_observations": 24,
+      "first_year": 2000,
+      "last_year": 2023,
+      "order_of_integration": 1,
+      "decisive": false,
+      "note": "the three tests did not agree at the level or at the first difference; carried as I(1) (the conservative branch in diagnostics.yml)",
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 24,
+          "teststat": -2.276806,
+          "cval": -3,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 24,
+          "teststat": -1.670989,
+          "cval": -3.6,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 24,
+          "teststat": 0.092496,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 24,
+          "teststat": -2.872992,
+          "cval": -2.996947,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 23,
+          "teststat": -2.746085,
+          "cval": -3,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 23,
+          "teststat": 0.081584,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 23,
+          "teststat": -5.939425,
+          "cval": -3.003827,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        }
+      }
+    },
+    "homicides": {
+      "metric_id": "homicides",
+      "series_label": "homicides",
+      "label": "Intentional homicides",
+      "native_frequency": "annual",
+      "n_observations": 3,
+      "first_year": 2016,
+      "last_year": 2023,
+      "order_of_integration": null,
+      "decisive": null,
+      "note": "only 3 native observations in the window (minimum 12) — not tested",
+      "tests": []
+    },
+    "immun_penta3": {
+      "metric_id": "immun_penta3",
+      "series_label": "immun_penta3",
+      "label": "Penta3 immunisation coverage",
+      "native_frequency": "annual",
+      "n_observations": 26,
+      "first_year": 1999,
+      "last_year": 2024,
+      "order_of_integration": 1,
+      "decisive": true,
+      "note": null,
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 26,
+          "teststat": -1.712566,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 26,
+          "teststat": -3.157122,
+          "cval": -3.5,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 26,
+          "teststat": 0.741809,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 26,
+          "teststat": -1.076004,
+          "cval": -2.984996,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 25,
+          "teststat": -3.493749,
+          "cval": -3,
+          "lags": 4,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 25,
+          "teststat": 0.053574,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 25,
+          "teststat": -4.192945,
+          "cval": -2.990697,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        }
+      }
+    },
+    "incidents": {
+      "metric_id": "incidents",
+      "series_label": "incidents",
+      "label": "Reported security incidents",
+      "native_frequency": null,
+      "n_observations": 0,
+      "first_year": null,
+      "last_year": null,
+      "order_of_integration": null,
+      "decisive": null,
+      "note": "only 0 native observations in the window (minimum 12) — not tested",
+      "tests": []
+    },
+    "life_expectancy": {
+      "metric_id": "life_expectancy",
+      "series_label": "life_expectancy",
+      "label": "Life expectancy at birth",
+      "native_frequency": "annual",
+      "n_observations": 26,
+      "first_year": 1999,
+      "last_year": 2024,
+      "order_of_integration": 1,
+      "decisive": false,
+      "note": "the three tests did not agree at the level or at the first difference; carried as I(1) (the conservative branch in diagnostics.yml)",
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 26,
+          "teststat": -0.667468,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 26,
+          "teststat": -2.94715,
+          "cval": -3.5,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 26,
+          "teststat": 0.936375,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 26,
+          "teststat": -2.260092,
+          "cval": -2.984996,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 25,
+          "teststat": -1.925731,
+          "cval": -3,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 25,
+          "teststat": 0.397415,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 25,
+          "teststat": -2.48365,
+          "cval": -2.990697,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        }
+      }
+    },
+    "literacy_youth": {
+      "metric_id": "literacy_youth",
+      "series_label": "literacy_youth",
+      "label": "Youth literacy (15-24)",
+      "native_frequency": "annual",
+      "n_observations": 7,
+      "first_year": 2003,
+      "last_year": 2024,
+      "order_of_integration": null,
+      "decisive": null,
+      "note": "only 7 native observations in the window (minimum 12) — not tested",
+      "tests": []
+    },
+    "measles_imm": {
+      "metric_id": "measles_imm",
+      "series_label": "measles_imm",
+      "label": "Measles immunisation coverage",
+      "native_frequency": "annual",
+      "n_observations": 26,
+      "first_year": 1999,
+      "last_year": 2024,
+      "order_of_integration": 1,
+      "decisive": true,
+      "note": null,
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 26,
+          "teststat": -2.354381,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 26,
+          "teststat": -2.74761,
+          "cval": -3.5,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 26,
+          "teststat": 0.607467,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 26,
+          "teststat": -1.55137,
+          "cval": -2.984996,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 25,
+          "teststat": -3.008918,
+          "cval": -3,
+          "lags": 4,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 25,
+          "teststat": 0.054954,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 25,
+          "teststat": -3.890144,
+          "cval": -2.990697,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        }
+      }
+    },
+    "mmr": {
+      "metric_id": "mmr",
+      "series_label": "mmr",
+      "label": "Maternal mortality ratio",
+      "native_frequency": "annual",
+      "n_observations": 25,
+      "first_year": 1999,
+      "last_year": 2023,
+      "order_of_integration": 1,
+      "decisive": false,
+      "note": "the three tests did not agree at the level or at the first difference; carried as I(1) (the conservative branch in diagnostics.yml)",
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 25,
+          "teststat": -3.064151,
+          "cval": -3,
+          "lags": 4,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 25,
+          "teststat": -2.812073,
+          "cval": -3.6,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 25,
+          "teststat": 0.179212,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 25,
+          "teststat": -0.760146,
+          "cval": -2.990697,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 24,
+          "teststat": -1.520469,
+          "cval": -3,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 24,
+          "teststat": 0.2358,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 24,
+          "teststat": -1.957763,
+          "cval": -2.996947,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        }
+      }
+    },
+    "neonatal_mr": {
+      "metric_id": "neonatal_mr",
+      "series_label": "neonatal_mr",
+      "label": "Neonatal mortality rate",
+      "native_frequency": "annual",
+      "n_observations": 26,
+      "first_year": 1999,
+      "last_year": 2024,
+      "order_of_integration": 1,
+      "decisive": false,
+      "note": "the three tests did not agree at the level or at the first difference; carried as I(1) (the conservative branch in diagnostics.yml)",
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 26,
+          "teststat": -3.210726,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 26,
+          "teststat": -1.341064,
+          "cval": -3.5,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 26,
+          "teststat": 0.549629,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 26,
+          "teststat": -5.562636,
+          "cval": -2.984996,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 25,
+          "teststat": -3.111756,
+          "cval": -3,
+          "lags": 4,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 25,
+          "teststat": 0.73829,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 25,
+          "teststat": -1.571574,
+          "cval": -2.990697,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        }
+      }
+    },
+    "ner_primary": {
+      "metric_id": "ner_primary",
+      "series_label": "ner_primary",
+      "label": "Net enrolment rate, primary",
+      "native_frequency": "annual",
+      "n_observations": 9,
+      "first_year": 1999,
+      "last_year": 2010,
+      "order_of_integration": null,
+      "decisive": null,
+      "note": "only 9 native observations in the window (minimum 12) — not tested",
+      "tests": []
+    },
+    "oil_rents": {
+      "metric_id": "oil_rents",
+      "series_label": "oil_rents",
+      "label": "Oil rents",
+      "native_frequency": "annual",
+      "n_observations": 23,
+      "first_year": 1999,
+      "last_year": 2021,
+      "order_of_integration": 1,
+      "decisive": true,
+      "note": null,
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 23,
+          "teststat": -1.341316,
+          "cval": -3,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 23,
+          "teststat": -3.210485,
+          "cval": -3.6,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 23,
+          "teststat": 0.669496,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 23,
+          "teststat": -1.858534,
+          "cval": -3.003827,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 22,
+          "teststat": -3.636521,
+          "cval": -3,
+          "lags": 4,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 22,
+          "teststat": 0.115398,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 22,
+          "teststat": -6.788992,
+          "cval": -3.011438,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        }
+      }
+    },
+    "population": {
+      "metric_id": "population",
+      "series_label": "population",
+      "label": "Population, total",
+      "native_frequency": "annual",
+      "n_observations": 27,
+      "first_year": 1999,
+      "last_year": 2025,
+      "order_of_integration": 2,
+      "decisive": true,
+      "note": null,
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 27,
+          "teststat": 1.294902,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 27,
+          "teststat": -3.057394,
+          "cval": -3.5,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 27,
+          "teststat": 0.998822,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 27,
+          "teststat": 3.992146,
+          "cval": -2.979775,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 26,
+          "teststat": -2.148867,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 26,
+          "teststat": 0.728834,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 26,
+          "teststat": -2.816797,
+          "cval": -2.984996,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        }
+      }
+    },
+    "primary_completion": {
+      "metric_id": "primary_completion",
+      "series_label": "primary_completion",
+      "label": "Primary completion rate",
+      "native_frequency": "annual",
+      "n_observations": 8,
+      "first_year": 2000,
+      "last_year": 2010,
+      "order_of_integration": null,
+      "decisive": null,
+      "note": "only 8 native observations in the window (minimum 12) — not tested",
+      "tests": []
+    },
+    "skilled_birth": {
+      "metric_id": "skilled_birth",
+      "series_label": "skilled_birth",
+      "label": "Skilled birth attendance",
+      "native_frequency": "annual",
+      "n_observations": 8,
+      "first_year": 1999,
+      "last_year": 2022,
+      "order_of_integration": null,
+      "decisive": null,
+      "note": "only 8 native observations in the window (minimum 12) — not tested",
+      "tests": []
+    },
+    "u5mr": {
+      "metric_id": "u5mr",
+      "series_label": "u5mr",
+      "label": "Under-5 mortality rate",
+      "native_frequency": "annual",
+      "n_observations": 26,
+      "first_year": 1999,
+      "last_year": 2024,
+      "order_of_integration": 1,
+      "decisive": false,
+      "note": "the three tests did not agree at the level or at the first difference; carried as I(1) (the conservative branch in diagnostics.yml)",
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 26,
+          "teststat": -0.476694,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 26,
+          "teststat": -1.397389,
+          "cval": -3.5,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 26,
+          "teststat": 0.83091,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 26,
+          "teststat": -9.210079,
+          "cval": -2.984996,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 25,
+          "teststat": -2.398898,
+          "cval": -3,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 25,
+          "teststat": 0.850667,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 25,
+          "teststat": -1.39937,
+          "cval": -2.990697,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        }
+      }
+    },
+    "unemp": {
+      "metric_id": "unemp",
+      "series_label": "unemp",
+      "label": "Unemployment rate",
+      "native_frequency": "annual",
+      "n_observations": 27,
+      "first_year": 1999,
+      "last_year": 2025,
+      "order_of_integration": 1,
+      "decisive": false,
+      "note": "the three tests did not agree at the level or at the first difference; carried as I(1) (the conservative branch in diagnostics.yml)",
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 27,
+          "teststat": -2.562337,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 27,
+          "teststat": -3.273692,
+          "cval": -3.5,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 27,
+          "teststat": 0.175737,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 27,
+          "teststat": -1.628406,
+          "cval": -2.979775,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 26,
+          "teststat": -2.536949,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 26,
+          "teststat": 0.137794,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 26,
+          "teststat": -2.783449,
+          "cval": -2.984996,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        }
+      }
+    },
+    "oil_monthly": {
+      "metric_id": "oil",
+      "series_label": "oil (monthly native)",
+      "label": "Brent crude (monthly, native)",
+      "native_frequency": "monthly",
+      "n_observations": 334,
+      "first_year": 1999,
+      "last_year": 2026,
+      "order_of_integration": 1,
+      "decisive": true,
+      "note": null,
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 334,
+          "teststat": -2.263722,
+          "cval": -2.87,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 334,
+          "teststat": -2.614616,
+          "cval": -3.42,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 334,
+          "teststat": 1.75323,
+          "cval": 0.463,
+          "lags": 5,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 334,
+          "teststat": -2.288167,
+          "cval": -2.870398,
+          "lags": 5,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 333,
+          "teststat": -10.776848,
+          "cval": -2.87,
+          "lags": 4,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 333,
+          "teststat": 0.05441,
+          "cval": 0.463,
+          "lags": 5,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 333,
+          "teststat": -12.460666,
+          "cval": -2.870423,
+          "lags": 5,
+          "verdict": "reject_null",
+          "note": null
+        }
+      }
+    },
+    "oil_annual": {
+      "metric_id": "oil",
+      "series_label": "oil (annual mean)",
+      "label": "Brent crude (annual mean)",
+      "native_frequency": "annual_mean",
+      "n_observations": 28,
+      "first_year": 1999,
+      "last_year": 2026,
+      "order_of_integration": 1,
+      "decisive": false,
+      "note": "the three tests did not agree at the level or at the first difference; carried as I(1) (the conservative branch in diagnostics.yml)",
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 28,
+          "teststat": -2.799609,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 28,
+          "teststat": -2.722578,
+          "cval": -3.5,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 28,
+          "teststat": 0.411424,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 28,
+          "teststat": -2.116003,
+          "cval": -2.974975,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 27,
+          "teststat": -4.146771,
+          "cval": -2.93,
+          "lags": 4,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 27,
+          "teststat": 0.093903,
+          "cval": 0.463,
+          "lags": 2,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 27,
+          "teststat": -4.779274,
+          "cval": -2.979775,
+          "lags": 2,
+          "verdict": "reject_null",
+          "note": null
+        }
+      }
+    }
+  },
+  "cointegration": {
+    "u5mr": {
+      "outcome_id": "u5mr",
+      "verdict": "system_reads_as_stationary",
+      "n_observations": 26,
+      "system": ["Y", "log_oil", "fx"],
+      "K": 2,
+      "ecdet": "const",
+      "absent_from_system": [
+        "faac"
+      ],
+      "note": "rank 3 of a 3-variable system: the trace test rejects every rank below the dimension, so the system reads as stationary rather than cointegrated",
+      "trace": [
+        {
+          "r": 0,
+          "teststat": 98.943191,
+          "cval": 34.91,
+          "exceeds": true
+        },
+        {
+          "r": 1,
+          "teststat": 54.081488,
+          "cval": 19.96,
+          "exceeds": true
+        },
+        {
+          "r": 2,
+          "teststat": 14.016828,
+          "cval": 9.24,
+          "exceeds": true
+        }
+      ],
+      "eigen": [
+        {
+          "r": 0,
+          "teststat": 44.861703,
+          "cval": 22,
+          "exceeds": true
+        },
+        {
+          "r": 1,
+          "teststat": 40.06466,
+          "cval": 15.67,
+          "exceeds": true
+        },
+        {
+          "r": 2,
+          "teststat": 14.016828,
+          "cval": 9.24,
+          "exceeds": true
+        }
+      ],
+      "rank_trace": 3,
+      "rank_eigen": 3,
+      "rank": 3,
+      "disagreement": false,
+      "rank_margin_frac": 0.516973,
+      "rank_borderline": false,
+      "recommended_estimator": "var_in_levels"
+    },
+    "mmr": {
+      "outcome_id": "mmr",
+      "verdict": "system_reads_as_stationary",
+      "n_observations": 25,
+      "system": ["Y", "log_oil", "fx"],
+      "K": 2,
+      "ecdet": "const",
+      "absent_from_system": [
+        "faac"
+      ],
+      "note": "rank 3 of a 3-variable system: the trace test rejects every rank below the dimension, so the system reads as stationary rather than cointegrated",
+      "trace": [
+        {
+          "r": 0,
+          "teststat": 60.924649,
+          "cval": 34.91,
+          "exceeds": true
+        },
+        {
+          "r": 1,
+          "teststat": 28.223538,
+          "cval": 19.96,
+          "exceeds": true
+        },
+        {
+          "r": 2,
+          "teststat": 10.063357,
+          "cval": 9.24,
+          "exceeds": true
+        }
+      ],
+      "eigen": [
+        {
+          "r": 0,
+          "teststat": 32.701111,
+          "cval": 22,
+          "exceeds": true
+        },
+        {
+          "r": 1,
+          "teststat": 18.160181,
+          "cval": 15.67,
+          "exceeds": true
+        },
+        {
+          "r": 2,
+          "teststat": 10.063357,
+          "cval": 9.24,
+          "exceeds": true
+        }
+      ],
+      "rank_trace": 3,
+      "rank_eigen": 3,
+      "rank": 3,
+      "disagreement": false,
+      "rank_margin_frac": 0.089108,
+      "rank_borderline": true,
+      "recommended_estimator": "var_in_levels"
+    },
+    "immun_penta3": {
+      "outcome_id": "immun_penta3",
+      "verdict": "no_cointegration_ardl_fallback",
+      "n_observations": 26,
+      "system": ["Y", "log_oil", "fx"],
+      "K": 2,
+      "ecdet": "const",
+      "absent_from_system": [
+        "faac"
+      ],
+      "note": null,
+      "trace": [
+        {
+          "r": 0,
+          "teststat": 24.548229,
+          "cval": 34.91,
+          "exceeds": false
+        },
+        {
+          "r": 1,
+          "teststat": 8.014563,
+          "cval": 19.96,
+          "exceeds": false
+        },
+        {
+          "r": 2,
+          "teststat": 1.565417,
+          "cval": 9.24,
+          "exceeds": false
+        }
+      ],
+      "eigen": [
+        {
+          "r": 0,
+          "teststat": 16.533666,
+          "cval": 22,
+          "exceeds": false
+        },
+        {
+          "r": 1,
+          "teststat": 6.449146,
+          "cval": 15.67,
+          "exceeds": false
+        },
+        {
+          "r": 2,
+          "teststat": 1.565417,
+          "cval": 9.24,
+          "exceeds": false
+        }
+      ],
+      "rank_trace": 0,
+      "rank_eigen": 0,
+      "rank": 0,
+      "disagreement": false,
+      "rank_margin_frac": 0.296814,
+      "rank_borderline": false,
+      "recommended_estimator": "ardl_bounds"
+    },
+    "skilled_birth": {
+      "outcome_id": "skilled_birth",
+      "verdict": "not_run",
+      "note": "8 annual observations (minimum 20)"
+    },
+    "literacy_youth": {
+      "outcome_id": "literacy_youth",
+      "verdict": "not_run",
+      "note": "7 annual observations (minimum 20)"
+    },
+    "primary_completion": {
+      "outcome_id": "primary_completion",
+      "verdict": "not_run",
+      "note": "8 annual observations (minimum 20)"
+    },
+    "ner_primary": {
+      "outcome_id": "ner_primary",
+      "verdict": "not_run",
+      "note": "9 annual observations (minimum 20)"
+    },
+    "fatalities": {
+      "outcome_id": "fatalities",
+      "verdict": "not_run",
+      "note": "0 annual observations (minimum 20)"
+    },
+    "incidents": {
+      "outcome_id": "incidents",
+      "verdict": "not_run",
+      "note": "0 annual observations (minimum 20)"
+    },
+    "gdp_growth": {
+      "outcome_id": "gdp_growth",
+      "verdict": "no_cointegration_ardl_fallback",
+      "n_observations": 27,
+      "system": ["Y", "log_oil", "fx"],
+      "K": 2,
+      "ecdet": "const",
+      "absent_from_system": [
+        "faac"
+      ],
+      "note": null,
+      "trace": [
+        {
+          "r": 0,
+          "teststat": 25.728092,
+          "cval": 34.91,
+          "exceeds": false
+        },
+        {
+          "r": 1,
+          "teststat": 9.324927,
+          "cval": 19.96,
+          "exceeds": false
+        },
+        {
+          "r": 2,
+          "teststat": 3.371713,
+          "cval": 9.24,
+          "exceeds": false
+        }
+      ],
+      "eigen": [
+        {
+          "r": 0,
+          "teststat": 16.403165,
+          "cval": 22,
+          "exceeds": false
+        },
+        {
+          "r": 1,
+          "teststat": 5.953214,
+          "cval": 15.67,
+          "exceeds": false
+        },
+        {
+          "r": 2,
+          "teststat": 3.371713,
+          "cval": 9.24,
+          "exceeds": false
+        }
+      ],
+      "rank_trace": 0,
+      "rank_eigen": 0,
+      "rank": 0,
+      "disagreement": false,
+      "rank_margin_frac": 0.263017,
+      "rank_borderline": false,
+      "recommended_estimator": "ardl_bounds"
+    },
+    "cpi_yoy": {
+      "outcome_id": "cpi_yoy",
+      "verdict": "cointegrated",
+      "n_observations": 27,
+      "system": ["Y", "log_oil", "fx"],
+      "K": 2,
+      "ecdet": "const",
+      "absent_from_system": [
+        "faac"
+      ],
+      "note": null,
+      "trace": [
+        {
+          "r": 0,
+          "teststat": 48.34331,
+          "cval": 34.91,
+          "exceeds": true
+        },
+        {
+          "r": 1,
+          "teststat": 14.334774,
+          "cval": 19.96,
+          "exceeds": false
+        },
+        {
+          "r": 2,
+          "teststat": 6.26198,
+          "cval": 9.24,
+          "exceeds": false
+        }
+      ],
+      "eigen": [
+        {
+          "r": 0,
+          "teststat": 34.008535,
+          "cval": 22,
+          "exceeds": true
+        },
+        {
+          "r": 1,
+          "teststat": 8.072795,
+          "cval": 15.67,
+          "exceeds": false
+        },
+        {
+          "r": 2,
+          "teststat": 6.26198,
+          "cval": 9.24,
+          "exceeds": false
+        }
+      ],
+      "rank_trace": 1,
+      "rank_eigen": 1,
+      "rank": 1,
+      "disagreement": false,
+      "rank_margin_frac": 0.384798,
+      "rank_borderline": false,
+      "recommended_estimator": "vecm"
+    },
+    "unemp": {
+      "outcome_id": "unemp",
+      "verdict": "cointegrated",
+      "n_observations": 27,
+      "system": ["Y", "log_oil", "fx"],
+      "K": 2,
+      "ecdet": "const",
+      "absent_from_system": [
+        "faac"
+      ],
+      "note": null,
+      "trace": [
+        {
+          "r": 0,
+          "teststat": 46.806805,
+          "cval": 34.91,
+          "exceeds": true
+        },
+        {
+          "r": 1,
+          "teststat": 12.279612,
+          "cval": 19.96,
+          "exceeds": false
+        },
+        {
+          "r": 2,
+          "teststat": 4.27981,
+          "cval": 9.24,
+          "exceeds": false
+        }
+      ],
+      "eigen": [
+        {
+          "r": 0,
+          "teststat": 34.527193,
+          "cval": 22,
+          "exceeds": true
+        },
+        {
+          "r": 1,
+          "teststat": 7.999803,
+          "cval": 15.67,
+          "exceeds": false
+        },
+        {
+          "r": 2,
+          "teststat": 4.27981,
+          "cval": 9.24,
+          "exceeds": false
+        }
+      ],
+      "rank_trace": 1,
+      "rank_eigen": 1,
+      "rank": 1,
+      "disagreement": false,
+      "rank_margin_frac": 0.340785,
+      "rank_borderline": false,
+      "recommended_estimator": "vecm"
+    }
+  },
+  "shock_visibility": {
+    "1": {
+      "shock_id": 1,
+      "label": "Oil crash & recession",
+      "start_month": "2014-06-01",
+      "end_month": "2016-12-01",
+      "n_months": 31,
+      "visible_on": "oil",
+      "single_anchor_on": ["adult_literacy", "homicides", "literacy_youth"],
+      "not_visible_on": ["ner_primary", "primary_completion", "skilled_birth"],
+      "partial_on": ["cpi_yoy", "donor_oda", "educ_spend_gdp", "fx", "gdp_growth", "gdp_per_capita", "health_spend_gdp", "immun_penta3", "life_expectancy", "measles_imm", "mmr", "neonatal_mr", "oil_rents", "population", "u5mr", "unemp"],
+      "per_metric": {
+        "adult_literacy": {
+          "metric_id": "adult_literacy",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 30,
+          "n_months_in_band": 31,
+          "verdict": "single_anchor"
+        },
+        "cpi_yoy": {
+          "metric_id": "cpi_yoy",
+          "n_observed_in_band": 3,
+          "n_interpolated_in_band": 28,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 31,
+          "verdict": "partial"
+        },
+        "donor_oda": {
+          "metric_id": "donor_oda",
+          "n_observed_in_band": 3,
+          "n_interpolated_in_band": 28,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 31,
+          "verdict": "partial"
+        },
+        "educ_spend_gdp": {
+          "metric_id": "educ_spend_gdp",
+          "n_observed_in_band": 3,
+          "n_interpolated_in_band": 28,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 31,
+          "verdict": "partial"
+        },
+        "fx": {
+          "metric_id": "fx",
+          "n_observed_in_band": 3,
+          "n_interpolated_in_band": 28,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 31,
+          "verdict": "partial"
+        },
+        "gdp_growth": {
+          "metric_id": "gdp_growth",
+          "n_observed_in_band": 3,
+          "n_interpolated_in_band": 28,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 31,
+          "verdict": "partial"
+        },
+        "gdp_per_capita": {
+          "metric_id": "gdp_per_capita",
+          "n_observed_in_band": 3,
+          "n_interpolated_in_band": 28,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 31,
+          "verdict": "partial"
+        },
+        "health_spend_gdp": {
+          "metric_id": "health_spend_gdp",
+          "n_observed_in_band": 3,
+          "n_interpolated_in_band": 28,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 31,
+          "verdict": "partial"
+        },
+        "homicides": {
+          "metric_id": "homicides",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 30,
+          "n_months_in_band": 31,
+          "verdict": "single_anchor"
+        },
+        "immun_penta3": {
+          "metric_id": "immun_penta3",
+          "n_observed_in_band": 3,
+          "n_interpolated_in_band": 28,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 31,
+          "verdict": "partial"
+        },
+        "life_expectancy": {
+          "metric_id": "life_expectancy",
+          "n_observed_in_band": 3,
+          "n_interpolated_in_band": 28,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 31,
+          "verdict": "partial"
+        },
+        "literacy_youth": {
+          "metric_id": "literacy_youth",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 30,
+          "n_months_in_band": 31,
+          "verdict": "single_anchor"
+        },
+        "measles_imm": {
+          "metric_id": "measles_imm",
+          "n_observed_in_band": 3,
+          "n_interpolated_in_band": 28,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 31,
+          "verdict": "partial"
+        },
+        "mmr": {
+          "metric_id": "mmr",
+          "n_observed_in_band": 3,
+          "n_interpolated_in_band": 28,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 31,
+          "verdict": "partial"
+        },
+        "neonatal_mr": {
+          "metric_id": "neonatal_mr",
+          "n_observed_in_band": 3,
+          "n_interpolated_in_band": 28,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 31,
+          "verdict": "partial"
+        },
+        "ner_primary": {
+          "metric_id": "ner_primary",
+          "n_observed_in_band": 0,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 31,
+          "n_months_in_band": 31,
+          "verdict": "not_visible"
+        },
+        "oil": {
+          "metric_id": "oil",
+          "n_observed_in_band": 31,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 31,
+          "verdict": "visible"
+        },
+        "oil_rents": {
+          "metric_id": "oil_rents",
+          "n_observed_in_band": 3,
+          "n_interpolated_in_band": 28,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 31,
+          "verdict": "partial"
+        },
+        "population": {
+          "metric_id": "population",
+          "n_observed_in_band": 3,
+          "n_interpolated_in_band": 28,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 31,
+          "verdict": "partial"
+        },
+        "primary_completion": {
+          "metric_id": "primary_completion",
+          "n_observed_in_band": 0,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 31,
+          "n_months_in_band": 31,
+          "verdict": "not_visible"
+        },
+        "skilled_birth": {
+          "metric_id": "skilled_birth",
+          "n_observed_in_band": 0,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 31,
+          "n_months_in_band": 31,
+          "verdict": "not_visible"
+        },
+        "u5mr": {
+          "metric_id": "u5mr",
+          "n_observed_in_band": 3,
+          "n_interpolated_in_band": 28,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 31,
+          "verdict": "partial"
+        },
+        "unemp": {
+          "metric_id": "unemp",
+          "n_observed_in_band": 3,
+          "n_interpolated_in_band": 28,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 31,
+          "verdict": "partial"
+        }
+      }
+    },
+    "2": {
+      "shock_id": 2,
+      "label": "COVID-19",
+      "start_month": "2020-03-01",
+      "end_month": "2020-12-01",
+      "n_months": 10,
+      "visible_on": "oil",
+      "single_anchor_on": ["cpi_yoy", "donor_oda", "educ_spend_gdp", "fx", "gdp_growth", "gdp_per_capita", "health_spend_gdp", "immun_penta3", "life_expectancy", "measles_imm", "mmr", "neonatal_mr", "oil_rents", "population", "u5mr", "unemp"],
+      "not_visible_on": ["adult_literacy", "homicides", "literacy_youth", "ner_primary", "primary_completion", "skilled_birth"],
+      "partial_on": [],
+      "per_metric": {
+        "adult_literacy": {
+          "metric_id": "adult_literacy",
+          "n_observed_in_band": 0,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 10,
+          "n_months_in_band": 10,
+          "verdict": "not_visible"
+        },
+        "cpi_yoy": {
+          "metric_id": "cpi_yoy",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 9,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 10,
+          "verdict": "single_anchor"
+        },
+        "donor_oda": {
+          "metric_id": "donor_oda",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 9,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 10,
+          "verdict": "single_anchor"
+        },
+        "educ_spend_gdp": {
+          "metric_id": "educ_spend_gdp",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 9,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 10,
+          "verdict": "single_anchor"
+        },
+        "fx": {
+          "metric_id": "fx",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 9,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 10,
+          "verdict": "single_anchor"
+        },
+        "gdp_growth": {
+          "metric_id": "gdp_growth",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 9,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 10,
+          "verdict": "single_anchor"
+        },
+        "gdp_per_capita": {
+          "metric_id": "gdp_per_capita",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 9,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 10,
+          "verdict": "single_anchor"
+        },
+        "health_spend_gdp": {
+          "metric_id": "health_spend_gdp",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 9,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 10,
+          "verdict": "single_anchor"
+        },
+        "homicides": {
+          "metric_id": "homicides",
+          "n_observed_in_band": 0,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 10,
+          "n_months_in_band": 10,
+          "verdict": "not_visible"
+        },
+        "immun_penta3": {
+          "metric_id": "immun_penta3",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 9,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 10,
+          "verdict": "single_anchor"
+        },
+        "life_expectancy": {
+          "metric_id": "life_expectancy",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 9,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 10,
+          "verdict": "single_anchor"
+        },
+        "literacy_youth": {
+          "metric_id": "literacy_youth",
+          "n_observed_in_band": 0,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 10,
+          "n_months_in_band": 10,
+          "verdict": "not_visible"
+        },
+        "measles_imm": {
+          "metric_id": "measles_imm",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 9,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 10,
+          "verdict": "single_anchor"
+        },
+        "mmr": {
+          "metric_id": "mmr",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 9,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 10,
+          "verdict": "single_anchor"
+        },
+        "neonatal_mr": {
+          "metric_id": "neonatal_mr",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 9,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 10,
+          "verdict": "single_anchor"
+        },
+        "ner_primary": {
+          "metric_id": "ner_primary",
+          "n_observed_in_band": 0,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 10,
+          "n_months_in_band": 10,
+          "verdict": "not_visible"
+        },
+        "oil": {
+          "metric_id": "oil",
+          "n_observed_in_band": 10,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 10,
+          "verdict": "visible"
+        },
+        "oil_rents": {
+          "metric_id": "oil_rents",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 9,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 10,
+          "verdict": "single_anchor"
+        },
+        "population": {
+          "metric_id": "population",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 9,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 10,
+          "verdict": "single_anchor"
+        },
+        "primary_completion": {
+          "metric_id": "primary_completion",
+          "n_observed_in_band": 0,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 10,
+          "n_months_in_band": 10,
+          "verdict": "not_visible"
+        },
+        "skilled_birth": {
+          "metric_id": "skilled_birth",
+          "n_observed_in_band": 0,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 10,
+          "n_months_in_band": 10,
+          "verdict": "not_visible"
+        },
+        "u5mr": {
+          "metric_id": "u5mr",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 9,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 10,
+          "verdict": "single_anchor"
+        },
+        "unemp": {
+          "metric_id": "unemp",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 9,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 10,
+          "verdict": "single_anchor"
+        }
+      }
+    },
+    "3": {
+      "shock_id": 3,
+      "label": "Fuel subsidy removal & naira float",
+      "start_month": "2023-06-01",
+      "end_month": "2023-12-01",
+      "n_months": 7,
+      "visible_on": "oil",
+      "single_anchor_on": ["cpi_yoy", "donor_oda", "educ_spend_gdp", "fx", "gdp_growth", "gdp_per_capita", "health_spend_gdp", "homicides", "immun_penta3", "life_expectancy", "measles_imm", "mmr", "neonatal_mr", "population", "u5mr", "unemp"],
+      "not_visible_on": ["adult_literacy", "literacy_youth", "ner_primary", "oil_rents", "primary_completion", "skilled_birth"],
+      "partial_on": [],
+      "per_metric": {
+        "adult_literacy": {
+          "metric_id": "adult_literacy",
+          "n_observed_in_band": 0,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 7,
+          "n_months_in_band": 7,
+          "verdict": "not_visible"
+        },
+        "cpi_yoy": {
+          "metric_id": "cpi_yoy",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 6,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 7,
+          "verdict": "single_anchor"
+        },
+        "donor_oda": {
+          "metric_id": "donor_oda",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 1,
+          "n_unobserved_in_band": 5,
+          "n_months_in_band": 7,
+          "verdict": "single_anchor"
+        },
+        "educ_spend_gdp": {
+          "metric_id": "educ_spend_gdp",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 1,
+          "n_unobserved_in_band": 5,
+          "n_months_in_band": 7,
+          "verdict": "single_anchor"
+        },
+        "fx": {
+          "metric_id": "fx",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 6,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 7,
+          "verdict": "single_anchor"
+        },
+        "gdp_growth": {
+          "metric_id": "gdp_growth",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 6,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 7,
+          "verdict": "single_anchor"
+        },
+        "gdp_per_capita": {
+          "metric_id": "gdp_per_capita",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 6,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 7,
+          "verdict": "single_anchor"
+        },
+        "health_spend_gdp": {
+          "metric_id": "health_spend_gdp",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 1,
+          "n_unobserved_in_band": 5,
+          "n_months_in_band": 7,
+          "verdict": "single_anchor"
+        },
+        "homicides": {
+          "metric_id": "homicides",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 6,
+          "n_months_in_band": 7,
+          "verdict": "single_anchor"
+        },
+        "immun_penta3": {
+          "metric_id": "immun_penta3",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 6,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 7,
+          "verdict": "single_anchor"
+        },
+        "life_expectancy": {
+          "metric_id": "life_expectancy",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 6,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 7,
+          "verdict": "single_anchor"
+        },
+        "literacy_youth": {
+          "metric_id": "literacy_youth",
+          "n_observed_in_band": 0,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 7,
+          "n_months_in_band": 7,
+          "verdict": "not_visible"
+        },
+        "measles_imm": {
+          "metric_id": "measles_imm",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 6,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 7,
+          "verdict": "single_anchor"
+        },
+        "mmr": {
+          "metric_id": "mmr",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 1,
+          "n_unobserved_in_band": 5,
+          "n_months_in_band": 7,
+          "verdict": "single_anchor"
+        },
+        "neonatal_mr": {
+          "metric_id": "neonatal_mr",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 6,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 7,
+          "verdict": "single_anchor"
+        },
+        "ner_primary": {
+          "metric_id": "ner_primary",
+          "n_observed_in_band": 0,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 7,
+          "n_months_in_band": 7,
+          "verdict": "not_visible"
+        },
+        "oil": {
+          "metric_id": "oil",
+          "n_observed_in_band": 7,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 7,
+          "verdict": "visible"
+        },
+        "oil_rents": {
+          "metric_id": "oil_rents",
+          "n_observed_in_band": 0,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 7,
+          "n_months_in_band": 7,
+          "verdict": "not_visible"
+        },
+        "population": {
+          "metric_id": "population",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 6,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 7,
+          "verdict": "single_anchor"
+        },
+        "primary_completion": {
+          "metric_id": "primary_completion",
+          "n_observed_in_band": 0,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 7,
+          "n_months_in_band": 7,
+          "verdict": "not_visible"
+        },
+        "skilled_birth": {
+          "metric_id": "skilled_birth",
+          "n_observed_in_band": 0,
+          "n_interpolated_in_band": 0,
+          "n_unobserved_in_band": 7,
+          "n_months_in_band": 7,
+          "verdict": "not_visible"
+        },
+        "u5mr": {
+          "metric_id": "u5mr",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 6,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 7,
+          "verdict": "single_anchor"
+        },
+        "unemp": {
+          "metric_id": "unemp",
+          "n_observed_in_band": 1,
+          "n_interpolated_in_band": 6,
+          "n_unobserved_in_band": 0,
+          "n_months_in_band": 7,
+          "verdict": "single_anchor"
+        }
+      }
+    }
+  },
+  "dose": {
+    "table": "state_panel",
+    "n_rows": 12358,
+    "n_states": 37,
+    "dose_status_values": [
+      {
+        "dose_status": "declared_gap",
+        "n": 8218
+      },
+      {
+        "dose_status": "observed",
+        "n": 4104
+      },
+      {
+        "dose_status": "not_covered",
+        "n": 36
+      }
+    ],
+    "axes": {
+      "D1": {
+        "id": "D1",
+        "label": "FAAC allocation per capita",
+        "column": "d1_faac_per_capita",
+        "verdict": "absent",
+        "n_rows": 12358,
+        "n_non_null": 0,
+        "coverage_fraction": 0,
+        "n_states_with_dose": 0,
+        "n_distinct_values": 0,
+        "min_months_per_state": 0,
+        "max_months_per_state": 0,
+        "note": "column exists and is typed, but no value has landed — the Stage 4 declared gap, not a null result"
+      },
+      "D1_nominal": {
+        "id": "D1_nominal",
+        "label": "FAAC gross allocation, nominal naira",
+        "column": "faac_gross_total_naira",
+        "verdict": "pass",
+        "n_rows": 12358,
+        "n_non_null": 4104,
+        "coverage_fraction": 0.332093,
+        "n_states_with_dose": 36,
+        "n_distinct_values": 4068,
+        "min_months_per_state": 0,
+        "max_months_per_state": 114,
+        "note": null
+      },
+      "D2": {
+        "id": "D2",
+        "label": "FAAC share of state revenue",
+        "column": "d2_faac_share_of_state_revenue",
+        "verdict": "absent",
+        "n_rows": 12358,
+        "n_non_null": 0,
+        "coverage_fraction": 0,
+        "n_states_with_dose": 0,
+        "n_distinct_values": 0,
+        "min_months_per_state": 0,
+        "max_months_per_state": 0,
+        "note": "column exists and is typed, but no value has landed — the Stage 4 declared gap, not a null result"
+      },
+      "D3": {
+        "id": "D3",
+        "label": "FX / import intensity of the consumption basket",
+        "column": null,
+        "verdict": "not_built",
+        "n_non_null": 0,
+        "note": "constructed; not built, and flagged constructed by design spec section 5.1"
+      }
+    },
+    "specified_axis": "D1",
+    "specified_axis_present": false,
+    "present_axes": ["D1_nominal"],
+    "axis_verdicts": "D1=absent, D1_nominal=pass, D2=absent, D3=not_built",
+    "state_outcomes": {
+      "fatalities": {
+        "column": "fatalities",
+        "n_non_null": 0,
+        "verdict": "absent"
+      },
+      "incidents": {
+        "column": "incidents",
+        "n_non_null": 0,
+        "verdict": "absent"
+      }
+    },
+    "any_dose_present": true,
+    "any_state_outcome_present": false,
+    "verdict": "fail",
+    "blockers": ["specified_dose_axis_absent:D1", "no_state_attributed_outcome"],
+    "vif_across_doses_computable": false
+  },
+  "prefit": {
+    "u5mr": {
+      "outcome_id": "u5mr",
+      "verdict": "infeasible_weak_pre_fit",
+      "n_donors_available": 13,
+      "predictors": ["cpi_yoy", "gdp_growth", "oil_rents", "population"],
+      "windows": {
+        "obasanjo": {
+          "window": "obasanjo",
+          "verdict": "not_run",
+          "pre_years": 0,
+          "post_years": 26,
+          "note": "needs >= 8 pre and >= 2 post years"
+        },
+        "yaradua": {
+          "window": "yaradua",
+          "from": "2007-05-29",
+          "verdict": "weak_fit",
+          "pre_rmse": 10.176185,
+          "pre_sd": 15.18599,
+          "ratio": 0.670104,
+          "threshold": 0.1,
+          "solver": "simplex_qp (quadprog) - globally optimal weights for the pre-treatment path",
+          "best_single_donor_rmse": 10.522238,
+          "rmse_vs_best_single_donor": 0.967112,
+          "donor_mean_interval": [20.0625, 158.8],
+          "treated_mean": 161.35,
+          "treated_outside_donor_mean_interval": true,
+          "level_gap": 2.55,
+          "rmse_on_differences": 0.117732,
+          "sd_of_differences": 0.663325,
+          "ratio_on_differences": 0.177488,
+          "synth_v_optimized_rmse": 25.031003,
+          "synth_beats_best_single_donor": false,
+          "weights": [0.916172, 0.083828, -0, -0, 0, 0, -0, -0, -0, -0, 0, -0, 0],
+          "n_donors_used": 13,
+          "donors_dropped_for_incomplete_path": [],
+          "n_donors_with_weight": 2,
+          "predictors_used": ["gdp_growth", "oil_rents", "population"],
+          "balanced_predictor_years": {
+            "gdp_growth": {
+              "first": 1999,
+              "last": 2006,
+              "n": 8
+            },
+            "oil_rents": {
+              "first": 1999,
+              "last": 2006,
+              "n": 8
+            },
+            "population": {
+              "first": 1999,
+              "last": 2006,
+              "n": 8
+            }
+          },
+          "n_predictors": 3,
+          "pre_years": 8,
+          "post_years": 18
+        },
+        "jonathan": {
+          "window": "jonathan",
+          "from": "2010-05-06",
+          "verdict": "weak_fit",
+          "pre_rmse": 18.818763,
+          "pre_sd": 18.514176,
+          "ratio": 1.016452,
+          "threshold": 0.1,
+          "solver": "simplex_qp (quadprog) - globally optimal weights for the pre-treatment path",
+          "best_single_donor_rmse": 19.617084,
+          "rmse_vs_best_single_donor": 0.959305,
+          "donor_mean_interval": [19.290909, 142.663636],
+          "treated_mean": 153.545455,
+          "treated_outside_donor_mean_interval": true,
+          "level_gap": 10.881818,
+          "rmse_on_differences": 0.224539,
+          "sd_of_differences": 1.221293,
+          "ratio_on_differences": 0.183854,
+          "synth_v_optimized_rmse": 32.984267,
+          "synth_beats_best_single_donor": false,
+          "weights": [0.800506, 0.199494, -0, 0, 0, 0, -0, -0, -0, -0, 0, 0, -0],
+          "n_donors_used": 13,
+          "donors_dropped_for_incomplete_path": [],
+          "n_donors_with_weight": 2,
+          "predictors_used": ["gdp_growth", "oil_rents", "population"],
+          "balanced_predictor_years": {
+            "gdp_growth": {
+              "first": 1999,
+              "last": 2009,
+              "n": 11
+            },
+            "oil_rents": {
+              "first": 1999,
+              "last": 2009,
+              "n": 11
+            },
+            "population": {
+              "first": 1999,
+              "last": 2009,
+              "n": 11
+            }
+          },
+          "n_predictors": 3,
+          "pre_years": 11,
+          "post_years": 15
+        },
+        "buhari": {
+          "window": "buhari",
+          "from": "2015-05-29",
+          "verdict": "weak_fit",
+          "pre_rmse": 26.985516,
+          "pre_sd": 21.40503,
+          "ratio": 1.260709,
+          "threshold": 0.1,
+          "solver": "simplex_qp (quadprog) - globally optimal weights for the pre-treatment path",
+          "best_single_donor_rmse": 28.462344,
+          "rmse_vs_best_single_donor": 0.948113,
+          "donor_mean_interval": [18.7875, 120.89375],
+          "treated_mean": 143.70625,
+          "treated_outside_donor_mean_interval": true,
+          "level_gap": 22.8125,
+          "rmse_on_differences": 0.308889,
+          "sd_of_differences": 1.93445,
+          "ratio_on_differences": 0.159678,
+          "synth_v_optimized_rmse": 38.105823,
+          "synth_beats_best_single_donor": false,
+          "weights": [0.345652, 0.654348, -0, -0, -0, -0, -0, 0, 0, 0, -0, -0, -0],
+          "n_donors_used": 13,
+          "donors_dropped_for_incomplete_path": [],
+          "n_donors_with_weight": 2,
+          "predictors_used": ["cpi_yoy", "gdp_growth", "oil_rents", "population"],
+          "balanced_predictor_years": {
+            "cpi_yoy": {
+              "first": 2009,
+              "last": 2014,
+              "n": 6
+            },
+            "gdp_growth": {
+              "first": 1999,
+              "last": 2014,
+              "n": 16
+            },
+            "oil_rents": {
+              "first": 1999,
+              "last": 2014,
+              "n": 16
+            },
+            "population": {
+              "first": 1999,
+              "last": 2014,
+              "n": 16
+            }
+          },
+          "n_predictors": 4,
+          "pre_years": 16,
+          "post_years": 10
+        },
+        "tinubu": {
+          "window": "tinubu",
+          "from": "2023-05-29",
+          "verdict": "weak_fit",
+          "pre_rmse": 33.163208,
+          "pre_sd": 21.420388,
+          "ratio": 1.548208,
+          "threshold": 0.1,
+          "solver": "simplex_qp (quadprog) - globally optimal weights for the pre-treatment path",
+          "best_single_donor_rmse": 33.163208,
+          "rmse_vs_best_single_donor": 1,
+          "donor_mean_interval": [18.329167, 102.725],
+          "treated_mean": 134.95,
+          "treated_outside_donor_mean_interval": true,
+          "level_gap": 32.225,
+          "rmse_on_differences": 0.76846,
+          "sd_of_differences": 2.561288,
+          "ratio_on_differences": 0.300029,
+          "synth_v_optimized_rmse": 62.847251,
+          "synth_beats_best_single_donor": false,
+          "weights": [-0, 1, 0, 0, 0, 0, -0, 0, 0, 0, -0, 0, 0],
+          "n_donors_used": 13,
+          "donors_dropped_for_incomplete_path": [],
+          "n_donors_with_weight": 1,
+          "predictors_used": ["cpi_yoy", "gdp_growth", "oil_rents", "population"],
+          "balanced_predictor_years": {
+            "cpi_yoy": {
+              "first": 2009,
+              "last": 2016,
+              "n": 8
+            },
+            "gdp_growth": {
+              "first": 1999,
+              "last": 2022,
+              "n": 24
+            },
+            "oil_rents": {
+              "first": 1999,
+              "last": 2014,
+              "n": 16
+            },
+            "population": {
+              "first": 1999,
+              "last": 2022,
+              "n": 24
+            }
+          },
+          "n_predictors": 4,
+          "pre_years": 24,
+          "post_years": 2
+        }
+      },
+      "note": null
+    },
+    "mmr": {
+      "outcome_id": "mmr",
+      "verdict": "not_attempted",
+      "note": "outcome mmr is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    },
+    "immun_penta3": {
+      "outcome_id": "immun_penta3",
+      "verdict": "not_attempted",
+      "note": "outcome immun_penta3 is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    },
+    "skilled_birth": {
+      "outcome_id": "skilled_birth",
+      "verdict": "not_attempted",
+      "note": "outcome skilled_birth is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    },
+    "literacy_youth": {
+      "outcome_id": "literacy_youth",
+      "verdict": "not_attempted",
+      "note": "outcome literacy_youth is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    },
+    "primary_completion": {
+      "outcome_id": "primary_completion",
+      "verdict": "not_attempted",
+      "note": "outcome primary_completion is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    },
+    "ner_primary": {
+      "outcome_id": "ner_primary",
+      "verdict": "not_attempted",
+      "note": "outcome ner_primary is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    },
+    "fatalities": {
+      "outcome_id": "fatalities",
+      "verdict": "not_attempted",
+      "note": "outcome fatalities is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    },
+    "incidents": {
+      "outcome_id": "incidents",
+      "verdict": "not_attempted",
+      "note": "outcome incidents is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    },
+    "gdp_growth": {
+      "outcome_id": "gdp_growth",
+      "verdict": "infeasible_weak_pre_fit",
+      "n_donors_available": 13,
+      "predictors": ["cpi_yoy", "oil_rents", "population", "u5mr"],
+      "windows": {
+        "obasanjo": {
+          "window": "obasanjo",
+          "verdict": "not_run",
+          "pre_years": 0,
+          "post_years": 27,
+          "note": "needs >= 8 pre and >= 2 post years"
+        },
+        "yaradua": {
+          "window": "yaradua",
+          "from": "2007-05-29",
+          "verdict": "weak_fit",
+          "pre_rmse": 2.832766,
+          "pre_sd": 4.175289,
+          "ratio": 0.67846,
+          "threshold": 0.1,
+          "solver": "simplex_qp (quadprog) - globally optimal weights for the pre-treatment path",
+          "best_single_donor_rmse": 3.376802,
+          "rmse_vs_best_single_donor": 0.83889,
+          "donor_mean_interval": [-0.765361, 8.001447],
+          "treated_mean": 6.992825,
+          "treated_outside_donor_mean_interval": false,
+          "level_gap": 0,
+          "rmse_on_differences": 2.625091,
+          "sd_of_differences": 5.479248,
+          "ratio_on_differences": 0.479097,
+          "synth_v_optimized_rmse": 3.054966,
+          "synth_beats_best_single_donor": true,
+          "weights": [0.440793, 0, -0, 0.179407, 0.087439, 0, -0, 0, 0, -0, 0.292361, 0, -0],
+          "n_donors_used": 13,
+          "donors_dropped_for_incomplete_path": [],
+          "n_donors_with_weight": 4,
+          "predictors_used": ["oil_rents", "population", "u5mr"],
+          "balanced_predictor_years": {
+            "oil_rents": {
+              "first": 1999,
+              "last": 2006,
+              "n": 8
+            },
+            "population": {
+              "first": 1999,
+              "last": 2006,
+              "n": 8
+            },
+            "u5mr": {
+              "first": 1999,
+              "last": 2006,
+              "n": 8
+            }
+          },
+          "n_predictors": 3,
+          "pre_years": 8,
+          "post_years": 19
+        },
+        "jonathan": {
+          "window": "jonathan",
+          "from": "2010-05-06",
+          "verdict": "weak_fit",
+          "pre_rmse": 2.788303,
+          "pre_sd": 3.511685,
+          "ratio": 0.794007,
+          "threshold": 0.1,
+          "solver": "simplex_qp (quadprog) - globally optimal weights for the pre-treatment path",
+          "best_single_donor_rmse": 3.016271,
+          "rmse_vs_best_single_donor": 0.92442,
+          "donor_mean_interval": [-0.299353, 8.163317],
+          "treated_mean": 7.030466,
+          "treated_outside_donor_mean_interval": false,
+          "level_gap": 0,
+          "rmse_on_differences": 3.151111,
+          "sd_of_differences": 4.481978,
+          "ratio_on_differences": 0.703063,
+          "synth_v_optimized_rmse": 3.119381,
+          "synth_beats_best_single_donor": false,
+          "weights": [0.245248, 0, -0, -0, 0.07631, 0, -0, 0, -0, 0, 0.678442, 0, -0],
+          "n_donors_used": 13,
+          "donors_dropped_for_incomplete_path": [],
+          "n_donors_with_weight": 3,
+          "predictors_used": ["oil_rents", "population", "u5mr"],
+          "balanced_predictor_years": {
+            "oil_rents": {
+              "first": 1999,
+              "last": 2009,
+              "n": 11
+            },
+            "population": {
+              "first": 1999,
+              "last": 2009,
+              "n": 11
+            },
+            "u5mr": {
+              "first": 1999,
+              "last": 2009,
+              "n": 11
+            }
+          },
+          "n_predictors": 3,
+          "pre_years": 11,
+          "post_years": 16
+        },
+        "buhari": {
+          "window": "buhari",
+          "from": "2015-05-29",
+          "verdict": "weak_fit",
+          "pre_rmse": 2.418431,
+          "pre_sd": 2.993212,
+          "ratio": 0.807972,
+          "threshold": 0.1,
+          "solver": "simplex_qp (quadprog) - globally optimal weights for the pre-treatment path",
+          "best_single_donor_rmse": 2.606677,
+          "rmse_vs_best_single_donor": 0.927783,
+          "donor_mean_interval": [1.630844, 7.295371],
+          "treated_mean": 6.741239,
+          "treated_outside_donor_mean_interval": false,
+          "level_gap": 0,
+          "rmse_on_differences": 2.86492,
+          "sd_of_differences": 3.767276,
+          "ratio_on_differences": 0.760475,
+          "synth_v_optimized_rmse": 2.47227,
+          "synth_beats_best_single_donor": true,
+          "weights": [0.234382, 0, 0, 0, 0.033164, 0, 0, 0, 0, 0, 0.732454, 0, 0],
+          "n_donors_used": 13,
+          "donors_dropped_for_incomplete_path": [],
+          "n_donors_with_weight": 3,
+          "predictors_used": ["cpi_yoy", "oil_rents", "population", "u5mr"],
+          "balanced_predictor_years": {
+            "cpi_yoy": {
+              "first": 2009,
+              "last": 2014,
+              "n": 6
+            },
+            "oil_rents": {
+              "first": 1999,
+              "last": 2014,
+              "n": 16
+            },
+            "population": {
+              "first": 1999,
+              "last": 2014,
+              "n": 16
+            },
+            "u5mr": {
+              "first": 1999,
+              "last": 2014,
+              "n": 16
+            }
+          },
+          "n_predictors": 4,
+          "pre_years": 16,
+          "post_years": 11
+        },
+        "tinubu": {
+          "window": "tinubu",
+          "from": "2023-05-29",
+          "verdict": "weak_fit",
+          "pre_rmse": 2.440092,
+          "pre_sd": 4.221037,
+          "ratio": 0.578079,
+          "threshold": 0.1,
+          "solver": "simplex_qp (quadprog) - globally optimal weights for the pre-treatment path",
+          "best_single_donor_rmse": 3.401633,
+          "rmse_vs_best_single_donor": 0.71733,
+          "donor_mean_interval": [-2.831613, 5.934074],
+          "treated_mean": 4.703829,
+          "treated_outside_donor_mean_interval": false,
+          "level_gap": 0,
+          "rmse_on_differences": 2.69382,
+          "sd_of_differences": 4.149856,
+          "ratio_on_differences": 0.649136,
+          "synth_v_optimized_rmse": 2.553551,
+          "synth_beats_best_single_donor": true,
+          "weights": [0.449162, -0, -0, 0.19861, 0.126838, 0, -0, -0, -0, -0, 0.22539, -0, -0],
+          "n_donors_used": 13,
+          "donors_dropped_for_incomplete_path": [],
+          "n_donors_with_weight": 4,
+          "predictors_used": ["cpi_yoy", "oil_rents", "population", "u5mr"],
+          "balanced_predictor_years": {
+            "cpi_yoy": {
+              "first": 2009,
+              "last": 2016,
+              "n": 8
+            },
+            "oil_rents": {
+              "first": 1999,
+              "last": 2014,
+              "n": 16
+            },
+            "population": {
+              "first": 1999,
+              "last": 2022,
+              "n": 24
+            },
+            "u5mr": {
+              "first": 1999,
+              "last": 2022,
+              "n": 24
+            }
+          },
+          "n_predictors": 4,
+          "pre_years": 24,
+          "post_years": 3
+        }
+      },
+      "note": null
+    },
+    "cpi_yoy": {
+      "outcome_id": "cpi_yoy",
+      "verdict": "infeasible_weak_pre_fit",
+      "n_donors_available": 13,
+      "predictors": ["gdp_growth", "oil_rents", "population", "u5mr"],
+      "windows": {
+        "obasanjo": {
+          "window": "obasanjo",
+          "verdict": "not_run",
+          "pre_years": 0,
+          "post_years": 27,
+          "note": "needs >= 8 pre and >= 2 post years"
+        },
+        "yaradua": {
+          "window": "yaradua",
+          "from": "2007-05-29",
+          "verdict": "weak_fit",
+          "pre_rmse": 4.798392,
+          "pre_sd": 4.809708,
+          "ratio": 0.997647,
+          "threshold": 0.1,
+          "solver": "simplex_qp (quadprog) - globally optimal weights for the pre-treatment path",
+          "best_single_donor_rmse": 7.302933,
+          "rmse_vs_best_single_donor": 0.65705,
+          "donor_mean_interval": [0.710639, 126.584526],
+          "treated_mean": 12.55283,
+          "treated_outside_donor_mean_interval": false,
+          "level_gap": 0,
+          "rmse_on_differences": 4.407674,
+          "sd_of_differences": 6.850776,
+          "ratio_on_differences": 0.643383,
+          "synth_v_optimized_rmse": 43.359331,
+          "synth_beats_best_single_donor": false,
+          "weights": [0, 0, 0, -0, -0, 0.148495, 0.264719, 0.455857, 0.130928, -0, -0, -0],
+          "n_donors_used": 12,
+          "donors_dropped_for_incomplete_path": [
+            "VEN"
+          ],
+          "n_donors_with_weight": 4,
+          "predictors_used": ["gdp_growth", "oil_rents", "population", "u5mr"],
+          "balanced_predictor_years": {
+            "gdp_growth": {
+              "first": 1999,
+              "last": 2006,
+              "n": 8
+            },
+            "oil_rents": {
+              "first": 1999,
+              "last": 2006,
+              "n": 8
+            },
+            "population": {
+              "first": 1999,
+              "last": 2006,
+              "n": 8
+            },
+            "u5mr": {
+              "first": 1999,
+              "last": 2006,
+              "n": 8
+            }
+          },
+          "n_predictors": 4,
+          "pre_years": 8,
+          "post_years": 19
+        },
+        "jonathan": {
+          "window": "jonathan",
+          "from": "2010-05-06",
+          "verdict": "weak_fit",
+          "pre_rmse": 4.320853,
+          "pre_sd": 4.562841,
+          "ratio": 0.946965,
+          "threshold": 0.1,
+          "solver": "simplex_qp (quadprog) - globally optimal weights for the pre-treatment path",
+          "best_single_donor_rmse": 6.998285,
+          "rmse_vs_best_single_donor": 0.617416,
+          "donor_mean_interval": [1.624131, 95.55762],
+          "treated_mean": 11.811793,
+          "treated_outside_donor_mean_interval": false,
+          "level_gap": 0,
+          "rmse_on_differences": 4.218467,
+          "sd_of_differences": 6.017121,
+          "ratio_on_differences": 0.701077,
+          "synth_v_optimized_rmse": 34.543571,
+          "synth_beats_best_single_donor": false,
+          "weights": [0, -0, -0, 0.187225, -0, 0.019016, 0.283784, 0.42865, 0.081325, 0, 0, 0],
+          "n_donors_used": 12,
+          "donors_dropped_for_incomplete_path": [
+            "VEN"
+          ],
+          "n_donors_with_weight": 5,
+          "predictors_used": ["gdp_growth", "oil_rents", "population", "u5mr"],
+          "balanced_predictor_years": {
+            "gdp_growth": {
+              "first": 1999,
+              "last": 2009,
+              "n": 11
+            },
+            "oil_rents": {
+              "first": 1999,
+              "last": 2009,
+              "n": 11
+            },
+            "population": {
+              "first": 1999,
+              "last": 2009,
+              "n": 11
+            },
+            "u5mr": {
+              "first": 1999,
+              "last": 2009,
+              "n": 11
+            }
+          },
+          "n_predictors": 4,
+          "pre_years": 11,
+          "post_years": 16
+        },
+        "buhari": {
+          "window": "buhari",
+          "from": "2015-05-29",
+          "verdict": "weak_fit",
+          "pre_rmse": 4.104023,
+          "pre_sd": 3.967991,
+          "ratio": 1.034282,
+          "threshold": 0.1,
+          "solver": "simplex_qp (quadprog) - globally optimal weights for the pre-treatment path",
+          "best_single_donor_rmse": 6.51157,
+          "rmse_vs_best_single_donor": 0.630266,
+          "donor_mean_interval": [1.736253, 69.088878],
+          "treated_mean": 11.453943,
+          "treated_outside_donor_mean_interval": false,
+          "level_gap": 0,
+          "rmse_on_differences": 3.743659,
+          "sd_of_differences": 5.037109,
+          "ratio_on_differences": 0.743216,
+          "synth_v_optimized_rmse": 30.486537,
+          "synth_beats_best_single_donor": false,
+          "weights": [0, -0, -0, 0, -0, -0, 0.282873, 0.321495, 0.000651, 0, 0.39498, -0],
+          "n_donors_used": 12,
+          "donors_dropped_for_incomplete_path": [
+            "VEN"
+          ],
+          "n_donors_with_weight": 4,
+          "predictors_used": ["gdp_growth", "oil_rents", "population", "u5mr"],
+          "balanced_predictor_years": {
+            "gdp_growth": {
+              "first": 1999,
+              "last": 2014,
+              "n": 16
+            },
+            "oil_rents": {
+              "first": 1999,
+              "last": 2014,
+              "n": 16
+            },
+            "population": {
+              "first": 1999,
+              "last": 2014,
+              "n": 16
+            },
+            "u5mr": {
+              "first": 1999,
+              "last": 2014,
+              "n": 16
+            }
+          },
+          "n_predictors": 4,
+          "pre_years": 16,
+          "post_years": 11
+        },
+        "tinubu": {
+          "window": "tinubu",
+          "from": "2023-05-29",
+          "verdict": "weak_fit",
+          "pre_rmse": 5.294742,
+          "pre_sd": 3.921979,
+          "ratio": 1.350018,
+          "threshold": 0.1,
+          "solver": "simplex_qp (quadprog) - globally optimal weights for the pre-treatment path",
+          "best_single_donor_rmse": 7.522115,
+          "rmse_vs_best_single_donor": 0.70389,
+          "donor_mean_interval": [1.946337, 53.391997],
+          "treated_mean": 12.375383,
+          "treated_outside_donor_mean_interval": false,
+          "level_gap": 0,
+          "rmse_on_differences": 3.530645,
+          "sd_of_differences": 4.450768,
+          "ratio_on_differences": 0.793266,
+          "synth_v_optimized_rmse": 7.981908,
+          "synth_beats_best_single_donor": false,
+          "weights": [0, 0, 0, 0.318214, 0, -0, 0.396221, 0.08727, 0.171392, -0, 0.026902, -0],
+          "n_donors_used": 12,
+          "donors_dropped_for_incomplete_path": [
+            "VEN"
+          ],
+          "n_donors_with_weight": 5,
+          "predictors_used": ["gdp_growth", "oil_rents", "population", "u5mr"],
+          "balanced_predictor_years": {
+            "gdp_growth": {
+              "first": 1999,
+              "last": 2022,
+              "n": 24
+            },
+            "oil_rents": {
+              "first": 1999,
+              "last": 2021,
+              "n": 23
+            },
+            "population": {
+              "first": 1999,
+              "last": 2022,
+              "n": 24
+            },
+            "u5mr": {
+              "first": 1999,
+              "last": 2022,
+              "n": 24
+            }
+          },
+          "n_predictors": 4,
+          "pre_years": 24,
+          "post_years": 3
+        }
+      },
+      "note": null
+    },
+    "unemp": {
+      "outcome_id": "unemp",
+      "verdict": "not_attempted",
+      "note": "outcome unemp is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+    }
+  },
+  "dof_power": {
+    "u5mr": {
+      "outcome_id": "u5mr",
+      "n_observations": 22,
+      "verdict": "computed",
+      "note": null,
+      "n_parameters": 14,
+      "dof": 8,
+      "residual_sd_baseline": 5.377146,
+      "spec_terms": ["intercept", "pdp_first", "pdp_second", "apc_first", "log_oil", "log_oil_x_pdp_first", "log_oil_x_pdp_second", "log_oil_x_apc_first", "trend", "trend2", "lag1", "lag2", "lag3", "lag4"],
+      "mde": {
+        "intercept": 3111.477638,
+        "pdp_first": 212.166922,
+        "pdp_second": 428.706599,
+        "apc_first": 252.016176,
+        "log_oil": 26.31125,
+        "log_oil_x_pdp_first": 45.252408,
+        "log_oil_x_pdp_second": 103.979192,
+        "log_oil_x_apc_first": 58.9448,
+        "trend": 140.861842,
+        "trend2": 3.733916,
+        "lag1": 37.597277,
+        "lag2": 56.671742,
+        "lag3": 61.572184,
+        "lag4": 35.402559
+      },
+      "mde_strata": {
+        "pdp_first": 212.166922,
+        "pdp_second": 428.706599,
+        "apc_first": 252.016176
+      },
+      "mde_strata_in_sd_units": {
+        "pdp_first": 39.457,
+        "pdp_second": 79.728,
+        "apc_first": 46.868
+      },
+      "outcome_sd": 12.538737,
+      "outcome_range": [115.6, 157.4],
+      "design_condition_number": 313756.145,
+      "reduced_spec_terms": ["intercept", "pdp_first", "pdp_second", "apc_first", "log_oil", "trend"],
+      "reduced_dof": 16,
+      "mde_strata_reduced": {
+        "pdp_first": 24.187264,
+        "pdp_second": 27.608174,
+        "apc_first": 10.040896
+      },
+      "mde_strata_reduced_in_sd_units": {
+        "pdp_first": 4.498,
+        "pdp_second": 5.134,
+        "apc_first": 1.867
+      }
+    },
+    "mmr": {
+      "outcome_id": "mmr",
+      "n_observations": 21,
+      "verdict": "computed",
+      "note": null,
+      "n_parameters": 14,
+      "dof": 7,
+      "residual_sd_baseline": 48.15528,
+      "spec_terms": ["intercept", "pdp_first", "pdp_second", "apc_first", "log_oil", "log_oil_x_pdp_first", "log_oil_x_pdp_second", "log_oil_x_apc_first", "trend", "trend2", "lag1", "lag2", "lag3", "lag4"],
+      "mde": {
+        "intercept": 3447.002172,
+        "pdp_first": 2339.682564,
+        "pdp_second": 4787.218683,
+        "apc_first": 3217.75371,
+        "log_oil": 253.191117,
+        "log_oil_x_pdp_first": 469.797926,
+        "log_oil_x_pdp_second": 1072.091268,
+        "log_oil_x_apc_first": 727.584478,
+        "trend": 246.482392,
+        "trend2": 9.86771,
+        "lag1": 6.928001,
+        "lag2": 8.108766,
+        "lag3": 5.406252,
+        "lag4": 6.417233
+      },
+      "mde_strata": {
+        "pdp_first": 2339.682564,
+        "pdp_second": 4787.218683,
+        "apc_first": 3217.75371
+      },
+      "mde_strata_in_sd_units": {
+        "pdp_first": 48.586,
+        "pdp_second": 99.412,
+        "apc_first": 66.82
+      },
+      "outcome_sd": 46.057004,
+      "outcome_range": [993, 1168],
+      "design_condition_number": 428210.233,
+      "reduced_spec_terms": ["intercept", "pdp_first", "pdp_second", "apc_first", "log_oil", "trend"],
+      "reduced_dof": 15,
+      "mde_strata_reduced": {
+        "pdp_first": 239.562759,
+        "pdp_second": 283.694352,
+        "apc_first": 99.712685
+      },
+      "mde_strata_reduced_in_sd_units": {
+        "pdp_first": 4.975,
+        "pdp_second": 5.891,
+        "apc_first": 2.071
+      }
+    },
+    "immun_penta3": {
+      "outcome_id": "immun_penta3",
+      "n_observations": 22,
+      "verdict": "computed",
+      "note": null,
+      "n_parameters": 14,
+      "dof": 8,
+      "residual_sd_baseline": 8.043825,
+      "spec_terms": ["intercept", "pdp_first", "pdp_second", "apc_first", "log_oil", "log_oil_x_pdp_first", "log_oil_x_pdp_second", "log_oil_x_apc_first", "trend", "trend2", "lag1", "lag2", "lag3", "lag4"],
+      "mde": {
+        "intercept": 203.520748,
+        "pdp_first": 316.358297,
+        "pdp_second": 353.988297,
+        "apc_first": 350.734697,
+        "log_oil": 40.863528,
+        "log_oil_x_pdp_first": 69.605749,
+        "log_oil_x_pdp_second": 76.251593,
+        "log_oil_x_apc_first": 84.053432,
+        "trend": 11.837717,
+        "trend2": 0.343621,
+        "lag1": 1.309257,
+        "lag2": 1.377656,
+        "lag3": 2.192596,
+        "lag4": 1.174416
+      },
+      "mde_strata": {
+        "pdp_first": 316.358297,
+        "pdp_second": 353.988297,
+        "apc_first": 350.734697
+      },
+      "mde_strata_in_sd_units": {
+        "pdp_first": 39.329,
+        "pdp_second": 44.007,
+        "apc_first": 43.603
+      },
+      "outcome_sd": 12.083762,
+      "outcome_range": [29, 67],
+      "design_condition_number": 24721.293,
+      "reduced_spec_terms": ["intercept", "pdp_first", "pdp_second", "apc_first", "log_oil", "trend"],
+      "reduced_dof": 16,
+      "mde_strata_reduced": {
+        "pdp_first": 36.182412,
+        "pdp_second": 41.299848,
+        "apc_first": 15.020461
+      },
+      "mde_strata_reduced_in_sd_units": {
+        "pdp_first": 4.498,
+        "pdp_second": 5.134,
+        "apc_first": 1.867
+      }
+    },
+    "skilled_birth": {
+      "outcome_id": "skilled_birth",
+      "n_observations": 8,
+      "verdict": "not_run",
+      "note": "8 annual observations — too few to fit the Tier-3 design"
+    },
+    "literacy_youth": {
+      "outcome_id": "literacy_youth",
+      "n_observations": 7,
+      "verdict": "not_run",
+      "note": "7 annual observations — too few to fit the Tier-3 design"
+    },
+    "primary_completion": {
+      "outcome_id": "primary_completion",
+      "n_observations": 8,
+      "verdict": "not_run",
+      "note": "8 annual observations — too few to fit the Tier-3 design"
+    },
+    "ner_primary": {
+      "outcome_id": "ner_primary",
+      "n_observations": 9,
+      "verdict": "not_run",
+      "note": "9 annual observations — too few to fit the Tier-3 design"
+    },
+    "fatalities": {
+      "outcome_id": "fatalities",
+      "n_observations": 0,
+      "verdict": "not_run",
+      "note": "0 annual observations — too few to fit the Tier-3 design"
+    },
+    "incidents": {
+      "outcome_id": "incidents",
+      "n_observations": 0,
+      "verdict": "not_run",
+      "note": "0 annual observations — too few to fit the Tier-3 design"
+    },
+    "gdp_growth": {
+      "outcome_id": "gdp_growth",
+      "n_observations": 23,
+      "verdict": "computed",
+      "note": null,
+      "n_parameters": 14,
+      "dof": 9,
+      "residual_sd_baseline": 2.499111,
+      "spec_terms": ["intercept", "pdp_first", "pdp_second", "apc_first", "log_oil", "log_oil_x_pdp_first", "log_oil_x_pdp_second", "log_oil_x_apc_first", "trend", "trend2", "lag1", "lag2", "lag3", "lag4"],
+      "mde": {
+        "intercept": 68.011899,
+        "pdp_first": 96.446736,
+        "pdp_second": 110.417306,
+        "apc_first": 133.003503,
+        "log_oil": 14.073148,
+        "log_oil_x_pdp_first": 22.76645,
+        "log_oil_x_pdp_second": 29.583329,
+        "log_oil_x_apc_first": 30.762119,
+        "trend": 3.108072,
+        "trend2": 0.099523,
+        "lag1": 0.871209,
+        "lag2": 0.939887,
+        "lag3": 1.012531,
+        "lag4": 1.088101
+      },
+      "mde_strata": {
+        "pdp_first": 96.446736,
+        "pdp_second": 110.417306,
+        "apc_first": 133.003503
+      },
+      "mde_strata_in_sd_units": {
+        "pdp_first": 38.592,
+        "pdp_second": 44.183,
+        "apc_first": 53.22
+      },
+      "outcome_sd": 3.542855,
+      "outcome_range": [-6.368898, 9.250558],
+      "design_condition_number": 27102.338,
+      "reduced_spec_terms": ["intercept", "pdp_first", "pdp_second", "apc_first", "log_oil", "trend"],
+      "reduced_dof": 17,
+      "mde_strata_reduced": {
+        "pdp_first": 9.916935,
+        "pdp_second": 11.17732,
+        "apc_first": 4.410608
+      },
+      "mde_strata_reduced_in_sd_units": {
+        "pdp_first": 3.968,
+        "pdp_second": 4.473,
+        "apc_first": 1.765
+      }
+    },
+    "cpi_yoy": {
+      "outcome_id": "cpi_yoy",
+      "n_observations": 23,
+      "verdict": "computed",
+      "note": null,
+      "n_parameters": 14,
+      "dof": 9,
+      "residual_sd_baseline": 5.188464,
+      "spec_terms": ["intercept", "pdp_first", "pdp_second", "apc_first", "log_oil", "log_oil_x_pdp_first", "log_oil_x_pdp_second", "log_oil_x_apc_first", "trend", "trend2", "lag1", "lag2", "lag3", "lag4"],
+      "mde": {
+        "intercept": 164.227437,
+        "pdp_first": 254.559409,
+        "pdp_second": 255.769789,
+        "apc_first": 195.692541,
+        "log_oil": 28.102808,
+        "log_oil_x_pdp_first": 54.679917,
+        "log_oil_x_pdp_second": 61.575324,
+        "log_oil_x_apc_first": 46.470274,
+        "trend": 8.018193,
+        "trend2": 0.313932,
+        "lag1": 1.524587,
+        "lag2": 1.284747,
+        "lag3": 1.316357,
+        "lag4": 1.473934
+      },
+      "mde_strata": {
+        "pdp_first": 254.559409,
+        "pdp_second": 255.769789,
+        "apc_first": 195.692541
+      },
+      "mde_strata_in_sd_units": {
+        "pdp_first": 49.063,
+        "pdp_second": 49.296,
+        "apc_first": 37.717
+      },
+      "outcome_sd": 6.207896,
+      "outcome_range": [5.386104, 33.241659],
+      "design_condition_number": 31159.471,
+      "reduced_spec_terms": ["intercept", "pdp_first", "pdp_second", "apc_first", "log_oil", "trend"],
+      "reduced_dof": 17,
+      "mde_strata_reduced": {
+        "pdp_first": 20.588781,
+        "pdp_second": 23.205496,
+        "apc_first": 9.156966
+      },
+      "mde_strata_reduced_in_sd_units": {
+        "pdp_first": 3.968,
+        "pdp_second": 4.473,
+        "apc_first": 1.765
+      }
+    },
+    "unemp": {
+      "outcome_id": "unemp",
+      "n_observations": 23,
+      "verdict": "computed",
+      "note": null,
+      "n_parameters": 14,
+      "dof": 9,
+      "residual_sd_baseline": 0.710977,
+      "spec_terms": ["intercept", "pdp_first", "pdp_second", "apc_first", "log_oil", "log_oil_x_pdp_first", "log_oil_x_pdp_second", "log_oil_x_apc_first", "trend", "trend2", "lag1", "lag2", "lag3", "lag4"],
+      "mde": {
+        "intercept": 21.735225,
+        "pdp_first": 27.068853,
+        "pdp_second": 24.95513,
+        "apc_first": 33.619576,
+        "log_oil": 3.940285,
+        "log_oil_x_pdp_first": 6.089353,
+        "log_oil_x_pdp_second": 6.021141,
+        "log_oil_x_apc_first": 7.957917,
+        "trend": 1.114935,
+        "trend2": 0.05791,
+        "lag1": 2.57865,
+        "lag2": 3.15371,
+        "lag3": 4.245128,
+        "lag4": 6.308689
+      },
+      "mde_strata": {
+        "pdp_first": 27.068853,
+        "pdp_second": 24.95513,
+        "apc_first": 33.619576
+      },
+      "mde_strata_in_sd_units": {
+        "pdp_first": 38.073,
+        "pdp_second": 35.1,
+        "apc_first": 47.286
+      },
+      "outcome_sd": 0.73725,
+      "outcome_range": [3.045, 5.714],
+      "design_condition_number": 24230.381,
+      "reduced_spec_terms": ["intercept", "pdp_first", "pdp_second", "apc_first", "log_oil", "trend"],
+      "reduced_dof": 17,
+      "mde_strata_reduced": {
+        "pdp_first": 2.821287,
+        "pdp_second": 3.179856,
+        "apc_first": 1.254782
+      },
+      "mde_strata_reduced_in_sd_units": {
+        "pdp_first": 3.968,
+        "pdp_second": 4.473,
+        "apc_first": 1.765
+      }
+    }
+  },
+  "collinearity": {
+    "u5mr": {
+      "outcome_id": "u5mr",
+      "verdict": "flag",
+      "vif": {
+        "intercept": null,
+        "pdp_first": 15.6558,
+        "pdp_second": 9.7893,
+        "apc_first": 2.0223,
+        "log_oil": 5.6744,
+        "trend": 19.8658
+      },
+      "max_vif": 19.865814,
+      "max_vif_term": "trend",
+      "n_obs": 26,
+      "dose_axes": {
+        "verdict": "not_computable",
+        "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+        "note": "VIF across D1/D2/D3 needs every dose axis present; specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+      },
+      "note": "party-by-tenure dummies are functions of the calendar, so they compete with the trend terms"
+    },
+    "mmr": {
+      "outcome_id": "mmr",
+      "verdict": "flag",
+      "vif": {
+        "intercept": null,
+        "pdp_first": 18.1369,
+        "pdp_second": 11.6243,
+        "apc_first": 2.0562,
+        "log_oil": 6.3696,
+        "trend": 21.675
+      },
+      "max_vif": 21.674981,
+      "max_vif_term": "trend",
+      "n_obs": 25,
+      "dose_axes": {
+        "verdict": "not_computable",
+        "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+        "note": "VIF across D1/D2/D3 needs every dose axis present; specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+      },
+      "note": "party-by-tenure dummies are functions of the calendar, so they compete with the trend terms"
+    },
+    "immun_penta3": {
+      "outcome_id": "immun_penta3",
+      "verdict": "flag",
+      "vif": {
+        "intercept": null,
+        "pdp_first": 15.6558,
+        "pdp_second": 9.7893,
+        "apc_first": 2.0223,
+        "log_oil": 5.6744,
+        "trend": 19.8658
+      },
+      "max_vif": 19.865814,
+      "max_vif_term": "trend",
+      "n_obs": 26,
+      "dose_axes": {
+        "verdict": "not_computable",
+        "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+        "note": "VIF across D1/D2/D3 needs every dose axis present; specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+      },
+      "note": "party-by-tenure dummies are functions of the calendar, so they compete with the trend terms"
+    },
+    "skilled_birth": {
+      "outcome_id": "skilled_birth",
+      "verdict": "not_computable",
+      "note": "8 annual observations"
+    },
+    "literacy_youth": {
+      "outcome_id": "literacy_youth",
+      "verdict": "not_computable",
+      "note": "7 annual observations"
+    },
+    "primary_completion": {
+      "outcome_id": "primary_completion",
+      "verdict": "not_computable",
+      "note": "8 annual observations"
+    },
+    "ner_primary": {
+      "outcome_id": "ner_primary",
+      "verdict": "not_computable",
+      "note": "9 annual observations"
+    },
+    "fatalities": {
+      "outcome_id": "fatalities",
+      "verdict": "not_computable",
+      "note": "0 annual observations"
+    },
+    "incidents": {
+      "outcome_id": "incidents",
+      "verdict": "not_computable",
+      "note": "0 annual observations"
+    },
+    "gdp_growth": {
+      "outcome_id": "gdp_growth",
+      "verdict": "flag",
+      "vif": {
+        "intercept": null,
+        "pdp_first": 12.5827,
+        "pdp_second": 7.7672,
+        "apc_first": 2.0499,
+        "log_oil": 4.5885,
+        "trend": 16.5668
+      },
+      "max_vif": 16.566786,
+      "max_vif_term": "trend",
+      "n_obs": 27,
+      "dose_axes": {
+        "verdict": "not_computable",
+        "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+        "note": "VIF across D1/D2/D3 needs every dose axis present; specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+      },
+      "note": "party-by-tenure dummies are functions of the calendar, so they compete with the trend terms"
+    },
+    "cpi_yoy": {
+      "outcome_id": "cpi_yoy",
+      "verdict": "flag",
+      "vif": {
+        "intercept": null,
+        "pdp_first": 12.5827,
+        "pdp_second": 7.7672,
+        "apc_first": 2.0499,
+        "log_oil": 4.5885,
+        "trend": 16.5668
+      },
+      "max_vif": 16.566786,
+      "max_vif_term": "trend",
+      "n_obs": 27,
+      "dose_axes": {
+        "verdict": "not_computable",
+        "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+        "note": "VIF across D1/D2/D3 needs every dose axis present; specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+      },
+      "note": "party-by-tenure dummies are functions of the calendar, so they compete with the trend terms"
+    },
+    "unemp": {
+      "outcome_id": "unemp",
+      "verdict": "flag",
+      "vif": {
+        "intercept": null,
+        "pdp_first": 12.5827,
+        "pdp_second": 7.7672,
+        "apc_first": 2.0499,
+        "log_oil": 4.5885,
+        "trend": 16.5668
+      },
+      "max_vif": 16.566786,
+      "max_vif_term": "trend",
+      "n_obs": 27,
+      "dose_axes": {
+        "verdict": "not_computable",
+        "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+        "note": "VIF across D1/D2/D3 needs every dose axis present; specified_dose_axis_absent:D1 and no_state_attributed_outcome"
+      },
+      "note": "party-by-tenure dummies are functions of the calendar, so they compete with the trend terms"
+    }
+  },
+  "design_verdicts": {
+    "A": {
+      "design_id": "A",
+      "status": "dropped",
+      "gates": {
+        "dose_variation": {
+          "passed": false,
+          "detail": "D1: 0 of 12358 panel values across 37 states — other axes present: D1_nominal"
+        },
+        "state_outcome_attribution": {
+          "passed": false,
+          "detail": "0 of 12358 state outcome values present"
+        }
+      },
+      "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+      "dropped_because": "the FAAC dose has landed and is Stage 3 gated, but on the **nominal** axis: the estimand is written on D1 (per capita), which needs the state population denominator decision (X-09). The family is also missing a state-attributed outcome, so a dose alone does not free it",
+      "diagnostics_that_decide": ["dose_variation", "state_outcome_attribution"],
+      "next_step": "the state population denominator decision (X-09), which is what the specified axis D1 waits on, plus a state-attributed outcome — the human-security series are the route and they are credential-blocked (C-13/C-14)",
+      "card_status_counts": {
+        "fail": 12
+      },
+      "n_outcomes_pass": 0,
+      "n_outcomes_attempted": 12,
+      "status_basis": "computed from the 12 cards: fail=12"
+    },
+    "B": {
+      "design_id": "B",
+      "status": "degraded",
+      "gates": {
+        "integration_order": {
+          "passed": null,
+          "detail": "26 series tested at native grain"
+        },
+        "cointegration_rank": {
+          "passed": null,
+          "detail": "4 outcomes tested"
+        },
+        "dof_minimum": {
+          "passed": null,
+          "detail": "0 outcomes infeasible at 3 residual DoF"
+        },
+        "collinearity": {
+          "passed": null,
+          "detail": "0 outcomes fail VIF >= 30"
+        }
+      },
+      "blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly",
+      "degraded_because": "base spec section 9 specifies oil + FAAC + FX + lags + trend at monthly grain; the testable system is {Y, log(oil), fx} at annual grain",
+      "diagnostics_that_decide": ["integration_order", "cointegration_rank", "dof_minimum", "collinearity"],
+      "next_step": "a metric-catalogue entry for the FAAC panel (landed and gated, but with no declared monthly-to-annual aggregation), and a decision on whether an annual-grain estimate is worth publishing",
+      "card_status_counts": {
+        "degraded": 7,
+        "not_attempted": 5
+      },
+      "n_outcomes_pass": 0,
+      "n_outcomes_attempted": 7,
+      "status_basis": "computed from the 12 cards: degraded=7, not_attempted=5"
+    },
+    "C": {
+      "design_id": "C",
+      "status": "infeasible",
+      "gates": {
+        "pretreatment_fit": {
+          "passed": null,
+          "detail": "0 outcomes pass the pre-fit threshold of 0.10 x pre-period SD"
+        },
+        "donor_pool_coverage": {
+          "passed": true,
+          "detail": "13 donor countries x 5 predictors"
+        }
+      },
+      "blocker": "no candidate treated window lets any convex combination of the donors track Nigeria's pre-treatment path: best pre-RMSPE exceeds 0.10 x the pre-period outcome SD",
+      "diagnostics_that_decide": "pretreatment_fit",
+      "next_step": "either a wider donor pool, or an estimand the pool can support (the fit on first differences is far better than on levels for u5mr, which is a different question)",
+      "card_status_counts": {
+        "fail": 3,
+        "not_attempted": 9
+      },
+      "n_outcomes_pass": 0,
+      "n_outcomes_attempted": 3,
+      "status_basis": "computed from the 12 cards: fail=3, not_attempted=9"
+    }
+  },
+  "cards": {
+    "u5mr__A": {
+      "status": "fail",
+      "checks": [
+        {
+          "id": "dose_variation",
+          "verdict": "flag",
+          "detail": "the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built"
+        },
+        {
+          "id": "state_outcome_attribution",
+          "verdict": "fail",
+          "detail": "no state-attributed outcome has landed — the security series are credential-blocked and the health and education outcomes are national"
+        },
+        {
+          "id": "parallel_trends_precheck",
+          "verdict": "not_run",
+          "detail": "the nominal dose could group states by exposure, but the estimand is written on the per-capita axis, so a trends test on the nominal dose would be a sensitivity check at Stage 6 rather than this pre-check"
+        }
+      ],
+      "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "coverage_status": "partial",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "mmr__A": {
+      "status": "fail",
+      "checks": [
+        {
+          "id": "dose_variation",
+          "verdict": "flag",
+          "detail": "the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built"
+        },
+        {
+          "id": "state_outcome_attribution",
+          "verdict": "fail",
+          "detail": "no state-attributed outcome has landed — the security series are credential-blocked and the health and education outcomes are national"
+        },
+        {
+          "id": "parallel_trends_precheck",
+          "verdict": "not_run",
+          "detail": "the nominal dose could group states by exposure, but the estimand is written on the per-capita axis, so a trends test on the nominal dose would be a sensitivity check at Stage 6 rather than this pre-check"
+        }
+      ],
+      "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "coverage_status": "ok",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "immun_penta3__A": {
+      "status": "fail",
+      "checks": [
+        {
+          "id": "dose_variation",
+          "verdict": "flag",
+          "detail": "the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built"
+        },
+        {
+          "id": "state_outcome_attribution",
+          "verdict": "fail",
+          "detail": "no state-attributed outcome has landed — the security series are credential-blocked and the health and education outcomes are national"
+        },
+        {
+          "id": "parallel_trends_precheck",
+          "verdict": "not_run",
+          "detail": "the nominal dose could group states by exposure, but the estimand is written on the per-capita axis, so a trends test on the nominal dose would be a sensitivity check at Stage 6 rather than this pre-check"
+        }
+      ],
+      "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "coverage_status": "partial",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "skilled_birth__A": {
+      "status": "fail",
+      "checks": [
+        {
+          "id": "dose_variation",
+          "verdict": "flag",
+          "detail": "the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built"
+        },
+        {
+          "id": "state_outcome_attribution",
+          "verdict": "fail",
+          "detail": "no state-attributed outcome has landed — the security series are credential-blocked and the health and education outcomes are national"
+        },
+        {
+          "id": "parallel_trends_precheck",
+          "verdict": "not_run",
+          "detail": "the nominal dose could group states by exposure, but the estimand is written on the per-capita axis, so a trends test on the nominal dose would be a sensitivity check at Stage 6 rather than this pre-check"
+        }
+      ],
+      "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "coverage_status": "partial",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "literacy_youth__A": {
+      "status": "fail",
+      "checks": [
+        {
+          "id": "dose_variation",
+          "verdict": "flag",
+          "detail": "the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built"
+        },
+        {
+          "id": "state_outcome_attribution",
+          "verdict": "fail",
+          "detail": "no state-attributed outcome has landed — the security series are credential-blocked and the health and education outcomes are national"
+        },
+        {
+          "id": "parallel_trends_precheck",
+          "verdict": "not_run",
+          "detail": "the nominal dose could group states by exposure, but the estimand is written on the per-capita axis, so a trends test on the nominal dose would be a sensitivity check at Stage 6 rather than this pre-check"
+        }
+      ],
+      "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "coverage_status": "declared_gap",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "primary_completion__A": {
+      "status": "fail",
+      "checks": [
+        {
+          "id": "dose_variation",
+          "verdict": "flag",
+          "detail": "the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built"
+        },
+        {
+          "id": "state_outcome_attribution",
+          "verdict": "fail",
+          "detail": "no state-attributed outcome has landed — the security series are credential-blocked and the health and education outcomes are national"
+        },
+        {
+          "id": "parallel_trends_precheck",
+          "verdict": "not_run",
+          "detail": "the nominal dose could group states by exposure, but the estimand is written on the per-capita axis, so a trends test on the nominal dose would be a sensitivity check at Stage 6 rather than this pre-check"
+        }
+      ],
+      "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "coverage_status": "declared_gap",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "ner_primary__A": {
+      "status": "fail",
+      "checks": [
+        {
+          "id": "dose_variation",
+          "verdict": "flag",
+          "detail": "the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built"
+        },
+        {
+          "id": "state_outcome_attribution",
+          "verdict": "fail",
+          "detail": "no state-attributed outcome has landed — the security series are credential-blocked and the health and education outcomes are national"
+        },
+        {
+          "id": "parallel_trends_precheck",
+          "verdict": "not_run",
+          "detail": "the nominal dose could group states by exposure, but the estimand is written on the per-capita axis, so a trends test on the nominal dose would be a sensitivity check at Stage 6 rather than this pre-check"
+        }
+      ],
+      "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "coverage_status": "declared_gap",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "fatalities__A": {
+      "status": "fail",
+      "checks": [
+        {
+          "id": "dose_variation",
+          "verdict": "flag",
+          "detail": "the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built"
+        },
+        {
+          "id": "state_outcome_attribution",
+          "verdict": "fail",
+          "detail": "no state-attributed outcome has landed — the security series are credential-blocked and the health and education outcomes are national"
+        },
+        {
+          "id": "parallel_trends_precheck",
+          "verdict": "not_run",
+          "detail": "the nominal dose could group states by exposure, but the estimand is written on the per-capita axis, so a trends test on the nominal dose would be a sensitivity check at Stage 6 rather than this pre-check"
+        }
+      ],
+      "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "coverage_status": "blocked",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "incidents__A": {
+      "status": "fail",
+      "checks": [
+        {
+          "id": "dose_variation",
+          "verdict": "flag",
+          "detail": "the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built"
+        },
+        {
+          "id": "state_outcome_attribution",
+          "verdict": "fail",
+          "detail": "no state-attributed outcome has landed — the security series are credential-blocked and the health and education outcomes are national"
+        },
+        {
+          "id": "parallel_trends_precheck",
+          "verdict": "not_run",
+          "detail": "the nominal dose could group states by exposure, but the estimand is written on the per-capita axis, so a trends test on the nominal dose would be a sensitivity check at Stage 6 rather than this pre-check"
+        }
+      ],
+      "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "coverage_status": "blocked",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "gdp_growth__A": {
+      "status": "fail",
+      "checks": [
+        {
+          "id": "dose_variation",
+          "verdict": "flag",
+          "detail": "the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built"
+        },
+        {
+          "id": "state_outcome_attribution",
+          "verdict": "fail",
+          "detail": "no state-attributed outcome has landed — the security series are credential-blocked and the health and education outcomes are national"
+        },
+        {
+          "id": "parallel_trends_precheck",
+          "verdict": "not_run",
+          "detail": "the nominal dose could group states by exposure, but the estimand is written on the per-capita axis, so a trends test on the nominal dose would be a sensitivity check at Stage 6 rather than this pre-check"
+        }
+      ],
+      "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "coverage_status": "ok",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "cpi_yoy__A": {
+      "status": "fail",
+      "checks": [
+        {
+          "id": "dose_variation",
+          "verdict": "flag",
+          "detail": "the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built"
+        },
+        {
+          "id": "state_outcome_attribution",
+          "verdict": "fail",
+          "detail": "no state-attributed outcome has landed — the security series are credential-blocked and the health and education outcomes are national"
+        },
+        {
+          "id": "parallel_trends_precheck",
+          "verdict": "not_run",
+          "detail": "the nominal dose could group states by exposure, but the estimand is written on the per-capita axis, so a trends test on the nominal dose would be a sensitivity check at Stage 6 rather than this pre-check"
+        }
+      ],
+      "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "coverage_status": "ok",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "unemp__A": {
+      "status": "fail",
+      "checks": [
+        {
+          "id": "dose_variation",
+          "verdict": "flag",
+          "detail": "the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built"
+        },
+        {
+          "id": "state_outcome_attribution",
+          "verdict": "fail",
+          "detail": "no state-attributed outcome has landed — the security series are credential-blocked and the health and education outcomes are national"
+        },
+        {
+          "id": "parallel_trends_precheck",
+          "verdict": "not_run",
+          "detail": "the nominal dose could group states by exposure, but the estimand is written on the per-capita axis, so a trends test on the nominal dose would be a sensitivity check at Stage 6 rather than this pre-check"
+        }
+      ],
+      "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "coverage_status": "partial",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "u5mr__B": {
+      "status": "degraded",
+      "checks": [
+        {
+          "id": "integration_order",
+          "verdict": "inconclusive",
+          "detail": "I(1) across ADF/KPSS/PP on 26 native annual observations — tests disagree"
+        },
+        {
+          "id": "cointegration_rank",
+          "verdict": "computed",
+          "detail": "Johansen rank 3 on {Y, log(oil), fx}, K=2 -> VAR in levels (rank = system dimension: reads as stationary, not cointegrated)"
+        },
+        {
+          "id": "dof_power",
+          "verdict": "computed",
+          "detail": "22 annual rows, 14 parameters, 8 residual DoF, MDE for the tenure strata 212-429"
+        },
+        {
+          "id": "collinearity",
+          "verdict": "flag",
+          "detail": "max VIF 19.9 on trend (26 rows)"
+        },
+        {
+          "id": "faac_in_tier3_system",
+          "verdict": "deviation",
+          "detail": "the base-spec Tier-3 system includes FAAC, which has no metric-catalogue entry (the monthly state panel landed 2026-10-16 and is Stage 3 gated, but it has no declared monthly-to-annual aggregation and no outcome decision); the system is reduced to {Y, log(oil), fx}"
+        }
+      ],
+      "blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly",
+      "note": "Runs, but not as base spec section 9 specifies; the deviations are listed above.",
+      "coverage_status": "partial",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "mmr__B": {
+      "status": "degraded",
+      "checks": [
+        {
+          "id": "integration_order",
+          "verdict": "inconclusive",
+          "detail": "I(1) across ADF/KPSS/PP on 25 native annual observations — tests disagree"
+        },
+        {
+          "id": "cointegration_rank",
+          "verdict": "computed",
+          "detail": "Johansen rank 3 on {Y, log(oil), fx}, K=2 -> VAR in levels (rank = system dimension: reads as stationary, not cointegrated) (rank marginal: deciding statistic only 9% over its critical value)"
+        },
+        {
+          "id": "dof_power",
+          "verdict": "computed",
+          "detail": "21 annual rows, 14 parameters, 7 residual DoF, MDE for the tenure strata 2.34e+03-4.79e+03"
+        },
+        {
+          "id": "collinearity",
+          "verdict": "flag",
+          "detail": "max VIF 21.7 on trend (25 rows)"
+        },
+        {
+          "id": "faac_in_tier3_system",
+          "verdict": "deviation",
+          "detail": "the base-spec Tier-3 system includes FAAC, which has no metric-catalogue entry (the monthly state panel landed 2026-10-16 and is Stage 3 gated, but it has no declared monthly-to-annual aggregation and no outcome decision); the system is reduced to {Y, log(oil), fx}"
+        }
+      ],
+      "blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly",
+      "note": "Runs, but not as base spec section 9 specifies; the deviations are listed above.",
+      "coverage_status": "ok",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "immun_penta3__B": {
+      "status": "degraded",
+      "checks": [
+        {
+          "id": "integration_order",
+          "verdict": "computed",
+          "detail": "I(1) across ADF/KPSS/PP on 26 native annual observations"
+        },
+        {
+          "id": "cointegration_rank",
+          "verdict": "computed",
+          "detail": "Johansen rank 0 on {Y, log(oil), fx}, K=2 -> ARDL bounds fallback"
+        },
+        {
+          "id": "dof_power",
+          "verdict": "computed",
+          "detail": "22 annual rows, 14 parameters, 8 residual DoF, MDE for the tenure strata 316-354"
+        },
+        {
+          "id": "collinearity",
+          "verdict": "flag",
+          "detail": "max VIF 19.9 on trend (26 rows)"
+        },
+        {
+          "id": "faac_in_tier3_system",
+          "verdict": "deviation",
+          "detail": "the base-spec Tier-3 system includes FAAC, which has no metric-catalogue entry (the monthly state panel landed 2026-10-16 and is Stage 3 gated, but it has no declared monthly-to-annual aggregation and no outcome decision); the system is reduced to {Y, log(oil), fx}"
+        }
+      ],
+      "blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly",
+      "note": "Runs, but not as base spec section 9 specifies; the deviations are listed above.",
+      "coverage_status": "partial",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "skilled_birth__B": {
+      "status": "degraded",
+      "checks": [
+        {
+          "id": "integration_order",
+          "verdict": "not_run",
+          "detail": "only 8 native observations in the window (minimum 12) — not tested"
+        },
+        {
+          "id": "cointegration_rank",
+          "verdict": "not_run",
+          "detail": "8 annual observations (minimum 20)"
+        },
+        {
+          "id": "dof_power",
+          "verdict": "not_run",
+          "detail": "8 annual observations — too few to fit the Tier-3 design"
+        },
+        {
+          "id": "collinearity",
+          "verdict": "not_run",
+          "detail": "8 annual observations"
+        },
+        {
+          "id": "faac_in_tier3_system",
+          "verdict": "deviation",
+          "detail": "the base-spec Tier-3 system includes FAAC, which has no metric-catalogue entry (the monthly state panel landed 2026-10-16 and is Stage 3 gated, but it has no declared monthly-to-annual aggregation and no outcome decision); the system is reduced to {Y, log(oil), fx}"
+        }
+      ],
+      "blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly",
+      "note": "Runs, but not as base spec section 9 specifies; the deviations are listed above.",
+      "coverage_status": "partial",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "literacy_youth__B": {
+      "status": "not_attempted",
+      "checks": [
+        {
+          "id": "integration_order",
+          "verdict": "not_run",
+          "detail": "only 7 native observations in the window (minimum 12) — not tested"
+        },
+        {
+          "id": "cointegration_rank",
+          "verdict": "not_run",
+          "detail": "7 annual observations (minimum 20)"
+        },
+        {
+          "id": "dof_power",
+          "verdict": "not_run",
+          "detail": "7 annual observations — too few to fit the Tier-3 design"
+        },
+        {
+          "id": "collinearity",
+          "verdict": "not_run",
+          "detail": "7 annual observations"
+        },
+        {
+          "id": "faac_in_tier3_system",
+          "verdict": "deviation",
+          "detail": "the base-spec Tier-3 system includes FAAC, which has no metric-catalogue entry (the monthly state panel landed 2026-10-16 and is Stage 3 gated, but it has no declared monthly-to-annual aggregation and no outcome decision); the system is reduced to {Y, log(oil), fx}"
+        }
+      ],
+      "blocker": "no usable series for this outcome (declared_gap)",
+      "note": "No pre-check could run: this outcome has no series over the window.",
+      "coverage_status": "declared_gap",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "primary_completion__B": {
+      "status": "not_attempted",
+      "checks": [
+        {
+          "id": "integration_order",
+          "verdict": "not_run",
+          "detail": "only 8 native observations in the window (minimum 12) — not tested"
+        },
+        {
+          "id": "cointegration_rank",
+          "verdict": "not_run",
+          "detail": "8 annual observations (minimum 20)"
+        },
+        {
+          "id": "dof_power",
+          "verdict": "not_run",
+          "detail": "8 annual observations — too few to fit the Tier-3 design"
+        },
+        {
+          "id": "collinearity",
+          "verdict": "not_run",
+          "detail": "8 annual observations"
+        },
+        {
+          "id": "faac_in_tier3_system",
+          "verdict": "deviation",
+          "detail": "the base-spec Tier-3 system includes FAAC, which has no metric-catalogue entry (the monthly state panel landed 2026-10-16 and is Stage 3 gated, but it has no declared monthly-to-annual aggregation and no outcome decision); the system is reduced to {Y, log(oil), fx}"
+        }
+      ],
+      "blocker": "no usable series for this outcome (declared_gap)",
+      "note": "No pre-check could run: this outcome has no series over the window.",
+      "coverage_status": "declared_gap",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "ner_primary__B": {
+      "status": "not_attempted",
+      "checks": [
+        {
+          "id": "integration_order",
+          "verdict": "not_run",
+          "detail": "only 9 native observations in the window (minimum 12) — not tested"
+        },
+        {
+          "id": "cointegration_rank",
+          "verdict": "not_run",
+          "detail": "9 annual observations (minimum 20)"
+        },
+        {
+          "id": "dof_power",
+          "verdict": "not_run",
+          "detail": "9 annual observations — too few to fit the Tier-3 design"
+        },
+        {
+          "id": "collinearity",
+          "verdict": "not_run",
+          "detail": "9 annual observations"
+        },
+        {
+          "id": "faac_in_tier3_system",
+          "verdict": "deviation",
+          "detail": "the base-spec Tier-3 system includes FAAC, which has no metric-catalogue entry (the monthly state panel landed 2026-10-16 and is Stage 3 gated, but it has no declared monthly-to-annual aggregation and no outcome decision); the system is reduced to {Y, log(oil), fx}"
+        }
+      ],
+      "blocker": "no usable series for this outcome (declared_gap)",
+      "note": "No pre-check could run: this outcome has no series over the window.",
+      "coverage_status": "declared_gap",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "fatalities__B": {
+      "status": "not_attempted",
+      "checks": [
+        {
+          "id": "integration_order",
+          "verdict": "not_run",
+          "detail": "only 0 native observations in the window (minimum 12) — not tested"
+        },
+        {
+          "id": "cointegration_rank",
+          "verdict": "not_run",
+          "detail": "0 annual observations (minimum 20)"
+        },
+        {
+          "id": "dof_power",
+          "verdict": "not_run",
+          "detail": "0 annual observations — too few to fit the Tier-3 design"
+        },
+        {
+          "id": "collinearity",
+          "verdict": "not_run",
+          "detail": "0 annual observations"
+        },
+        {
+          "id": "faac_in_tier3_system",
+          "verdict": "deviation",
+          "detail": "the base-spec Tier-3 system includes FAAC, which has no metric-catalogue entry (the monthly state panel landed 2026-10-16 and is Stage 3 gated, but it has no declared monthly-to-annual aggregation and no outcome decision); the system is reduced to {Y, log(oil), fx}"
+        }
+      ],
+      "blocker": "no usable series for this outcome (blocked)",
+      "note": "No pre-check could run: this outcome has no series over the window.",
+      "coverage_status": "blocked",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "incidents__B": {
+      "status": "not_attempted",
+      "checks": [
+        {
+          "id": "integration_order",
+          "verdict": "not_run",
+          "detail": "only 0 native observations in the window (minimum 12) — not tested"
+        },
+        {
+          "id": "cointegration_rank",
+          "verdict": "not_run",
+          "detail": "0 annual observations (minimum 20)"
+        },
+        {
+          "id": "dof_power",
+          "verdict": "not_run",
+          "detail": "0 annual observations — too few to fit the Tier-3 design"
+        },
+        {
+          "id": "collinearity",
+          "verdict": "not_run",
+          "detail": "0 annual observations"
+        },
+        {
+          "id": "faac_in_tier3_system",
+          "verdict": "deviation",
+          "detail": "the base-spec Tier-3 system includes FAAC, which has no metric-catalogue entry (the monthly state panel landed 2026-10-16 and is Stage 3 gated, but it has no declared monthly-to-annual aggregation and no outcome decision); the system is reduced to {Y, log(oil), fx}"
+        }
+      ],
+      "blocker": "no usable series for this outcome (blocked)",
+      "note": "No pre-check could run: this outcome has no series over the window.",
+      "coverage_status": "blocked",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "gdp_growth__B": {
+      "status": "degraded",
+      "checks": [
+        {
+          "id": "integration_order",
+          "verdict": "computed",
+          "detail": "I(1) across ADF/KPSS/PP on 27 native annual observations"
+        },
+        {
+          "id": "cointegration_rank",
+          "verdict": "computed",
+          "detail": "Johansen rank 0 on {Y, log(oil), fx}, K=2 -> ARDL bounds fallback"
+        },
+        {
+          "id": "dof_power",
+          "verdict": "computed",
+          "detail": "23 annual rows, 14 parameters, 9 residual DoF, MDE for the tenure strata 96.4-133"
+        },
+        {
+          "id": "collinearity",
+          "verdict": "flag",
+          "detail": "max VIF 16.6 on trend (27 rows)"
+        },
+        {
+          "id": "faac_in_tier3_system",
+          "verdict": "deviation",
+          "detail": "the base-spec Tier-3 system includes FAAC, which has no metric-catalogue entry (the monthly state panel landed 2026-10-16 and is Stage 3 gated, but it has no declared monthly-to-annual aggregation and no outcome decision); the system is reduced to {Y, log(oil), fx}"
+        }
+      ],
+      "blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly",
+      "note": "Runs, but not as base spec section 9 specifies; the deviations are listed above.",
+      "coverage_status": "ok",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "cpi_yoy__B": {
+      "status": "degraded",
+      "checks": [
+        {
+          "id": "integration_order",
+          "verdict": "inconclusive",
+          "detail": "I(1) across ADF/KPSS/PP on 27 native annual observations — tests disagree"
+        },
+        {
+          "id": "cointegration_rank",
+          "verdict": "computed",
+          "detail": "Johansen rank 1 on {Y, log(oil), fx}, K=2 -> VECM"
+        },
+        {
+          "id": "dof_power",
+          "verdict": "computed",
+          "detail": "23 annual rows, 14 parameters, 9 residual DoF, MDE for the tenure strata 196-256"
+        },
+        {
+          "id": "collinearity",
+          "verdict": "flag",
+          "detail": "max VIF 16.6 on trend (27 rows)"
+        },
+        {
+          "id": "faac_in_tier3_system",
+          "verdict": "deviation",
+          "detail": "the base-spec Tier-3 system includes FAAC, which has no metric-catalogue entry (the monthly state panel landed 2026-10-16 and is Stage 3 gated, but it has no declared monthly-to-annual aggregation and no outcome decision); the system is reduced to {Y, log(oil), fx}"
+        }
+      ],
+      "blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly",
+      "note": "Runs, but not as base spec section 9 specifies; the deviations are listed above.",
+      "coverage_status": "ok",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "unemp__B": {
+      "status": "degraded",
+      "checks": [
+        {
+          "id": "integration_order",
+          "verdict": "inconclusive",
+          "detail": "I(1) across ADF/KPSS/PP on 27 native annual observations — tests disagree"
+        },
+        {
+          "id": "cointegration_rank",
+          "verdict": "computed",
+          "detail": "Johansen rank 1 on {Y, log(oil), fx}, K=2 -> VECM"
+        },
+        {
+          "id": "dof_power",
+          "verdict": "computed",
+          "detail": "23 annual rows, 14 parameters, 9 residual DoF, MDE for the tenure strata 25-33.6"
+        },
+        {
+          "id": "collinearity",
+          "verdict": "flag",
+          "detail": "max VIF 16.6 on trend (27 rows)"
+        },
+        {
+          "id": "faac_in_tier3_system",
+          "verdict": "deviation",
+          "detail": "the base-spec Tier-3 system includes FAAC, which has no metric-catalogue entry (the monthly state panel landed 2026-10-16 and is Stage 3 gated, but it has no declared monthly-to-annual aggregation and no outcome decision); the system is reduced to {Y, log(oil), fx}"
+        }
+      ],
+      "blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly",
+      "note": "Runs, but not as base spec section 9 specifies; the deviations are listed above.",
+      "coverage_status": "partial",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "u5mr__C": {
+      "status": "fail",
+      "checks": [
+        {
+          "id": "pretreatment_fit:obasanjo",
+          "verdict": "not_run",
+          "detail": "needs >= 8 pre and >= 2 post years"
+        },
+        {
+          "id": "pretreatment_fit:yaradua",
+          "verdict": "weak_fit",
+          "detail": "pre-RMSPE 10.18 vs 0.10 x pre SD 15.19 (ratio 0.670), 8 pre years, 2 donors with weight"
+        },
+        {
+          "id": "pretreatment_fit:jonathan",
+          "verdict": "weak_fit",
+          "detail": "pre-RMSPE 18.82 vs 0.10 x pre SD 18.51 (ratio 1.016), 11 pre years, 2 donors with weight"
+        },
+        {
+          "id": "pretreatment_fit:buhari",
+          "verdict": "weak_fit",
+          "detail": "pre-RMSPE 26.99 vs 0.10 x pre SD 21.41 (ratio 1.261), 16 pre years, 2 donors with weight"
+        },
+        {
+          "id": "pretreatment_fit:tinubu",
+          "verdict": "weak_fit",
+          "detail": "pre-RMSPE 33.16 vs 0.10 x pre SD 21.42 (ratio 1.548), 24 pre years, 1 donors with weight"
+        },
+        {
+          "id": "donor_pool_coverage",
+          "verdict": "computed",
+          "detail": "13 donors x 5 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
+        }
+      ],
+      "blocker": "no candidate treated window lets any convex combination of the donors track Nigeria's pre-treatment path: best pre-RMSPE exceeds 0.10 x the pre-period outcome SD",
+      "note": "Reported infeasible rather than estimated, per PHASES.md's Stage 5 gate",
+      "coverage_status": "partial",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "mmr__C": {
+      "status": "not_attempted",
+      "checks": [
+        {
+          "id": "pretreatment_fit",
+          "verdict": "not_run",
+          "detail": "outcome mmr is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+        },
+        {
+          "id": "donor_pool_coverage",
+          "verdict": "computed",
+          "detail": "13 donors x 5 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
+        }
+      ],
+      "blocker": "outcome mmr is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)",
+      "note": "No candidate window is testable for this outcome",
+      "coverage_status": "ok",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "immun_penta3__C": {
+      "status": "not_attempted",
+      "checks": [
+        {
+          "id": "pretreatment_fit",
+          "verdict": "not_run",
+          "detail": "outcome immun_penta3 is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+        },
+        {
+          "id": "donor_pool_coverage",
+          "verdict": "computed",
+          "detail": "13 donors x 5 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
+        }
+      ],
+      "blocker": "outcome immun_penta3 is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)",
+      "note": "No candidate window is testable for this outcome",
+      "coverage_status": "partial",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "skilled_birth__C": {
+      "status": "not_attempted",
+      "checks": [
+        {
+          "id": "pretreatment_fit",
+          "verdict": "not_run",
+          "detail": "outcome skilled_birth is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+        },
+        {
+          "id": "donor_pool_coverage",
+          "verdict": "computed",
+          "detail": "13 donors x 5 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
+        }
+      ],
+      "blocker": "outcome skilled_birth is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)",
+      "note": "No candidate window is testable for this outcome",
+      "coverage_status": "partial",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "literacy_youth__C": {
+      "status": "not_attempted",
+      "checks": [
+        {
+          "id": "pretreatment_fit",
+          "verdict": "not_run",
+          "detail": "outcome literacy_youth is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+        },
+        {
+          "id": "donor_pool_coverage",
+          "verdict": "computed",
+          "detail": "13 donors x 5 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
+        }
+      ],
+      "blocker": "outcome literacy_youth is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)",
+      "note": "No candidate window is testable for this outcome",
+      "coverage_status": "declared_gap",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "primary_completion__C": {
+      "status": "not_attempted",
+      "checks": [
+        {
+          "id": "pretreatment_fit",
+          "verdict": "not_run",
+          "detail": "outcome primary_completion is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+        },
+        {
+          "id": "donor_pool_coverage",
+          "verdict": "computed",
+          "detail": "13 donors x 5 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
+        }
+      ],
+      "blocker": "outcome primary_completion is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)",
+      "note": "No candidate window is testable for this outcome",
+      "coverage_status": "declared_gap",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "ner_primary__C": {
+      "status": "not_attempted",
+      "checks": [
+        {
+          "id": "pretreatment_fit",
+          "verdict": "not_run",
+          "detail": "outcome ner_primary is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+        },
+        {
+          "id": "donor_pool_coverage",
+          "verdict": "computed",
+          "detail": "13 donors x 5 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
+        }
+      ],
+      "blocker": "outcome ner_primary is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)",
+      "note": "No candidate window is testable for this outcome",
+      "coverage_status": "declared_gap",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "fatalities__C": {
+      "status": "not_attempted",
+      "checks": [
+        {
+          "id": "pretreatment_fit",
+          "verdict": "not_run",
+          "detail": "outcome fatalities is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+        },
+        {
+          "id": "donor_pool_coverage",
+          "verdict": "computed",
+          "detail": "13 donors x 5 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
+        }
+      ],
+      "blocker": "outcome fatalities is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)",
+      "note": "No candidate window is testable for this outcome",
+      "coverage_status": "blocked",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "incidents__C": {
+      "status": "not_attempted",
+      "checks": [
+        {
+          "id": "pretreatment_fit",
+          "verdict": "not_run",
+          "detail": "outcome incidents is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+        },
+        {
+          "id": "donor_pool_coverage",
+          "verdict": "computed",
+          "detail": "13 donors x 5 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
+        }
+      ],
+      "blocker": "outcome incidents is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)",
+      "note": "No candidate window is testable for this outcome",
+      "coverage_status": "blocked",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "gdp_growth__C": {
+      "status": "fail",
+      "checks": [
+        {
+          "id": "pretreatment_fit:obasanjo",
+          "verdict": "not_run",
+          "detail": "needs >= 8 pre and >= 2 post years"
+        },
+        {
+          "id": "pretreatment_fit:yaradua",
+          "verdict": "weak_fit",
+          "detail": "pre-RMSPE 2.833 vs 0.10 x pre SD 4.175 (ratio 0.678), 8 pre years, 4 donors with weight"
+        },
+        {
+          "id": "pretreatment_fit:jonathan",
+          "verdict": "weak_fit",
+          "detail": "pre-RMSPE 2.788 vs 0.10 x pre SD 3.512 (ratio 0.794), 11 pre years, 3 donors with weight"
+        },
+        {
+          "id": "pretreatment_fit:buhari",
+          "verdict": "weak_fit",
+          "detail": "pre-RMSPE 2.418 vs 0.10 x pre SD 2.993 (ratio 0.808), 16 pre years, 3 donors with weight"
+        },
+        {
+          "id": "pretreatment_fit:tinubu",
+          "verdict": "weak_fit",
+          "detail": "pre-RMSPE 2.44 vs 0.10 x pre SD 4.221 (ratio 0.578), 24 pre years, 4 donors with weight"
+        },
+        {
+          "id": "donor_pool_coverage",
+          "verdict": "computed",
+          "detail": "13 donors x 5 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
+        }
+      ],
+      "blocker": "no candidate treated window lets any convex combination of the donors track Nigeria's pre-treatment path: best pre-RMSPE exceeds 0.10 x the pre-period outcome SD",
+      "note": "Reported infeasible rather than estimated, per PHASES.md's Stage 5 gate",
+      "coverage_status": "ok",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "cpi_yoy__C": {
+      "status": "fail",
+      "checks": [
+        {
+          "id": "pretreatment_fit:obasanjo",
+          "verdict": "not_run",
+          "detail": "needs >= 8 pre and >= 2 post years"
+        },
+        {
+          "id": "pretreatment_fit:yaradua",
+          "verdict": "weak_fit",
+          "detail": "pre-RMSPE 4.798 vs 0.10 x pre SD 4.81 (ratio 0.998), 8 pre years, 4 donors with weight"
+        },
+        {
+          "id": "pretreatment_fit:jonathan",
+          "verdict": "weak_fit",
+          "detail": "pre-RMSPE 4.321 vs 0.10 x pre SD 4.563 (ratio 0.947), 11 pre years, 5 donors with weight"
+        },
+        {
+          "id": "pretreatment_fit:buhari",
+          "verdict": "weak_fit",
+          "detail": "pre-RMSPE 4.104 vs 0.10 x pre SD 3.968 (ratio 1.034), 16 pre years, 4 donors with weight"
+        },
+        {
+          "id": "pretreatment_fit:tinubu",
+          "verdict": "weak_fit",
+          "detail": "pre-RMSPE 5.295 vs 0.10 x pre SD 3.922 (ratio 1.350), 24 pre years, 5 donors with weight"
+        },
+        {
+          "id": "donor_pool_coverage",
+          "verdict": "computed",
+          "detail": "13 donors x 5 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
+        }
+      ],
+      "blocker": "no candidate treated window lets any convex combination of the donors track Nigeria's pre-treatment path: best pre-RMSPE exceeds 0.10 x the pre-period outcome SD",
+      "note": "Reported infeasible rather than estimated, per PHASES.md's Stage 5 gate",
+      "coverage_status": "ok",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    },
+    "unemp__C": {
+      "status": "not_attempted",
+      "checks": [
+        {
+          "id": "pretreatment_fit",
+          "verdict": "not_run",
+          "detail": "outcome unemp is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+        },
+        {
+          "id": "donor_pool_coverage",
+          "verdict": "computed",
+          "detail": "13 donors x 5 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
+        }
+      ],
+      "blocker": "outcome unemp is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)",
+      "note": "No candidate window is testable for this outcome",
+      "coverage_status": "partial",
+      "vintage": "2026-10-16",
+      "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    }
+  },
+  "spec_echo": {
+    "alpha": 0.05,
+    "min_observations_unit_root": 12,
+    "cointegration_K": 2,
+    "shock_min_observed_in_band": 3,
+    "pre_rmse_threshold_frac_of_sd": 0.1,
+    "tier3_lag_max": 4,
+    "min_dof": 3,
+    "vif_flag": 10,
+    "vif_fail": 30
+  }
+}
