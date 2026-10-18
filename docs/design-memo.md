@@ -30,13 +30,15 @@ recomputed independently by `tests/verify_stage5.py`. The current artifact is
 >   is gated; what it lacks is a metric-catalogue entry, which needs a declared monthly-to-annual
 >   aggregation and an outcome decision for a series that begins 2016-12.
 >
-> The verdict totals are unchanged (15 fail, 7 degraded, 14 not attempted, 0 pass), and the sections below
-> have been updated where their reasons changed. Everything else — the grain, the cointegration ranks, the
-> detectable-effect sizes, the donor-pool infeasibility — was measured against the base and is unaffected.
-Machine-readable companion: `registry/diagnostics/2026-10-16/diagnostics.json` (the re-run); the human
-page is `registry/diagnostics/2026-10-16/report.md`. This memo is the Stage 5 output PHASES.md names — for
-each outcome, which design family is credible, which is not attempted, and **the diagnostic that
-justifies the call**.
+> The verdict totals have since moved, and the movement is the point: **2026-10-16 was 15 fail / 7 degraded /
+> 14 not attempted / 0 pass; 2026-10-17 was 15 / 9 / 12 / 0; 2026-10-18 is 14 / 9 / 12 / **1 pass**.** The
+> sections below are dated where their reasons changed. Everything else — the grain, the cointegration
+> ranks, the detectable-effect sizes — was measured against the base and is unaffected.
+Machine-readable companion: `registry/diagnostics/2026-10-18/diagnostics.json` (current); the human page is
+`registry/diagnostics/2026-10-18/report.md`. The 2026-10-16 and 2026-10-17 vintages are kept as superseded
+runs, which is what makes the totals above checkable rather than asserted. This memo is the Stage 5 output
+PHASES.md names — for each outcome, which design family is credible, which is not attempted, and **the
+diagnostic that justifies the call**.
 
 The governing rule is PHASES.md's: *models failing their pre-check are dropped here, on the record,
 which is far cheaper than dropping them after their estimate looks inconvenient.* Nothing below is
@@ -52,9 +54,9 @@ a result. It is the boundary inside which results will be obtained at Stage 6.
 | **B** — national VECM / ARDL | **degraded** | cointegration rank, DoF, collinearity; the base-spec Tier-3 system has no FAAC — the series exists and is gated, but has **no catalogue entry** | a metric-catalogue entry for the FAAC panel, and a decision on whether an annual-grain estimate is worth publishing |
 | **C** — synthetic control | **feasible on one outcome** (re-run 2026-10-18) | pre-treatment fit over a **99-country** pool: `u5mr` passes **3 of its 4** windows; `gdp_growth` 1 of 4 and `cpi_yoy` 0 of 4 do not pass the declared strict-majority rollup | build the estimator and its placebos on the `u5mr` windows |
 
-All **36** (outcome × design) cards carry their own pre-check verdict: **15 fail, 7 degraded,
-14 not attempted, 0 pass.** No outcome clears its gate under any design at this vintage. That is the
-finding.
+All **36** (outcome × design) cards carry their own pre-check verdict: **14 fail, 9 degraded,
+12 not attempted, 1 pass.** The pass is `u5mr` under Design C, and it is permission to build that design
+rather than evidence its fit is real. No other card clears its gate. That is the finding.
 
 ---
 

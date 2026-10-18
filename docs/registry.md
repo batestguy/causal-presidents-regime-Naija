@@ -93,8 +93,9 @@ cards on disk, and `verify_registry.py` fails when a card that should carry a nu
 
 ## 5. What this layer does not claim
 
-- **A number on a card is not a passing design.** Two cards carry an estimate and **0 of 36** pass their
-  pre-check. The card shows both.
+- **A number on a card is not a passing design.** Two cards carry an estimate and **1 of 36** passes its
+  pre-check (and it is not one of them: the pass is `u5mr` under Design C, which has no estimate yet). The
+  card shows both.
 - **The four Design B cards with no series are not "no effect".** `outcome_series_absent` is a statement
   about the data, not about the policy.
 - **Nothing here re-estimates anything.** `05_registry.R` fits nothing: it copies published fields and stops

@@ -249,7 +249,9 @@ a widened Design C donor pool. The memo is
 `registry/diagnostics/<vintage>/diagnostics.json` + `report.md`, attached to all 36 cards. Config in
 `analysis/specs/diagnostics.yml`, engine in `analysis/R/02_diagnostics.R`, independent verifier
 `tests/verify_stage5.py`. Exit criteria met: **every one of the 36 (outcome × design) cards carries a
-pre-check verdict, and none passes** — 15 fail, 7 degraded, 14 not attempted, 0 pass.
+pre-check verdict, and exactly one passes** — 14 fail, 9 degraded, 12 not attempted, 1 pass
+(`u5mr` under Design C, since the 2026-10-18 re-run). The earlier re-runs' totals are kept because they
+moved: 2026-10-16 was 15 / 7 / 14 with 0 pass, and 2026-10-17 was 15 / 9 / 12 with 0 pass.
 
 **What the 2026-10-18 re-run changed (the donor pool).** Design C's `infeasible` verdict was always a
 statement about the *pool*: with 13 countries chosen on GDP comparability, no convex combination could track
@@ -283,7 +285,8 @@ See decisions S5-01…S5-10 and C-44.
 > **Two of those three reasons expired between 2026-10-16 and 2026-10-17, and the re-run above is what
 > recorded it.** The FAAC dose is landed and gated, so "0 of 12,358 dose values" and "FAAC absent" no
 > longer describe the base: `state_panel` now carries 4,104 dose values and `faac_national_monthly` is a
-> real monthly fiscal series. The verdicts above are the current ones — 0 of 36 pass, with the reasons
+> real monthly fiscal series. The verdicts above are the current ones — 1 of 36 passes (`u5mr`, Design C),
+> with the reasons
 > recomputed. What has *not* changed is the grain: the dose begins 2016-12, so the Tier-3 system is 10
 > years long at the annual grain the outcomes are on, against the ~20-observation floor Johansen needs
 > (C-41). And what the re-run refused to do is quietly convert a nominal dose into the per-capita one the

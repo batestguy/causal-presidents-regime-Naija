@@ -11,9 +11,12 @@ what must be assumed absent, and which claim the design can actually carry. The 
 not chosen by hand — it is computed from the graph.
 
 **Status:** DAG layer built and verified (2026-10-11); every card carries its **Stage 5 pre-check**
-(`diagnostics`), re-run at vintage **2026-10-17** after both the fiscal dose and the security outcome
-landed. Cards still do not carry estimates — **0 of 36 cards pass their pre-check** (15 fail, 7 degraded,
-14 not attempted); see `docs/design-memo.md`. The totals survived both re-runs; the reasons did not.
+(`diagnostics`), re-run at vintage **2026-10-18** after the fiscal dose, the security outcome and the
+widened donor pool landed. Cards do not carry estimates as a layer — that is Stage 8's job — and
+**1 of 36 cards passes its pre-check**: `u5mr` under Design C. The rest are **14 fail, 9 degraded,
+12 not attempted**; see `docs/design-memo.md`. The totals moved on the last two re-runs (2026-10-16 was
+15 fail / 7 degraded / 14 not attempted; 2026-10-17 was 15 / 9 / 12), while the reasons moved on all of
+them.
 Family A's cards now say the dose is absent on the per-capita axis the estimand is written on (the
 nominal dose is landed and gated) and that **the state-attributed outcome has arrived** — so the family is
 estimable on the nominal axis, which Stage 6 ran: `estimated_not_identified`, with the failing check named

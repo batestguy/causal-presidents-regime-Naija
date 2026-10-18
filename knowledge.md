@@ -20,10 +20,11 @@ word *performance* is retired from all user-facing naming; see the title note ab
 works end to end on **five** sources and is provenance-verified — including 174 FAAC disbursement
 documents, which are the state fiscal dose, and the UCDP GED security events, which are the
 state-attributed outcome (keyless: its bulk archive needs no token, C-45) — 36 causal graphs are generated
-and verified, 242 series are quality-gated, `dbt/` builds the analytical base the models and the app read,
-and Stage 5 has attached a **pre-check verdict to every card — 0 of 36 pass** (15 fail, 7 degraded, 14 not
-attempted; `docs/design-memo.md`; re-run at vintage 2026-10-18 over the widened donor pool). The verdicts have been re-run three times, once per data delivery (the
-artifact on disk is `registry/diagnostics/2026-10-17/`), and the totals never moved while the reasons did:
+and verified, 672 series are quality-gated, `dbt/` builds the analytical base the models and the app read,
+and Stage 5 has attached a **pre-check verdict to every card — 1 of 36 passes** (14 fail, 9 degraded, 12 not
+attempted; `docs/design-memo.md`; re-run at vintage 2026-10-18 over the widened donor pool). The one pass is
+`u5mr` under Design C. The verdicts have been re-run three times, once per data delivery (the artifact on
+disk is `registry/diagnostics/2026-10-18/`), and the totals **did** move while the reasons moved too:
 Family A is dropped because the dose's per-capita axis waits on the population denominator (X-09), not for
 want of a dose or an outcome.
 

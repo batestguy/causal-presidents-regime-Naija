@@ -13,25 +13,28 @@ verdict — which is why the whole chain was re-run at the new vintage rather th
 one.
 
 **One-line status:** specification complete; ingestion working and provenance-verified on **five**
-sources — **203 payloads**, 0 orphaned files — the newest being **UCDP GED**, whose bulk archive turned
-out to be keyless (C-45), so the state-attributed security outcome exists. **Stage 6 has published its
-first estimates** (`docs/estimates.md`, `registry/estimates/2026-10-17/`): the fiscal transmission
+sources — **238 retrievals at the newest vintage of each source** (174 FAAC documents, 22 World Bank
+national series, 40 donor requests, Brent, UCDP GED) — the newest being **UCDP GED**, whose bulk archive
+turned out to be keyless (C-45), so the state-attributed security outcome exists. **Stage 6 has published
+its first estimates** (`docs/estimates.md`, `registry/estimates/2026-10-18/`): the fiscal transmission
 channel is estimated (**a 10 % Brent move reaches the states as ~5 % more money two to three months
 later**, C-48), and the state dose-response question is **estimated but not identified** (C-47) — with the
 numbers and the failing check both on the record. Ingestion, plus the older status: the FAAC monthly
 disbursement workbook — **the fiscal dose is landed and gated** (174 documents, 114 months × 36 states,
 2016-12 → 2026-06; 37 series through the Stage 3 gates with the result travelling on the panel); the
 causal-graph (DAG) assumption layer is built — 36 graphs (12 outcomes × 3 identification designs); Stage
-3's five quality gates run over all **242** landed series (60 `ok`, 182 `flagged`, 0 `empty` — the FAAC
-dose and the UCDP scopes are flagged on movements the whole panel shares); Stage 4's analytical base
+3's five quality gates run over all **672** landed series (357 `ok`, 313 `flagged`, 2 `empty` — the FAAC
+dose, the UCDP scopes and the monthly prices are flagged on movements the whole panel shares, and the two
+empty series are Eritrea's and Somalia's CPI, which the source has no data for); Stage 4's analytical base
 exists — one monthly table, **8,350 rows (25 metrics × 334 months, 1999-01 → 2026-10)**, held by 136 data
 tests; and **Stage 5 has decided what the data can support before anything is estimated**. Every one of
-the **36 (outcome × design) cards carries a pre-check verdict and none passes** — 15 fail, 7 degraded,
-14 not attempted, **re-run at vintage 2026-10-17** after the security landing. The totals have never moved
-while the reasons did: Family A is still dropped, now because its dose is absent **on the per-capita axis
-the estimand is written on** (the nominal dose is landed and gated) rather than for want of an outcome;
-Family B is degraded (annual grain, FAAC present as data but absent from the catalogue, a 38–99 SD
-detectable effect); Family C is infeasible (no convex combination of the 13 donors tracks Nigeria). **No
+the **36 (outcome × design) cards carries a pre-check verdict, and one passes** — `u5mr` under Design C —
+with 14 fail, 9 degraded and 12 not attempted, **re-run at vintage 2026-10-18** after the donor pool was
+widened. The totals moved on both later re-runs while the reasons moved on all of them: Family A is still
+dropped, now because its dose is absent **on the per-capita axis the estimand is written on** (the nominal
+dose is landed and gated) rather than for want of an outcome; Family B is degraded (annual grain, FAAC
+present as data but absent from the catalogue, a 38–99 SD detectable effect); Family C is no longer
+infeasible — it is a `candidate`, and `u5mr` passes 3 of its 4 runnable windows against a 99-candidate pool. **No
 credential gates anything now** — FRED's key is set, UCDP's archive is keyless, and ACLED is simply not
 wired. The recurring constraint is the one Stage 4 measured: **the monthly spine is only 16.2 % observed**,
 and on the native grain the study is ~26 annual observations.
@@ -224,8 +227,10 @@ in the base — because the artifact was computed before the FAAC dose landed. I
   output into that older vintage's directory (C-44). Fixed on both sides: the Stage 3 report's own label
   is a date again (the raw correction label still travels per source in `source_vintages`), and the
   verifier now reads the latest diagnostics vintage instead of a hard-coded one (S4-20).
-- **The verdict totals are unchanged** — 15 fail, 7 degraded, 14 not attempted, 0 of 36 pass — and that is
-the result: the dose's arrival changed *why* an estimate is not yet possible, not whether one is.
+- **The verdict totals were 15 fail, 7 degraded, 14 not attempted, 0 of 36 passing at this vintage** — the
+dose's arrival changed *why* an estimate was not yet possible, not whether one was. Both totals have since
+moved: 2026-10-17 gave 15 / 9 / 12, and widening the donor pool on 2026-10-18 gave 14 / 9 / 12 with **one
+pass** (`u5mr` under Design C).
 
 Immediately prior (2026-10-17) — **the FAAC dose through Stage 3, and a verifier that had been broken by
 the landing without saying so.**
@@ -307,10 +312,12 @@ engine that decides what the data can support *before* anything is estimated, an
 the record rather than after an estimate looked inconvenient. The stage turned several expectations
 over:
 
-- **Nothing clears its gate.** Of 36 (outcome × design) cards, **0 pass** — 15 fail, 7 degraded, 14 not
-  attempted. The state dose is empty (Family A dropped); the national VECM family runs at **annual**
-  grain without FAAC (degraded); and **no convex combination of the 13 donors tracks Nigeria's
-  pre-treatment path**, so the synthetic control is reported infeasible rather than shipped weak.
+- **Nothing clears its gate — as the totals stood then** (0 pass, 15 fail, 7 degraded, 14 not attempted;
+  they moved to 15 / 9 / 12 at the 2026-10-17 re-run and to 14 / 9 / 12 with one pass at 2026-10-18). The
+  state dose was empty (Family A dropped); the national VECM family ran at **annual** grain without FAAC
+  (degraded); and **no convex combination of the 13 donors tracked Nigeria's pre-treatment path**, so the
+  synthetic control was reported infeasible rather than shipped weak — a verdict the widened 99-candidate
+  pool later lifted to `candidate` on `u5mr` (S5-12).
 - **The base-spec Tier-3 design can detect almost nothing.** The mandated `oil × tenure` interactions
   are nearly collinear with the tenure dummies themselves (R² 0.997–0.999), inflating the minimum
   detectable effect from ~2 residual SDs to **35–99**. That is a property of the *design matrix*, not
@@ -447,7 +454,7 @@ effect that the design cannot support.
 | `tests/verify_harmonisation.py` | Recomputes the whole base from `data/raw/` + the specs, independently of dbt and of the gate module | Exit 0 |
 | `analysis/specs/diagnostics.yml` | Stage 5's declared parameters: grain, unit-root reconciliation, cointegration rule, dose thresholds, pre-fit gate, DoF/power, collinearity, candidate windows, design gates | 9 thresholds echoed |
 | `analysis/R/02_diagnostics.R` | The Stage 5 engine: integration order, Johansen, shock visibility, dose validation, pre-fit QP, DoF/power, collinearity — then attaches a verdict to every card | Exit 0, 36/36 cards |
-| `registry/diagnostics/2026-10-18/` | The Stage 5 result, re-run over the widened donor pool — `diagnostics.json` + a human-readable `report.md` | 0 of 36 pass (15 fail, 7 degraded, 14 not attempted); **Design C: `u5mr` pass (3/4 windows), `gdp_growth` 1/4, `cpi_yoy` 0/4** |
+| `registry/diagnostics/2026-10-18/` | The Stage 5 result, re-run over the widened donor pool — `diagnostics.json` + a human-readable `report.md` | **1 of 36 passes** (`u5mr` under C): 14 fail, 9 degraded, 12 not attempted; **Design C: `u5mr` pass (3/4 windows), `gdp_growth` 1/4, `cpi_yoy` 0/4** |
 | `docs/design-memo.md` | The Stage 5 output: per outcome, which family is credible, which is not attempted, and the diagnostic that decides it | Complete |
 | `analysis/specs/estimation.yml` | Stage 6's declared parameters: the 12 specifications, horizons, HAC lags, the placebo and null designs, and the rule that decides a design's verdict | 12 specifications |
 | `analysis/R/03_estimate.R` | The Stage 6 engine: local projections, PPML count models, the placebo, the time-shift null, the power bound | Exit 0, 12 specifications |
@@ -1226,6 +1233,14 @@ a table; what it produced that matters is one constraint and two confirmations.
     layer down, and the same one that would break the Linux CI runner the plan schedules against.
     Normalised in one place with `chr(92)`, not a backslash literal: a bare `'\'` inside a DuckDB
     string literal is an escape character, not a path separator.
+16. **The Stage 5 card totals were stale in six published places, and the artifact said so.** Both later
+    re-runs moved the totals (`15/7/14` at 2026-10-16 → `15/9/12` at 2026-10-17 → `14/9/12` **with one
+    pass** at 2026-10-18), but `README.md`, `knowledge.md`, `PHASES.md`, `docs/dags.md`,
+    `docs/design-memo.md` and `docs/registry.md` still carried the first set — the README said "0 of 36
+    pass" in the same sentence that announced Design C had moved to `pass` on `u5mr`. Found by reading the
+    artifact next to the prose while answering a coverage question, not by a test. Corrected in all six, and
+    the per-vintage totals are now written where the re-runs are narrated, so the next movement reads as a
+    change rather than as a contradiction.
 
 ## 7. Blocked
 
