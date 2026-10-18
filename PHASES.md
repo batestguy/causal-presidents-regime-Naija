@@ -148,8 +148,8 @@ changes every adjusted estimate.
 
 ## Stage 3 — Validation and quality gates (the honesty chokepoint)
 
-**STATUS: BUILT 2026-10-11 · RE-RUN 2026-10-17 over the FAAC document source.** 125 series gated
-(60 ok, 65 flagged, 0 empty) → `registry/quality/<vintage>/`. Config in
+**STATUS: BUILT 2026-10-11 · RE-RUN 2026-10-16 over the FAAC document source and again 2026-10-17 over UCDP.**
+**242 series** gated (60 ok, 182 flagged, 0 empty) → `registry/quality/<vintage>/`. Config in
 `analysis/specs/quality.yml`, gates in `ingestion/quality/gates.py`, runner
 `ingestion/flows/check_quality.py`, independent verifier `tests/verify_quality.py`. Exit criteria met:
 every series has a gate result, enforced in code — including the 37 that only exist after a parser reads
@@ -184,9 +184,9 @@ walked `data/raw` and assumed every page file was JSON, which held while every s
 FAAC landing put 174 PDFs and spreadsheets in that directory, and `tests/verify_quality.py` then died on
 the first byte of a PDF while the report on disk still read 88 series — the gate had no result for the
 raw layer's newest source and nothing said so (C-42). Document sources are now declared in `quality.yml`
-and gated from their **parsed** artifact, so the gate reads the same series Stage 4 reads. With FAAC in,
-the report is **125 series — ok 60, flagged 65, empty 0**, and the dose plus its gate status is on the
-panel. See S4-19, C-42, C-43.
+and gated from their **parsed** artifact, so the gate reads the same series Stage 4 reads. With FAAC and the UCDP scopes in, the
+report is **242 series — ok 60, flagged 182, empty 0**, and the dose, its gate status and the security
+counts are on the panel. See S4-19, C-42, C-43.
 
 **Exit criteria.** No series reaches Stage 4 without a gate result; the quality report is published with
 the vintage timestamp.
@@ -195,16 +195,18 @@ the vintage timestamp.
 
 ## Stage 4 — Harmonisation: the analytical base
 
-**STATUS: BUILT 2026-10-11.** `fact_metric` holds **7,682 rows = 23 metrics × 334 months
+**STATUS: BUILT 2026-10-11, extended 2026-10-16 (the FAAC dose) and 2026-10-17 (the security outcome).**
+`fact_metric` holds **8,350 rows = 25 metrics × 334 months
 (1999-01 → 2026-10)**, built by dbt into a local DuckDB (`data/analytics.duckdb`, gitignored and
 reproducible). Rules declared in `analysis/specs/harmonisation.yml`, models under `dbt/models/`, seeds
 under `dbt/seeds/` (administration spine, metric catalogue, shock bands, the 37 state units), and a build
-of 144 nodes — 4 seeds, 22 models and 118 tests, 19 of them singular — independent verifier
+of 165 nodes — 4 seeds, 25 models and 136 tests, 19 of them singular — independent verifier
 `tests/verify_harmonisation.py`, and every column documented in `docs/data-dictionary.md`. Exit criteria met: one analytical base table, every column
 documented, reproducible from the vintage plus the anchor config — with **20 break-tests** showing each
-new guard can fail. What the stage *measured* is the important part: **10.1 % of the base is observed**
-(775 of 7,682 rows), because every open source here is annual, so the 2023 subsidy window is not
-monthly-visible on the landed CPI (C-30). See decisions S4-01…S4-12, M-11, C-30…C-32.
+new guard can fail, **plus three more added 2026-10-17 for the artifact contracts**
+(`scripts/validate_artifacts.py`, `PROGRESS.md` §4). What the stage *measured* is the important part: **10.1 % of the base was observed** when it was built
+(775 of 7,682 rows) and **16.2 %** is observed now (1,349 of 8,350) — the monthly landings moved it — while
+the *CPI* series is still annual, so the 2023 subsidy window is not monthly-visible on it (C-30). See decisions S4-01…S4-12, M-11, C-30…C-32.
 
 **Purpose.** One table that the models and the app both read, with nothing computed at render time.
 
@@ -304,6 +306,52 @@ dropping them after their estimate looks inconvenient.
 
 ## Stage 6 — Estimation (R)
 
+**STATUS: BUILT 2026-10-17.** Spec in `analysis/specs/estimation.yml`, engine in
+`analysis/R/03_estimate.R`, artifacts in `registry/estimates/2026-10-17/` (`estimates.json` +
+`report.md`), independent verifier `tests/verify_stage6.py`, output document `docs/estimates.md`.
+**Twelve specifications published across two designs — three Design A outcomes and nine Design B horizons — and one of the two designs is reported as not identified.**
+
+**What was estimated, and what the plan expected.** Stage 5 left 0 of 36 cards passing, so Stage 6 could
+not run the plan's three families as written. What it ran instead is the subset the landed data can
+carry, declared before the numbers were read:
+
+- **Design A — state dose-response** (the Family A estimand, on 3,456 state-months from 2016-12 to
+  2024-12): PPML with state and month effects, clustered by state, for fatalities, incidents and civilian
+  fatalities. **`estimated_not_identified`**: a mis-timed dose (each state's own series shifted by any
+  non-zero offset in ±30 months) returns an estimate at least as large for 8 of 60 offsets, p = 0.133,
+  and the deterministic 24-month placebo (+0.302) is nearly as large as the estimate (+0.479). The reason
+  is measured rather than asserted: after state and month effects the dose's residual variation is 0.50 in
+  Delta/Bayelsa/Rivers against 0.11 elsewhere, i.e. it is the 13 % derivation share moving with the oil
+  price (C-47).
+- **Design B — national fiscal transmission** (114 months): local projection of the cumulative log change
+  in state FAAC on the Brent shock, Newey-West at 12 lags. **`estimated`**: −0.160 at h=0, **+0.518 at
+  h=2** (SE 0.166), **+0.470 at h=3** (0.158), tapering to +0.325 at h=12; the 6-month lead placebo is
+  +0.095 (C-48). A 10 % Brent move reaches the states as ~5 % more money two to three months later.
+- **Design C — synthetic control**: **not run**, and Stage 5's reason is carried onto the artifact
+  rather than dropped. The next step is the donor pool, not the estimator.
+
+**The deviation from the plan, on the record.** The plan specified Callaway & Sant'Anna group-time ATTs
+with `did`. That estimand needs a treatment date per unit, and this dose has no staggered adoption — every
+state receives an allocation every month, and the variation is a magnitude, not a switch. The
+identification the family actually proposes is exposure intensity, so the estimator is a dose-response
+count model. `did` remains correct for a future design with a real adoption date (a state-level policy
+with different start months); it is not a substitute for one.
+
+**Exit criteria — partially met, and the gap is named.** "Every card satisfies all six rigor-floor
+items" cannot be met while no card *passes* its pre-check: Stage 5's verdicts stand, and Stage 6 attached
+estimates to the one family that became estimable, on the nominal dose axis rather than the specified one
+(S6-06). What the shipped estimates do carry is intervals, a placebo, a randomisation check, a dominant
+residual-variation measurement, an explicit DoF/cluster caveat and named assumptions — five of the six
+items, with "confounding sensitivity" replaced by the harder statement that the design is not identified.
+The card schema for estimates is Stage 8 work and is *not* claimed here.
+
+**Gotchas, from this run.** A permutation null is not automatically a valid null: shuffling the dose
+across states within a month destroys the cross-state mean that the state fixed effects already absorb,
+so it compares against a null with far less structure than the design uses — it returned p = 0.000 on a
+design whose own placebo was nearly as large as its estimate (S6-07). The check that decides a timing
+claim has to be a *timing* null. And a count series must never be interpolated: the monthly spine would
+otherwise have carried 25 fabricated fatality-months between 1999 and 2009 (S6-05).
+
 **Work**
 
 - **Family A — state dose-response DiD.** Callaway & Sant'Anna group-time ATT (`did`), with `fixest`
@@ -329,6 +377,36 @@ and must not be written up as one, however good the point estimate looks.
 
 ## Stage 7 — Robustness and the multiverse
 
+**STATUS: BUILT 2026-10-18.** Spec in `analysis/specs/robustness.yml`, engine in
+`analysis/R/04_robustness.R`, artifacts in `registry/robustness/2026-10-17/` (`robustness.json` +
+`report.md` + `specification_curve.svg`), independent verifier `tests/verify_stage7.py`, output document
+`docs/robustness.md`.
+**105 specifications declared before any was fitted and all published; the curve is drawn, the support
+counts are computed from the fitted rows, and the two designs get opposite answers.**
+
+**What the plan asked for, and what was fitted.** The plan names eight axes; four are live here
+(outcome, dose lag, adjustment set, sample window for Design A; shock definition, covariate set, window
+for Design B), and **four are declared dead with their reasons rather than dropped** (imputation
+handling, index anchor, donor pool, event window). One axis is live in principle and unbuilt in fact —
+the per-capita dose, because `d1_faac_per_capita` is 0 of 12,358 rows (X-09) — so the artifact lists it as
+unbuilt and every cell of the curve is the nominal dose.
+
+**What the grid decided.** Design B holds its sign in **24 of 24** specifications (all 24 intervals
+exclude zero, the pre-registered cell reproducing Stage 6 to 4.3e-12) but not its timing: the in-time
+placebo over 48 shifted alignments returns **p = 0.0625**, published as a bound rather than widened until
+it passed (S7-04). Design A does not survive: **45 of 81 specifications positive against 36 negative**,
+**five** axis levels flip by majority (including the preferred `outcome = fatalities` level, 14 of 27),
+and the sharpest is the dose lag — lagged one month, the estimate is negative in all three windows. The
+36 leave-one-state-out refits do not flip the sign ([0.1234, 0.6254], 0 flips), so the fragility is the
+identification and the timing rather than one unit. Oster's δ is negative for both designs and is
+reported with the case it is in; **Rosenbaum bounds are recorded as not applicable** (continuous
+treatment, no matching) with the reason (S7-05).
+
+**Exit criteria.** Support count per sign computed from the fitted rows; the pre-registered specification
+marked on the curve and flagged in the artifact (the contract test fails if two are flagged or none); the
+sign-flip regions drawn as an axis strip beneath each panel rather than buried in a table. All three hold
+in `verify.sh`, and each is break-tested — the observed failures are recorded in `PROGRESS.md`.
+
 **Work**
 
 - Build the specification grid: family × adjustment tier × covariate set × lag order × event window ×
@@ -344,6 +422,26 @@ flips visible in the figure rather than buried in a table.
 ---
 
 ## Stage 8 — Analysis products and interpretation
+
+**STATUS: IN PROGRESS (2026-10-18).** The registry half is built: spec `analysis/specs/registry.yml`,
+engine `analysis/R/05_registry.R`, verifier `tests/verify_registry.py`, output `docs/registry.md`, cards and
+index at schema 0.3.0. **Two of 36 cards carry a published number; 34 carry a reason**, and the two
+design-level results (Design B's channel, Design C's non-run) sit on the index where they cannot be mistaken
+for an estimate about a card's outcome.
+
+**What the registry half decided.** Stage 6's twelve specifications do not line up with 36 cards: three
+Design A specifications are about catalogue outcomes (two of which have cards), nine Design B specifications
+are about the **national FAAC channel** — a *mediator* node on every B card — and Design C was not run. The
+mapping is declared with both of its counts and checked in the engine and the verifier, so the count that
+matters (cards carrying a number) cannot change unnoticed (S8-02, C-55). An `estimated` card carries its
+interval, its Stage 6 verdict with the check that decided it, and the Stage 7 summary for its own axis level;
+sensitivity computed on the preferred specification stays design-level (S8-03). The ordering constraint —
+`01_build_dags.R` resets the estimate block, so the assembler runs after it — is checked by
+`validate_artifacts.py` and `verify_registry.py` rather than documented and hoped for (S8-01).
+
+**Still to do in this stage:** the remaining figures (forest plot, event-study panels — the specification
+curve landed with Stage 7), the RAG corpus with the registry's vintage stamp, the RAGAS evaluation set, and
+the limitations-before-findings narrative.
 
 **Work**
 

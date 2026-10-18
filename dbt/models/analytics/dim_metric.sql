@@ -36,7 +36,9 @@ quality as (
         coalesce(sum(n_spikes), 0) as n_spikes,
         any_value(native_frequency) as native_frequency
     from {{ ref('stg_quality_series') }}
-    where source in ('worldbank', 'fred')
+    -- Sources whose series are catalogue metrics. `faac` is absent on purpose: its gate rows are per
+    -- state (`faac_gross_total`), and no catalogue metric is built from that series yet.
+    where source in ('worldbank', 'fred', 'ucdp')
     group by metric_id
 ),
 

@@ -1,8 +1,18 @@
 # Design memo — what the data can support (Stage 5)
 
-**Vintage 2026-10-11 · re-run at vintage 2026-10-16.** Built by `analysis/R/02_diagnostics.R` from the
-analytical base and `analysis/specs/diagnostics.yml`; every number recomputed independently by
-`tests/verify_stage5.py`.
+**Vintage 2026-10-11 · re-run at vintage 2026-10-16 · re-run again at vintage 2026-10-17.** Built by
+`analysis/R/02_diagnostics.R` from the analytical base and `analysis/specs/diagnostics.yml`; every number
+recomputed independently by `tests/verify_stage5.py`. The current artifact is
+`registry/diagnostics/2026-10-17/`.
+
+> **This memo's verdicts are pre-estimation, and Stage 6 has since run two of them.** The third re-run
+> (2026-10-17) followed the security outcome landing (C-45), which cleared Family A's *outcome* blocker:
+> the family is still dropped on the dose **axis** — per capita waits on X-09 — but it is now estimable on
+> the nominal axis, and Stage 6 estimated it. **Read `docs/estimates.md` before acting on the Family A
+> row**: the estimate is published as `estimated_not_identified`, because the dose's post-fixed-effect
+> variation is the 13 % derivation share moving with the oil price and a mis-timed dose fits just as well
+> (C-47). Design B's row below says its testable system is `{Y, log(oil), fx}`; Stage 6 ran
+> `{Y, log(oil)}` at monthly grain on the FAAC side and found a real transmission channel (C-48).
 
 > **The re-run changed the reasons, not the verdicts (2026-10-17).** The 2026-10-11 run was computed
 > against a base that no longer exists. Family A read "dropped — **0 of 12,358** dose values present" and

@@ -1,25 +1,156 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-10-17 · **Stage:** 5 of 8 complete (designs validated) — no estimates yet
-**One-line status:** specification complete; ingestion working and provenance-verified on **four**
-sources, including the FAAC monthly disbursement workbook — **the fiscal dose is landed and gated**
-(174 documents, 114 months × 36 states, 2016-12 → 2026-06; 37 series through the Stage 3 gates with the
-result travelling on the panel); the causal-graph (DAG) assumption layer is built — 36 graphs (12 outcomes × 3 identification
-designs); Stage 3's five quality gates run over all 125 landed series (60 `ok`, 65 `flagged`, 0 `empty`
-— 37 of those are the FAAC dose, flagged on spikes the whole panel shares);
-Stage 4's analytical base exists — one monthly table, **7,682 rows (23 metrics × 334 months,
-1999-01 → 2026-10)**; and **Stage 5 has decided what the data can support before anything is estimated**.
-Every one of the **36 (outcome × design) cards carries a pre-check verdict and none passes** — 15 fail,
-7 degraded, 14 not attempted, and the verdicts have been **re-run at vintage 2026-10-16** because the
-first set described a base that no longer exists. The totals are unchanged and the reasons are not:
-Family A is still dropped, now because its dose is absent **on the per-capita axis the estimand is
-written on** (the nominal dose is landed and gated) and because no outcome is state-attributed; Family B
-is degraded (annual grain, FAAC present as data but absent from the catalogue, a 38–99 SD detectable
-effect); Family C is infeasible (no convex combination of the 13 donors tracks Nigeria). No estimate is attached to any model yet. The recurring constraint is
-the same one Stage 4 measured: **the monthly spine is only 10.1 % observed**, and on the native grain the
-study is ~26 annual observations. One credential (UCDP) still gates the security domain.
+**Last updated:** 2026-10-18 (fifth session) · **Stage:** 8 of 8, begun — the registry the app will read
+exists: 36 cards, **2 carrying a published number and 34 carrying a reason**, the design-level results on
+the index · **verified by `scripts/verify.sh`**
+**One-line status:** specification complete; ingestion working and provenance-verified on **five**
+sources — **203 payloads**, 0 orphaned files — the newest being **UCDP GED**, whose bulk archive turned
+out to be keyless (C-45), so the state-attributed security outcome exists. **Stage 6 has published its
+first estimates** (`docs/estimates.md`, `registry/estimates/2026-10-17/`): the fiscal transmission
+channel is estimated (**a 10 % Brent move reaches the states as ~5 % more money two to three months
+later**, C-48), and the state dose-response question is **estimated but not identified** (C-47) — with the
+numbers and the failing check both on the record. Ingestion, plus the older status: the FAAC monthly
+disbursement workbook — **the fiscal dose is landed and gated** (174 documents, 114 months × 36 states,
+2016-12 → 2026-06; 37 series through the Stage 3 gates with the result travelling on the panel); the
+causal-graph (DAG) assumption layer is built — 36 graphs (12 outcomes × 3 identification designs); Stage
+3's five quality gates run over all **242** landed series (60 `ok`, 182 `flagged`, 0 `empty` — the FAAC
+dose and the UCDP scopes are flagged on movements the whole panel shares); Stage 4's analytical base
+exists — one monthly table, **8,350 rows (25 metrics × 334 months, 1999-01 → 2026-10)**, held by 136 data
+tests; and **Stage 5 has decided what the data can support before anything is estimated**. Every one of
+the **36 (outcome × design) cards carries a pre-check verdict and none passes** — 15 fail, 7 degraded,
+14 not attempted, **re-run at vintage 2026-10-17** after the security landing. The totals have never moved
+while the reasons did: Family A is still dropped, now because its dose is absent **on the per-capita axis
+the estimand is written on** (the nominal dose is landed and gated) rather than for want of an outcome;
+Family B is degraded (annual grain, FAAC present as data but absent from the catalogue, a 38–99 SD
+detectable effect); Family C is infeasible (no convex combination of the 13 donors tracks Nigeria). **No
+credential gates anything now** — FRED's key is set, UCDP's archive is keyless, and ACLED is simply not
+wired. The recurring constraint is the one Stage 4 measured: **the monthly spine is only 16.2 % observed**,
+and on the native grain the study is ~26 annual observations.
 
-**Last action (2026-10-17): Stage 5 re-run — the dose's checks recomputed on the axis the estimand is
+
+**Last action (2026-10-18, fifth session): Stage 8 — the registry. The app's data contract exists, and it
+carries two numbers, not twelve.**
+
+Stage 9 has to be buildable without opening R (PHASES.md Stage 8), so every number the app can show has to be
+on a card, beside the assumption it rests on, with the artifact it was copied from named. Stage 6 published
+12 specifications and the registry has 36 cards — and the two do not line up:
+
+- **2 cards carry a published number, 34 say why not**, and the ratio is enforced rather than reported. Both
+  Design A cards that can carry one do (fatalities +0.4793, incidents +0.5460, each with its interval, its
+  `estimated_not_identified` verdict and the check that decided it); the third Design A specification lives
+  on an outcome with no card (`fatalities_civilians` is a UCDP item inside the `fatalities` outcome) and is
+  carried on the index as a declared gap rather than dropped (C-55).
+- **No Design B card carries a number, and that is the point of the layer.** Stage 6's nine B specifications
+  measure the **national FAAC channel**; on every B card FAAC is a *mediator* node, not the outcome. The
+  result is published once, on the index, with `result_is_card_level: false` — showing it nine times would
+  have been the most misleading thing this layer could do.
+- **Every card with no number names a reason from a closed set** — `outcome_series_absent` (12),
+  `no_specification_declared` (10), `design_result_is_channel_level` (9), `design_not_run` (3) — so the
+  absence of an estimate is never silent, and the verifier recomputes which reason each card should carry.
+- **The index no longer claims the registry holds no estimates.** Its `layer` string said exactly that until
+  this stage; the app would have read the strongest claim in the repository and been wrong.
+- **The engine found the omission before publication.** The first assembly wrote 2 of 3 Design A numbers and
+  reported success, because the declared expectation counted *published specifications* rather than *cards*.
+  The count that matters is now declared separately and checked in both directions (S8-02, C-55).
+
+**Previous action (2026-10-18, fourth session): Stage 7 — robustness and the multiverse. The grid was fitted,
+and it turned one design's verdict into a different one.**
+
+Stage 6 published two estimates. Stage 7 asks whether either survives the choices it did not pin down:
+**105 specifications** fitted and published (81 Design A, 24 Design B), every one declared in
+`analysis/specs/robustness.yml` before any of them ran, with the specification curve drawn and the support
+counts computed rather than typed.
+
+- **Design B survives, with a named weak part.** All **24 of 24** specifications are positive and all 24
+  intervals exclude zero; the pre-registered cell reproduces Stage 6 to 4.3e-12. Its *magnitude* is a
+  choice (the coefficient at h=2 spans +0.3968 to +2.3976, and the spread is mostly the shock definition —
+  a three-month average is a smoother regressor) and its **timing is weaker than its sign**: the in-time
+  placebo, 48 shifted alignments, returns **p = 0.0625**. That number is published as a bound rather than
+  widened until it passed (S7-04).
+- **Design A does not survive, and that is the finding.** **45 of 81 specifications are positive and 36
+  negative.** Five axis levels have a majority on the opposite side of zero from the pre-registered
+  specification — including the preferred `outcome = fatalities` level itself (14 of 27), and 6 of the 105
+  specifications sit inside the declared ±0.02 near-zero band and are counted as such — and the sharpest
+  is the **dose lag**: with the dose lagged one month and state and month effects, the estimate is negative
+  in all three windows while the pre-registered same-month estimate is +0.479. The 36 leave-one-state-out
+  refits do **not** flip the sign ([0.1234, 0.6254], 0 flips), so the fragility is the identification and
+  the timing rather than one unit; dropping Delta/Bayelsa/Rivers raises the estimate to 0.6663 (C-47 restated).
+  Stage 6's `estimated_not_identified` was therefore the *milder* of the two true statements: this number is
+  not a direction (C-50).
+- **What the grid cannot vary is declared rather than dropped.** Four of the design spec's eight axes have
+  no live variant here (imputation handling, index anchor, donor pool, event window) and each carries its
+  reason; the **per-capita dose axis is live in principle and unbuilt in fact** — `d1_faac_per_capita` is
+  0 of 12,358 rows because X-09 is unmade — so the curve is a curve over the nominal dose and says so.
+- **Sensitivity, reported in the case it is actually in.** Oster's delta is negative for both designs
+  (Design B −44.04: the controls move the estimate away from zero; Design A's linear analogue −1.53: the
+  control set flips its sign, −0.1023 to +0.0882), so the artifact carries `delta_interpretable`, a
+  sign-flip flag and beta* at delta = 1 rather than a bare number that reads like a certification.
+  **Rosenbaum bounds are declared not applicable** (continuous treatment, no matching) with the reason, and
+  the HAC bandwidth moves the Design B interval only from 0.1609 to 0.1723, so its width is the sample.
+- **The engine found a real bug and the pre-registered check caught it before publication.** `data.table`'s
+  `shift(x, -h, type = "lead")` is a *lag* — the sign and the type cancel — and the first grid run produced
+  a Design B coefficient 0.408 away from Stage 6's. The engine refuses to write when the pre-registered cell
+  disagrees with the estimate artifact, which is exactly the class of error that check exists for (C-52).
+  Two more were found the same session: a rank-deficient state-slope design made the verifier's clustered SE
+  disagree by 97 % while the coefficient agreed to 1e-10, and `lm`'s silent drop of the first lagged month had
+  to be reproduced explicitly so the two implementations compare the same sample.
+
+**Previous action (2026-10-17, third session): the verification became one command, and the documentation was
+put back onto the artifacts.**
+
+What this session found is that the project's *claims* drifted faster than its artifacts: three of them
+(C-42, C-44, C-49) were true when written and silently false later, and the verifiers were only ever run
+by hand — so a green verifier on disk was a convention, not a check.
+
+- **`scripts/verify.sh` and `.github/workflows/verify.yml`.** One command runs compile, the artifact
+  contracts, acquisition when nothing is landed, Stage 3, dbt, Stage 6 and all seven verifiers, and returns
+  the first failure's status; CI runs it from `requirements.txt` on a clean runner. Run today: **exit 0 —
+  `all checks passed`**.
+- **`scripts/validate_artifacts.py`, the contract test.** Every landed payload must be readable by the
+  reader its **extension** declares — an unregistered extension fails rather than being skipped — the
+  newest gate report's own label must be a date and agree with its directory, Stage 5 must describe that
+  report, and every registry JSON must validate against its schema. Today: 203 payloads, 37 documents, 0
+  unreadable. Three mutations confirmed each check can fail, on the real raw layer (§4).
+- **C-49 — two numbers in the Stage 5 report were typed into the prose, and one was worse than stale.** It
+  printed the *modal* dose status under the words "on every row", so a panel that is now 4,104 observed
+  rows out of 12,358 still described itself as entirely declared gaps; the observed share was the literal
+  "10.1%". Both are now computed (`grain_decision.observed_fraction`), the report was regenerated at
+  vintage 2026-10-17 and the 36 cards re-emitted — and each card's own `estimate.note` was fixed too, since
+  it promised estimates from a stage that has already run (G-07, narrowed).
+- **The documentation was put back onto the artifacts**, and checked by a script against
+  `data/analytics.duckdb`, the quality report and `estimates.json` rather than by eye: 7,682 → **8,350**
+  rows, 23 → **25** metrics, 92 → **136** data tests, 125 → **242** gated series, 3 → **5** provenance
+  sources, 10.1 % → **16.2 %** observed, and "five published estimates" → the **12 specifications** that are
+  actually in `estimates.json`. Dated session logs and decisions were left as written; only the
+  current-state claims moved.
+
+**Previous action (2026-10-17, second session): the security outcome landed, and Stage 6 ran.**
+
+The blocker that mattered was a credential — `fatalities` and `incidents` were recorded as needing a UCDP
+token or an ACLED OAuth app (C-14/C-13), and Family A had no state-attributed outcome at all. Both halves
+turned out to be one probe away: **UCDP's API is token-gated and its bulk archive is not** (401 on three
+API versions, a plain 200 on a 29 MB zip), and it is CC-BY, unlike ACLED. So the security domain stopped
+being blocked rather than being unblocked, and the state-month outcome exists.
+
+- **Landed and gated**: 7,418 Nigeria events, 1990-09 → 2024-12, state-attributed via `adm_1`. 117 new
+gated series (38 scopes × 3 items + national), the national series on the monthly spine from 1999-01, and
+the state outcome on the panel — with `security_status` distinguishing a **recorded zero** (80 % of
+state-months) from a month the archive does not cover at all.
+- **A decision the landing forced**: a count series must never be interpolated. The spine would otherwise
+  have carried **25 fabricated fatality-months** (1999-2009) between months the archive covers and months
+  it does not (S6-05).
+- **Stage 6** (`analysis/R/03_estimate.R`, 12 specifications, every number recomputed by
+  `tests/verify_stage6.py` to within 1e-12): Design B is **estimated** — cumulative elasticity of state
+  FAAC to a Brent shock of −0.160 at h=0, **+0.518 at h=2**, +0.470 at h=3, with a 6-month lead placebo of
+  +0.095 — and Design A is **estimated, not identified**: the dose's post-fixed-effect variation is 0.50 in
+  the oil-producing states against 0.11 elsewhere, and 8 of 60 mis-timed doses return an estimate at least
+  as large (C-47). Both are published, each with the check that decided it.
+- **Stage 5 re-ran** on the new base: the same 0-of-36 verdicts, with the reasons recomputed — the outcome
+  blocker is now cleared and the remaining one is the dose axis plus the population denominator. The cards
+  carry that, and the one stale sentence they carried ("missing a state-attributed outcome", on the same
+  page as 21,238 outcome values) is now derived from the artifacts rather than typed beside them.
+
+**Previous action (2026-10-17, first session): Stage 5 re-run — the dose's checks recomputed on the axis the estimand is
 actually written on.**
 
 The registry had drifted from the base and the drift was the kind that flatters: `tests/verify_stage5.py`
@@ -84,7 +215,8 @@ things, one of which was a defect of mine:
   internally consistent. The test was break-tested against a doctored panel (a state that loses its gate
   result, a state claiming a status it lacks, an empty join, the FCT wrongly gated): it catches all four
   and is clean on the real table.
-- **A fresh number for the report:** Stage 3 now covers **125 series — ok 60, flagged 65, empty 0**,
+- **A fresh number for the report:** Stage 3 now covers **125 series — ok 60, flagged 65, empty 0** (242
+  after the UCDP scopes landed on 2026-10-17),
   up from 88, with `tests/verify_quality.py` recomputing every one of them independently (and checking
   that every one of the 174 landed documents is referenced by the parse).
 - **What this does not do.** It does not put FAAC on the metric spine. That needs a declared
@@ -160,7 +292,8 @@ read: `fact_metric`, on a local DuckDB file (`data/analytics.duckdb`, gitignored
   tenure strata — while 92 dbt tests hold the same invariants from inside the build. Twenty guards were
   then mutated to confirm they *can* fail (seven dbt tests and thirteen verifier checks), because a
   green test that cannot go red proves nothing.
-- **10.1 % of the base is observed** (775 rows; 4,389 interpolated, 2,518 empty). That ratio is the
+- **10.1 % of the base was observed at this vintage** (775 of 7,682 rows; 4,389 interpolated, 2,518 empty —
+  the same measure reads 16.2 %, 1,349 of 8,350, after the 2026-10-16/17 monthly landings). That ratio is the
   honest cost of a monthly spine over annual sources, and it settles a question §8 had left open:
   **design B on `cpi_yoy` cannot see the 2023-06 → 2023-12 window monthly**, because the landed series
   is annual and that window contains two observations (C-30). `dim_metric.frequency_gap` flags
@@ -221,51 +354,239 @@ effect that the design cannot support.
 | `ingestion/clients/provenance.py` | Shared provenance: byte-exact payload storage, sha256, POSIX paths, **credential redaction** | Redaction confirmed |
 | `ingestion/clients/worldbank.py` | World Bank acquisition; retries, pagination, row-count assertion, detects the 200-with-error envelope | Working |
 | `ingestion/clients/fred.py` | Brent crude (`DCOILBRENTEU`) — oil covariate for the VECM/ARDL family | **Working** (key present) |
-| `ingestion/clients/ucdp.py` | UCDP GED fatalities — security domain (CC-BY, redistributable) | Failure path only |
+| `ingestion/clients/ucdp.py` | UCDP GED fatalities — security domain (CC-BY, redistributable) | **Working** — bulk archive, keyless (C-45) |
 | `ingestion/flows/pull_worldbank.py` | Lands a vintage: raw pages + `manifest.json` + provisional `coverage.json` | Exit 0, 22/22 |
 | `ingestion/flows/probe_candidates.py` | Reconnaissance: which indicators actually reach the APC era | Exit 0 |
 | `ingestion/flows/probe_missing_variables.py` | Reconnaissance: what the causal graphs need that nothing sources | Exit 0 |
 | `ingestion/flows/pull_worldbank_donors.py` | The Design C donor panel — 13 countries × 5 screening predictors | Exit 0, 5/5 |
 | `ingestion/flows/pull_fred.py` | Lands the oil covariate: Brent crude, daily; refuses to overwrite a landed vintage (X-07) | Exit 0, 1/1 |
-| `analysis/specs/quality.yml` | Stage 3 gate configuration: study window, thresholds, grains, frozen resample rules, definition breaks, spike adjudications, and the `document_sources` block that gates a PDF/XLSX source from its parsed artifact | 125 series configured |
+| `ingestion/flows/pull_faac.py` | Acquires the FAAC monthly disbursement documents from both publishers (174 PDF/XLSX payloads, 2016-12 → 2026-06) | Exit 0, 174/174 |
+| `ingestion/parsers/faac_disbursement.py` | Parses the documents into per-state items and persists the parse report (per-document reconciliation + the header cells that did not resolve) | Exit 0, 4,104 state-months |
+| `ingestion/flows/pull_ucdp.py` | Lands the UCDP GED bulk archive — keyless, 28 MB, CC-BY — which is the state-attributed security outcome | Exit 0, 1/1 |
+| `ingestion/parsers/ucdp_events.py` | Filters to Nigeria, aggregates to scope × month × item, and carries the 47 unattributed events as their own scope rather than dropping them (S6-04) | Exit 0, 37,734 rows |
+| `tests/verify_faac.py` | Re-reads the parsed documents and re-derives the dose, the publisher rule and the cross-publisher differences | Exit 0 |
+| `analysis/specs/quality.yml` | Stage 3 gate configuration: study window, thresholds, grains, frozen resample rules, definition breaks, spike adjudications, and the `document_sources` block that gates a PDF/XLSX source from its parsed artifact | 242 series configured |
 | `ingestion/quality/gates.py` | The five gates (gap · spike · revision · definition-drift · provenance) as pure functions | covered by `verify_quality.py` |
-| `ingestion/flows/check_quality.py` | Runs the gates over every landed series; enforces the exit criterion in code | Exit 0, 88/88 |
-| `registry/quality/2026-10-16/` | The vintage quality report — `report.json` + a human-readable `report.md` (`2026-10-11/` is kept as the previous vintage) | 125 series: 60 ok, 65 flagged, 0 empty |
+| `ingestion/flows/check_quality.py` | Runs the gates over every landed series; enforces the exit criterion in code | Exit 0, 242/242 |
+| `registry/quality/2026-10-17/` | The vintage quality report — `report.json` + a human-readable `report.md` (older vintages are kept) | 242 series: 60 ok, 182 flagged, 0 empty |
 | `tests/verify_quality.py` | Recomputes the gap and spike results from the raw payloads independently of the gate module | Exit 0 |
-| `tests/verify_provenance.py` | Re-derives every sha256, for every source, and detects orphaned files | Exit 0, 3 sources |
+| `tests/verify_provenance.py` | Re-derives every sha256, for every source, and detects orphaned files | Exit 0, 5 sources / 203 payloads |
 | `data/raw/worldbank/2026-10-11/` | 22 payloads + manifest + coverage report | Gitignored, never committed |
 | `data/raw/worldbank_donors/2026-10-11/` | 5 payloads (13 donors each) + manifest + coverage | Gitignored, never committed |
 | `data/raw/fred/2026-10-11/` | 1 payload (Brent, 10,275 rows) + manifest + coverage profile | Gitignored, never committed |
 | `analysis/specs/outcomes.yml` | Outcome registry for the DAG layer — 12 catalogue outcomes with Stage-1 coverage status | 12/12 |
 | `analysis/specs/dag_designs.yml` | The three identification designs as node/edge templates, with assumption text | 36/36 instantiated |
 | `analysis/R/01_build_dags.R` | DAG generator: acyclicity check → dagitty adjustment set → ggdag SVG → in-figure legibility check | Exit 0, 36/36 |
-| `registry/dags/` | 36 DAG cards + 36 SVG figures + index — the assumption layer the app reads | Verified |
+| `registry/dags/` | 36 DAG cards + 36 SVG figures + index — the assumption layer **and the published results**, i.e. everything the app reads | Verified: 2 cards carry a published number, 34 carry a reason |
+| `analysis/specs/registry.yml` | Stage 8's contract: the mapping rule, both of its counts, the cardless specification, the closed reason set, the ordering constraint | 36 cards mapped |
+| `analysis/R/05_registry.R` | The Stage 8 assembler: copies the published specification onto the cards it is about, lifts the design-level results onto the index, fits nothing | Exit 0, 2 estimated / 34 explained |
+| `tests/verify_registry.py` | Re-derives the mapping and checks every card's number against the artifact it names; fails when a card that should carry one does not | Exit 0 |
+| `docs/registry.md` | The Stage 8 output: what the app reads, which cards carry a number, and why the rest do not | Complete |
 | `tests/verify_dags.py` | Independent verification of every DAG card (schema, acyclicity, backdoor blocking) | Exit 0 |
 | `analysis/specs/harmonisation.yml` | Stage 4's declared rules: spine, annual→monthly alignment, interpolation, the index anchor and its recorded fallback, and the declared gaps | 5 gaps declared |
-| `dbt/` | The transformation project (D-05: SQL, never Python): staging → analytics, run into a local DuckDB | 19 models, 4 seeds |
+| `dbt/` | The transformation project (D-05: SQL, never Python): staging → analytics, run into a local DuckDB | 25 models, 4 seeds |
 | `dbt/seeds/raw_administration.csv` | Administration spine + term count, base spec §7 | 5 rows |
 | `dbt/seeds/raw_metric_catalogue.csv` | The metric dimension's source: label, unit, **direction**, domain, catalogue vs landed frequency, coverage status | 25 metrics, 12 outcomes |
 | `dbt/seeds/raw_shock_bands.csv` · `raw_state.csv` | Base spec §8 shock bands · the 37 state-level units | 3 · 37 |
-| `dbt/models/analytics/fact_metric.sql` | **The analytical base**: 23 metrics × 334 months with the index, the observation type and the tenure strata | Built, 7,682 rows |
-| `dbt/models/analytics/metric_anchor.sql` | The index anchor per metric, naming the rule that produced it | 23 rows (16 fixed, 7 fallback) |
-| `dbt/models/analytics/int_metric_monthly.sql` | The spine before indexing: observed / interpolated / unobserved, no extrapolation, no interpolation across a gap | 7,682 rows |
+| `dbt/models/analytics/fact_metric.sql` | **The analytical base**: 25 metrics × 334 months with the index, the observation type and the tenure strata | Built, 8,350 rows |
+| `dbt/models/analytics/metric_anchor.sql` | The index anchor per metric, naming the rule that produced it | 25 rows (18 fixed, 7 fallback) |
+| `dbt/models/analytics/int_metric_monthly.sql` | The spine before indexing: observed / interpolated / unobserved, no extrapolation, no interpolation across a gap | 8,350 rows |
 | `dbt/models/analytics/dim_administration_term.sql` | Term-level spans carrying the four LOCKED party-by-tenure strata | 7 terms |
 | `dbt/models/analytics/dim_metric.sql` | The metric dimension, with the Stage 3 quality status and definition breaks travelling on it | 25 rows |
-| `dbt/models/analytics/state_panel.sql` | 37 × 334 panel, dose columns typed, empty and declared | 12,358 rows, 0 doses |
+| `dbt/models/analytics/state_panel.sql` | 37 × 334 panel: the FAAC dose and the UCDP outcome where their sources cover the month, the rest typed and declared | 12,358 rows, 4,104 doses observed |
 | `dbt/models/analytics/fact_donor_panel.sql` | Design C's donor pool, kept off the national spine | 3,866 rows, 13 countries |
-| `dbt/tests/` | 13 singular tests for what generic tests cannot express: no extrapolation, no interpolation across a gap, the frozen Brent rule, vintage isolation, spine completeness, term coverage, declared gaps | 92 data tests total |
+| `dbt/models/analytics/faac_state_allocation.sql` | The dose itself: one publisher chosen per state-month by the declared rule, the other measured beside it | 4,104 rows |
+| `dbt/models/analytics/faac_national_monthly.sql` | The dose summed over the 36 states — the fiscal transfer channel on a national spine | 114 months |
+| `dbt/models/analytics/ucdp_state_month.sql` | The security outcome at state-month grain, `observed` / `not_covered` distinguished | 15,244 rows |
+| `dbt/models/analytics/ucdp_national_monthly.sql` | The same archive at national grain, summed over 38 scopes so the country is not the sum of its states | 331 rows |
+| `dbt/tests/` | 13 singular tests for what generic tests cannot express: no extrapolation, no interpolation across a gap, the frozen Brent rule, vintage isolation, spine completeness, term coverage, declared gaps | 136 data tests total |
 | `tests/verify_harmonisation.py` | Recomputes the whole base from `data/raw/` + the specs, independently of dbt and of the gate module | Exit 0 |
 | `analysis/specs/diagnostics.yml` | Stage 5's declared parameters: grain, unit-root reconciliation, cointegration rule, dose thresholds, pre-fit gate, DoF/power, collinearity, candidate windows, design gates | 9 thresholds echoed |
 | `analysis/R/02_diagnostics.R` | The Stage 5 engine: integration order, Johansen, shock visibility, dose validation, pre-fit QP, DoF/power, collinearity — then attaches a verdict to every card | Exit 0, 36/36 cards |
-| `registry/diagnostics/2026-10-16/` | The Stage 5 result, re-run after the dose landed — `diagnostics.json` + a human-readable `report.md` | 0 of 36 pass (15 fail, 7 degraded, 14 not attempted) |
+| `registry/diagnostics/2026-10-17/` | The Stage 5 result, re-run after the security outcome landed — `diagnostics.json` + a human-readable `report.md` | 0 of 36 pass (15 fail, 7 degraded, 14 not attempted) |
 | `docs/design-memo.md` | The Stage 5 output: per outcome, which family is credible, which is not attempted, and the diagnostic that decides it | Complete |
+| `analysis/specs/estimation.yml` | Stage 6's declared parameters: the 12 specifications, horizons, HAC lags, the placebo and null designs, and the rule that decides a design's verdict | 12 specifications |
+| `analysis/R/03_estimate.R` | The Stage 6 engine: local projections, PPML count models, the placebo, the time-shift null, the power bound | Exit 0, 12 specifications |
+| `registry/estimates/2026-10-17/` | The Stage 6 result — `estimates.json` + a human-readable `report.md`, each estimate carrying the check that decided its verdict | 12 specifications: 3 Design A outcomes, 9 Design B horizons |
+| `docs/estimates.md` | The Stage 6 output: what the data can answer, what it cannot, and the check behind each verdict | Complete |
+| `tests/verify_stage6.py` | Recomputes every coefficient, sample size, horizon and verdict from the base to within 1e-12 | Exit 0 |
+| `analysis/specs/robustness.yml` | Stage 7's declared multiverse: the 4 live axes per design, the windows, the two Oster analogues, the placebo and leave-one-out rules, the support-count rule, and the 6 axes that are dead or unbuilt with their reasons | 105 specifications declared |
+| `analysis/R/04_robustness.R` | The Stage 7 engine: fits the whole grid, computes the sensitivity checks, the support counts and the majority-flip rule, draws the specification curve | Exit 0, 81 A + 24 B |
+| `registry/robustness/2026-10-17/` | The Stage 7 result — `robustness.json`, `report.md` and `specification_curve.svg` (two panels, axis strips beneath, pre-registered cell marked) | 105 specifications: A 45 positive / 36 negative, B 24 positive; 6 inside the declared ±0.02 near-zero band |
+| `registry/schema/robustness.schema.json` | The Stage 7 contract: every row carries its axis levels, its interval and its sign; the preferred cell is flagged; an unbuilt axis is listed rather than omitted | Validated by `validate_artifacts.py` |
+| `tests/verify_stage7.py` | Re-fits all 81 PPML specifications (statsmodels, not fixest), all 24 local projections, 36 leave-one-state-out refits and 48 placebo alignments, and recomputes both Oster bounds and every count | Exit 0, worst coefficient gap 6.5e-9 |
+| `docs/robustness.md` | The Stage 7 output: what survived, what did not, and the checks behind each | Complete |
 | `tests/verify_stage5.py` | Recomputes every Stage 5 headline number from the base in numpy/scipy and re-derives the design verdicts from the card statuses | Exit 0, 1 warning |
+| `scripts/validate_artifacts.py` | Contract test on names and shapes: every landed payload readable by the reader its **extension** declares, the newest gate report date-labelled and self-consistent, Stage 5 describing it, every registry JSON schema-valid | Exit 0 (1 check skipped without `data/raw`, which is the CI case) |
+| `scripts/verify.sh` | One command that runs the whole chain — compile, artifact contracts, acquisition when nothing is landed, Stage 3, dbt, Stages 6 and 7, every verifier — and returns the first failure's status | Exit 0 |
+| `.github/workflows/verify.yml` | CI: installs the pinned requirements and runs `scripts/verify.sh` on a clean runner (the R engines are skipped there; every verifier still runs) | Wired, runs on push |
+| `requirements.txt` · `requirements-dev.txt` | The pinned Python dependencies (runtime · verification), beside the `ds-general` conda environment rather than replacing it | Pinned |
 | `docs/data-dictionary.md` | Every column of the base, documented — Stage 4's exit criterion and the Stage 0 data dictionary that was never written | Complete |
 
 ## 4. Verification evidence
 
 Commands and their observed results — these are measurements, not assertions. Every exit status
 below was captured directly, not inferred from filtered output.
+
+**Vintage 2026-10-17 (current, second session) — the UCDP landing and Stage 6:**
+
+```
+pull_ucdp.py               -> exit 0  1/1 — GED 25.1 bulk archive, 28.0 MB, sha256 e256f1fb20a5,
+                                      keyless; 7,418 Nigeria events, 1990-09 -> 2024-12,
+                                      38 state labels, 46 events with no state
+ucdp_events.py             -> exit 0  37,734 staging rows = 38 scopes x 331 active months x 3 items;
+                                      totals 73,822 fatalities, 7,418 incidents, 19,538 civilians;
+                                      parse report carries the 81 inactive months and the 47
+                                      unattributed events
+check_quality.py           -> exit 0  242/242 series gated (60 ok, 182 flagged, 0 empty); the 117
+                                      new ones are the UCDP scopes, flagged on monthly volatility
+                                      as any count series is; 0 omitted, exit criterion enforced
+verify_quality.py          -> exit 0  242 series, exit criterion met, every gap/spike reproduced
+                                      independently; the multi-item document source is handled
+                                      by the verifier's own reader, not by the gate's
+dbt build                  -> exit 0  165 nodes: 4 seeds, 25 models, 136 tests, 0 errors. New:
+                                      stg_ucdp_state_month, ucdp_state_month,
+                                      ucdp_national_monthly, plus the spine and panel joins
+verify_harmonisation.py    -> exit 0  25 metrics, 8,350 spine rows, 1,349 observed (16.2%), and the
+                                      count metrics carry **0 interpolated months** (the rule is
+                                      keyed on the catalogue's unit = 'count')
+verify_stage6.py           -> exit 0  12 specifications reproduced independently: PPML coefficients
+                                      agree to 2e-12, cumulative LP coefficients to 1e-12, and the
+                                      five verdicts re-derived from the declared rules
+03_estimate.R              -> exit 0  12 specifications + 60-offset lead-shift distribution +
+                                      499-draw secondary null; design A estimated_not_identified,
+                                      design B estimated
+verify_stage5.py           -> exit 0  36 cards, diagnostics re-run on the new base; 1 reported
+                                      warning (the marginal mmr cointegration rank), 0 failures
+verify_dags.py             -> exit 0  36/36 cards acyclic, schema-valid, adjustment sets block
+                                      every backdoor path in the assumed graph
+```
+
+**Vintage 2026-10-18 (fourth session) — Stage 7, the multiverse:**
+
+```
+04_robustness.R            -> exit 0  105 specifications fitted (81 Design A PPML, 24 Design B
+                                      local projections at h=2); support A 45 positive /
+                                      36 negative, B 24 / 0; 5 axis levels flip by majority;
+                                      6 of the 105 inside the declared ±0.02 near-zero
+                                      band; the pre-registered cell reproduces Stage 6
+                                      to 4.3e-12; spread decomposition 0.4073 across
+                                      covariate sets / 0.7548 across shock definitions;
+                                      base fingerprint state_panel dd11d300f588,
+                                      national 0084ea1d7129, oil 167ff0dce42d;
+                                      specification_curve.svg written (94,502 bytes,
+                                      505 marks across two panels)
+verify_stage7.py           -> exit 0  every specification re-fitted independently: 81 PPML
+                                      fits in statsmodels, 24 local projections, 36
+                                      leave-one-state-out refits and 48 placebo alignments;
+                                      worst coefficient gap 6.5e-9, worst clustered-SE gap
+                                      0.85 % against the stated 5 % allowance; both Oster
+                                      bounds, the majority-flip rule, the HAC table and
+                                      the spread decomposition reproduced — the spread
+                                      from the verifier's own re-fitted coefficients,
+                                      not from the published rows
+validate_artifacts.py      -> exit 0  105 specifications, 81 A / 24 B; the support counts are
+                                      recomputed from the artifact's own rows, exactly one
+                                      specification per design is flagged pre-registered,
+                                      the curve exists and draws at least one mark per
+                                      specification; 38 registry documents schema-valid
+scripts/verify.sh          -> exit 0  the whole chain in one status — compile, contracts,
+                                      Stage 3 gates, dbt build, Stage 6 estimates, Stage 7
+                                      grid and all seven verifiers — ending "all checks
+                                      passed" with the Stage 7 curve regenerated in the
+                                      same run it was verified against
+```
+
+**Vintage 2026-10-18 (current, fifth session) — Stage 8, the registry:**
+
+```
+05_registry.R             -> exit 0  vintage 2026-10-17 | 36 cards | 2 carry a published number,
+                                    34 do not: outcome_series_absent 12,
+                                    no_specification_declared 10,
+                                    design_result_is_channel_level 9, design_not_run 3;
+                                    published without a card: fatalities_civilians;
+                                    design results A estimated_not_identified (3 specs),
+                                    B estimated (9, channel-level), C not_run
+verify_registry.py        -> exit 0  the mapping re-derived from the artifacts: 2 of 36 cards
+                                    should carry a number and 2 do; every attached number
+                                    equals the estimates artifact's to 1e-9; every
+                                    not_estimated card's reason is the recomputed one; the
+                                    index's design-level results are the artifacts' numbers;
+                                    B is declared channel-level
+validate_artifacts.py     -> exit 0  2 of 36 cards carry a published number; the index's counts
+                                    recomputed from the cards on disk; 38 registry
+                                    documents schema-valid against 0.3.0
+```
+
+**Stage 8 break-tests — three guards mutated, the failure observed, then restored.** The driver backed up
+all 37 registry documents, kept the digest of the directory, and checked afterwards that it was
+byte-identical (`ed6a53a8c7da6630`): a break-test that leaves the artifact changed is worse than none.
+
+```
+validate_artifacts  a card's estimate block reset (the   -> exit 1  "registry/dags: the index says 2 card(s)
+                   ordering trap)                                    carry a published number and the cards
+                                                                     say 1 — the registry is stale against
+                                                                     its own cards"
+verify_registry    a coefficient moved off the artifact's-> exit 1  "fatalities__A: coefficient is
+                   value                                             0.4892847253 on the card and
+                                                                     0.4792847253 in registry/estimates/
+                                                                     2026-10-17/estimates.json"
+verify_registry    a not_estimated card's reason swapped -> exit 1  "mmr__B: reason
+                                                                     'no_specification_declared',
+                                                                     recomputed
+                                                                     'design_result_is_channel_level'"
+                                     each case restored  -> exit 0  contracts green again; registry
+                                                                    digest unchanged
+```
+
+**Stage 7 break-tests — eight guards mutated, the failure observed, then restored.** The first four are
+contract tests and run in seconds; the last four re-run the verifier, which re-fits the whole grid (three
+minutes each). The driver kept each run's full output and checked afterward that the artifact's sha256 was
+byte-identical to the one it started from — a mutation that leaves the artifact changed is the failure
+mode a break-test exists to rule out, and a restored-but-different artifact would look green.
+
+```
+validate_artifacts  support count 45 -> 46 in the summary     -> exit 1  "design A support n_positive
+                                                                          is 46 in the summary and 45
+                                                                          in its own rows"
+validate_artifacts  a second specification flagged preferred -> exit 1  "design A has 2 specifications
+                                                                          flagged preferred; exactly one
+                                                                          per design is the pre-registered
+                                                                          one"
+validate_artifacts  specification_curve.svg moved aside      -> exit 1  "the specification curve is
+                                                                          missing or empty — the exit
+                                                                          criterion is a rendered curve,
+                                                                          not a table"
+validate_artifacts  artifact vintage -> 2026-10-16           -> exit 1  "the artifact's own vintage is
+                                                                          '2026-10-16', which disagrees
+                                                                          with the directory holding it"
+verify_stage7       one coefficient moved by 0.01            -> exit 1  "design A / A|fatalities|lag0|
+                                                                          state_fe|full: reported
+                                                                          -0.062311 vs recomputed
+                                                                          -0.052311"
+verify_stage7       the `fatalities` flip level removed      -> exit 1  "flip list: published [...] vs
+                                                                          recomputed [...]" — the published
+                                                                          4 omit 'outcome = fatalities' from
+                                                                          the recomputed 5 — and "flip count
+                                                                          disagrees with the recomputed
+                                                                          majority rule"
+verify_stage7       the per-capita axis removed from the
+                    unbuilt list                             -> exit 1  "unbuilt axes: population_
+                                                                          denominator is neither varied
+                                                                          nor declared as unbuilt"
+verify_stage7       the spread decomposition moved to 0.9   -> exit 1  "spread / design B /
+                                                                          across_shock_definitions:
+                                                                          published 0.900000 vs
+                                                                          recomputed 0.754829 — the
+                                                                          magnitude claim is not the
+                                                                          fitted grid's"
+                                      each case restored  -> exit 0  contracts and verifier green again;
+                                                                     artifact byte-identical to the
+                                                                     one the run started from
+```
+
+The earlier vintages below are kept as history. Note that the report's own label is a date and the raw
+vintages are not (S4-20) — `registry/quality/2026-10-17/` is the current gate report.
 
 **Vintage 2026-10-16-correction (current, 2026-10-17):**
 
@@ -431,6 +752,23 @@ verifier: a frequency gap erased                -> exit 1  cpi_yoy catalogue_fre
                                       each case restored -> exit 0  base green again
 ```
 
+**Break-tests — the artifact contracts (2026-10-17).** The three checks in `scripts/validate_artifacts.py`
+exist because C-42 and C-44 were both a *name or a shape that stayed in the code after it stopped being
+true*. Each was mutated and the failure observed, on the real raw layer, then restored:
+
+```
+validate_artifacts  PDF_SUFFIXES = {} (drop the reader)      -> exit 1  data/raw/faac/2026-10-16-correction/
+                                                                       oagf-2019-04/page-0001.pdf: unregistered
+                                                                       payload extension '.pdf'
+validate_artifacts  report label must be '...-correction'    -> exit 1  registry/quality/2026-10-17: the report's
+                                                                       own label is not a date, so every consumer
+                                                                       that selects the newest report by date
+                                                                       will skip it
+validate_artifacts  Stage 5 must describe 2026-10-11 instead -> exit 1  registry/diagnostics/2026-10-17
+                                                                       describes a superseded gate report
+                                         each case restored  -> exit 0  contracts green again
+```
+
 ```bash
 # Stage 4 — build the analytical base, run its tests, then verify it independently
 # (dbt is not on PATH: it lives in the ds-general env, so it needs the same conda run wrapper)
@@ -515,6 +853,46 @@ Note: `conda run -n ds-general` does **not** work — `ds-general` is a prefix e
 
 ## 5. Findings so far
 
+**Stage 7 — what survives the choices (2026-10-18).** Full write-up: `docs/robustness.md`.
+
+- **Design B's sign is invariant; its timing is not.** 24 of 24 specifications positive, all 24 intervals
+  excluding zero, the pre-registered cell reproducing Stage 6 to 4.3e-12 — against an in-time placebo of
+  **p = 0.0625** (3 of 48 shifted alignments as large as the estimate) and a coefficient that spans 0.3968
+  to 2.3976 across the grid, mostly because the three-month shock is a smoother regressor. The honest
+  reading: the channel and its sign are the result; "two to three months" is a weaker claim that now
+  carries its placebo (C-51).
+- **Design A is not robust, and the axis that moves it is the dose lag.** 45 of 81 positive against 36
+  negative; the lag-1 specification is negative in all three windows while the pre-registered same-month
+  one is positive; `state_fe` and `state_month_fe_state_trend` also flip by majority. Leave-one-state-out
+  does not flip it (0 of 36), so the instability is not one unit — and dropping the three oil-producing
+  states moves the estimate from +0.479 to +0.666, the same oil-price concentration C-47 measured (C-50).
+- **The per-capita dose is still missing and the curve says so.** Every cell is the nominal dose, because
+  `d1_faac_per_capita` is 0 of 12,358 rows (X-09). S6-06's invariance argument is an argument, not a fitted
+  specification, and the artifact lists the axis as unbuilt rather than quietly omitting it.
+- **Oster's delta does not certify anything here, and the artifact says which case it is in.** Negative for
+  both designs — the controls move Design B away from zero (−44.04) and flip the sign of Design A's linear
+  analogue (−0.1023 → +0.0882) — so the δ ≥ 1 cutoff has no reading. Rosenbaum bounds are recorded as not
+  applicable rather than omitted (S7-05).
+
+**Stage 6 — what could actually be answered (2026-10-17).** Full write-up: `docs/estimates.md`.
+
+- **The presidential-tenure question is not answerable**, and the reason is arithmetic: four to five
+  administrations against 27 annual observations put the minimum detectable effect at 35–80 residual
+  standard deviations (Stage 5's rebuilt design matrices). It is not "no evidence yet"; it is a question
+  this data cannot carry. Any tenure number would be a restatement of its own assumptions.
+- **The fiscal channel is answerable, and now estimated.** A 10 % Brent rise reaches state allocations as
+  **~5 % more money, two to three months later** (cumulative elasticity +0.518 at h=2, HAC SE 0.166;
+  −0.160 at h=0; 6-month lead placebo +0.095). The lag matches the disbursement calendar rather than
+  contradicting it, and the zero at h=0 is part of the finding (C-48).
+- **The dose-response question is estimable and not identified.** Higher allocations do not visibly buy
+  less violence, and the design cannot distinguish that from any other timing: 8 of 60 mis-timed doses
+  return an estimate at least as large as the estimate itself, and the 24-month placebo (+0.302) is nearly
+  the estimate (+0.479). The cause is measurable, not rhetorical — after state and month effects the
+  dose's variation is the 13 % derivation share moving with the oil price (residual sd 0.50 in Delta,
+  Bayelsa, Rivers; 0.11 elsewhere) — a national shock interacted with a fixed state characteristic (C-47).
+- **A monthly NGN/USD series does not exist on any keyless source** (C-46), so the price and exchange-rate
+  channels cannot be separated inside Design B. It is a stated limitation on the estimate, not a silent one.
+
 **Access (probed 2026-10-10; "unreachable" = failed via two independent network paths):**
 
 | Source | Result |
@@ -523,7 +901,7 @@ Note: `conda run -n ds-general` does **not** work — `ds-general` is a prefix e
 | NBS, CBN | ✅ reachable (HTML/PDF, no API) |
 | IMF DataMapper | ⚠️ 403 to scripted clients, 200 via relay |
 | FRED | ✅ **resolved 2026-10-11** — key registered, HTTP 200, Brent landed |
-| UCDP | 🔑 free token still required |
+| UCDP | ✅ **keyless via the bulk archive (2026-10-17)** — the *API* still returns 401 without a token, but `ged251-csv.zip` is a plain 200 (29,307,888 bytes) and CC-BY. Landed as the security outcome (C-45) |
 | ACLED | ❌ documented endpoint dead; now **OAuth** |
 | OAGF (`oagf.gov.ng`), Open Treasury, NEMIS | **OAGF 🟡 corrected 2026-10-16** — the Open Treasury portal is still unreachable, but the OAGF's own site publishes the monthly disbursement PDFs and was crawled successfully (83 documents). Open Treasury and NEMIS remain ❌ — two Nigerian gov hosts of the three |
 | UNESCO UIS | ❌ every path 404, including root |
@@ -538,7 +916,7 @@ as `variables_still_missing` — **7 variables, 3 root causes**:
 |---|---|---|
 | Fiscal dose | `dose` (D1), `faac` | ✅ **The acquisition is done (2026-10-16)** — 174 documents, 114 months × 36 states, `state_panel.faac_gross_total_naira` — **and the Stage 3 gate is done (2026-10-17)**: 37 series gated, all `flagged` on distribution-cycle spikes, with `dose_gate_status` on the panel. What remains is a **decision** (the state population denominator, X-09), a **catalogue entry** for a panel with no declared national aggregation, and a decision about the annual-grain length |
 | Education outcomes | primary completion, net enrolment, youth literacy | No open source reaches 2015+ |
-| Security outcomes | fatalities, incidents | A free UCDP token (reachable) or ACLED OAuth |
+| Security outcomes | fatalities, incidents | ✅ **Closed 2026-10-17** — UCDP GED bulk archive, keyless, state-attributed, on the panel and on the spine (C-45). ACLED would still be a second, richer source, and its terms stay unresolved without leaving a hole |
 
 **Oil price — closed.** Brent crude is landed as a daily series: 10,275 rows, 9,102 with values,
 1987-05-20 → 2026-10-06, sha256 `b6807052c734`. All **474 months** in the span carry at least one
@@ -598,8 +976,9 @@ unsourced nodes**; designs A and B are each down to one, the FAAC fiscal dose.
 **Stage 4 harmonisation (2026-10-11) — what building the base measured.** The stage's job was to build
 a table; what it produced that matters is one constraint and two confirmations.
 
-- **The monthly spine is 10.1 % observed (C-30).** 775 of 7,682 rows are direct observations; 4,389 are
-  linear interpolations between annual points and 2,518 are empty months within the spine's span. That
+- **The monthly spine is 16.2 % observed (C-30)** — 1,349 of 8,350 rows — and was **10.1 %** (775 of
+  7,682) when the finding was first recorded, before the monthly Brent, FAAC and UCDP landings. 4,389 rows
+  are linear interpolations between annual points and 2,612 are empty months within the spine's span. That
   is not a defect — it is what a monthly spine over annual sources *is* — but it has a consequence that
   changes the plan: **the landed `cpi_yoy` is annual, so a monthly design-B estimate cannot see the
   2023-06 → 2023-12 window**, which contains two observations. `dim_metric.frequency_gap` flags
@@ -687,30 +1066,29 @@ a table; what it produced that matters is one constraint and two confirmations.
 | Blocker | Needs |
 |---|---|
 | ~~FRED key~~ | ✅ **Unblocked 2026-10-11** — registered, key in `.env`, Brent landed, `oil` acquired (C-23) |
-| UCDP token, ACLED OAuth app | **You** — two free registrations. These are the only route to the security outcomes |
+| ~~UCDP token~~ | ✅ **Not needed 2026-10-17** — the bulk archive is keyless and the security outcome is landed (C-45). ACLED stays unwired by choice: UCDP is CC-BY and already answers the domain |
 | ~~FAAC parser (D1)~~ | ✅ **Unblocked 2026-10-16** — both publishers crawled, 174 documents parsed, every one reconciled to its own Total row (C-39/C-41) |
 | State IGR parser (D2) | NBS publishes PDFs and HTML, no API. D2 is FAAC ÷ (FAAC + IGR), so the IGR half is now the only missing input |
-| A Stage 3 gate on the FAAC series (S4-17) | The Stage 3 gates over the new monthly national series, before it can enter `dim_metric` and the Tier-3 system |
+| ~~A Stage 3 gate on the FAAC series (S4-17)~~ | ✅ **Done 2026-10-17** — 37 series (36 states + the national aggregate) gated from the parsed artifact and the result read onto the panel (S4-19). What the national series still lacks is a **catalogue entry**, which needs a declared monthly-to-annual aggregation, not a gate |
 | UNESCO UIS current API path | Its docs (web search unavailable in this environment) |
 | NEMIS reachability | A check from a network other than this one |
 | DHIS2 tenant access | Institutional credentials; do not design a model on it until confirmed |
-| Monthly NBS CPI — the grain the app's chart spec states | The manual-download parser. The landed CPI is annual, so the spine is 10.1 % observed and design B cannot see the 2023 window monthly (C-30). Either parse the monthly series, or run design B at its annual cross-check |
+| Monthly NBS CPI — the grain the app's chart spec states | The manual-download parser. The landed CPI is annual, so design B cannot see the 2023 window monthly on it (C-30) even though the spine is now 16.2 % observed. Either parse the monthly series, or run design B at its annual cross-check |
 
 ## 8. Next steps, in order
 
-Stages 0–4 are done. One registration still gates the security domain, and the critical path to a
-fitted model contains no acquisition step at all — but it does contain a **grain problem** that Stage 4
-measured rather than inherited (C-30), and that choice belongs to Stage 5.
+**Stages 0–6 are done. No credential gates anything on the critical path, and the first estimates exist.**
+What is left is not acquisition: it is the two *decisions* that would let the unidentified design become
+identified (X-09 and a non-oil fiscal instrument), the designs that were never runnable, and the stages
+that turn estimates into a product.
 
-**A. One free registration left.**
+**A. Credentials: none outstanding.**
 
-1. **UCDP token** → the only route to the security outcomes (`fatalities`, `incidents`). The endpoint
-   and header are already confirmed (C-14) and the client is written and tested on its failure path.
-   ACLED remains the richer alternative but needs OAuth and forbids redistribution.
-
-   FRED needed no code and no further action: the account is registered, the key is in `.env`,
-   `pull_fred.py` runs keyed, and the `oil` node is acquired — so the covariate gap that appeared
-   against designs A, B and C is closed for three of those nodes at once.
+1. ~~**UCDP token**~~ **Not needed — 2026-10-17.** The API wants a token (401 on three versions) but the
+   bulk archive does not, and it is CC-BY, so the security outcome landed keyless (C-45). ACLED stays the
+   richer alternative and stays unwired: it needs OAuth and forbids redistribution, and the domain is
+   answered. FRED needed no further action either (key in `.env`, Brent landed) — so the covariate gap
+   that appeared against designs A, B and C is closed for three of those nodes at once.
 
 **B. Unblocked now, no credentials needed.**
 
@@ -720,16 +1098,18 @@ measured rather than inherited (C-30), and that choice belongs to Stage 5.
    re-choose it. Carried forward: **60 unadjudicated spikes**, and the `donor_oda` contamination that
    must reach every health and education card (C-28).
 3. ~~**Stage 4 — harmonisation** (dbt).~~ **Done 2026-10-11.** The analytical base exists: 7,682 rows
-   (23 metrics × 334 months, 1999-01 → 2026-10) on a local DuckDB, with the January-2000 index anchor
+   (23 metrics × 334 months, 1999-01 → 2026-10; 25 metrics after the FAAC and UCDP landings) on a local
+   DuckDB, with the January-2000 index anchor
    and its recorded fallback, direction labels as a dimension, the base-spec §7 administration spine
    plus term-level party-by-tenure strata, the 37 × 334 state panel with declared-empty dose columns,
    the shock bands, and the Stage 3 quality status and 8 definition breaks travelling on it. 92 dbt
    tests and 20 break-tests; `tests/verify_harmonisation.py` recomputes the whole base independently.
-4. **Stage 5 — the design memo.** The next unblocked step, and now the one that decides the most: it
-   takes C-30 (the monthly spine is 10.1 % observed, so the 2023 window is not monthly-visible on the
-   landed CPI), C-28 (the `donor_oda` contamination), C-27 (the 2025 CPI rebasing), the 60
-   unadjudicated spikes and the 3 frequency gaps, and drops failing designs *on the record*. Attaching
-   diagnostics to each DAG card is the whole of its work.
+4. ~~**Stage 5 — the design memo.**~~ **Done 2026-10-11, re-run 2026-10-16 and 2026-10-17** — it took
+   C-30 (the 2023 window is not monthly-visible on the landed annual CPI), C-28 (the `donor_oda`
+   contamination), C-27 (the 2025 CPI rebasing), the unadjudicated spikes and the 3 frequency gaps, and
+   dropped failing designs *on the record*: 0 of 36 cards pass. Diagnostics are attached to every card;
+   the artifact on disk is `registry/diagnostics/2026-10-17/` and the narrative is
+   `docs/design-memo.md` at the vintage it was written against.
 5. ~~**The FAAC parser (D1)**~~ **Done 2026-10-16.** All four publishers' paths are now acquired and the
    dose is in the base. ~~**Stage 3 gate on the FAAC series**~~ **Done 2026-10-17** — 37 series (36 states
    + national) gated from the parsed artifact, all `flagged` on spikes that fire at every state at once,
@@ -742,24 +1122,46 @@ measured rather than inherited (C-30), and that choice belongs to Stage 5.
 
 **C. Then, in plan order.**
 
-6. ~~**Stage 5 re-run — the design memo.**~~ **Done 2026-10-17 at vintage 2026-10-16.** The dose and
+6. ~~**Stage 5 re-run — the design memo.**~~ **Done 2026-10-17, twice: at vintage 2026-10-16 over the FAAC dose and at vintage 2026-10-17 over the security outcome** (artifact: `registry/diagnostics/2026-10-17/`; the second re-run also replaced the two hand-typed numbers in the report with computed ones, C-49). The dose and
    Tier-3 checks were re-run against the post-FAAC base: the nominal column is now a measured dose axis,
    the specified axis `D1` (per capita) still decides the family, the Family A card text is derived
    rather than typed, all 36 cards were re-emitted, and `tests/verify_stage5.py` passes again (S5-10,
    S4-20, C-44). What the re-run **did not** do, and what now heads this list:
    - **X-09 — the state population denominator.** It is the only thing standing between the landed
      nominal dose and the per-capita axis Family A's estimand is written on, and it is a decision.
-   - **A state-attributed outcome.** Family A's other blocker: the security series are the route and are
-     credential-blocked (C-13/C-14); the health and education outcomes are national.
+   - ~~**A state-attributed outcome.**~~ **Done 2026-10-17** — UCDP GED landed keyless, state-attributed,
+     on the panel and the spine (C-45). Family A's other blocker is cleared; what remains on it is the
+     dose axis and the identification below.
    - **A metric-catalogue entry for the FAAC panel** with a declared monthly-to-annual aggregation, which
      is what Family B's Tier-3 system is missing now that the series exists and is gated.
    - **`dag_designs.yml`'s `dose`/`faac` nodes still read `source_status: gap`,** deliberately — the node
      is specified as *per capita*, and the per-capita axis is absent. Noted in `docs/dags.md` rather than
      flipped, because `gap` is under-specified here, not wrong.
-7. **Stage 6 — estimation (R).** Fill each card's `estimate` block (`did`/`fixest`, `vars`/`urca`/`dynlm`,
-   `Synth`/`coresynth`/`scpi`). A card without an interval still does not ship.
-8. **Stages 7–8** — specification curve, then the registry, narrative and RAG corpus.
-9. **Stage 9 — the app**, reading `registry/dags/index.json`: pick an outcome → pick a causal model →
+7. ~~**Stage 6 — estimation (R).**~~ **Built 2026-10-17, partially.** Twelve specifications across two designs
+   (`registry/estimates/2026-10-17/`, verifier `tests/verify_stage6.py`, output `docs/estimates.md`).
+   Design B — the fiscal transmission channel — is **estimated**; Design A is **estimated, not
+   identified**, and says so with the check that decided it. The plan's `did` estimator was not used and
+   the deviation is recorded (the dose has no staggered adoption; it is a magnitude, not a switch).
+   **Still open, and this is what heads the list now that the estimates exist:**
+   - **Identification for Design A.** C-47 measured the problem: the post-fixed-effect dose variation is
+     the 13 % derivation share moving with the oil price. A fiscal instrument that varies within state
+     for reasons unrelated to oil (state IGR, the VAT distribution) is a different acquisition, not a
+     different estimator.
+   - **The estimate block on the card schema** — Stage 8 work, not claimed by Stage 6. A card without an
+     interval still does not ship, and no card currently carries an estimate.
+   - **The FX channel** inside Design B (C-46): a monthly NGN/USD series would separate the price and
+     exchange-rate channels and has no keyless source, so it would have to be assembled from CBN.
+8. ~~**Stage 7 — robustness and the multiverse.**~~ **Built 2026-10-18** (`registry/robustness/2026-10-17/`,
+   verifier `tests/verify_stage7.py`, output `docs/robustness.md`). 105 specifications declared before
+   fitting and all published; the exit criteria are met by construction rather than by assertion — support
+   counts per sign computed from the fitted rows, the pre-registered specification marked on the curve,
+   and the five majority sign-flip levels named in the artifact, the figure and the narrative. What it
+   changed: Design B's verdict now carries a timing bound (placebo p = 0.0625) and Design A's verdict is
+   sharper than `estimated_not_identified` — its **sign** does not survive the grid. **What is still open
+   from this stage:** the per-capita dose axis (X-09), the IGR instrument (D2), and a donor pool that would
+   let Design C run at all.
+9. **Stage 8 — the registry, narrative and RAG corpus.**
+10. **Stage 9 — the app**, reading `registry/dags/index.json`: pick an outcome → pick a causal model →
    read the assumption and adjustment set → then the estimate under that model.
 
 ### The smallest credible end-to-end slice — revisited by Stage 4

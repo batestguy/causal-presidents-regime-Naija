@@ -1,0 +1,26 @@
+# Runtime dependencies: acquisition (ingestion/) and the transformation layer (dbt/).
+#
+# Pinned to the versions every verification in this repository was last run against. A floating
+# environment is how a "reproducible" pipeline quietly stops being one: DuckDB's CSV sniffer and
+# pdfplumber's text extraction both change between minor releases, and this project's parsers read
+# documents whose layout the library's heuristics decide.
+#
+# The analytical base is built from these plus data/raw/ and the declared specs (design spec §18).
+#
+# Not in here: R. Stage 5 (analysis/R/02_diagnostics.R) runs on the system R installation with renv.lock
+# tracking its packages; a Python environment file cannot pin it.
+
+requests==2.34.2
+python-dotenv==1.2.2
+PyYAML==6.0.3
+
+# Document parsing — the FAAC disbursement workbooks (PDF and XLSX).
+pdfplumber==0.11.10
+openpyxl==3.1.5
+pandas==2.2.3
+beautifulsoup4==4.15.0
+lxml==6.1.2
+
+# Transformation (dbt) and the local warehouse.
+dbt-duckdb==1.11.0
+duckdb==1.5.5

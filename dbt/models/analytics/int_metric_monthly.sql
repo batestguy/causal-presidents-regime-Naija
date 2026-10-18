@@ -49,6 +49,21 @@ observed as (
     from native
 ),
 
+-- `no_interpolation` in `analysis/specs/harmonisation.yml`: a **count** series is never filled between
+-- two observations. The rule above is about a level series, where a month between two annual
+-- observations is a reasonable linear read; "7.5 fatalities in August" between 12 in July and 3 in
+-- September is a number no source published.
+--
+-- The list is **derived from the metric catalogue rather than restated here**: `unit = 'count'` is
+-- what makes a series a count, so that is the evidence the rule reads. A metric added to
+-- the catalogue with that unit is therefore covered without an edit to this model, and a metric whose
+-- unit changes stops being interpolated (or starts) without anyone remembering to update a second list.
+no_interpolation as (
+    select metric_id
+    from {{ ref('raw_metric_catalogue') }}
+    where unit = 'count'
+),
+
 bounds as (
     select
         metric_id,
@@ -75,6 +90,7 @@ interpolated as (
         )) as gs(period_month)
     where bs.b is not null
       and datediff('month', bs.a, bs.b) <= 12
+      and bs.metric_id not in (select metric_id from no_interpolation)
 ),
 
 span as (

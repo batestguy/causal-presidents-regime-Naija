@@ -16,15 +16,41 @@ economic metrics. Visitors ask causal questions of a model and inspect the fitte
 behind the answers. (Base spec title: "Nigeria Presidential Performance Dashboard" — the
 word *performance* is retired from all user-facing naming; see the title note above.)
 
-**Status: Stage 5 of 8 built (2026-10-11), re-run at vintage 2026-10-16 — designs validated; no estimates yet.** Ingestion
-works end to end on four sources and is provenance-verified — including 174 FAAC disbursement documents,
-which are the state fiscal dose — 36 causal graphs are generated and verified, 125 series are
-quality-gated, `dbt/` builds the analytical base the models and the app will read, and Stage 5 has
-attached a **pre-check verdict to every card — 0 of 36 pass** (15 fail, 7 degraded, 14 not attempted;
-`docs/design-memo.md`). The verdicts were **re-run at vintage 2026-10-16** once the fiscal dose landed
-and was gated: the totals are unchanged, the *reasons* are not — Family A is dropped because the dose's
-per-capita axis waits on the population denominator (X-09) and no outcome is state-attributed, not
-because there is no dose. Nothing is fitted: no model card carries an estimate until Stages 6–7. Read `PROGRESS.md` for what is verified and what is blocked.
+**Status: Stage 8 of 8 begun (2026-10-18) — the registry the app reads exists.** Ingestion
+works end to end on **five** sources and is provenance-verified — including 174 FAAC disbursement
+documents, which are the state fiscal dose, and the UCDP GED security events, which are the
+state-attributed outcome (keyless: its bulk archive needs no token, C-45) — 36 causal graphs are generated
+and verified, 242 series are quality-gated, `dbt/` builds the analytical base the models and the app read,
+and Stage 5 has attached a **pre-check verdict to every card — 0 of 36 pass** (15 fail, 7 degraded, 14 not
+attempted; `docs/design-memo.md`). The verdicts have been re-run three times, once per data delivery (the
+artifact on disk is `registry/diagnostics/2026-10-17/`), and the totals never moved while the reasons did:
+Family A is dropped because the dose's per-capita axis waits on the population denominator (X-09), not for
+want of a dose or an outcome.
+
+**Stage 6 has since published the first estimates, and the finding is a split verdict**
+(`docs/estimates.md`): the fiscal transmission channel is **estimated** — a 10 % Brent move reaches the
+states as roughly 5 % more money two to three months later (C-48) — while the state dose-response question
+is **estimated but not identified**, because the dose's post-fixed-effect variation is the 13 % derivation
+share moving with the oil price and a mis-timed dose fits just as well (C-47). The presidential-tenure
+question is not answerable at all: 4–5 administrations against 27 annual observations put the minimum
+detectable effect at 35–80 residual standard deviations.
+
+**Stage 7 has since asked whether either answer survives the choices it did not pin down**
+(`docs/robustness.md`, `registry/robustness/2026-10-17/`): **105 specifications** declared before fitting
+and all published. Design B holds its sign in 24 of 24 (its *timing* is the weak part — in-time placebo
+p = 0.0625), and Design A's sign **does not survive at all**: 45 positive against 36 negative, negative in
+every window once the dose is lagged a month, so Stage 6's `estimated_not_identified` was the milder of the
+two true statements.
+
+**Stage 8 has since assembled the registry the app reads** (`docs/registry.md`, `analysis/specs/registry.yml`,
+`analysis/R/05_registry.R`): **2 of the 36 cards carry a published number, 34 carry a reason**, because
+Stage 6's twelve specifications do not line up with 36 cards — three Design A specifications are about
+catalogue outcomes (two of which have cards), nine Design B specifications are about the **national FAAC
+channel**, which is a *mediator* node on every B card, and Design C was not run. The two B/C results sit on
+`registry/dags/index.json → published_results` with `result_is_card_level: false` where the app can show them
+once instead of implying them nine times, every `not_estimated` card names a reason from a closed set, and
+`tests/verify_registry.py` re-derives the mapping and checks each number against the artifact it names. Read
+`PROGRESS.md` for what is verified and what is blocked.
 
 **Scope upgrade (2026-10-10):** it is no longer a comparison dashboard. It is an
 interactive causal-inference explorer — visitors ask causal questions of a model *and*
@@ -46,16 +72,20 @@ See `nigeria-causal-inference-spec.md` for every design decision and which base-
 | `docs/data-dictionary.md` | Every column of the analytical base, its grain and its imputation rules |
 | `docs/dags.md` | The causal-graph layer: designs, assumptions, variable sources, and each card's pre-check |
 | `docs/design-memo.md` | Stage 5 output: which design family is credible per outcome, and the diagnostic that decides it |
+| `docs/estimates.md` · `docs/robustness.md` | Stage 6 output (what the data can answer) and Stage 7 output (what survives the choices) |
 | `ingestion/` | Python: source clients, Prefect-style flows, the five Stage 3 gates |
-| `analysis/specs/` | Declared inputs: outcomes, DAG designs, quality gates, harmonisation rules |
+| `analysis/specs/` | Declared inputs: outcomes, DAG designs, quality gates, harmonisation rules, estimation, the Stage 7 robustness grid |
 | `dbt/` | The transformation project (seeds + staging + analytics). Run from the **repo root** |
 | `registry/` | Published artifacts the app reads: DAG cards, the quality report, the Stage 5 diagnostics |
 | `tests/` | Independent verifiers — one per stage, each recomputing its stage's claims |
 | `data/raw/` | Immutable landed payloads. **Gitignored** and never committed |
 
-The repository is a git repo (public, `main`). There is still no `package.json`, `pyproject.toml`,
-`requirements.txt`, `renv.lock`, or CI config — Python dependencies are taken from the `ds-general`
-conda environment rather than pinned in the repo.
+The repository is a git repo (public, `main`). Python dependencies are pinned in `requirements.txt` and
+`requirements-dev.txt` *and* taken from the `ds-general` conda environment; CI is
+`.github/workflows/verify.yml`, which runs `scripts/verify.sh` — the one command that runs the whole
+chain (compile, artifact contracts, acquisition if nothing is landed, Stage 3, dbt, Stages 6 and 7, every
+verifier) and whose exit status is the answer to "is it verified?". There is still no `package.json`,
+`pyproject.toml` or `renv.lock`.
 
 ## Reading the spec
 
@@ -99,6 +129,15 @@ $PY tests/verify_harmonisation.py                # recompute the base from raw, 
 Rscript analysis/R/02_diagnostics.R              # Stage 5 engine -> registry/diagnostics/<vintage>/
 Rscript analysis/R/01_build_dags.R               # re-attach the pre-checks to the 36 cards
 $PY tests/verify_stage5.py                       # recompute every Stage 5 number independently
+$PY ingestion/flows/pull_ucdp.py && $PY ingestion/parsers/ucdp_events.py   # security outcome
+Rscript analysis/R/03_estimate.R                 # Stage 6 engine -> registry/estimates/<vintage>/
+$PY tests/verify_stage6.py                       # recompute every estimate independently
+Rscript analysis/R/04_robustness.R               # Stage 7 grid + curve -> registry/robustness/<vintage>/
+$PY tests/verify_stage7.py                       # re-fit all 105 specifications independently (~3 min)
+Rscript analysis/R/05_registry.R                 # Stage 8: assemble estimates + robustness onto the cards
+$PY tests/verify_registry.py                     # re-derive which card carries which number
+
+scripts/verify.sh                                # all of the above, one exit status
 ```
 
 - **Everything runs from the repository root.** Both dbt paths (`profiles.yml`'s DuckDB file and the
@@ -115,7 +154,7 @@ $PY tests/verify_stage5.py                       # recompute every Stage 5 numbe
 
 - **Stage 5 runs every test on the native observation, never the monthly spine** (`analysis/specs/diagnostics.yml`,
   `analysis/R/02_diagnostics.R`). Testing interpolated rows tests the interpolator. **0 of 36 cards pass
-  their pre-check at vintage 2026-10-16** — the dose's specified axis is empty (the nominal one is landed
+  their pre-check at vintage 2026-10-17** — the dose's specified axis is empty (the nominal one is landed
   and gated), the VECM family is annual-grain and has no catalogue entry for FAAC, and the synthetic
   control is infeasible. `docs/design-memo.md` is the source of truth for
   which design is credible per outcome; the summary is computed from the cards, never asserted.
@@ -132,15 +171,19 @@ $PY tests/verify_stage5.py                       # recompute every Stage 5 numbe
 - **Never present a point estimate without its confidence interval**; adjusted estimates are
   *associations, not causal effects*, and are stored as tables, never computed at render time.
 - **Sample size is tiny** (5 administrations, ~26 annual observations) — expect wide CIs.
-- **The monthly spine is only 10.1 % observed** (775 of 7,682 rows; 4,389 interpolated, 2,518 empty),
-  because every open source here is annual. A monthly model on `cpi_yoy` therefore cannot see the 2023
-  subsidy window — that window holds two annual observations (C-30). Check
-  `dim_metric.frequency_gap` before proposing any monthly design.
+- **The monthly spine is only 16.2 % observed** (1,349 of 8,350 rows; 4,389 interpolated, 2,612 empty) —
+  it was 10.1 % until the monthly landings (Brent, the FAAC dose, UCDP). A monthly model on `cpi_yoy`
+  still cannot see the 2023 subsidy window, because that window holds two *annual* observations (C-30).
+  Check `dim_metric.frequency_gap` before proposing any monthly design.
 - **Two invariants the base enforces in code, not in prose:** no value outside a metric's observed span
   (no extrapolation), and no interpolation across a gap wider than one step — a 108-month hole stays a
   hole. Mutating either turns a test red; they are break-tested.
 - **Every guard is expected to be able to fail.** The repo's convention is to mutate each new check and
   watch it fail before trusting it; `PROGRESS.md` §4 lists those break-tests. Add one with any new guard.
+- **A number that appears in prose belongs in the artifact, computed.** Three defects now share one cause
+  (C-42, C-44, C-49): a literal or a glob that was true when written and silently false later. The Stage 5
+  report asserted "10.1 %" and "dose status on every row: `declared_gap`" for a base at 16.2 % with 4,104
+  observed rows, and the verifier could not catch it because it recomputes from the *base*, not the page.
 - Chart constraints: single panel, max 5 metrics (trim + warn, never error), index to 100 at
   Jan 2000 (subtitle must say so), tooltips show raw values, Yar'Adua→Jonathan boundary must
   render correctly in both party and president color modes.

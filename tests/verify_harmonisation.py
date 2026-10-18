@@ -35,6 +35,7 @@ Usage:
 
 from __future__ import annotations
 
+import csv
 import json
 import sys
 from itertools import pairwise
@@ -83,7 +84,7 @@ def parse_index(value) -> int:
 # ---------------------------------------------------------------------------------------------
 # the raw layer, read independently
 # ---------------------------------------------------------------------------------------------
-def load_raw() -> dict:
+def load_raw(spec: dict) -> dict:
     """{'sources': {source: vintage}, 'annual': {metric: [(index, value)]}, 'daily': [(date, value)]}"""
     sources: dict[str, str] = {}
     per_source: dict[str, list[dict]] = {}
@@ -141,7 +142,35 @@ def load_raw() -> dict:
     for points in annual.values():
         points.sort()
 
-    return {"sources": sources, "annual": annual, "daily": daily, "donors": donors}
+    return {"sources": sources, "annual": annual, "daily": daily, "donors": donors,
+            "security": security_national(spec)}
+
+
+def security_national(spec: dict) -> dict[str, list[tuple[int, float]]]:
+    """The UCDP national monthly series, recomputed from the parsed artifact.
+
+    Summed over **every scope the artifact carries**, including `unattributed`, so this is the country and
+    not the states — the same rule the dbt model applies, arrived at independently here. If the model
+    ever summed only the 37 units, the spine comparison below would catch it as a value mismatch rather
+    than as a plausible-looking smaller number.
+    """
+    path = REPO_ROOT / "data" / "staging" / "ucdp_state_month.csv"
+    if not path.exists():
+        return {}
+    items = {}
+    for cfg in (spec.get("ucdp_source") or {}).get("metrics", []):
+        items[cfg] = cfg
+    with path.open(newline="", encoding="utf-8") as handle:
+        totals: dict[str, dict[int, float]] = {}
+        for row in csv.DictReader(handle):
+            item = row["item"]
+            if items and item not in items:
+                continue
+            year, _, month = str(row["period_month"])[:7].partition("-")
+            bucket = totals.setdefault(item, {})
+            index = mi(int(year), int(month))
+            bucket[index] = bucket.get(index, 0.0) + float(row["value"])
+    return {metric: sorted(points.items()) for metric, points in totals.items()}
 
 
 def daily_to_monthly(daily: list[tuple[str, float]], rule: str) -> dict[int, tuple[float, int]]:
@@ -158,7 +187,7 @@ def daily_to_monthly(daily: list[tuple[str, float]], rule: str) -> dict[int, tup
 # ---------------------------------------------------------------------------------------------
 # the declared rules
 # ---------------------------------------------------------------------------------------------
-def expected_spine(annual, oil_monthly, spec) -> tuple[dict, int, int]:
+def expected_spine(annual, oil_monthly, security, spec) -> tuple[dict, int, int]:
     """Recompute every (metric, month) row from the spec's alignment and interpolation rules."""
     floor = mi(int(str(spec["spine"]["start"])[:4]), int(str(spec["spine"]["start"])[5:7]))
     annual_step = spec["alignment"]["annual"]["step_months"]
@@ -170,6 +199,12 @@ def expected_spine(annual, oil_monthly, spec) -> tuple[dict, int, int]:
         for metric, points in annual.items()
     }
     series["oil"] = [(i, v) for i, (v, _) in sorted(oil_monthly.items()) if i >= floor]
+    # The security series are monthly and are **never interpolated** (harmonisation.yml
+    # `interpolation.no_interpolation`, keyed on the catalogue's `unit = 'count'`), so a month the archive
+    # does not cover stays unobserved even where two nearby months are observed. That is what the loop
+    # below does with them: `b - a` is 1, never 12, so nothing is filled between them.
+    for metric, points in security.items():
+        series[metric] = [(i, v) for i, v in points if i >= floor]
 
     last = max(points[-1][0] for points in series.values() if points)
     months = list(range(floor, last + 1))
@@ -233,12 +268,12 @@ def main() -> int:
     quality_spec = yaml.safe_load((SPEC_DIR / "quality.yml").read_text(encoding="utf-8"))
     outcomes = yaml.safe_load((SPEC_DIR / "outcomes.yml").read_text(encoding="utf-8"))
 
-    raw = load_raw()
+    raw = load_raw(spec)
     frozen_rule = next(
         r["rule"] for r in quality_spec["resample_rules"] if r["dataset_id"] == "DCOILBRENTEU"
     )
     oil_monthly = daily_to_monthly(raw["daily"], frozen_rule)
-    rows, floor, last_month = expected_spine(raw["annual"], oil_monthly, spec)
+    rows, floor, last_month = expected_spine(raw["annual"], oil_monthly, raw["security"], spec)
     anchors = expected_anchor(rows, spec)
 
     con = duckdb.connect(str(DB_PATH), read_only=True)

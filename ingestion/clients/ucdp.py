@@ -1,97 +1,91 @@
-"""UCDP GED client — organised-violence fatalities, for the security domain.
+"""UCDP GED client — the state-attributed security outcome Family A was missing.
 
-The security domain has no usable World Bank series (``homicides`` has 3 observations, see
-decisions.md C-10), and ACLED's raw data cannot be redistributed. UCDP is CC-BY licenced, so
-it can be both analysed **and published**.
+**No credential is needed for this route, and that is the reason it exists.** The UCDP *API* answers
+401 without an `x-ucdp-access-token` header (verified 2026-10-17 against versions 25.1, 24.1 and 23.1),
+which is what the catalogue recorded as C-14. The **bulk archive** is a plain HTTPS download on the
+same host, 29 MB zipped, and it answers a GET with no credential at all. The dataset therefore stops
+being credential-blocked, and the project does not need an ACLED OAuth app for the security outcome.
 
-Requires a free access token in the environment::
+Licence: UCDP GED is **CC-BY 4.0** — redistributable with attribution, unlike ACLED's terms (C-13).
+See `docs/licences.md`. The attribution string travels on the manifest entry.
 
-    UCDP_ACCESS_TOKEN=<token>
-
-Register at https://ucdp.uu.se/. The token is sent as the header ``x-ucdp-access-token``
-(confirmed 2026-10-10: an unauthenticated request returned 401 naming that header). The API
-root serves Swagger UI at https://ucdpapi.pcr.uu.se/index.html.
-
-Caveat: UCDP's conflict definition differs from ACLED's. Never splice the two series into one
-without saying so on the model card.
+The payload is a ZIP of one 250 MB CSV covering every country since 1989. It is landed **byte for
+byte** and filtered to Nigeria by the parser, never by this client: the contract in
+:mod:`ingestion.clients.provenance` is that payloads are stored untransformed, so a recorded
+`sha256` always reproduces what UCDP served.
 """
 
 from __future__ import annotations
 
-import json
-import os
-
 import requests
 
-from ingestion.clients.provenance import MissingCredential, Retrieval, build
+from ingestion.clients.provenance import Retrieval, build
 
-BASE_URL = "https://ucdpapi.pcr.uu.se/api/gedevents"
+BASE_URL = "https://ucdp.uu.se/downloads/ged"
 USER_AGENT = "causal-presidents/0.1 (low-volume public-data access)"
-TIMEOUT_SECONDS = 60
-ENV_VAR = "UCDP_ACCESS_TOKEN"
-# UCDP country code for Nigeria.
-NIGERIA = 475
-MAX_ATTEMPTS = 3
+TIMEOUT_SECONDS = 300
+
+# Version -> archive file name. `version` is UCDP's release label and is part of the dataset id, so a
+# new release lands as a new dataset rather than overwriting the one already parsed.
+ARCHIVES = {
+    "25.1": "ged251-csv.zip",
+    "24.1": "ged241-csv.zip",
+    "23.1": "ged231-csv.zip",
+}
+
+LATEST = "25.1"
+
+ATTRIBUTION = (
+    "UCDP Georeferenced Event Dataset (GED) Global version 25.1, Uppsala Conflict Data Program, "
+    "Uppsala University — CC-BY 4.0. https://ucdp.uu.se/downloads/"
+)
+
+NOTE = (
+    "UCDP GED bulk archive, landed untransformed. The parser filters to Nigeria and aggregates to "
+    "state-month; the archive itself is the payload because a filtered extract would not reproduce "
+    "the publisher's bytes."
+)
 
 
-def get_token() -> str:
-    token = (os.environ.get(ENV_VAR) or "").strip()
-    if not token:
-        raise MissingCredential(
-            f"{ENV_VAR} is not set. Register for a free token at https://ucdp.uu.se/ "
-            "and export it; the API expects it in the x-ucdp-access-token header."
-        )
-    return token
+class UcdpError(RuntimeError):
+    """Raised when the bulk archive cannot be discovered or does not look like the archive."""
 
 
-def fetch_events(
-    version: str = "24.1",
-    country: int = NIGERIA,
-    pagesize: int = 1000,
-    session: requests.Session | None = None,
-) -> tuple[Retrieval, list[dict]]:
-    """Fetch every page of GED events for one country. Returns ``(retrieval, events)``."""
+def archive_url(version: str = LATEST) -> str:
+    if version not in ARCHIVES:
+        raise UcdpError(f"unknown GED version {version!r}; known: {sorted(ARCHIVES)}")
+    return f"{BASE_URL}/{ARCHIVES[version]}"
+
+
+def fetch_archive(
+    version: str = LATEST, session: requests.Session | None = None
+) -> tuple[Retrieval, bytes]:
+    """Download the bulk archive. Returns ``(retrieval, payload)``.
+
+    The ZIP magic is checked before anything is written: these hosts have been observed to answer with
+    an HTML error page under a 200, and a mislabelled payload would fail three stages later as a parse
+    error rather than here as a retrieval error.
+    """
     session = session or requests.Session()
-    session.headers.update({"User-Agent": USER_AGENT, "x-ucdp-access-token": get_token()})
-    url = f"{BASE_URL}/{version}"
+    session.headers.update({"User-Agent": USER_AGENT})
+    url = archive_url(version)
 
-    payloads: list[bytes] = []
-    events: list[dict] = []
-    page = 1
-    page_count = 1
-    last_status = 0
-
-    while page <= page_count:
-        params = {"pagesize": pagesize, "page": page, "Country": country}
-        response = None
-        for attempt in range(1, MAX_ATTEMPTS + 1):
-            response = session.get(url, params=params, timeout=TIMEOUT_SECONDS)
-            if response.status_code != 401 or attempt == MAX_ATTEMPTS:
-                break
-        last_status = response.status_code
-        if response.status_code == 401:
-            raise MissingCredential(
-                f"UCDP rejected the token (HTTP 401): {response.text[:160]}"
-            )
-        if response.status_code != 200:
-            raise RuntimeError(f"UCDP: HTTP {response.status_code} — {response.text[:200]}")
-
-        raw = response.content
-        body = json.loads(raw)
-        if page == 1:
-            page_count = int(body.get("PageCount") or 1)
-        payloads.append(raw)
-        events.extend(body.get("Result") or [])
-        page += 1
+    response = session.get(url, timeout=TIMEOUT_SECONDS)
+    if response.status_code != 200:
+        raise UcdpError(f"{url}: HTTP {response.status_code} — {response.text[:200]}")
+    payload = response.content
+    if not payload.startswith(b"PK"):
+        head = payload[:80].decode("utf-8", errors="replace").replace("\n", " ")
+        raise UcdpError(f"{url}: not a ZIP archive (starts {head!r})")
 
     retrieval = build(
         source="ucdp",
-        dataset_id=f"gedevents-{version}",
-        dataset_name=f"UCDP GED events, country {country}",
+        dataset_id=f"ged-{version}",
+        dataset_name=f"UCDP GED {version} (bulk CSV archive)",
         url=url,
-        params={"pagesize": pagesize, "Country": country, "page_count": page_count},
-        http_status=last_status,
-        payloads=payloads,
-        row_count=len(events),
+        params={"version": version, "files": ARCHIVES[version]},
+        http_status=response.status_code,
+        payloads=[payload],
+        row_count=0,  # filled by the flow once the archive is counted
     )
-    return retrieval, events
+    return retrieval, payload

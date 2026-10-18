@@ -1,0 +1,336 @@
+# Stage 7 — robustness and the multiverse
+#
+# Stage 6 asked two fiscal questions and answered them. This stage asks the question a reviewer asks
+# next: *does the answer survive the choices that were not pinned down?* It fits a declared grid of
+# specifications, stores every one of them — including the ones that disagree — and reports the count of
+# specifications on each side of zero rather than the count that makes the preferred number look safe.
+#
+# ---------------------------------------------------------------------------------------------
+# What "the grid" is here, and what it is not
+# ---------------------------------------------------------------------------------------------
+# The design spec (§5.4) lists eight axes: family, adjustment tier, covariate set, lag order, event
+# window, imputation handling, index anchor, donor pool. Four of those are live for this data and four
+# are not, and the four that are not are declared below with the reason instead of being quietly
+# dropped. That distinction is the substance of this stage: a grid that silently shrinks to the axes
+# that happen to have variants would make the curve look more robust than the analysis is.
+#
+# Live axes:
+#   * Design A — outcome (3), dose lag (3), adjustment set (3), sample window (3)  = 81 specifications
+#   * Design B — shock definition (2), covariate set (4), sample window (3)      = 24 specifications
+#
+# Dead axes, each with its reason (`fixed_axes`):
+#   * **imputation handling** — neither design admits an imputed value. The dose is read only where
+#     `dose_status = observed` and the outcome only where `security_status = observed`; the count series
+#     is never interpolated (S6-05). A grid axis over "impute / do not impute" would be a grid over two
+#     different datasets, one of which is fabricated.
+#   * **index anchor** — these designs use levels and log-levels, not the indexed metric. The January-2000
+#     anchor is a scaling constant per metric and is absorbed by the fixed effects; changing it would
+#     change no coefficient.
+#   * **donor pool** — Design C was not run (Stage 5 `infeasible`, Stage 6 `not_run`). There is no donor
+#     grid to vary, and pretending otherwise would put specifications in the curve whose estimator was
+#     never fitted.
+#   * **event window** — realized as the sample window: neither design is an event study, because neither
+#     has a treatment date. An event window belongs to the tenure design, which Stage 5 showed this data
+#     cannot support at 80 % power.
+#
+# One axis is live in principle and **unbuilt in fact**, and it is the one that matters most:
+# **the population denominator (D1, per capita)**. `state_panel` carries `d1_faac_per_capita` and
+# `population_denominator` as typed, empty columns — 0 of 12,358 rows populated — because the state
+# population series is an unmade decision (X-09). So every specification here is the nominal dose, and
+# the curve cannot tell a reader whether the per-capita estimand behaves the same way. That is recorded
+# in `unbuilt_axes` and repeated in the report, not left to be inferred from a missing level.
+version: 1
+labelled: "2026-10-17"
+spec_path: "analysis/specs/robustness.yml"
+engine: "analysis/R/04_robustness.R"
+verifier: "tests/verify_stage7.py"
+upstream:
+  estimation_spec: "analysis/specs/estimation.yml"
+  estimates: "registry/estimates/2026-10-17/estimates.json"
+
+# ---------------------------------------------------------------------------------------------
+# Inputs — the same base the estimates read, never a staging CSV
+# ---------------------------------------------------------------------------------------------
+input:
+  database: "data/analytics.duckdb"
+  panel_table: "main_analytics.state_panel"
+  national_faac_table: "main_analytics.faac_national_monthly"
+  fact_metric_table: "main_analytics.fact_metric"
+  oil_metric_id: oil
+
+# ---------------------------------------------------------------------------------------------
+# Sample windows, shared by both designs
+# ---------------------------------------------------------------------------------------------
+# A window filters **estimation rows**, and nothing else. Leads and lags are always constructed on the
+# full landed series first, so dropping 2020 does not silently redefine the outcome at the window edge:
+# a local projection at 2022-01 still uses 2022-03 as its outcome, even when 2020-2021 is excluded.
+windows:
+  full:
+    start: null
+    end: null
+    why: "the landed intersection — Design A 2016-12 -> 2024-12, Design B 2016-12 -> 2026-06"
+  exclude_covid:
+    drop: ["2020-03", "2021-12"]
+    why: >-
+      The COVID period moved both the oil price and the security outcome for reasons that have nothing to
+      do with the fiscal channel; a response estimated through it could be a common shock.
+  post_2019:
+    start: "2020-01"
+    why: >-
+      The second-term window. It is also the only window in which the OAGF is the primary FAAC publisher
+      for every month, so a publisher composition change cannot drive the result.
+
+# ---------------------------------------------------------------------------------------------
+# Design A — state dose-response (PPML)
+# ---------------------------------------------------------------------------------------------
+design_a:
+  id: A
+  name: "State dose-response: does a larger federal allocation reduce conflict fatalities?"
+  estimator: "PPML (fixest::fepois), clustered by state"
+  cluster: state_id
+  sample:
+    require_dose_status: observed
+    require_security_status: observed
+    min_exposure: 1
+  axes:
+    outcome: [fatalities, incidents, fatalities_civilians]
+    dose_lag_months: [0, 1, 2]
+    adjustment_set: [state_fe, state_month_fe, state_month_fe_state_trend]
+    window: [full, exclude_covid, post_2019]
+  adjustment_sets:
+    state_fe:
+      formula: "y ~ log_dose | state_id"
+      why: "the state absorbs every time-invariant difference, including the level of the allocation"
+    state_month_fe:
+      formula: "y ~ log_dose | state_id + ym"
+      why: "the baseline Stage 6 specification: the state and the country-month"
+    state_month_fe_state_trend:
+      formula: "y ~ log_dose | state_id + ym + state_id[trend]"
+      why: >-
+        adds a state-specific linear trend, which is the adjustment that would absorb a slow divergence
+        between a state's allocation and its conflict path. It is also the most demanding: 36 extra
+        parameters on 3,456 rows.
+  dose_lag:
+    why: >-
+      The allocation is published after the revenue accrues and after the month it is shared (S4-16), so
+      the same-month dose is already lagged relative to the oil shock. Lags 1 and 2 ask whether the
+      disbursement month is the right alignment, or whether spending follows the transfer.
+    construction: >-
+      shift(log(faac_gross_total_naira), k) within state on the full panel, then apply the window and
+      drop the rows a lag makes unavailable. A window therefore loses k months at its start rather than
+      borrowing a dose from outside the sample without saying so.
+  preferred:
+    outcome: fatalities
+    dose_lag_months: 0
+    adjustment_set: state_month_fe
+    window: full
+    why: >-
+      The specification declared in `estimation.yml` before this grid was fitted. It is marked on the
+      curve because it is the pre-registered one, not because the grid selected it — selecting the best
+      cell of a multiverse and calling it preferred is the failure mode the specification curve exists
+      to expose.
+  checks:
+    leave_one_state_out:
+      unit: state_name
+      why: >-
+        C-47 measured that the identifying variation is concentrated in the oil-producing states. If the
+        estimate is carried by Delta, Bayelsa and Rivers, then dropping them is the test that matters.
+      oil_states: [Delta, Bayelsa, Rivers]
+    oster:
+      analogue: "log(1 + fatalities) on log_dose, state and month fixed effects"
+      why: >-
+        Oster's delta is defined for a linear model with an R-squared, and PPML has neither. The bound is
+        therefore computed on the **linear analogue** of the preferred specification and reported as a
+        bound on that analogue — not transplanted onto the PPML estimate as if it applied to it. The
+        report says so beside the number.
+      rmax_multiplier: 1.3
+    rosenbaum:
+      status: not_applicable
+      why: >-
+        Rosenbaum bounds require a binary treatment or a matched sample. The dose is continuous and no
+        matching was performed, so there is no gamma to report. Recorded rather than omitted because the
+        rigor floor asks for "Rosenbaum bounds where applicable", and a reader should see the judgement.
+
+# ---------------------------------------------------------------------------------------------
+# Design B — national fiscal transmission (local projection)
+# ---------------------------------------------------------------------------------------------
+design_b:
+  id: B
+  name: "Brent crude to state allocations: how much of an oil shock reaches the states, and when?"
+  estimator: "local projection (Jorda), OLS, Newey-West standard errors"
+  focus_horizon: 2
+  # The preferred specification's full path is published beside the grid. The grid itself is compared at
+  # the focus horizon, because a curve over horizons would confound "specification" with "time".
+  horizons: [0, 1, 2, 3, 4, 5, 6, 9, 12]
+  focus_horizon_why: >-
+    h = 2 is where Stage 6's estimate peaks and where the disbursement calendar says the response should
+    arrive. It was chosen before this grid was fitted; the grid reports whether other specifications put
+    the response somewhere else, not whether a different focus would look better.
+  # The magnitude claim ("the spread is mostly the shock definition") is a claim about which axis moves
+  # the coefficient, so it is computed from the fitted rows and published in the artifact rather than
+  # typed into the prose. Two decompositions, each holding everything else fixed:
+  spread_rule: >-
+    Across the fitted rows: the range across the four covariate sets, averaged over the six
+    shock x window cells (`across_covariate_sets`), and the gap between the two shock definitions,
+    averaged over the twelve covariate-set x window cells (`across_shock_definitions`). A mean of
+    within-cell ranges rather than a single pair of specifications, because one pair would make the
+    claim depend on which pair was picked.
+  axes:
+    shock: [d_log_oil_1m, d_log_oil_3m]
+    controls: [none, month_of_year, month_of_year_plus_lagged_shock, month_of_year_plus_covid]
+    window: [full, exclude_covid, post_2019]
+  shocks:
+    d_log_oil_1m:
+      construction: "log(oil_t) - log(oil_t-1)"
+      why: "the Stage 6 definition: a one-month log change in Brent"
+    d_log_oil_3m:
+      construction: "(log(oil_t) - log(oil_t-3)) / 3"
+      why: >-
+        the average monthly log change over a quarter. Divided by three so the coefficient stays on a
+        per-1 %-per-month scale and is comparable with the baseline; an undivided three-month change would
+        make the two shock levels differ by a factor of three and turn a units artefact into a sign
+        argument.
+  control_sets:
+    none:
+      formula: "y ~ shock"
+      why: "no controls at all — the least defensible and the most transparent"
+    month_of_year:
+      formula: "y ~ shock + factor(month_of_year)"
+      why: "the baseline: a month is a month, and the fiscal year is seasonal"
+    month_of_year_plus_lagged_shock:
+      formula: "y ~ shock + lag(shock, 1) + factor(month_of_year)"
+      why: >-
+        lets the previous month's shock carry part of the response, so a persistent oil path cannot be
+        read as a same-month transmission
+    month_of_year_plus_covid:
+      formula: "y ~ shock + factor(month_of_year) + covid"
+      why: "a level shift for 2020-03 -> 2021-12, kept separate from the window axis"
+  preferred:
+    shock: d_log_oil_1m
+    controls: month_of_year
+    window: full
+    why: "the specification declared in `estimation.yml` before this grid was fitted"
+  inference:
+    covariance: newey_west
+    maxlags: 12
+    sensitivity_lags: [6, 18]
+    why: >-
+      The bandwidth changes no coefficient, only its interval. Reporting the preferred specification's
+      interval at 6, 12 and 18 lags shows how much of the width is a bandwidth choice rather than a
+      sample.
+  checks:
+    in_time_placebo:
+      offsets: [-24, 24]
+      focus_horizon: 2
+      why: >-
+        The in-time placebo for this design: shift the shock series by every non-zero offset in the
+        interval and refit the preferred specification. A real transmission channel should be largest at
+        the true alignment. This is the check Stage 6 ran forward (a 6-month lead) made into a
+        distribution.
+    oster:
+      analogue: "the preferred local projection at h = 2, long controls = month-of-year dummies"
+      rmax_multiplier: 1.3
+    rosenbaum:
+      status: not_applicable
+      why: "continuous treatment, no matching — the same reason as Design A"
+
+# ---------------------------------------------------------------------------------------------
+# Axes that exist in the design spec but cannot be varied on this data
+# ---------------------------------------------------------------------------------------------
+unbuilt_axes:
+  - axis: population_denominator
+    status: not_built
+    reason: >-
+      X-09 is an unmade decision, and `state_panel.d1_faac_per_capita` is 0 of 12,358 rows populated.
+      Every specification in this grid is the nominal dose. The elasticity with state fixed effects is
+      invariant to a state-constant denominator (S6-06), so the *slope* is not expected to move — but
+      that is an argument, not a fitted specification, and the grid cannot test it.
+  - axis: state_igr_d2
+    status: not_acquired
+    reason: >-
+      D2 is FAAC / (FAAC + internally generated revenue); the IGR half has no landed series, so the
+      non-oil fiscal instrument that would let Design A vary within state for reasons other than the oil
+      price does not exist yet (C-47).
+  - axis: donor_pool
+    status: not_run
+    reason: "Design C is `not_run`: Stage 5 found the donor pool fails pre-treatment fit on every outcome."
+  - axis: imputation_handling
+    status: fixed
+    reason: "no imputed value enters either design; see the header of this file."
+  - axis: index_anchor
+    status: fixed
+    reason: "the designs use levels, not the indexed metric; the anchor is absorbed by the fixed effects."
+  - axis: event_window
+    status: not_applicable
+    reason: "neither design is an event study; the tenure design that would need one is not estimable."
+
+# ---------------------------------------------------------------------------------------------
+# Support counts and the figure
+# ---------------------------------------------------------------------------------------------
+support:
+  sign_rule: "positive if coefficient > 0, negative if < 0, exact zero counted separately"
+  interval_rule: "a specification 'supports' a sign beyond zero only if its 95 % interval excludes zero on that side"
+  # Added 2026-10-18 after the counts moved between two bases. A specification whose coefficient is
+  # 0.0006 against a standard error of 0.18 has no direction — it has rounding — and the *sign* of such a
+  # cell is decided by the last bit of a floating-point sum in the base, not by the data. The band is
+  # declared, its members are counted, and every claim in the report is made with them set aside.
+  near_zero_band: 0.02
+  near_zero_why: >-
+    0.02 is about 4 % of the pre-registered Design A coefficient (0.4793) — below it, a specification
+    contributes nothing to a statement about direction, and a count that moved when such a cell flipped
+    would be a count of floating-point noise. Members of the band are published as a subset of both signs,
+    never removed: `n_positive` still counts them, and `n_near_zero` says how many of those are the ones
+    the reader should not interpret.
+  counting_note: >-
+    The count is descriptive, not a vote. The specifications are deliberately correlated — 81 of them
+    reuse the same 3,456 rows, the same outcome and overlapping windows — so "70 of 81 are positive" is a
+    statement about the grid, not 70 independent pieces of evidence. It is published as a count, never as
+    a share of evidence, and never as a probability that the sign is right.
+  flips:
+    rule: >-
+      A level flips when **more than half** of the specifications carrying it have the opposite sign to
+      the preferred specification of its design. The minority count is published beside it
+      (`n_opposite`) rather than discarded, because one negative cell in 27 is a corner of the grid and
+      20 in 27 is a region — and a rule that called both a flip would report the whole grid as unstable,
+      which is just as uninformative as reporting none of it.
+figure:
+  path: "specification_curve.svg"
+  layout: >-
+    two panels (A above, B below), each sorted by coefficient. Top: estimate with its 95 % interval,
+    coloured by sign, the zero line, and the pre-registered specification marked. Bottom: the axis levels
+    of each specification in the same order, so a sign flip can be read against the choice that caused it.
+
+# ---------------------------------------------------------------------------------------------
+# Output
+# ---------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
+# Base fingerprint — which base the grid was fitted on
+# ---------------------------------------------------------------------------------------------
+# The counts in this artifact moved by one between two bases on 2026-10-18, because a specification whose
+# coefficient is numerically zero changed side. The base is rebuilt by dbt (and a rebuild is not even
+# bit-identical, because a parallel float sum is not associative), so an artifact and the database beside
+# it can silently be different vintages. The queries below are the fix: they are declared here, run by
+# both the engine and the verifier, and compared. Values are formatted at 10 significant digits so that
+# last-bit jitter does not trip the check while a material change does.
+base_fingerprint:
+  why: >-
+    Reads the tables the grid actually uses at 10 significant digits. A mismatch means the artifact was
+    fitted on a different base than the one on disk — re-run analysis/R/04_robustness.R. This is the C-44
+    invariant (an artifact describing a vintage other than the current one) applied to the base rather
+    than to a report label.
+  queries:
+    state_panel: "select md5(string_agg(s, '|' order by s)) from (select printf('%s|%s|%s|%.10g|%.10g|%.10g|%.10g|%s', state_id::VARCHAR, strftime(period_month, '%Y-%m'), dose_status, faac_gross_total_naira::DOUBLE, fatalities::DOUBLE, incidents::DOUBLE, fatalities_civilians::DOUBLE, security_status) as s from main_analytics.state_panel) t"
+    faac_national_monthly: "select md5(string_agg(s, '|' order by s)) from (select printf('%s|%.10g|%d', strftime(period_month, '%Y-%m'), gross_total_naira, n_beneficiaries) as s from main_analytics.faac_national_monthly) t"
+    oil_series: "select md5(string_agg(s, '|' order by s)) from (select printf('%s|%.10g', strftime(period_month, '%Y-%m'), value) as s from main_analytics.fact_metric where metric_id = 'oil') t"
+
+output:
+  root: "registry/robustness"
+  format: [robustness.json, report.md, specification_curve.svg]
+  json_contract:
+    - "one row per fitted specification, keyed by spec_id, carrying every axis level"
+    - "every row carries n_obs, coefficient, standard_error, ci_low, ci_high and sign"
+    - "the pre-registered specification of each design is flagged preferred = true, and exactly one per design"
+    - "support counts are computed in the engine from the fitted rows, never typed"
+    - "every sensitivity check carries the number it produced and the rule that produced it"
+    - "an unbuilt axis is listed with its status and reason, not omitted"
+    - "the base the grid was fitted on is fingerprinted, so a stale artifact is visible rather than absorbed"

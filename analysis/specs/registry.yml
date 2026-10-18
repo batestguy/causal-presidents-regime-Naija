@@ -1,0 +1,156 @@
+# Stage 8 — the registry: what the app reads
+#
+# Stage 8's exit criterion is that Stage 9 can be built without opening R. That means every number the app
+# can display has to be *on the card*, next to the assumption it rests on, with the artifact it came from
+# named. This spec declares which card carries which published number and why the others carry none.
+#
+# ---------------------------------------------------------------------------------------------
+# The problem this spec exists to solve
+# ---------------------------------------------------------------------------------------------
+# The registry is 36 cards: 12 outcomes x 3 identification designs. Stage 6 published 12 specifications,
+# and they do not line up with the cards the way a reader would guess:
+#
+#   * **Design A** published three specifications, each on a *catalogue outcome* (fatalities, incidents,
+#     fatalities_civilians) at state-month grain. Three cards can carry a number.
+#   * **Design B** published nine, all on **one thing: the cumulative log change in national FAAC** — the
+#     fiscal-transmission channel. That is not a card's outcome; on every Design B card, FAAC is a
+#     **mediator** node. So the B result is *design-level*: it is a statement about the channel the design
+#     rests on, not an estimate for any of the nine B outcomes. Nine B cards cannot carry a number, and
+#     putting the channel's number on them would be the single most misleading thing this layer could do.
+#   * **Design C** was not run: Stage 5 recorded `infeasible` (the donor pool cannot track Nigeria's
+#     pre-treatment path), and nothing landed since changes the donor pool.
+#
+# So the honest registry is: **3 cards carry a number, 33 say why they do not**, and the two design-level
+# results (the FAAC channel, and Design C's non-run) live on the index where the app can show them once
+# rather than 12 times. Values that read: "0 of 36 cards pass their pre-check but 3 carry a published
+# estimate, and here is the difference between those two statements" is the point of the layer.
+#
+# ---------------------------------------------------------------------------------------------
+version: 1
+labelled: "2026-10-17"
+spec_path: "analysis/specs/registry.yml"
+engine: "analysis/R/05_registry.R"
+verifier: "tests/verify_registry.py"
+
+# ---------------------------------------------------------------------------------------------
+# Inputs — every one of them a published artifact, none of them a number typed in here
+# ---------------------------------------------------------------------------------------------
+input:
+  cards_dir: "registry/dags"
+  index: "registry/dags/index.json"
+  estimates_root: "registry/estimates"
+  robustness_root: "registry/robustness"
+  estimates_artifact: "estimates.json"
+  robustness_artifact: "robustness.json"
+
+# The registry vintage is the *data* vintage: the vintage of the estimates it publishes, which must equal
+# the cards' own vintage_date (they carry Stage 5's), the robustness vintage and the newest estimates
+# vintage on disk. A registry stamped with a run date would let a stale number pass as current, and Stage
+# 9 reads this file without R present, so nothing downstream can re-check it.
+vintage_rule: >-
+  The registry vintage is the newest registry/estimates/<vintage> and must equal the newest
+  registry/robustness/<vintage>. Every card's vintage_date must equal it. A mismatch is a stop, not a
+  warning: cards are statements about a data vintage, and a card describing one vintage while quoting
+  another's estimate is exactly the class of defect Stage 7 recorded as C-53.
+
+# ---------------------------------------------------------------------------------------------
+# The mapping rule: which card is `estimated`
+# ---------------------------------------------------------------------------------------------
+mapping:
+  design_a:
+    rule: >-
+      A card with design `A` is `estimated` **iff** the estimates artifact publishes a Design A
+      specification whose `outcome` is the card's outcome id. The number, interval and sample are copied
+      from that specification, not from anywhere else.
+    expectation:
+      published_specifications: 3
+      cards_that_carry_one: 2
+    without_a_card:
+      - outcome: fatalities_civilians
+        why: >-
+          Stage 6 published a specification on civilian fatalities, which is a UCDP item carried inside the
+          `fatalities` outcome rather than one of the 12 catalogue outcomes the registry holds cards for, so
+          no card can carry it. It is published on the index and named here rather than dropped: a
+          published specification no card carries is the registry's version of a declared gap.
+    expectation_why: >-
+      Stage 6 declared three Design A outcomes (fatalities, incidents, fatalities_civilians) and the
+      catalogue has cards for two of them. Both counts are declared and checked because a change in either
+      changes what the app shows, and the engine refuses to write on a mismatch (S8-02).
+  design_b:
+    rule: >-
+      No card with design `B` is `estimated`, because the published Design B result measures the national
+      FAAC channel and every B card's outcome is something else. Each B card points at the design-level
+      result on the index instead.
+    result_is_design_level: true
+    result_outcome: "cumulative log change in national FAAC (the channel), national-month grain"
+  design_c:
+    rule: >-
+      No card with design `C` is `estimated`: the design was not run, and the reason is carried from the
+      estimates artifact's own Design C block rather than restated here.
+    result_is_design_level: true
+
+# ---------------------------------------------------------------------------------------------
+# The reasons a card carries no number — a closed set, so "no estimate" is never silent
+# ---------------------------------------------------------------------------------------------
+not_estimated_reasons:
+  outcome_series_absent: >-
+    The outcome has no usable series, so no Stage 5 pre-check could run for this (outcome, design) pair.
+    The card is a declared gap, not a null result.
+  no_specification_declared: >-
+    Stage 5 ran a pre-check for this pair, but Stage 6 declared no specification for it: the stage fitted
+    the outcomes whose series it could carry, and this was not one of them. Nothing about the estimate
+    stage says this question was asked and answered.
+  design_result_is_channel_level: >-
+    The design has a published result, but it is a statement about the channel the design rests on (the
+    national FAAC series) rather than about this card's outcome. The number is on the index, once, where
+    it cannot be mistaken for an estimate for this outcome.
+  design_not_run: >-
+    The design was not run. The reason is on the index and in the estimates artifact.
+
+# Precedence: an outcome with no series (`outcome_series_absent`) outranks the design-level reasons,
+# because it is a statement about this card's data rather than about the design.
+
+# ---------------------------------------------------------------------------------------------
+# The block written onto each card
+# ---------------------------------------------------------------------------------------------
+# `status`, `model_card_ref`, `the_number_is_for_this_card` and `note` are always present. The `specification`
+# and `robustness` blocks are present iff status is `estimated`; `not_estimated_reason` is present iff it is
+# not. The card schema enforces exactly this shape (registry/schema/dag_card.schema.json 0.3.0).
+card_block:
+  status_values: [estimated, not_estimated]
+  the_number_is_for_this_card: >-
+    true only when the published specification's outcome is this card's outcome. False would mean a number
+    belonging to something else is being shown here, which is the failure this field exists to make
+    impossible: the mapping never produces it, and the verifier fails if a card ever claims it.
+  robustness_summary: >-
+    Each `estimated` card carries the Stage 7 robustness summary for its own axis level (how many of the
+    design's specifications sharing this card's outcome are on the other side of zero) plus the design-level
+    support counts, so "this number is one cell of a grid" travels with the number rather than waiting for a
+    reader to open the robustness artifact.
+  sensitivity: >-
+    Oster's delta, the in-time placebo and the leave-one-state-out range are computed by Stages 6-7 on the
+    **preferred** specification of each design. They are design-level evidence, so they travel on the index
+    and not on a card that is not the preferred specification.
+
+# ---------------------------------------------------------------------------------------------
+# The design-level results on the index
+# ---------------------------------------------------------------------------------------------
+published_results:
+  carry: [status, verdict_rule, failed_checks, specifications, sensitivity, artifacts]
+  rule: >-
+    One entry per design that reached a verdict: A (`estimated_not_identified`, 3 specifications),
+    B (`estimated`, 9 specifications on the channel), C (`not_run`, with its reason). Every number is
+    copied from `registry/estimates/<vintage>/estimates.json`; the sensitivity blocks come from
+    `registry/robustness/<vintage>/robustness.json`. The index carries `vintage_date` so a stale answer
+    cannot outlive the model it quotes.
+
+# ---------------------------------------------------------------------------------------------
+# What the layer must never do
+# ---------------------------------------------------------------------------------------------
+#   * Put a number on a card whose outcome the number is not about (see `the_number_is_for_this_card`).
+#   * Leave a card's lack of an estimate unexplained: every `not_estimated` card names a reason from the
+#     closed set above.
+#   * Let the index claim the registry carries no estimates (its `layer` string said exactly that until
+#     Stage 8 - the app would have read the strongest claim in the repository and been wrong).
+#   * Change a published number to make the registry tidier. The card wins over prose
+#     (PHASES.md Stage 8); when a card and the narrative disagree, the narrative is regenerated.

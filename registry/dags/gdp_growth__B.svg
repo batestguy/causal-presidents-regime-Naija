@@ -118,7 +118,7 @@
 <text x='5.98' y='436.15' style='font-size: 7.50px;fill: #4D4D4D; font-family: "Arial";' textLength='379.33px' lengthAdjust='spacingAndGlyphs'>The exposure is the administration. Node(s) labelled '(assumed absent)' are unobserved and are assumed absent.</text>
 <text x='5.98' y='444.25' style='font-size: 7.50px;fill: #4D4D4D; font-family: "Arial";' textLength='96.28px' lengthAdjust='spacingAndGlyphs'>Backdoor adjustment set: oil.</text>
 <text x='5.98' y='452.35' style='font-size: 7.50px;fill: #4D4D4D; font-family: "Arial";' textLength='239.66px' lengthAdjust='spacingAndGlyphs'>Stage 5 pre-check: RUNS DEGRADED - see the deviations on the card.</text>
-<text x='5.98' y='460.45' style='font-size: 7.50px;fill: #4D4D4D; font-family: "Arial";' textLength='130.44px' lengthAdjust='spacingAndGlyphs'>The estimate is attached at Stages 6-7.</text>
+<text x='5.98' y='460.45' style='font-size: 7.50px;fill: #4D4D4D; font-family: "Arial";' textLength='385.05px' lengthAdjust='spacingAndGlyphs'>No estimate is attached here: Stage 6's estimates are in registry/estimates/ and the card's estimate block is Stage 8.</text>
 </g>
 </g>
 </svg>

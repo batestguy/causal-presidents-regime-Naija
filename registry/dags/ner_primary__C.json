@@ -1,11 +1,11 @@
 {
   "dag_id": "ner_primary__C",
-  "schema_version": "0.2.0",
-  "vintage_date": "2026-10-16",
-  "generated_at": "2026-10-17T03:45:10+0100",
+  "schema_version": "0.3.0",
+  "vintage_date": "2026-10-17",
+  "generated_at": "2026-10-17T07:33:43+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "b16743f"
+    "git_sha": "ba5741f"
   },
   "outcome": {
     "id": "ner_primary",
@@ -29,7 +29,11 @@
     "exposure_node": "treat",
     "outcome_node": "Y",
     "adjustment_criterion": "backdoor",
-    "design_controls": ["Donor weights chosen to reproduce Nigeria's pre-treatment outcome path and predictors", "In-space placebo across every donor; in-time placebo; leave-one-donor-out sweep", "Pool composition treated as a robustness axis, not a fixed choice"]
+    "design_controls": [
+      "Donor weights chosen to reproduce Nigeria's pre-treatment outcome path and predictors",
+      "In-space placebo across every donor; in-time placebo; leave-one-donor-out sweep",
+      "Pool composition treated as a robustness axis, not a fixed choice"
+    ]
   },
   "nodes": [
     {
@@ -125,13 +129,24 @@
       "to": "Y"
     }
   ],
-  "adjustment_set": ["common"],
-  "adjustment_sets": [
-    ["common"]
+  "adjustment_set": [
+    "common"
   ],
-  "assumption_required": ["u_ng"],
+  "adjustment_sets": [
+    [
+      "common"
+    ]
+  ],
+  "assumption_required": [
+    "u_ng"
+  ],
   "identifying_assumption": "The synthetic control reproduces Nigeria's outcome path absent treatment: donor-weighted common factors (above all the global oil and commodity cycle) stand in for Nigeria's counterfactual, and no Nigeria-specific shock coincides with the treatment (the unobserved node is absent).",
-  "cannot_rule_out": ["Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).", "Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.", "Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.", "Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared."],
+  "cannot_rule_out": [
+    "Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).",
+    "Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.",
+    "Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.",
+    "Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared."
+  ],
   "dagitty_full": "dag {\n  common [pos = \"0,1.8\"]\n  countryfe [pos = \"0,0.6\"]\n  donors [pos = \"0,-0.8\"]\n  treat [pos = \"1.8,1.8\", exposure]\n  Y [pos = \"3.6,0.6\", outcome]\n  u_ng [pos = \"1.8,-0.9\", unobserved]\n  common -> treat\n  common -> donors\n  common -> Y\n  countryfe -> donors\n  countryfe -> Y\n  donors -> Y\n  treat -> Y\n  u_ng -> treat\n  u_ng -> Y\n}",
   "dagitty_assumed": "dag {\n  common [pos = \"0,1.8\"]\n  countryfe [pos = \"0,0.6\"]\n  donors [pos = \"0,-0.8\"]\n  treat [pos = \"1.8,1.8\", exposure]\n  Y [pos = \"3.6,0.6\", outcome]\n  common -> treat\n  common -> donors\n  common -> Y\n  countryfe -> donors\n  countryfe -> Y\n  donors -> Y\n  treat -> Y\n}",
   "diagnostics": {
@@ -151,8 +166,8 @@
     "blocker": "outcome ner_primary is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)",
     "note": "No candidate window is testable for this outcome",
     "coverage_status": "declared_gap",
-    "vintage": "2026-10-16",
-    "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    "vintage": "2026-10-17",
+    "source": "registry/diagnostics/2026-10-17/diagnostics.json"
   },
   "assets": {
     "svg": "registry/dags/ner_primary__C.svg"
@@ -160,6 +175,12 @@
   "estimate": {
     "status": "not_estimated",
     "model_card_ref": null,
-    "note": "Estimates are attached at Stages 6-7; a card without an interval does not ship (docs/decisions.md M-02)."
+    "the_number_is_for_this_card": false,
+    "not_estimated_reason": {
+      "code": "outcome_series_absent",
+      "detail": "The outcome has no usable series, so no Stage 5 pre-check could run for this (outcome, design) pair. The card is a declared gap, not a null result."
+    },
+    "published_result": "index.json#published_results.design.C",
+    "note": "No estimate for (ner_primary, C). The outcome series is absent, so no pre-check ran for this pair (Stage 5 status not_attempted). This is a declared gap, not a null result."
   }
 }

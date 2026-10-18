@@ -1,11 +1,11 @@
 {
   "dag_id": "cpi_yoy__B",
-  "schema_version": "0.2.0",
-  "vintage_date": "2026-10-16",
-  "generated_at": "2026-10-17T03:45:10+0100",
+  "schema_version": "0.3.0",
+  "vintage_date": "2026-10-17",
+  "generated_at": "2026-10-17T07:33:43+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "b16743f"
+    "git_sha": "ba5741f"
   },
   "outcome": {
     "id": "cpi_yoy",
@@ -29,7 +29,11 @@
     "exposure_node": "admin",
     "outcome_node": "Y",
     "adjustment_criterion": "backdoor",
-    "design_controls": ["Lagged outcome captures persistence (error-correction form)", "Linear and quadratic time trend absorb secular drift", "Oil price is interacted with administration, never partialled out (base spec section 9)"]
+    "design_controls": [
+      "Lagged outcome captures persistence (error-correction form)",
+      "Linear and quadratic time trend absorb secular drift",
+      "Oil price is interacted with administration, never partialled out (base spec section 9)"
+    ]
   },
   "nodes": [
     {
@@ -188,13 +192,24 @@
       "to": "Y"
     }
   ],
-  "adjustment_set": ["oil"],
-  "adjustment_sets": [
-    ["oil"]
+  "adjustment_set": [
+    "oil"
   ],
-  "assumption_required": ["u_t"],
+  "adjustment_sets": [
+    [
+      "oil"
+    ]
+  ],
+  "assumption_required": [
+    "u_t"
+  ],
   "identifying_assumption": "Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).",
-  "cannot_rule_out": ["FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.", "Only ~26 annual observations and five administrations — the interval is wide by construction.", "Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.", "Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove."],
+  "cannot_rule_out": [
+    "FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.",
+    "Only ~26 annual observations and five administrations — the interval is wide by construction.",
+    "Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.",
+    "Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove."
+  ],
   "dagitty_full": "dag {\n  oil [pos = \"0,2.8\"]\n  lagY [pos = \"0,1.6\"]\n  trend [pos = \"0,0.4\"]\n  u_t [pos = \"0,-2.0\", unobserved]\n  admin [pos = \"1.8,2.4\", exposure]\n  oilxadmin [pos = \"1.8,1.0\"]\n  faac [pos = \"1.8,-0.2\"]\n  fx [pos = \"1.8,-1.4\"]\n  Y [pos = \"3.6,0.6\", outcome]\n  oil -> admin\n  oil -> oilxadmin\n  oil -> faac\n  oil -> fx\n  oil -> Y\n  admin -> oilxadmin\n  admin -> faac\n  admin -> fx\n  admin -> Y\n  oilxadmin -> Y\n  faac -> Y\n  fx -> Y\n  lagY -> Y\n  trend -> faac\n  trend -> fx\n  trend -> Y\n  u_t -> admin\n  u_t -> Y\n}",
   "dagitty_assumed": "dag {\n  oil [pos = \"0,2.8\"]\n  lagY [pos = \"0,1.6\"]\n  trend [pos = \"0,0.4\"]\n  admin [pos = \"1.8,2.4\", exposure]\n  oilxadmin [pos = \"1.8,1.0\"]\n  faac [pos = \"1.8,-0.2\"]\n  fx [pos = \"1.8,-1.4\"]\n  Y [pos = \"3.6,0.6\", outcome]\n  oil -> admin\n  oil -> oilxadmin\n  oil -> faac\n  oil -> fx\n  oil -> Y\n  admin -> oilxadmin\n  admin -> faac\n  admin -> fx\n  admin -> Y\n  oilxadmin -> Y\n  faac -> Y\n  fx -> Y\n  lagY -> Y\n  trend -> faac\n  trend -> fx\n  trend -> Y\n}",
   "diagnostics": {
@@ -229,8 +244,8 @@
     "blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly",
     "note": "Runs, but not as base spec section 9 specifies; the deviations are listed above.",
     "coverage_status": "ok",
-    "vintage": "2026-10-16",
-    "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    "vintage": "2026-10-17",
+    "source": "registry/diagnostics/2026-10-17/diagnostics.json"
   },
   "assets": {
     "svg": "registry/dags/cpi_yoy__B.svg"
@@ -238,6 +253,12 @@
   "estimate": {
     "status": "not_estimated",
     "model_card_ref": null,
-    "note": "Estimates are attached at Stages 6-7; a card without an interval does not ship (docs/decisions.md M-02)."
+    "the_number_is_for_this_card": false,
+    "not_estimated_reason": {
+      "code": "design_result_is_channel_level",
+      "detail": "The design has a published result, but it is a statement about the channel the design rests on (the national FAAC series) rather than about this card's outcome. The number is on the index, once, where it cannot be mistaken for an estimate for this outcome."
+    },
+    "published_result": "index.json#published_results.design.B",
+    "note": "No estimate for (cpi_yoy, B). The design has a published result, but it measures the national FAAC channel (cumulative log change in national FAAC (the channel), national-month grain) — on this card, FAAC is a mediator node, not the outcome. The number is on the index, once, rather than on the nine B cards that would each imply it is about their outcome."
   }
 }

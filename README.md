@@ -12,31 +12,49 @@ coefficient tables, intervals, diagnostics and sensitivity bounds.
 
 ---
 
-## Status: Stage 5 of 8 — designs validated, no estimates yet
+## Status: Stage 8 of 8, begun — the registry the app reads exists, and it carries two numbers
+
+> **The headline finding (2026-10-18): an oil-price shock reaches Nigeria's states, and federal money does
+> not visibly buy peace.** A 10 % rise in Brent reaches state allocations as roughly **5 % more money, two
+> to three months later** (cumulative elasticity +0.518 at h=2, HAC SE 0.166; C-48), and that sign holds in
+> **all 24** specifications of the robustness grid — though the *timing* is its weak part: an in-time
+> placebo across 48 shifted alignments returns p = 0.0625. The state dose-response question *can* be
+> estimated — 3,456 state-months — and **cannot be identified** from this dose: a mis-timed dose fits just
+> as well, because what survives the fixed effects is the 13 % derivation share moving with the oil price
+> (C-47). Asked 81 ways, **its sign does not survive at all** — 45 positive against 36 negative, negative in
+> every window once the dose is lagged a month. The presidential-tenure question is **not answerable at all**
+> from 4–5 administrations and 27 annual observations. Full write-ups:
+> [`docs/estimates.md`](docs/estimates.md) and [`docs/robustness.md`](docs/robustness.md).
 
 | | |
 |---|---|
 | Specification | ✅ Complete (`nigeria-causal-inference-spec.md`, `PHASES.md`) |
-| Ingestion | ✅ **Four** sources working, provenance-verified: 22 national indicators + a 13-country donor panel + the Brent crude oil series + 174 FAAC disbursement documents (the state fiscal dose) |
+| Ingestion | ✅ **Five** sources working, provenance-verified: 22 national indicators + a 13-country donor panel + the Brent crude oil series + 174 FAAC disbursement documents (the state fiscal dose) + the UCDP GED security events (the state-attributed outcome — **keyless**, C-45) |
 | Assumption layer | ✅ **36 causal graphs** — 3 identification designs × 12 outcomes, with the adjustment set computed from each graph |
-| Quality gates | ✅ **Stage 3** — 5 gates over 125 series: 60 ok, 65 flagged, 0 silently dropped (37 of them the FAAC dose, gated from its parsed documents) |
-| Analytical base | ✅ **Stage 4** — one monthly table, 7,682 rows (23 metrics × 334 months), index-anchored, with the party-by-tenure strata and the Stage 3 quality status on it |
-| Pre-analysis diagnostics | ✅ **Stage 5** — every design validated before estimation, **re-run at vintage 2026-10-16** after the dose landed. **0 of 36 cards pass their pre-check** (15 fail, 7 degraded, 14 not attempted): Family A dropped (the dose now exists, but its per-capita axis waits on X-09 and no outcome is state-attributed), B degraded (annual grain, FAAC not in the catalogue, a 38–99 SD detectable effect), C infeasible (donor pool can't track Nigeria) |
-| Analysis | ⬜ Not started (Stages 6–8) — no estimate is attached to any model |
-| Dashboard | ⬜ Not started |
+| Quality gates | ✅ **Stage 3** — 5 gates over **242 series**: 60 ok, 182 flagged, 0 silently dropped (37 are the FAAC dose; 117 are the UCDP scopes, flagged on monthly volatility as any count series is) |
+| Analytical base | ✅ **Stage 4** — one monthly table, 8,350 rows (25 metrics × 334 months), index-anchored, with the party-by-tenure strata, the Stage 3 quality status and the 37 × 334 state panel carrying both the dose and the outcome |
+| Pre-analysis diagnostics | ✅ **Stage 5** — every design validated before estimation, **re-run at vintage 2026-10-17** after both series landed. **0 of 36 cards pass their pre-check** (15 fail, 7 degraded, 14 not attempted): Family A dropped on the dose *axis* (per capita waits on X-09) with the outcome blocker now cleared, B degraded (annual grain, a 38–99 SD detectable effect), C infeasible (donor pool can't track Nigeria) |
+| Estimation | ✅ **Stage 6** — 12 specifications across two designs (3 Design A outcomes, 9 Design B horizons), every one published with its interval and the check that decided its verdict. Verifier recomputes every number to 1e-12 |
+| Robustness | ✅ **Stage 7** — **105 specifications** declared before fitting and all published, with the specification curve drawn and the support counts computed from the fitted rows: Design B 24/24 positive, Design A 45 positive / 36 negative with five majority sign-flip levels (6 of the 105 sit inside a declared ±0.02 near-zero band and are counted as such). Verifier re-fits every one of them (worst coefficient gap 6.5e-9) |
+| Registry / dashboard | 🔨 **Stage 8, registry half built** — **2 of 36 cards carry a published number, 34 carry a reason** (both Design A cards that can: fatalities +0.4793, incidents +0.5460, each with its interval, its `estimated_not_identified` verdict and the Stage 7 grid summary for its own outcome); Design B's nine specifications are published on the index as **channel-level** (`result_is_card_level: false`, because on every B card FAAC is a mediator) and Design C's non-run likewise; every card without a number names a reason from a closed set. Verifier re-derives the mapping and checks every number against the artifact it names. Still to come: the RAG corpus, the remaining figures |
 
 **There is no dashboard to look at yet.** Ingestion works end to end, the causal-graph assumption layer
-is built, the harmonised analytical base the models and the app will read exists, and Stage 5 has
-established what the data can support **before** estimating anything — which is to say, very little
-without the FAAC fiscal-dose parser. See [`PROGRESS.md`](PROGRESS.md) for what is verified and what is
-blocked, [`docs/design-memo.md`](docs/design-memo.md) for the stage's verdict on every design,
+is built, the harmonised analytical base the models and the app will read exists, Stage 5 established what
+the data can support **before** estimating anything, Stage 6 estimated the part of it that is estimable —
+publishing a null and an unidentified estimate beside the one clean result — and Stage 7 asked whether
+either survives its own choices, 105 specifications of them. See
+[`PROGRESS.md`](PROGRESS.md) for what is verified and what is blocked,
+[`docs/estimates.md`](docs/estimates.md) for the answer to "what can this data actually say?",
+[`docs/robustness.md`](docs/robustness.md) for what survives that answer's choices,
+[`docs/design-memo.md`](docs/design-memo.md) for the per-design verdict,
 [`docs/dags.md`](docs/dags.md) for the graphs, and [`docs/data-dictionary.md`](docs/data-dictionary.md)
 for every column of the base.
 
 **And a finding worth stating on the front page**, because it shapes what can be estimated at all: the
-monthly spine is only **10.1 % observed**. The open sources here are annual, so a monthly model cannot
-see the 2023 fuel-subsidy window — the spine exists, the values in it are mostly interpolation, and the
-base says which months those are (`observation_type`) rather than presenting them as data.
+monthly spine is only **16.2 % observed** (1,349 of 8,350 rows; it was 10.1 % before the monthly Brent,
+FAAC and UCDP landings). The national sources are annual, so a monthly model on `cpi_yoy` cannot see the
+2023 fuel-subsidy window — the spine exists, most of its values are interpolation, and the base says which
+months those are (`observation_type`) rather than presenting them as data.
 
 ## What works today
 
@@ -70,29 +88,44 @@ $PY tests/verify_harmonisation.py
 # Stage 5: pre-analysis diagnostics - which designs survive, then verify every number independently
 Rscript analysis/R/02_diagnostics.R && Rscript analysis/R/01_build_dags.R   # engine + attach to cards
 $PY tests/verify_stage5.py
+
+# Land the security outcome (keyless, CC-BY) and parse it to state-month
+$PY ingestion/flows/pull_ucdp.py && $PY ingestion/parsers/ucdp_events.py
+
+# Stage 6: estimate, then recompute every coefficient, sample and verdict independently
+Rscript analysis/R/03_estimate.R        # -> registry/estimates/<vintage>/
+$PY tests/verify_stage6.py
+
+# Stage 7: fit the declared multiverse and draw the specification curve, then re-fit all 105 independently
+Rscript analysis/R/04_robustness.R      # -> registry/robustness/<vintage>/
+$PY tests/verify_stage7.py
+
+# Everything above, in order, with one exit status
+scripts/verify.sh
 ```
 
-Last run: 22/22 national indicators, 5/5 donor-panel predictors and 1/1 oil series — **28 payloads
-across 3 sources**, every one reproducing its recorded `sha256`, 0 orphaned files. 36/36 DAGs built,
-and every one verified to be acyclic, schema-valid, and to have an adjustment set that provably blocks
-every backdoor path in its graph.
+Last run: 22/22 national indicators, 5/5 donor-panel predictors, 1/1 oil series, 1/1 conflict archive and
+174 FAAC disbursement documents — **203 payloads across 5 sources**, every one reproducing its recorded
+`sha256`, 0 orphaned files. 36/36 DAGs built, and every one verified to be acyclic, schema-valid, and to
+have an adjustment set that provably blocks every backdoor path in its graph.
 
 The oil series is Brent crude from FRED: 10,275 daily observations spanning 1987→2026, provenance
 verified. It refuses to overwrite a landed vintage, because the raw layer is immutable.
 
-The analytical base is 7,682 rows = 23 metrics × 334 months, built by dbt from the raw layer plus the
+The analytical base is 8,350 rows = 25 metrics × 334 months, built by dbt from the raw layer plus the
 declared rules in `analysis/specs/harmonisation.yml`: a January-2000 index anchor (with the fallback
 recorded per metric), the base-spec §7 administration spine split into term-level party-by-tenure
-strata, the 37 × 334 state panel with its dose columns declared empty, and every definition break the
-quality gates found. 92 data tests hold it, and `tests/verify_harmonisation.py` recomputes the whole
-thing from `data/raw/` without importing a single dbt model.
+strata, the 37 × 334 state panel whose dose columns are filled for 4,104 state-months and declared gaps
+elsewhere, and every definition break the quality gates found. **136 data tests** hold it, and
+`tests/verify_harmonisation.py` recomputes the whole thing from `data/raw/` without importing a single
+dbt model.
 
 Key-gated sources read free credentials from a gitignored `.env` — copy `.env.example` to `.env`:
 
 | Variable | Source | Status |
 |---|---|---|
 | `FRED_API_KEY` | Brent crude oil price ([register](https://fred.stlouisfed.org/docs/api/api_key.html)) | ✅ set, series landed |
-| `UCDP_ACCESS_TOKEN` | Organised-violence fatalities ([register](https://ucdp.uu.se/)) | ⬜ still needed |
+| ~~`UCDP_ACCESS_TOKEN`~~ | Organised-violence fatalities | ✅ **Not needed** — its *API* wants a token (401), its **bulk archive** does not (200, 29 MB, CC-BY), and that is what landed (C-45) |
 | ACLED | Security events (now **OAuth**, not a key) | not yet wired |
 
 ## Repository layout
@@ -106,16 +139,21 @@ ingestion/clients/    one client per source, plus shared provenance
 ingestion/flows/      stage runners that land a vintage, and the Stage 3 gate runner
 ingestion/quality/    the five Stage 3 gates, as pure functions
 analysis/specs/       outcome registry, the three identification designs, gate config, harmonisation rules
-analysis/R/           DAG generator (estimation scripts land here at Stage 6)
+analysis/R/           one script per stage that runs in R: DAG generator, Stage 5 diagnostics,
+                      Stage 6 estimates, Stage 7 robustness grid
 dbt/                  the transformation project: seeds (spine, catalogue, shocks, states),
                       models/staging (raw payloads -> typed observations) and models/analytics
                       (dimensions, the spine, the index anchor, the analytical base table)
 registry/dags/        the DAG cards, JSON schemas and figures
 registry/quality/     the vintage quality report (gate results per series)
 registry/diagnostics/ the Stage 5 pre-check result (diagnostics.json + report.md)
+registry/estimates/   the Stage 6 estimates (estimates.json + report.md), one dir per vintage
+registry/robustness/  the Stage 7 multiverse (robustness.json + report.md + specification_curve.svg)
 docs/design-memo.md   the Stage 5 output - which design family is credible per outcome, and why
+docs/estimates.md     the Stage 6 output - what the data can actually answer, and what it cannot
+docs/robustness.md    the Stage 7 output - what survives the choices, and where the sign changes
 docs/data-dictionary.md  every column of the analytical base, its grain and its imputation rules
-tests/                one independent verifier per stage (provenance, DAGs, quality, harmonisation, Stage 5)
+tests/                one independent verifier per stage (provenance, DAGs, quality, harmonisation, Stage 5, Stage 6, Stage 7)
 ```
 
 ## Two things worth knowing about the data
@@ -131,19 +169,30 @@ health and education outcome, so those designs partially condition on a debt res
 recorded on the cards and carried to Stage 5 rather than quietly used as a clean control.
 
 **What is still missing is listed, not hidden.** `registry/dags/index.json` carries
-`variables_still_missing`: every variable a design needs that has no usable source yet — currently **7,
-in three groups** (the FAAC fiscal dose, and the education and security outcomes). The oil price used
-to be the fourth and largest group; it is now acquired, which took **design C down to zero unsourced
-nodes**. The verifier recomputes that list from the graphs, so it cannot drift from what it summarises.
+`variables_still_missing`: every variable a design needs that has no usable source yet — currently **5,
+in two groups** (the per-capita FAAC dose, which is a *decision* rather than a source, and the education
+outcomes, which no open series covers past 2010). Three groups have closed, one at a time: the oil price
+(2026-10-11), the FAAC fiscal dose (2026-10-16) and the security outcomes (2026-10-17) — the last because
+UCDP's bulk archive is keyless even though its API is not. The verifier recomputes that list from the
+graphs, so it cannot drift from what it summarises.
 
-**And Stage 5 asked whether any of it is estimable yet — the answer is no, on the record.** Every one
-of the 36 (outcome × design) cards carries a pre-check verdict and **none passes**: the state dose has 0
-of 12,358 values, so the state DiD family is dropped; the national VECM family runs at **annual** grain
+**And Stage 5 asked whether any of it is estimable yet — the answer was no, on the record, and re-running
+it after each delivery has kept that answer honest.** Every one of the 36 (outcome × design) cards carries
+a pre-check verdict and **none passes**: the state dose is absent on the per-capita axis the estimand is
+written on (the nominal dose landed and is gated, and the state-attributed outcome arrived on 2026-10-17),
+so the state DiD family stays dropped on its *axis*; the national VECM family runs at **annual** grain
 without FAAC and, on its base-spec design, can only detect an effect ~38–99× the residual SD (the
 mandated oil×tenure interactions are nearly collinear with the tenure dummies — a property of the
 *design*, not the data); and no convex combination of the 13 donors tracks Nigeria's pre-treatment path,
-so the synthetic control is reported **infeasible rather than shipped weak**. The one action that revives
-the most is an NBS FAAC parser. Full reasoning: [`docs/design-memo.md`](docs/design-memo.md).
+so the synthetic control is reported **infeasible rather than shipped weak**. What Stage 6 then did with
+the series that did land is [`docs/estimates.md`](docs/estimates.md): the fiscal transmission channel is
+estimated, and the dose-response question is estimated but not identified, with the failing check named.
+Stage 7 then asked the same two questions 105 ways: the transmission channel keeps its sign in all 24 of
+its specifications (its timing is the weak part, placebo p = 0.0625), and the dose-response estimate's
+**sign does not survive at all** — 45 positive against 36 negative, negative in every window once the dose
+is lagged a month, which is a sharper statement than "estimated, not identified".
+Full per-design reasoning: [`docs/design-memo.md`](docs/design-memo.md) and
+[`docs/robustness.md`](docs/robustness.md).
 
 **Raw restricted data is never committed.** ACLED's terms prohibit redistribution and DHS/NDHS microdata
 may not be republished, so the repository ships code, derived aggregates and acquisition instructions —

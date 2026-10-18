@@ -1,11 +1,11 @@
 {
   "dag_id": "u5mr__A",
-  "schema_version": "0.2.0",
-  "vintage_date": "2026-10-16",
-  "generated_at": "2026-10-17T03:45:10+0100",
+  "schema_version": "0.3.0",
+  "vintage_date": "2026-10-17",
+  "generated_at": "2026-10-17T07:33:43+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "b16743f"
+    "git_sha": "ba5741f"
   },
   "outcome": {
     "id": "u5mr",
@@ -29,7 +29,11 @@
     "exposure_node": "dose",
     "outcome_node": "Y",
     "adjustment_criterion": "backdoor",
-    "design_controls": ["State fixed effects absorb time-invariant state characteristics", "Time fixed effects absorb common national shocks (including the oil price)", "Permutation inference over treatment-date reassignment"]
+    "design_controls": [
+      "State fixed effects absorb time-invariant state characteristics",
+      "Time fixed effects absorb common national shocks (including the oil price)",
+      "Permutation inference over treatment-date reassignment"
+    ]
   },
   "nodes": [
     {
@@ -159,13 +163,32 @@
       "to": "Y"
     }
   ],
-  "adjustment_set": ["donor", "inherit", "oil", "statefe", "timefe"],
-  "adjustment_sets": [
-    ["donor", "inherit", "oil", "statefe", "timefe"]
+  "adjustment_set": [
+    "donor",
+    "inherit",
+    "oil",
+    "statefe",
+    "timefe"
   ],
-  "assumption_required": ["u_st"],
+  "adjustment_sets": [
+    [
+      "donor",
+      "inherit",
+      "oil",
+      "statefe",
+      "timefe"
+    ]
+  ],
+  "assumption_required": [
+    "u_st"
+  ],
   "identifying_assumption": "Parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths. Formally, no unmeasured state-by-time confounder affects both the dose and the outcome (the unobserved node is absent).",
-  "cannot_rule_out": ["Anticipation: states may adjust behaviour before the formal policy date.", "SUTVA violations through cross-state spillovers (trade, migration, security).", "Compositional or definitional change in state accounts over the window.", "The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures."],
+  "cannot_rule_out": [
+    "Anticipation: states may adjust behaviour before the formal policy date.",
+    "SUTVA violations through cross-state spillovers (trade, migration, security).",
+    "Compositional or definitional change in state accounts over the window.",
+    "The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures."
+  ],
   "dagitty_full": "dag {\n  oil [pos = \"0,2.6\"]\n  inherit [pos = \"0,1.4\"]\n  statefe [pos = \"0,0.2\"]\n  timefe [pos = \"0,-1.0\"]\n  donor [pos = \"0,-2.2\"]\n  dose [pos = \"1.8,0.8\", exposure]\n  Y [pos = \"3.6,0.2\", outcome]\n  u_st [pos = \"1.8,-1.4\", unobserved]\n  oil -> dose\n  oil -> Y\n  inherit -> dose\n  inherit -> Y\n  statefe -> dose\n  statefe -> Y\n  timefe -> dose\n  timefe -> Y\n  donor -> dose\n  donor -> Y\n  dose -> Y\n  u_st -> dose\n  u_st -> Y\n}",
   "dagitty_assumed": "dag {\n  oil [pos = \"0,2.6\"]\n  inherit [pos = \"0,1.4\"]\n  statefe [pos = \"0,0.2\"]\n  timefe [pos = \"0,-1.0\"]\n  donor [pos = \"0,-2.2\"]\n  dose [pos = \"1.8,0.8\", exposure]\n  Y [pos = \"3.6,0.2\", outcome]\n  oil -> dose\n  oil -> Y\n  inherit -> dose\n  inherit -> Y\n  statefe -> dose\n  statefe -> Y\n  timefe -> dose\n  timefe -> Y\n  donor -> dose\n  donor -> Y\n  dose -> Y\n}",
   "diagnostics": {
@@ -178,8 +201,8 @@
       },
       {
         "id": "state_outcome_attribution",
-        "verdict": "fail",
-        "detail": "no state-attributed outcome has landed — the security series are credential-blocked and the health and education outcomes are national"
+        "verdict": "pass",
+        "detail": "21238 state outcome values present"
       },
       {
         "id": "parallel_trends_precheck",
@@ -187,11 +210,11 @@
         "detail": "the nominal dose could group states by exposure, but the estimand is written on the per-capita axis, so a trends test on the nominal dose would be a sensitivity check at Stage 6 rather than this pre-check"
       }
     ],
-    "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+    "blocker": "specified_dose_axis_absent:D1",
     "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
     "coverage_status": "partial",
-    "vintage": "2026-10-16",
-    "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    "vintage": "2026-10-17",
+    "source": "registry/diagnostics/2026-10-17/diagnostics.json"
   },
   "assets": {
     "svg": "registry/dags/u5mr__A.svg"
@@ -199,6 +222,11 @@
   "estimate": {
     "status": "not_estimated",
     "model_card_ref": null,
-    "note": "Estimates are attached at Stages 6-7; a card without an interval does not ship (docs/decisions.md M-02)."
+    "the_number_is_for_this_card": false,
+    "not_estimated_reason": {
+      "code": "no_specification_declared",
+      "detail": "Stage 5 ran a pre-check for this pair, but Stage 6 declared no specification for it: the stage fitted the outcomes whose series it could carry, and this was not one of them. Nothing about the estimate stage says this question was asked and answered."
+    },
+    "note": "No estimate for (u5mr, A). Stage 5 ran a pre-check for this pair (status fail), but Stage 6 declared no specification for it: the stage fitted the outcomes its series could carry, and this was not one of them. Nothing here says the question was asked and answered."
   }
 }

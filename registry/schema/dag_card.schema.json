@@ -203,13 +203,91 @@
     "estimate": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status", "model_card_ref", "note"],
+      "required": ["status", "model_card_ref", "the_number_is_for_this_card", "note"],
       "properties": {
         "status": { "type": "string", "enum": ["not_estimated", "estimated"] },
         "model_card_ref": { "type": ["string", "null"] },
-        "note": { "type": "string" }
+        "the_number_is_for_this_card": {
+          "type": "boolean",
+          "description": "True only when the attached specification is about this card's own outcome. The registry never publishes a number that fails this test; the field exists so that if it ever did, the app and the verifier would both see it as false rather than as a number"
+        },
+        "specification": {
+          "type": "object",
+          "description": "Copied field for field from the estimates artifact named in `artifact`. Present iff status is `estimated`",
+          "required": ["artifact", "spec_index", "design", "outcome", "coefficient_name", "coefficient", "standard_error", "ci_low", "ci_high", "n_obs"],
+          "properties": {
+            "artifact": { "type": "string" },
+            "spec_index": { "type": "integer", "minimum": 1 },
+            "design": { "type": "string", "enum": ["A", "B"] },
+            "outcome": { "type": "string" },
+            "coefficient_name": { "type": "string" },
+            "coefficient": { "type": "number" },
+            "standard_error": { "type": "number", "minimum": 0 },
+            "ci_low": { "type": "number" },
+            "ci_high": { "type": "number" },
+            "p_value": { "type": "number" },
+            "n_obs": { "type": "integer", "minimum": 1 },
+            "n_units": { "type": "integer", "minimum": 1 },
+            "first_month": { "type": "string" },
+            "last_month": { "type": "string" },
+            "estimator": { "type": "string" },
+            "formula": { "type": "string" },
+            "covariance": { "type": "string" }
+          }
+        },
+        "verdict": {
+          "type": "object",
+          "description": "The Stage 6 verdict for this card's design, with the check that decided it. An estimate can be published on a card whose pre-check failed: both statements travel together",
+          "required": ["status", "rule"],
+          "properties": {
+            "status": { "type": "string" },
+            "rule": { "type": "string" },
+            "failed_checks": { "type": ["string", "null"] },
+            "checked_at": { "type": "object" }
+          }
+        },
+        "robustness": {
+          "type": "object",
+          "description": "Stage 7's summary for this card's own axis level, so 'this number is one cell of a grid' travels with the number (Stage 8, S8-03)",
+          "required": ["artifact", "axis", "axis_level", "design_support", "near_zero_band"],
+          "properties": {
+            "artifact": { "type": "string" },
+            "axis": { "type": "string" },
+            "preferred_specification": { "type": "string" },
+            "this_specification_is_the_preferred_one": { "type": "boolean" },
+            "axis_level": { "type": "object" },
+            "design_support": { "type": "object" },
+            "design_flip_levels": { "type": "integer", "minimum": 0 },
+            "near_zero_band": { "type": "number", "minimum": 0 },
+            "rule": { "type": "string" }
+          }
+        },
+        "not_estimated_reason": {
+          "type": "object",
+          "description": "Present iff status is `not_estimated`: a closed set of reasons, so 'no estimate' is never silent",
+          "required": ["code", "detail"],
+          "properties": {
+            "code": {
+              "type": "string",
+              "enum": ["outcome_series_absent", "no_specification_declared", "design_result_is_channel_level", "design_not_run"]
+            },
+            "detail": { "type": "string", "minLength": 20 }
+          }
+        },
+        "published_result": { "type": ["string", "null"] },
+        "note": { "type": "string", "minLength": 20 }
       },
-      "description": "Filled by the estimation stages (6-7). While status is not_estimated the app must show the assumption and the adjustment set with no number."
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "estimated" } }, "required": ["status"] },
+          "then": {
+            "required": ["specification", "verdict", "robustness"],
+            "properties": { "the_number_is_for_this_card": { "const": true } }
+          },
+          "else": { "required": ["not_estimated_reason"] }
+        }
+      ],
+      "description": "Filled by analysis/R/05_registry.R (Stage 8) from the Stage 6 and Stage 7 artifacts. While status is not_estimated the app must show the assumption and the adjustment set with no number, and must say why."
     }
   }
 }

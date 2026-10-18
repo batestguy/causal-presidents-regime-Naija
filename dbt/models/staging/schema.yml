@@ -11,7 +11,7 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values: ["worldbank", "worldbank_donors", "fred", "faac"]
+                values: ["worldbank", "worldbank_donors", "fred", "faac", "ucdp"]
       - name: metric_id
         tests:
           - not_null
@@ -118,6 +118,40 @@ models:
           - accepted_values:
               arguments:
                 values: ["document"]
+      - name: source_sha256
+        tests:
+          - not_null
+
+  - name: stg_ucdp_state_month
+    description: >
+      Per-state-month UCDP GED counts, long by item (fatalities / incidents / fatalities_civilians),
+      including the `unattributed` scope for events with no `adm_1`. A zero is a recorded zero inside
+      a month the archive covers; a month with no Nigeria event anywhere is absent instead.
+    columns:
+      - name: state_id
+        description: >
+          NULL for the `unattributed` scope only — events located no more precisely than the country.
+          That is a declared value, not a failed join; `state_name` says which scope the row belongs to.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_state')
+                field: state_id
+      - name: state_name
+        tests:
+          - not_null
+      - name: period_month
+        tests:
+          - not_null
+      - name: item
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["fatalities", "incidents", "fatalities_civilians"]
+      - name: value
+        tests:
+          - not_null
       - name: source_sha256
         tests:
           - not_null

@@ -115,10 +115,18 @@ def gate_document_source(name: str, cfg: dict, spec: dict, failures: list[str]) 
         )
         return [], None
 
+    # A parsed artifact may carry several metrics in one long table (`item` -> one series per item).
+    # `value_items` names them; `value_item`/`metric_id` is the single-series form FAAC uses, kept
+    # because a 174-document source with one dose should not have to spell out a one-entry map.
+    value_items = cfg.get("value_items") or {cfg["value_item"]: cfg["metric_id"]}
+
     with staging_path.open(newline="", encoding="utf-8") as handle:
-        rows = [row for row in csv.DictReader(handle) if row.get("item") == cfg["value_item"]]
+        artifact_rows = list(csv.DictReader(handle))
+    rows = [row for row in artifact_rows if row.get("item") in value_items]
     if not rows:
-        failures.append(f"{name}: the parsed artifact carries no '{cfg['value_item']}' rows")
+        failures.append(
+            f"{name}: the parsed artifact carries none of the declared items {sorted(value_items)}"
+        )
         return [], None
 
     vintages = sorted({row["vintage"] for row in rows})
@@ -129,85 +137,94 @@ def gate_document_source(name: str, cfg: dict, spec: dict, failures: list[str]) 
         )
     vintage = vintages[-1]
 
-    series = parse_staging_monthly_series(
-        rows,
-        key_field=cfg["series_key"],
-        value_field=cfg["value_field"],
-        publisher_field=cfg.get("publisher_field"),
-        publisher_precedence=publisher_precedence(cfg),
-    )
-
-    # The national aggregate, summed over the same selected values the panel carries. A month is
-    # present only if every unit is: a partial sum is not a national total.
-    n_units = len(series)
-    by_month: dict[int, list[float]] = {}
-    for points in series.values():
-        for point in points:
-            by_month.setdefault(point.start_index, []).append(point.value)
-    national = parse_staging_monthly_series(
-        [
-            {
-                cfg["series_key"]: cfg["national_scope"],
-                "period_month": index_to_month(index),
-                cfg["value_field"]: str(sum(values)),
-                "item": cfg["value_item"],
-            }
-            for index, values in by_month.items()
-            if len(values) == n_units
-        ],
-        key_field=cfg["series_key"],
-        value_field=cfg["value_field"],
-    )
-    series.update(national)
-
-    measure = (
-        "points"
-        if cfg["metric_id"] in ((spec.get("spike_measure") or {}).get("percentage_point_series") or [])
-        else (spec.get("spike_measure") or {}).get("default", "relative")
-    )
-    adjudications = [
-        a for a in spec.get("spike_adjudications") or [] if a["metric_id"] == cfg["metric_id"]
-    ]
-    breaks = next(
-        (b["breaks"] for b in spec.get("definition_breaks") or [] if b["metric_id"] == cfg["metric_id"]),
-        [],
-    )
-    imputation = [i for i in spec.get("imputation") or [] if i["metric_id"] == cfg["metric_id"]]
-
+    spike_spec = spec.get("spike_measure") or {}
     out: list[dict] = []
-    for scope in sorted(series, key=lambda s: (s == cfg.get("national_scope"), s)):
-        points = series[scope]
-        result = evaluate_series(
-            points,
-            grain_period=spec["grains"][name]["period"],
-            study_start=spec["_study_start"],
-            study_end=_study_end(points, spec),
-            thresholds=spec["thresholds"],
-            breaks=breaks,
-            declared_imputation=imputation,
-            previous_points=None,
-            adjudications=adjudications,
-            spike_measure=measure,
+
+    for item, metric_id in value_items.items():
+        item_rows = [row for row in artifact_rows if row.get("item") == item]
+        if not item_rows:
+            failures.append(f"{name}: the parsed artifact carries no '{item}' rows")
+            continue
+
+        series = parse_staging_monthly_series(
+            item_rows,
+            key_field=cfg["series_key"],
+            value_field=cfg["value_field"],
+            publisher_field=cfg.get("publisher_field"),
+            publisher_precedence=publisher_precedence(cfg),
         )
-        # A revision gate that never compares is reported as such rather than as zero revisions. The
-        # parsed artifact is overwritten by each parse, so the previous vintage's parse no longer exists
-        # to compare against — the omission is named instead of looking like a clean comparison.
-        result["gates"]["revision"]["note"] = (
-            "the parsed artifact holds one vintage; an earlier parse is not retained, so this gate "
-            "cannot compare the correction vintage against the original (the raw payloads for both are "
-            "on disk — see docs/decisions.md C-39/C-42)"
+
+        # The national aggregate, summed over the same selected values the panel carries. A month is
+        # present only if every unit is: a partial sum is not a national total.
+        n_units = len(series)
+        by_month: dict[int, list[float]] = {}
+        for points in series.values():
+            for point in points:
+                by_month.setdefault(point.start_index, []).append(point.value)
+        national = parse_staging_monthly_series(
+            [
+                {
+                    cfg["series_key"]: cfg["national_scope"],
+                    "period_month": index_to_month(index),
+                    cfg["value_field"]: str(sum(values)),
+                    "item": item,
+                }
+                for index, values in by_month.items()
+                if len(values) == n_units
+            ],
+            key_field=cfg["series_key"],
+            value_field=cfg["value_field"],
         )
-        out.append(
-            {
-                "source": name,
-                "vintage": vintage,
-                "metric_id": cfg["metric_id"],
-                "dataset_id": vintage,
-                "scope": scope,
-                "resample": None,
-                **result,
-            }
+        series.update(national)
+
+        measure = (
+            "points"
+            if metric_id in (spike_spec.get("percentage_point_series") or [])
+            else spike_spec.get("default", "relative")
         )
+        adjudications = [
+            a for a in spec.get("spike_adjudications") or [] if a["metric_id"] == metric_id
+        ]
+        breaks = next(
+            (b["breaks"] for b in spec.get("definition_breaks") or [] if b["metric_id"] == metric_id),
+            [],
+        )
+        imputation = [i for i in spec.get("imputation") or [] if i["metric_id"] == metric_id]
+
+        for scope in sorted(series, key=lambda s: (s == cfg.get("national_scope"), s)):
+            points = series[scope]
+            result = evaluate_series(
+                points,
+                grain_period=spec["grains"][name]["period"],
+                study_start=spec["_study_start"],
+                study_end=_study_end(points, spec),
+                thresholds=spec["thresholds"],
+                breaks=breaks,
+                declared_imputation=imputation,
+                previous_points=None,
+                adjudications=adjudications,
+                spike_measure=measure,
+            )
+            # A revision gate that never compares is reported as such rather than as zero revisions. The
+            # parsed artifact is overwritten by each parse, so the previous vintage's parse no longer exists
+            # to compare against — the omission is named instead of looking like a clean comparison.
+            result["gates"]["revision"]["note"] = (
+                "the parsed artifact holds one vintage; an earlier parse is not retained, so this gate "
+                "cannot compare the correction vintage against the original (the raw payloads for both are "
+                "on disk — see docs/decisions.md C-39/C-42)"
+            )
+            out.append(
+                {
+                    "source": name,
+                    "vintage": vintage,
+                    "metric_id": metric_id,
+                    "dataset_id": f"{vintage}:{item}",
+                    "value_item": item,
+                    "scope": scope,
+                    "resample": None,
+                    **result,
+                }
+            )
     return out, vintage
 
 
@@ -452,8 +469,20 @@ def main(argv: list[str] | None = None) -> int:
     for source, vintage in source_vintages.items():
         if source in document_sources:
             # One gate row per parsed series (units + the national aggregate), not one per document:
-            # 174 documents describing 114 months are not 174 series.
-            expected += len({r["scope"] for r in rows if r["source"] == source})
+            # 174 documents describing 114 months are not 174 series. Every declared item must cover
+            # the *same* set of scopes — an item whose scope set differs is a parse that lost a unit,
+            # which is exactly the silent hole this check exists for.
+            scopes_by_item: dict[str, set[str]] = {}
+            for row in rows:
+                if row["source"] == source:
+                    scopes_by_item.setdefault(row["metric_id"], set()).add(row["scope"])
+            scope_sets = {frozenset(v) for v in scopes_by_item.values()}
+            if len(scope_sets) > 1:
+                failures.append(
+                    f"{source}: its items cover different scope sets "
+                    f"({ {k: len(v) for k, v in scopes_by_item.items()} }) — an item lost a unit"
+                )
+            expected += sum(len(v) for v in scopes_by_item.values())
             continue
         manifest = json.loads((RAW_ROOT / source / vintage / "manifest.json").read_text(encoding="utf-8"))
         for retrieval in manifest["retrievals"]:

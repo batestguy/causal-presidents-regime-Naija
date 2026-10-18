@@ -1,0 +1,310 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/causal-presidents-regime-Naija/registry/schema/robustness.schema.json",
+  "title": "Causal Presidents — Stage 7 robustness (specification curve) artifact",
+  "description": "One row per fitted specification in the declared multiverse grid, with the support counts, the sensitivity checks and the unbuilt axes. Schema version 0.1.0 (2026-10-17).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "stage",
+    "layer",
+    "vintage",
+    "generated_at",
+    "generator",
+    "spec",
+    "verifier",
+    "grid",
+    "preferred",
+    "support",
+    "sensitivity",
+    "spread",
+    "unbuilt_axes",
+    "figure",
+    "specifications"
+  ],
+  "properties": {
+    "stage": { "type": "integer", "const": 7 },
+    "layer": { "type": "string", "const": "robustness" },
+    "vintage": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "generated_at": { "type": "string" },
+    "generator": { "type": "string" },
+    "spec": { "type": "string" },
+    "verifier": { "type": "string" },
+    "input": { "type": "object" },
+    "base_fingerprint": {
+      "type": "object",
+      "description": "Which base the grid was fitted on. The queries are declared in analysis/specs/robustness.yml and run by both the engine and the verifier, so a stale artifact is detectable (added 2026-10-18, S7-07/C-53).",
+      "required": ["why", "queries", "values"],
+      "properties": {
+        "why": { "type": "string" },
+        "queries": { "type": "object", "minProperties": 1, "additionalProperties": { "type": "string" } },
+        "values": { "type": "object", "minProperties": 1, "additionalProperties": { "type": "string" } }
+      }
+    },
+    "upstream": {
+      "type": "object",
+      "description": "The Stage 6 artifact the pre-registered specification must reproduce, and the result of that comparison.",
+      "required": ["estimates", "preferred_matches_stage6"],
+      "properties": {
+        "estimates": { "type": "string" },
+        "preferred_matches_stage6": { "type": "object" }
+      }
+    },
+    "grid": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["design_a", "design_b", "n_total"],
+      "properties": {
+        "design_a": { "type": "object" },
+        "design_b": { "type": "object" },
+        "n_total": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "preferred": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["A", "B", "rule", "design_a", "design_b"],
+      "properties": {
+        "A": { "type": "string" },
+        "B": { "type": "string" },
+        "rule": { "type": "string" },
+        "design_a": { "$ref": "#/$defs/preferredDetail" },
+        "design_b": { "$ref": "#/$defs/preferredDetail" }
+      }
+    },
+    "support": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule", "overall", "by_design", "by_axis_level", "flips"],
+      "properties": {
+        "rule": { "type": "object" },
+        "overall": { "$ref": "#/$defs/counts" },
+        "by_design": {
+          "type": "object",
+          "required": ["A", "B"],
+          "properties": { "A": { "$ref": "#/$defs/counts" }, "B": { "$ref": "#/$defs/counts" } }
+        },
+        "by_axis_level": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["design", "axis", "level", "n", "n_positive", "n_negative", "n_opposite", "flips_against_preferred"],
+            "properties": {
+              "design": { "type": "string", "enum": ["A", "B"] },
+              "axis": { "type": "string" },
+              "level": { "type": "string" },
+              "is_preferred_level": { "type": "boolean" },
+              "n": { "type": "integer", "minimum": 1 },
+              "n_positive": { "type": "integer", "minimum": 0 },
+              "n_negative": { "type": "integer", "minimum": 0 },
+              "n_positive_ci": { "type": "integer", "minimum": 0 },
+              "n_negative_ci": { "type": "integer", "minimum": 0 },
+              "n_opposite": { "type": "integer", "minimum": 0 },
+              "flips_against_preferred": { "type": "boolean" }
+            }
+          }
+        },
+        "flips": {
+          "type": "object",
+          "required": ["rule", "n_levels", "levels"],
+          "properties": {
+            "rule": { "type": "string" },
+            "n_levels": { "type": "integer", "minimum": 0 },
+            "levels": { "type": "array", "items": { "type": "object" } }
+          }
+        }
+      }
+    },
+    "sensitivity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["design_a", "design_b", "rosenbaum"],
+      "properties": {
+        "design_a": {
+          "type": "object",
+          "required": ["oster", "leave_one_state_out"],
+          "properties": {
+            "oster": { "$ref": "#/$defs/oster" },
+            "leave_one_state_out": {
+              "type": "object",
+              "required": ["unit", "preferred_coefficient", "n_refits", "min", "max", "n_sign_flips", "drop_oil_states", "distribution"],
+              "properties": {
+                "unit": { "type": "string" },
+                "preferred_coefficient": { "type": "number" },
+                "n_refits": { "type": "integer", "minimum": 1 },
+                "min": { "type": "number" },
+                "max": { "type": "number" },
+                "median": { "type": "number" },
+                "n_sign_flips": { "type": "integer", "minimum": 0 },
+                "most_influential": { "type": "array", "items": { "type": "object" } },
+                "drop_oil_states": { "type": "object" },
+                "distribution": { "type": "array", "minItems": 1, "items": { "type": "object" } }
+              }
+            }
+          }
+        },
+        "design_b": {
+          "type": "object",
+          "required": ["oster", "in_time_placebo", "hac_bandwidth"],
+          "properties": {
+            "oster": { "$ref": "#/$defs/oster" },
+            "in_time_placebo": {
+              "type": "object",
+              "required": ["offsets", "n_draws", "p_value", "distribution"],
+              "properties": {
+                "offsets": { "type": "array", "items": { "type": "integer" } },
+                "n_draws": { "type": "integer", "minimum": 1 },
+                "p_value": { "type": "number", "minimum": 0, "maximum": 1 },
+                "shifted_mean_abs": { "type": "number" },
+                "shifted_max_abs": { "type": "number" },
+                "observed": { "type": "number" },
+                "distribution": { "type": "array", "minItems": 1, "items": { "type": "object" } }
+              }
+            },
+            "hac_bandwidth": { "type": "array", "minItems": 2, "items": { "type": "object" } }
+          }
+        },
+        "rosenbaum": {
+          "type": "object",
+          "required": ["status", "reason_a", "reason_b"],
+          "properties": {
+            "status": { "type": "string", "const": "not_applicable" },
+            "reason_a": { "type": "string" },
+            "reason_b": { "type": "string" }
+          }
+        }
+      }
+    },
+    "unbuilt_axes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["axis", "status", "reason"],
+        "properties": {
+          "axis": { "type": "string" },
+          "status": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "spread": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The magnitude claim decomposed from the fitted rows, so the report and the docs quote a computed number rather than a typed one (added 2026-10-18, C-54).",
+      "required": ["design_b"],
+      "properties": {
+        "design_b": {
+          "type": "object",
+          "required": ["rule", "n", "n_cells_holding_shock", "n_cells_holding_controls", "coefficient_min", "coefficient_min_spec", "coefficient_max", "coefficient_max_spec", "across_covariate_sets", "across_shock_definitions"],
+          "properties": {
+            "rule": { "type": "string" },
+            "n": { "type": "integer", "minimum": 1 },
+            "n_cells_holding_shock": { "type": "integer", "minimum": 1 },
+            "n_cells_holding_controls": { "type": "integer", "minimum": 1 },
+            "coefficient_min": { "type": "number" },
+            "coefficient_min_spec": { "type": "string" },
+            "coefficient_max": { "type": "number" },
+            "coefficient_max_spec": { "type": "string" },
+            "across_covariate_sets": { "type": "number", "minimum": 0 },
+            "across_shock_definitions": { "type": "number", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "figure": {
+      "type": "object",
+      "required": ["path", "layout", "n_points", "bytes"],
+      "properties": {
+        "path": { "type": "string", "pattern": "\\.svg$" },
+        "layout": { "type": "string" },
+        "n_points": { "type": "integer", "minimum": 1 },
+        "bytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "specifications": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "spec_id",
+          "design",
+          "estimator",
+          "formula",
+          "n_obs",
+          "coefficient",
+          "standard_error",
+          "ci_low",
+          "ci_high",
+          "sign",
+          "preferred"
+        ],
+        "properties": {
+          "spec_id": { "type": "string" },
+          "design": { "type": "string", "enum": ["A", "B"] },
+          "estimator": { "type": "string" },
+          "formula": { "type": "string" },
+          "n_obs": { "type": "integer", "minimum": 1 },
+          "n_units": { "type": "integer", "minimum": 1 },
+          "first_month": { "type": "string" },
+          "last_month": { "type": "string" },
+          "coefficient": { "type": "number" },
+          "standard_error": { "type": "number", "minimum": 0 },
+          "ci_low": { "type": "number" },
+          "ci_high": { "type": "number" },
+          "sign": { "type": "string", "enum": ["positive", "negative", "zero"] },
+          "preferred": { "type": "boolean" }
+        }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "counts": {
+      "type": "object",
+      "required": ["n", "n_positive", "n_negative", "n_zero", "n_positive_ci", "n_negative_ci"],
+      "properties": {
+        "n": { "type": "integer", "minimum": 0 },
+        "n_positive": { "type": "integer", "minimum": 0 },
+        "n_negative": { "type": "integer", "minimum": 0 },
+        "n_zero": { "type": "integer", "minimum": 0 },
+        "n_positive_ci": { "type": "integer", "minimum": 0 },
+        "n_negative_ci": { "type": "integer", "minimum": 0 },
+        "n_near_zero": { "type": "integer", "minimum": 0 },
+        "n_positive_outside_band": { "type": "integer", "minimum": 0 },
+        "n_negative_outside_band": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "preferredDetail": {
+      "type": "object",
+      "required": ["coefficient", "standard_error", "ci_low", "ci_high", "n_obs"],
+      "properties": {
+        "coefficient": { "type": "number" },
+        "standard_error": { "type": "number", "minimum": 0 },
+        "ci_low": { "type": "number" },
+        "ci_high": { "type": "number" },
+        "n_obs": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "oster": {
+      "type": "object",
+      "required": ["beta_long", "beta_short", "r2_long", "r2_short", "r2_max", "delta", "delta_interpretable", "beta_star_at_delta_1", "interpretation", "analogue"],
+      "properties": {
+        "beta_long": { "type": "number" },
+        "beta_short": { "type": "number" },
+        "r2_long": { "type": "number", "minimum": 0, "maximum": 1 },
+        "r2_short": { "type": "number", "minimum": 0, "maximum": 1 },
+        "r2_max": { "type": "number", "minimum": 0, "maximum": 1 },
+        "delta": { "type": ["number", "null"] },
+        "delta_interpretable": { "type": "boolean" },
+        "control_set_flips_the_sign": { "type": "boolean" },
+        "beta_star_at_delta_1": { "type": "number" },
+        "interpretation": { "type": "string" },
+        "analogue": { "type": "string" }
+      }
+    }
+  }
+}

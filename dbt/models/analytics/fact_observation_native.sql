@@ -48,6 +48,29 @@ monthly as (
         null::VARCHAR as scope,
         value
     from {{ ref('stg_fred_monthly') }}
+),
+
+-- The security series land monthly at national grain, so they join the spine the same way Brent does:
+-- native monthly, no interpolation, and every value traceable to the UCDP archive. Two metrics from one
+-- table because the spine is one row per (metric, month).
+security as (
+    select
+        metric_id,
+        'ucdp' as source,
+        vintage,
+        'monthly' as native_frequency,
+        period_month as period_start_date,
+        last_day(period_month) as period_end_date,
+        period_month as anchor_month,
+        'NGA' as scope,
+        value
+    from (
+        select period_month, vintage, 'fatalities' as metric_id, fatalities::DOUBLE as value
+        from {{ ref('ucdp_national_monthly') }}
+        union all
+        select period_month, vintage, 'incidents' as metric_id, incidents::DOUBLE as value
+        from {{ ref('ucdp_national_monthly') }}
+    )
 )
 
 select
@@ -75,3 +98,17 @@ select
     scope,
     value
 from monthly
+
+union all
+
+select
+    metric_id,
+    source,
+    vintage,
+    native_frequency,
+    period_start_date,
+    period_end_date,
+    anchor_month,
+    scope,
+    value
+from security

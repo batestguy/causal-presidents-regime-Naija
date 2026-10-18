@@ -95,8 +95,8 @@
 <text x='5.98' y='13.85' style='font-size: 11.00px; font-weight: bold; font-family: "Arial";' textLength='338.97px' lengthAdjust='spacingAndGlyphs'>Reported security incidents - Design A: State dose-response DiD</text>
 <text x='5.98' y='436.15' style='font-size: 7.50px;fill: #4D4D4D; font-family: "Arial";' textLength='379.33px' lengthAdjust='spacingAndGlyphs'>The exposure is the administration. Node(s) labelled '(assumed absent)' are unobserved and are assumed absent.</text>
 <text x='5.98' y='444.25' style='font-size: 7.50px;fill: #4D4D4D; font-family: "Arial";' textLength='172.11px' lengthAdjust='spacingAndGlyphs'>Backdoor adjustment set: inherit, oil, statefe, timefe.</text>
-<text x='5.98' y='452.35' style='font-size: 7.50px;fill: #4D4D4D; font-family: "Arial";' textLength='317.25px' lengthAdjust='spacingAndGlyphs'>Stage 5 pre-check: FAILED - specified_dose_axis_absent:D1 and no_state_attributed_outcome</text>
-<text x='5.98' y='460.45' style='font-size: 7.50px;fill: #4D4D4D; font-family: "Arial";' textLength='130.44px' lengthAdjust='spacingAndGlyphs'>The estimate is attached at Stages 6-7.</text>
+<text x='5.98' y='452.35' style='font-size: 7.50px;fill: #4D4D4D; font-family: "Arial";' textLength='203.44px' lengthAdjust='spacingAndGlyphs'>Stage 5 pre-check: FAILED - specified_dose_axis_absent:D1</text>
+<text x='5.98' y='460.45' style='font-size: 7.50px;fill: #4D4D4D; font-family: "Arial";' textLength='385.05px' lengthAdjust='spacingAndGlyphs'>No estimate is attached here: Stage 6's estimates are in registry/estimates/ and the card's estimate block is Stage 8.</text>
 </g>
 </g>
 </svg>

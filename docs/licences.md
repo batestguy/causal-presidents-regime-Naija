@@ -21,7 +21,7 @@ able to reproduce every aggregate.
 | UNESCO UIS | free API | CC-BY-SA style; attribution | Likely yes — confirm | ⚠️ 400 (endpoint moved) | Verify current endpoint first |
 | NEMIS / NEDI | manual portal | Nigerian government publication | Confirm | — not probed | Patchy coverage |
 | ACLED | registration + key | **ACLED terms of use** | **No** — redistribution restricted; free tier has a 12-month embargo | ❌ host no longer resolves | **Confirm the new API host before building any client** |
-| UCDP GED | free token | CC-BY 4.0 | Yes, with attribution | 🔑 401 without token | Distinct conflict definition from ACLED — do not splice the two silently |
+| UCDP GED | **bulk archive: keyless** (the API alone needs a token) | CC-BY 4.0 | **Yes**, with attribution | ✅ **200, 29,307,888 bytes, no credential (2026-10-17)**; API 401 on 25.1/24.1/23.1 | **Landed 2026-10-17** as the state-attributed security outcome (C-45). `https://ucdp.uu.se/downloads/ged/ged251-csv.zip`; attribution is carried on the manifest and in `docs/estimates.md`. Distinct conflict definition from ACLED — do not splice the two silently |
 | Nigeria DHIS2 (HMIS) | institutional credentials | Ministry of Health / DHIS2 terms | **Confirm** | ⚠️ tenant unverified | Do not design a model on it until access is confirmed |
 
 ## Open licensing questions to resolve before publishing anything
@@ -30,6 +30,12 @@ able to reproduce every aggregate.
 2. **IMF** — redistribution terms for DataMapper series.
 3. **UNIGME and MICS** — modelled estimates: redistribution and required labelling.
 4. **DHIS2** — whether any extracted aggregate may be published at state level.
-5. **ACLED** — the current licence text, plus whether derived counts are themselves restricted.
+5. **ACLED** — the current licence text, plus whether derived counts are themselves restricted. **No
+   longer blocking**: the security domain is answered from UCDP GED, which is CC-BY and keyless to
+   acquire, so ACLED's terms can stay unresolved without a hole in the design (C-45).
 
 Until each is resolved, the default is the safe one: **derived aggregates only, raw never committed.**
+The UCDP case is the interesting one, because it is a *resolved* question rather than an exception: the
+licence permits redistribution with attribution, the attribution is recorded on the manifest and cited
+on the derived aggregate, and the raw archive is still not committed — not because it is forbidden but
+because 29 MB of every-country events is not needed to reproduce a Nigeria state-month series.

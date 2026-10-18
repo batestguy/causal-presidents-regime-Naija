@@ -12,7 +12,9 @@
 --     the World Bank's population series diverge, and choosing one is a decision (X-09). So
 --     `d1_faac_per_capita` is empty while its numerator now exists, which is the honest shape: the
 --     per-capita column is one join away and the join is a decision, not a fetch.
---   * **Fatalities and incidents** are credential-blocked (C-13/C-14), so they stay empty.
+--   * **Fatalities and incidents** are landed from UCDP GED, which answers keyless from its bulk
+--     archive (C-14 recorded the *API* blocker, not a licence one — see C-45). They are joined at
+--     state-month grain and carry `security_status`, so a zero and an uncovered month stay distinct.
 --
 -- The declared gaps and what each needs are in `analysis/specs/harmonisation.yml` `declared_gaps`, and
 -- `dose_note` points at the one in force for each row rather than paraphrasing it here.
@@ -93,6 +95,24 @@ gate as (
     from {{ ref('stg_quality_series') }}
     where source = 'faac'
       and metric_id = 'faac_gross_total'
+),
+
+-- The security outcome. `not_covered` rows join too — with a NULL value and their own status — because
+-- dropping them would collapse "the archive records nothing for this month" into `declared_gap` and
+-- lose the difference between a hole and the end of the series. What must never happen is a
+-- `not_covered` month arriving as a **zero**, and it does not: the value columns are null on those rows.
+security as (
+    select
+        state_id,
+        period_month,
+        fatalities,
+        incidents,
+        fatalities_civilians,
+        security_status,
+        security_gated,
+        security_gate_status,
+        security_note
+    from {{ ref('ucdp_state_month') }}
 )
 
 select
@@ -114,8 +134,12 @@ select
     null::DOUBLE as d1_faac_per_capita,
     null::DOUBLE as d2_faac_share_of_state_revenue,
     null::DOUBLE as population_denominator,
-    null::INTEGER as fatalities,
-    null::INTEGER as incidents,
+    s.fatalities,
+    s.incidents,
+    s.fatalities_civilians,
+    s.security_gated,
+    s.security_gate_status,
+    coalesce(s.security_status, 'declared_gap') as security_status,
     case
         when g.state_name = 'FCT' then 'declared_gap'
         when d.gross_total is not null then 'observed'
@@ -147,3 +171,6 @@ left join dose d
    and d.period_month = g.period_month
 left join gate q
     on q.state_name = g.state_name
+left join security s
+    on s.state_id = g.state_id
+   and s.period_month = g.period_month

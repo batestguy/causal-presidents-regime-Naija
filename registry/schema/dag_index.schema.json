@@ -2,6 +2,29 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/causal-presidents-regime-Naija/registry/schema/dag_index.schema.json",
   "title": "Causal DAG registry index",
+  "$defs": {
+    "designResult": {
+      "type": "object",
+      "required": ["design", "status", "verdict", "result_is_card_level", "specifications", "artifacts"],
+      "properties": {
+        "design": { "type": "string", "enum": ["A", "B", "C"] },
+        "status": { "type": "string" },
+        "verdict": { "type": "object" },
+        "result_is_card_level": {
+          "type": "boolean",
+          "description": "False means the published result is not about any one card's outcome (Design B: the national FAAC channel; Design C: not run)"
+        },
+        "result_outcome": { "type": "string" },
+        "cards_that_carry_no_number": { "type": "integer", "minimum": 0 },
+        "why": { "type": "string" },
+        "next_step": { "type": "string" },
+        "specifications": { "type": "array" },
+        "specifications_without_a_card": { "type": "array" },
+        "robustness": { "type": "object" },
+        "artifacts": { "type": "object" }
+      }
+    }
+  },
   "description": "The matrix the app reads first: which outcomes exist, which identification designs exist, and one entry per (outcome, design) DAG. Also carries the honest gap list — every variable a design needs that has no usable source yet.",
   "type": "object",
   "additionalProperties": false,
@@ -13,6 +36,9 @@
     "generator",
     "counts",
     "diagnostics",
+    "registry",
+    "estimates",
+    "published_results",
     "designs",
     "outcomes",
     "dags",
@@ -103,6 +129,57 @@
           "additionalProperties": { "type": "integer", "minimum": 0 },
           "description": "How many of the 36 cards carry each pre-check status"
         }
+      }
+    },
+    "registry": {
+      "type": "object",
+      "description": "Stage 8: what the app's data contract is, and how many cards carry a published number (added 2026-10-18, schema 0.3.0)",
+      "required": ["generated_at", "generated_by", "spec", "rule", "card_estimate_counts", "card_wins"],
+      "properties": {
+        "generated_at": { "type": "string" },
+        "generated_by": { "type": "string" },
+        "spec": { "type": "string" },
+        "rule": { "type": "string" },
+        "card_estimate_counts": {
+          "type": "object",
+          "required": ["estimated", "not_estimated", "not_estimated_by_reason"],
+          "properties": {
+            "estimated": { "type": "integer", "minimum": 0 },
+            "not_estimated": { "type": "integer", "minimum": 0 },
+            "not_estimated_by_reason": {
+              "type": "object",
+              "additionalProperties": { "type": "integer", "minimum": 0 }
+            }
+          }
+        },
+        "card_wins": { "type": "string" }
+      }
+    },
+    "estimates": {
+      "type": "object",
+      "required": ["artifact", "vintage", "design_status"],
+      "properties": {
+        "artifact": { "type": "string" },
+        "vintage": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+        "design_status": {
+          "type": "object",
+          "required": ["A", "B", "C"],
+          "properties": {
+            "A": { "type": "string" },
+            "B": { "type": "string" },
+            "C": { "type": "string" }
+          }
+        }
+      }
+    },
+    "published_results": {
+      "type": "object",
+      "description": "One entry per design that reached a verdict. Design B's result is channel-level, which is why no B card carries a number; the field says so explicitly",
+      "required": ["A", "B", "C"],
+      "properties": {
+        "A": { "$ref": "#/$defs/designResult" },
+        "B": { "$ref": "#/$defs/designResult" },
+        "C": { "$ref": "#/$defs/designResult" }
       }
     },
     "dags": {

@@ -1,0 +1,16 @@
+# Verification dependencies: everything the six verifiers re-derive their numbers with, plus lint.
+#
+# Deliberately disjoint from requirements.txt so the static CI job installs a handful of packages rather
+# than the document parsers: the contract checks must be cheap enough to run on every push, or they will
+# not run on every push.
+#
+# Each verifier is an independent reimplementation — that is why numpy/scipy/statsmodels are here at all.
+# A verifier that imported the code under test would only prove the module is self-consistent.
+
+duckdb==1.5.5
+numpy==1.26.4
+scipy==1.17.1
+statsmodels==0.14.6
+jsonschema==4.26.0
+PyYAML==6.0.3
+ruff==0.16.2

@@ -200,9 +200,15 @@ def publisher_precedence(spec: dict) -> list[str]:
     return []
 
 
+def declared_items(cfg: dict) -> dict[str, str]:
+    """`item` -> metric id, in either the single-series or the multi-series form."""
+    return cfg.get("value_items") or {cfg["value_item"]: cfg["metric_id"]}
+
+
 def staging_rows(cfg: dict) -> list[dict]:
+    items = set(declared_items(cfg))
     with (REPO_ROOT / cfg["staging"]).open(newline="", encoding="utf-8") as handle:
-        return [row for row in csv.DictReader(handle) if row.get("item") == cfg["value_item"]]
+        return [row for row in csv.DictReader(handle) if row.get("item") in items]
 
 
 def load_document_series(spec: dict) -> dict:
@@ -218,38 +224,41 @@ def load_document_series(spec: dict) -> dict:
         if not (REPO_ROOT / cfg["staging"]).exists():
             continue
         rows = staging_rows(cfg)
-        chosen: dict[str, dict[int, tuple[float, int]]] = {}
-        for row in rows:
-            month = str(row["period_month"])[:7]
-            year, _, number = month.partition("-")
-            index = mi(int(year), int(number))
-            publisher = str(row.get(cfg.get("publisher_field") or ""))
-            rank = precedence.index(publisher) if publisher in precedence else len(precedence)
-            key = str(row[cfg["series_key"]])
-            current = chosen.setdefault(key, {}).get(index)
-            if current is None or rank < current[1]:
-                chosen[key][index] = (float(row[cfg["value_field"]]), rank)
+        for item, metric_id in declared_items(cfg).items():
+            chosen: dict[str, dict[int, tuple[float, int]]] = {}
+            for row in rows:
+                if row.get("item") != item:
+                    continue
+                month = str(row["period_month"])[:7]
+                year, _, number = month.partition("-")
+                index = mi(int(year), int(number))
+                publisher = str(row.get(cfg.get("publisher_field") or ""))
+                rank = precedence.index(publisher) if publisher in precedence else len(precedence)
+                key = str(row[cfg["series_key"]])
+                current = chosen.setdefault(key, {}).get(index)
+                if current is None or rank < current[1]:
+                    chosen[key][index] = (float(row[cfg["value_field"]]), rank)
 
-        points = {
-            key: [
-                (f"{index // 12:04d}-{index % 12 + 1:02d}", index, index, value)
-                for index, (value, _) in sorted(monthly.items())
-            ]
-            for key, monthly in chosen.items()
-        }
-        n_units = len(points)
-        months: dict[int, list[float]] = {}
-        for unit_points in points.values():
-            for _, index, _, value in unit_points:
-                months.setdefault(index, []).append(value)
-        if n_units:
-            points[cfg.get("national_scope", "national")] = [
-                (f"{index // 12:04d}-{index % 12 + 1:02d}", index, index, sum(values))
-                for index, values in sorted(months.items())
-                if len(values) == n_units
-            ]
-        for scope, unit_points in points.items():
-            series[(name, cfg["metric_id"], scope)] = {"points": unit_points, "grain": "monthly"}
+            points = {
+                key: [
+                    (f"{index // 12:04d}-{index % 12 + 1:02d}", index, index, value)
+                    for index, (value, _) in sorted(monthly.items())
+                ]
+                for key, monthly in chosen.items()
+            }
+            n_units = len(points)
+            months: dict[int, list[float]] = {}
+            for unit_points in points.values():
+                for _, index, _, value in unit_points:
+                    months.setdefault(index, []).append(value)
+            if n_units:
+                points[cfg.get("national_scope", "national")] = [
+                    (f"{index // 12:04d}-{index % 12 + 1:02d}", index, index, sum(values))
+                    for index, values in sorted(months.items())
+                    if len(values) == n_units
+                ]
+            for scope, unit_points in points.items():
+                series[(name, metric_id, scope)] = {"points": unit_points, "grain": "monthly"}
     return series
 
 

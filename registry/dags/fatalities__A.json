@@ -1,11 +1,11 @@
 {
   "dag_id": "fatalities__A",
-  "schema_version": "0.2.0",
-  "vintage_date": "2026-10-16",
-  "generated_at": "2026-10-17T03:45:10+0100",
+  "schema_version": "0.3.0",
+  "vintage_date": "2026-10-17",
+  "generated_at": "2026-10-17T07:33:43+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "b16743f"
+    "git_sha": "ba5741f"
   },
   "outcome": {
     "id": "fatalities",
@@ -15,9 +15,9 @@
     "unit": "count",
     "direction": "down",
     "frequency": "monthly",
-    "source": "ACLED (UCDP substitute)",
-    "coverage_status": "blocked",
-    "coverage_note": "No usable World Bank security series (homicides: 3 observations, C-10). ACLED requires an OAuth app and withholds the most recent 12 months (C-13); UCDP needs a free token (C-14). Security depends entirely on these two."
+    "source": "UCDP GED (bulk archive, keyless)",
+    "coverage_status": "ok",
+    "coverage_note": "**Landed 2026-10-17.** 7,418 Nigeria events 1990-09 to 2024-12, state-attributed (`adm_1`), so the state panel carries a 37-unit outcome and the national spine carries a monthly one from 1999-01. The World Bank series is unusable (homicides: 3 observations, C-10) and ACLED remains licence-blocked (C-13), but neither was needed: the UCDP API wants a token (C-14) while the UCDP **bulk archive** does not, and UCDP GED is CC-BY 4.0. 80 % of state-months are zero and every state series is flagged by the Stage 3 spike gate, which is what a monthly conflict count does — see `analysis/specs/quality.yml` `document_sources.ucdp.spike_note`."
   },
   "design": {
     "id": "A",
@@ -29,7 +29,11 @@
     "exposure_node": "dose",
     "outcome_node": "Y",
     "adjustment_criterion": "backdoor",
-    "design_controls": ["State fixed effects absorb time-invariant state characteristics", "Time fixed effects absorb common national shocks (including the oil price)", "Permutation inference over treatment-date reassignment"]
+    "design_controls": [
+      "State fixed effects absorb time-invariant state characteristics",
+      "Time fixed effects absorb common national shocks (including the oil price)",
+      "Permutation inference over treatment-date reassignment"
+    ]
   },
   "nodes": [
     {
@@ -83,8 +87,8 @@
       "short": "Security fatalities",
       "role": "outcome",
       "observed": true,
-      "source": "ACLED (UCDP substitute)",
-      "source_status": "gap"
+      "source": "UCDP GED (bulk archive, keyless)",
+      "source_status": "acquired"
     },
     {
       "id": "u_st",
@@ -142,13 +146,30 @@
       "to": "Y"
     }
   ],
-  "adjustment_set": ["inherit", "oil", "statefe", "timefe"],
-  "adjustment_sets": [
-    ["inherit", "oil", "statefe", "timefe"]
+  "adjustment_set": [
+    "inherit",
+    "oil",
+    "statefe",
+    "timefe"
   ],
-  "assumption_required": ["u_st"],
+  "adjustment_sets": [
+    [
+      "inherit",
+      "oil",
+      "statefe",
+      "timefe"
+    ]
+  ],
+  "assumption_required": [
+    "u_st"
+  ],
   "identifying_assumption": "Parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths. Formally, no unmeasured state-by-time confounder affects both the dose and the outcome (the unobserved node is absent).",
-  "cannot_rule_out": ["Anticipation: states may adjust behaviour before the formal policy date.", "SUTVA violations through cross-state spillovers (trade, migration, security).", "Compositional or definitional change in state accounts over the window.", "The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures."],
+  "cannot_rule_out": [
+    "Anticipation: states may adjust behaviour before the formal policy date.",
+    "SUTVA violations through cross-state spillovers (trade, migration, security).",
+    "Compositional or definitional change in state accounts over the window.",
+    "The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures."
+  ],
   "dagitty_full": "dag {\n  oil [pos = \"0,2.6\"]\n  inherit [pos = \"0,1.4\"]\n  statefe [pos = \"0,0.2\"]\n  timefe [pos = \"0,-1.0\"]\n  dose [pos = \"1.8,0.8\", exposure]\n  Y [pos = \"3.6,0.2\", outcome]\n  u_st [pos = \"1.8,-1.4\", unobserved]\n  oil -> dose\n  oil -> Y\n  inherit -> dose\n  inherit -> Y\n  statefe -> dose\n  statefe -> Y\n  timefe -> dose\n  timefe -> Y\n  dose -> Y\n  u_st -> dose\n  u_st -> Y\n}",
   "dagitty_assumed": "dag {\n  oil [pos = \"0,2.6\"]\n  inherit [pos = \"0,1.4\"]\n  statefe [pos = \"0,0.2\"]\n  timefe [pos = \"0,-1.0\"]\n  dose [pos = \"1.8,0.8\", exposure]\n  Y [pos = \"3.6,0.2\", outcome]\n  oil -> dose\n  oil -> Y\n  inherit -> dose\n  inherit -> Y\n  statefe -> dose\n  statefe -> Y\n  timefe -> dose\n  timefe -> Y\n  dose -> Y\n}",
   "diagnostics": {
@@ -161,8 +182,8 @@
       },
       {
         "id": "state_outcome_attribution",
-        "verdict": "fail",
-        "detail": "no state-attributed outcome has landed — the security series are credential-blocked and the health and education outcomes are national"
+        "verdict": "pass",
+        "detail": "21238 state outcome values present"
       },
       {
         "id": "parallel_trends_precheck",
@@ -170,18 +191,77 @@
         "detail": "the nominal dose could group states by exposure, but the estimand is written on the per-capita axis, so a trends test on the nominal dose would be a sensitivity check at Stage 6 rather than this pre-check"
       }
     ],
-    "blocker": "specified_dose_axis_absent:D1 and no_state_attributed_outcome",
+    "blocker": "specified_dose_axis_absent:D1",
     "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
-    "coverage_status": "blocked",
-    "vintage": "2026-10-16",
-    "source": "registry/diagnostics/2026-10-16/diagnostics.json"
+    "coverage_status": "ok",
+    "vintage": "2026-10-17",
+    "source": "registry/diagnostics/2026-10-17/diagnostics.json"
   },
   "assets": {
     "svg": "registry/dags/fatalities__A.svg"
   },
   "estimate": {
-    "status": "not_estimated",
-    "model_card_ref": null,
-    "note": "Estimates are attached at Stages 6-7; a card without an interval does not ship (docs/decisions.md M-02)."
+    "status": "estimated",
+    "model_card_ref": "registry/estimates/2026-10-17/estimates.json#specification[1]",
+    "the_number_is_for_this_card": true,
+    "specification": {
+      "artifact": "registry/estimates/2026-10-17/estimates.json",
+      "spec_index": 1,
+      "design": "A",
+      "outcome": "fatalities",
+      "coefficient_name": "elasticity_of_fatalities_to_allocation",
+      "coefficient": 0.4792847253,
+      "standard_error": 0.30230383194,
+      "ci_low": -0.11323078531,
+      "ci_high": 1.0718002359,
+      "p_value": 0.11286629542,
+      "n_obs": 3456,
+      "n_units": 36,
+      "first_month": "2016-12-01",
+      "last_month": "2024-12-01",
+      "estimator": "PPML (Poisson pseudo-maximum-likelihood), fixest::fepois",
+      "formula": "fatalities ~ log(faac_gross_total_naira) | state_id + year_month",
+      "covariance": "cluster by state (36 clusters)"
+    },
+    "verdict": {
+      "status": "estimated_not_identified",
+      "rule": "Reported as `identified` only if the lead-shift p-value is below 0.05 **and** the 24-month placebo estimate is smaller in magnitude than the estimated coefficient. Otherwise `estimated_not_identified`, with the failed check named. Fixed before the numbers were read.",
+      "failed_checks": "the lead-shift p-value is 0.133: 8 of 60 mis-timed doses return an estimate at least as large as the estimate itself",
+      "checked_at": {
+        "artifact": "registry/estimates/2026-10-17/estimates.json",
+        "design": "A"
+      }
+    },
+    "robustness": {
+      "artifact": "registry/robustness/2026-10-17/robustness.json",
+      "axis": "outcome",
+      "preferred_specification": "A|fatalities|lag0|state_month_fe|full",
+      "this_specification_is_the_preferred_one": true,
+      "axis_level": {
+        "design": "A",
+        "axis": "outcome",
+        "level": "fatalities",
+        "is_preferred_level": true,
+        "n": 27,
+        "n_positive": 13,
+        "n_negative": 14,
+        "n_positive_ci": 2,
+        "n_negative_ci": 5,
+        "n_opposite": 14,
+        "flips_against_preferred": true
+      },
+      "design_support": {
+        "n": 81,
+        "n_positive": 45,
+        "n_negative": 36,
+        "n_near_zero": 6,
+        "n_positive_ci": 13,
+        "n_negative_ci": 5
+      },
+      "design_flip_levels": 5,
+      "near_zero_band": 0.02,
+      "rule": "A level flips when **more than half** of the specifications carrying it have the opposite sign to the preferred specification of its design. The minority count is published beside it (`n_opposite`) rather than discarded, because one negative cell in 27 is a corner of the grid and 20 in 27 is a region — and a rule that called both a flip would report the whole grid as unstable, which is just as uninformative as reporting none of it."
+    },
+    "note": "One of the 3 Design A specifications published at Stage 6, and the number the card's outcome was fitted on. It sits in a grid: 27 of the design's 81 specifications share this outcome and a majority of those 27 are on the other side of zero. The card's Stage 5 status is fail — an estimate exists for this pair and the design still does not pass its pre-check, which is why both travel together."
   }
 }

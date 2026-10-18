@@ -987,19 +987,33 @@ design_verdicts <- list(
                                                         panel_total))
     ),
     blocker = paste(dose$blockers, collapse = " and "),
+    # Both clauses below are built from the dose and outcome blocks, never typed next to them. The
+    # alternative (the wording that shipped on 2026-10-17 before this fix) is a sentence that describes
+    # a premise the artifacts have already changed: it said the family "is also missing a
+    # state-attributed outcome" on the same page as a table reporting 21,238 state outcome values.
     dropped_because = if (specified_present && dose$any_state_outcome_present)
       NA_character_
     else if (!specified_present && dose$any_dose_present)
       paste("the FAAC dose has landed and is Stage 3 gated, but on the **nominal** axis: the estimand is",
             sprintf("written on %s (per capita), which needs the state population denominator decision",
                     specified_axis),
-            "(X-09). The family is also missing a state-attributed outcome, so a dose alone does not free it")
+            "(X-09).",
+            if (dose$any_state_outcome_present)
+              paste(" The state-attributed outcome HAS landed (UCDP GED, C-45), so what is left is the",
+                    "denominator decision and the choice of dose axis — Stage 6 ran the nominal-axis",
+                    "version and reported it `estimated_not_identified` (registry/estimates/)")
+            else
+              paste(" The family is also missing a state-attributed outcome, so a dose alone does not",
+                    "free it."))
     else paste("PHASES.md Stage 5 dose validation: a dose with near-zero cross-state variance cannot",
                "support a dose-response design, and no estimator fixes that"),
     diagnostics_that_decide = c("dose_variation", "state_outcome_attribution"),
-    next_step = paste("the state population denominator decision (X-09), which is what the specified",
-                      "axis D1 waits on, plus a state-attributed outcome — the human-security series are",
-                      "the route and they are credential-blocked (C-13/C-14)")
+    next_step = if (dose$any_state_outcome_present)
+      paste("the state population denominator decision (X-09), which is what the specified axis D1 waits",
+            "on. The outcome blocker is cleared: the state-attributed security series landed 2026-10-17")
+    else paste("the state population denominator decision (X-09), which is what the specified",
+               "axis D1 waits on, plus a state-attributed outcome — the human-security series are",
+               "the route and they are credential-blocked (C-13/C-14)")
   ),
   B = list(
     design_id = "B",
@@ -1071,8 +1085,8 @@ for (o in outcomes) {
     detail = if (dose$any_state_outcome_present)
       sprintf("%d state outcome values present",
               sum(vapply(outcome_entries, function(d) d$n_non_null, numeric(1))))
-    else paste("no state-attributed outcome has landed — the security series are credential-blocked and",
-               "the health and education outcomes are national"))
+    else paste("no state-attributed outcome has landed — the landed health and education outcomes are",
+               "national, and the security series this would have come from are not on the panel"))
   card_diagnostics[[sprintf("%s__A", o$id)]] <- list(
     status = if (specified_present && dose$any_state_outcome_present) "pass" else "fail",
     checks = list(
@@ -1273,6 +1287,13 @@ for (d in names(design_verdicts)) {
   }
 }
 
+# The observed share of the spine is a number the base owns, so it is computed rather than written into
+# the prose: the 2026-10-11 wording asserted "10.1%" literally and would have gone on asserting it after
+# the Brent, FAAC and UCDP landings moved the share to 16.2% (C-48).
+spine_counts <- q("select observation_type, count(*) as n from main_analytics.fact_metric group by 1")
+spine_total <- sum(spine_counts$n)
+spine_share <- spine_counts$n[spine_counts$observation_type == "observed"] / spine_total
+
 # ------------------------------------------------------------------------------------------
 # write the artifacts
 # ------------------------------------------------------------------------------------------
@@ -1290,6 +1311,9 @@ diagnostics <- list(
   grain_decision = list(
     primary = "native",
     forbidden = "fact_metric monthly spine",
+    observed_rows = spine_counts$n[spine_counts$observation_type == "observed"],
+    spine_rows = spine_total,
+    observed_fraction = round(spine_share, 6),
     reason = spec_get(c("grain", "forbidden_reason"))),
   series = series_diag,
   cointegration = cointegration,
@@ -1330,7 +1354,8 @@ md <- c(
   "",
   "## Grain",
   "",
-  "All tests run on **native observations**, never on the monthly spine: 10.1% of spine rows are",
+  sprintf("All tests run on **native observations**, never on the monthly spine: %.1f%% of spine rows are",
+          spine_share * 100),
   "observed, and a unit-root test on interpolated data tests the interpolator.",
   "",
   "## Design verdicts",
@@ -1360,9 +1385,14 @@ md <- c(
                                            d$column %||% "—", d$n_non_null,
                                            fmt(d$n_states_with_dose, 0), d$verdict), character(1)),
   "",
-  sprintf("State panel: %d rows = %d states x %d months. Dose status on every row: `%s`.",
+  # The distribution, not its mode. The 2026-10-16 wording took `dose_status_values$dose_status[[1]]`
+  # and printed "Dose status on every row: `declared_gap`" — true only while every row was a gap. Once
+  # the dose landed the modal status stayed `declared_gap`, so the sentence kept asserting "every row"
+  # about a panel that is now 4,104 observed rows out of 12,358 (found 2026-10-17, C-48).
+  sprintf("State panel: %d rows = %d states x %d months. Dose status per row: %s.",
           panel_total, dose$n_states, panel_total / dose$n_states,
-          dose$dose_status_values$dose_status[[1]]),
+          paste(sprintf("%s `%s`", format(dose$dose_status_values$n, big.mark = ",", trim = TRUE),
+                        dose$dose_status_values$dose_status), collapse = " · ")),
   "",
   "## Integration order (native grain)",
   "",

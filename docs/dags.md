@@ -10,12 +10,14 @@ model makes three things checkable before any number exists: which variable is b
 what must be assumed absent, and which claim the design can actually carry. The adjustment set is
 not chosen by hand — it is computed from the graph.
 
-**Status:** DAG layer built and verified (2026-10-11), and every card now carries its **Stage 5
-pre-check** (`diagnostics`), re-run at vintage **2026-10-16** after the fiscal dose landed. No estimates
-attached yet — **0 of 36 cards pass their pre-check** (15 fail, 7 degraded, 14 not attempted); see
-`docs/design-memo.md`. The totals survived the re-run; the reasons did not — Family A's cards now say the
-dose is absent on the per-capita axis the estimand is written on (the nominal dose is landed and gated)
-and that no outcome is state-attributed, rather than "no dose series has landed".
+**Status:** DAG layer built and verified (2026-10-11); every card carries its **Stage 5 pre-check**
+(`diagnostics`), re-run at vintage **2026-10-17** after both the fiscal dose and the security outcome
+landed. Cards still do not carry estimates — **0 of 36 cards pass their pre-check** (15 fail, 7 degraded,
+14 not attempted); see `docs/design-memo.md`. The totals survived both re-runs; the reasons did not.
+Family A's cards now say the dose is absent on the per-capita axis the estimand is written on (the
+nominal dose is landed and gated) and that **the state-attributed outcome has arrived** — so the family is
+estimable on the nominal axis, which Stage 6 ran: `estimated_not_identified`, with the failing check named
+(`docs/estimates.md`, C-47).
 
 ---
 
@@ -155,25 +157,30 @@ gates record *whether that thing is fit to hold fixed* (decisions C-28).
 
 ### Still missing, by root cause
 
-**Seven variables, three root causes** — the oil group closed on 2026-10-11:
+**Five variables, two root causes** — the oil group closed on 2026-10-11 and the security group on
+2026-10-17:
 
 | Root cause | Variables | What it needs |
 |---|---|---|
 | **Fiscal dose** | `dose` (D1), `faac` | ~~An NBS FAAC PDF/HTML parser, plus a decided state population denominator~~ — **the parser is done (2026-10-16) and the series is Stage 3 gated (2026-10-17)**; what is left is the state population denominator (X-09), on which the per-capita form of `dose` rests |
 | **Education outcomes** | primary completion, net enrolment, youth literacy | No open source reaches 2015+. UNESCO UIS 404s, NEMIS times out |
-| **Security outcomes** | fatalities, incidents | A free UCDP token (verified reachable) or ACLED OAuth |
+| **Security outcomes** | fatalities, incidents | ✅ **Closed 2026-10-17** — UCDP GED, landed from its **keyless bulk archive** (the API's token was never the only route, C-45); state-attributed on the panel, national on the spine |
 | ~~**Oil price**~~ | ~~`oil` (designs A, B), `common` (design C)~~ | ✅ **Closed** — free FRED key registered, Brent landed (C-23, C-24) |
 
-Closing it took **design C to zero unsourced nodes**; designs A and B are each down to one, the FAAC
-dose.
+Closing the oil group took **design C to zero unsourced nodes**. With the security outcome also closed,
+designs A and B are each down to one unsourced node — the per-capita FAAC dose — and that one is now a
+*decision* (X-09) rather than a source, which is what Stage 6's log specification works around for the
+elasticity (S6-06).
 
-> **This table reads from the registry cards, and the cards are stale on the dose (noted 2026-10-17).**
-> `dose` and `faac` still carry `source_status: gap` because `analysis/specs/dag_designs.yml` says so and
-> the cards are generated from it. The FAAC series it declares missing now exists — 174 documents,
-> 114 months × 36 states, populated on the panel and gated by Stage 3 (S4-13…S4-19, C-39…C-43). The
-> `dose` node is specified as *per capita*, which still waits on X-09, so `gap` is not simply wrong — it
-> is under-specified. Changing it is the Stage 5 re-run's job, not a hand edit here: `tests/verify_dags.py`
-> recomputes the gap list from the cards and would fail against an edited page.
+> **The two rows above `dose`/`faac` are not stale, and the reason is worth keeping.** `dose` and `faac`
+> still carry `source_status: gap` because `analysis/specs/dag_designs.yml` says so and the cards are
+> generated from it. The FAAC series itself exists — 174 documents, 114 months × 36 states, populated on
+> the panel, gated by Stage 3 (S4-13…S4-19, C-39…C-43) and now carrying an estimate on the *nominal* axis
+> (S6-06). What is missing is the per-capita form the `dose` node is specified as, and that waits on X-09.
+> So `gap` is under-specified rather than wrong, and it is left alone rather than hand-edited:
+> `tests/verify_dags.py` recomputes the gap list from the cards and would fail against an edited page.
+> The security outcomes, by contrast, have left this list — their `coverage_status` changed in
+> `outcomes.yml` because the data changed (C-45), and the cards were regenerated from it.
 
 ### Acquired since the last vintage
 
@@ -246,12 +253,15 @@ paths per graph, all blocked.
 
 1. **Stage 4 harmonisation** gives the cards their inputs: the administration spine, the monthly panel,
    direction labels, the January-2000 anchor — and Brent resampled by the rule Stage 3 froze.
-2. **Stage 5 diagnostics** — **built 2026-10-11, re-run at vintage 2026-10-16**: every card carries its pre-check verdict, and the
+2. **Stage 5 diagnostics** — **built 2026-10-11, re-run at vintage 2026-10-16 and again 2026-10-17**: every card carries its pre-check verdict, and the
    three families are decided on the record (A dropped, B degraded, C infeasible; `docs/design-memo.md`).
    It carries Stage 3's findings onto the affected cards too — the `donor` contamination above, and the
    January-2025 CPI rebasing inside `cpi_yoy`'s window.
-3. **Stage 6–7 estimation** fills `estimate` with a point estimate, an interval and the diagnostic
-   bundle. Until then the app shows the assumption and the adjustment set with **no number** —
-   a card without an interval does not ship.
+3. **Estimation.** Stage 6 **ran on 2026-10-17** and published 12 specifications with intervals and the
+   check behind each verdict (`registry/estimates/2026-10-17/`, `docs/estimates.md`) — but not on these
+   cards: the `estimate` block is the model-card schema, which is Stage 8 work. Until it is filled the app
+   shows the assumption and the adjustment set with **no number**, which is the rule M-02 set: a card
+   without an interval does not ship. The card's own `estimate.note` says so, computed by the generator
+   rather than typed beside it.
 4. **The app** reads the index and renders: pick an outcome → pick a causal model → read the
    assumption and adjustment set → later, the estimate under that model.

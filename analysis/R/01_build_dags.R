@@ -304,7 +304,7 @@ for (outcome in outcomes) {
       sprintf("Stage 5 pre-check: %s", diag_status)
     )
     caption <- sprintf(
-      "The exposure is the administration. Node(s) labelled '%s' are unobserved and are assumed absent.\nBackdoor adjustment set: %s.\n%s\nThe estimate is attached at Stages 6-7.",
+      "The exposure is the administration. Node(s) labelled '%s' are unobserved and are assumed absent.\nBackdoor adjustment set: %s.\n%s\nNo estimate is attached here: Stage 6's estimates are in registry/estimates/ and the card's estimate block is Stage 8.",
       trimws(ASSUMED_SUFFIX),
       if (length(adj_set)) paste(adj_set, collapse = ", ") else "none (no open backdoor path)",
       diag_line
@@ -377,7 +377,7 @@ for (outcome in outcomes) {
       estimate = list(
         status = "not_estimated",
         model_card_ref = NA,
-        note = "Estimates are attached at Stages 6-7; a card without an interval does not ship (docs/decisions.md M-02)."
+        note = "No estimate is attached to this card. The estimate block is the model-card schema, which is Stage 8 work; Stage 6's published specifications live in registry/estimates/<vintage>/. A card without an interval still does not ship (docs/decisions.md M-02)."
       )
     )
 

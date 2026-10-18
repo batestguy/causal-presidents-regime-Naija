@@ -78,6 +78,26 @@ interpolation:
   extrapolation_reason: >-
     Nothing is ever extended before the first or after the last observation. A back-filled value is
     a fabricated value, and the models would treat it as data.
+  # ---- count series are never interpolated (added 2026-10-17, with the UCDP landing) ----------
+  # The rule above is right for a **level** series and wrong for a **count**. Linear interpolation of
+  # 12 fatalities in July and 3 in September produces "7.5 fatalities in August", a number no source
+  # published and no event produced — and unlike an interpolated price, a reader has no way to tell it
+  # apart from a real toll. The distinction is the same one quality.yml draws between a relative and a
+  # percentage-point spike: applying one rule to both series types is a category error, not a
+  # simplification.
+  #
+  # The series it bites are the UCDP ones, and the bite is real: the archive records no Nigeria event
+  # at all in 25 months inside the spine, so the monthly spine would otherwise interpolate 25 fabricating
+  # months across those holes (1999-2009; none after). Those months stay `unobserved`.
+  no_interpolation:
+    rule: "unit = 'count' in the metric catalogue"
+    metrics_as_of_2026_10_17: [fatalities, incidents, fatalities_civilians]
+    reason: >-
+      A count of events or deaths is not a continuous quantity between two observations. Absence of a
+      recorded event is not the midpoint of the months either side of it. The rule is keyed on the
+      catalogue's `unit` column rather than on a list of ids, so it cannot drift from the catalogue.
+    enforced_in: "dbt/models/analytics/int_metric_monthly.sql"
+    verified_by: "tests/verify_harmonisation.py"
 
 observation_type:
   vocabulary:
@@ -237,6 +257,30 @@ resample:
 # ---------------------------------------------------------------------------------------------
 # Declared gaps are legitimate; silent holes are not (Stage 1 exit criterion). These are the inputs
 # the analytical base would need and does not have, recorded here rather than left as absent tables.
+# ---------------------------------------------------------------------------------------------
+# The UCDP security outcome (landed 2026-10-17)
+# ---------------------------------------------------------------------------------------------
+# Read by `tests/verify_harmonisation.py`, which recomputes the national monthly series from the parsed
+# artifact and compares it against the spine. The list is here rather than in the verifier because the
+# verifier's job is to hold the *declared* set against the data, not to decide which metrics exist.
+ucdp_source:
+  source_artifact: "data/raw/ucdp/<vintage>/ged-<version>/page-0001.zip"
+  parsed_artifact: "data/staging/ucdp_state_month.csv"
+  parse_report: "data/staging/ucdp_parse_report.json"
+  licence: "CC-BY-4.0 (redistributable with attribution; UCDP, Uppsala University)"
+  access: >-
+    The bulk archive is keyless. The API is not (401 on versions 25.1/24.1/23.1, verified 2026-10-17),
+    and C-14 recorded that as a blocker for the security outcome. Both facts are true; the second is why
+    the first had to be found.
+  metrics: [fatalities, incidents]
+  national_aggregation: >-
+    A sum over every scope in the artifact, including `unattributed` — the country, not the states.
+  state_aggregation: >-
+    The 37 panel units only; `unattributed` has no state id and never joins.
+
+# ---------------------------------------------------------------------------------------------
+# Declared gaps at this stage
+# ---------------------------------------------------------------------------------------------
 declared_gaps:
   - id: state_dose_d1
     what: "FAAC allocation per state-month (base spec X-01, the primary exposure)"
