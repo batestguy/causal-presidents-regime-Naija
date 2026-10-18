@@ -1240,6 +1240,13 @@ a table; what it produced that matters is one constraint and two confirmations.
 | NEMIS reachability | A check from a network other than this one |
 | DHIS2 tenant access | Institutional credentials; do not design a model on it until confirmed |
 | Monthly NBS CPI — the grain the app's chart spec states | The manual-download parser. The landed CPI is annual, so design B cannot see the 2023 window monthly on it (C-30) even though the spine is now 16.2 % observed. Either parse the monthly series, or run design B at its annual cross-check |
+| **`oagf.gov.ng` TLS certificate — expired 2026-10-17** | The publisher to renew it. The leaf expired `2026-10-17 08:45:30 UTC` (issuer `Certum OV TLS G2 R39 CA`), so `curl` returns `SEC_E_CERT_EXPIRED` and `pull_faac.py` refuses. Plain HTTP 301-redirects to HTTPS, `www.` has the same expired leaf and NBS does not resolve from here — so the FAAC vintage cannot be re-landed anywhere, local or CI, until renewal. Nothing is worked around: disabling verification would make a dead source look green |
+
+**CI's `data` job ran for the first time on 2026-10-18** (run `39124538665`, `workflow_dispatch` on
+`5a48f55`, after `FRED_API_KEY` was set as a repo secret). It acquired World Bank national **22/22**, the
+donor pool **5/5 in 40 requests** and Brent **1/1** (`DCOILBRENTEU`, 9,108 obs, `1987-05-20..2026-10-14`
+— the secret works in CI), then stopped at `oagf.gov.ng` on the certificate above. `static contracts`
+passed. The job stays red until the publisher renews; the weekly cron retries it.
 
 ## 8. Next steps, in order
 

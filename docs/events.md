@@ -170,7 +170,7 @@ Recorded on the artifact as `not_claimed` and checked by the verifier:
 | `registry/schema/events.schema.json` | The whole document against a JSON Schema — closed verdict vocabulary, `deterministic: true`, a p-value that cannot be zero |
 | Break-tests | Five mutations applied to the committed artifact — a coefficient moved 2 %, a row deleted, the uncheckable pre-trend scored as a pass, a `p_value` added to the party block, the figure deleted. **All five caught** by the verifier and the contract test, each restored byte-for-byte afterwards |
 
-`scripts/verify.sh` runs the engine and then all nine verifiers, locally and in CI.
+`scripts/verify.sh` runs the engine and then all ten verifiers, locally and in CI.
 
 ---
 
