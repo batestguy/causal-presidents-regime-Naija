@@ -1239,8 +1239,16 @@ a table; what it produced that matters is one constraint and two confirmations.
     `docs/design-memo.md` and `docs/registry.md` still carried the first set — the README said "0 of 36
     pass" in the same sentence that announced Design C had moved to `pass` on `u5mr`. Found by reading the
     artifact next to the prose while answering a coverage question, not by a test. Corrected in all six, and
-    the per-vintage totals are now written where the re-runs are narrated, so the next movement reads as a
+    the    per-vintage totals are now written where the re-runs are narrated, so the next movement reads as a
     change rather than as a contradiction.
+17. **A "needs a separate acquisition" claim that the raw layer already paid for.** `docs/design-memo.md`
+    said a Design C for the conflict outcomes needs a donor conflict path, "a separate acquisition this
+    re-run did not make". The landed UCDP payload is the **global** GED 25.1 archive — 385,918 events over
+    124 countries, 1989–2024 — and only the parse step filters to Nigeria, so the missing piece is a
+    parser extension and a name/ID crosswalk, not a download. Found by opening the landed zip instead of
+    trusting the prose; the same sentence now carries the two facts a build needs (Gleditsch–Ward
+    `country_id`, and that a name-only join reaches 70 of the 99 donors).
+
 
 ## 7. Blocked
 
