@@ -192,7 +192,8 @@ state-months) from a month the archive does not cover at all.
   +0.095 — and Design A is **estimated, not identified**: the dose's post-fixed-effect variation is 0.50 in
   the oil-producing states against 0.11 elsewhere, and 8 of 60 mis-timed doses return an estimate at least
   as large (C-47). Both are published, each with the check that decided it.
-- **Stage 5 re-ran** on the new base: the same 0-of-36 verdicts, with the reasons recomputed — the outcome
+- **Stage 5 re-ran** on the new base: the same 0-of-36 verdicts *at that vintage* (the totals moved later —
+  to 15/9/12, then to 14/9/12 with one pass), with the reasons recomputed — the outcome
   blocker is now cleared and the remaining one is the dose axis plus the population denominator. The cards
   carry that, and the one stale sentence they carried ("missing a state-attributed outcome", on the same
   page as 21,238 outcome values) is now derived from the artifacts rather than typed beside them.
@@ -1303,8 +1304,9 @@ that turn estimates into a product.
 4. ~~**Stage 5 — the design memo.**~~ **Done 2026-10-11, re-run 2026-10-16 and 2026-10-17** — it took
    C-30 (the 2023 window is not monthly-visible on the landed annual CPI), C-28 (the `donor_oda`
    contamination), C-27 (the 2025 CPI rebasing), the unadjudicated spikes and the 3 frequency gaps, and
-   dropped failing designs *on the record*: 0 of 36 cards pass. Diagnostics are attached to every card;
-   the artifact on disk is `registry/diagnostics/2026-10-17/` and the narrative is
+   dropped failing designs *on the record*: 0 of 36 cards passed at that vintage (the 2026-10-18 re-run
+   over the widened donor pool leaves 1 passing, `u5mr` under Design C). Diagnostics are attached to every
+   card; the current artifact is `registry/diagnostics/2026-10-18/` and the narrative is
    `docs/design-memo.md` at the vintage it was written against.
 5. ~~**The FAAC parser (D1)**~~ **Done 2026-10-16.** All four publishers' paths are now acquired and the
    dose is in the base. ~~**Stage 3 gate on the FAAC series**~~ **Done 2026-10-17** — 37 series (36 states

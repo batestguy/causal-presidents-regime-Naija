@@ -7,9 +7,11 @@
 # ---------------------------------------------------------------------------------------------
 # What this stage is answering, and what it is not
 # ---------------------------------------------------------------------------------------------
-# Stage 5 returned **0 of 36 cards passing**: Family A dropped, B degraded, C infeasible. This stage does
-# not overturn that. It asks the narrower question the landed data can actually carry, and it answers it
-# with the same artifacts Stage 5 read:
+# Stage 5 returned **0 of 36 cards passing** at vintage 2026-10-17: Family A dropped, B degraded, C
+# infeasible. This stage does not overturn that. (The 2026-10-18 re-run over a widened donor pool moves C
+# to `candidate` and passes `u5mr` — permission to build that design, not an estimate of it.) It asks the
+# narrower question the landed data can actually carry, and it answers it with the same artifacts Stage 5
+# read:
 #
 #   * **The presidential-tenure question is not answerable.** Four to five administrations and 27 annual
 #     observations per series put the minimum detectable effect at 35-80 residual standard deviations

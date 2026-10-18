@@ -20,10 +20,11 @@
 #   * **Design C** was not run: Stage 5 recorded `infeasible` (the donor pool cannot track Nigeria's
 #     pre-treatment path), and nothing landed since changes the donor pool.
 #
-# So the honest registry is: **3 cards carry a number, 33 say why they do not**, and the two design-level
+# So the honest registry is: **2 cards carry a number, 34 say why they do not**, and the two design-level
 # results (the FAAC channel, and Design C's non-run) live on the index where the app can show them once
-# rather than 12 times. Values that read: "0 of 36 cards pass their pre-check but 3 carry a published
-# estimate, and here is the difference between those two statements" is the point of the layer.
+# rather than 12 times. Values that read: "1 of 36 cards passes its pre-check but 2 carry a published
+# estimate, and here is the difference between those two statements" is the point of the layer. (Counts
+# recomputed from the built cards on 2026-10-18: 2 estimated, 34 with a declared reason.)
 #
 # ---------------------------------------------------------------------------------------------
 version: 1

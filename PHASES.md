@@ -327,8 +327,8 @@ dropping them after their estimate looks inconvenient.
 `report.md`), independent verifier `tests/verify_stage6.py`, output document `docs/estimates.md`.
 **Twelve specifications published across two designs — three Design A outcomes and nine Design B horizons — and one of the two designs is reported as not identified.**
 
-**What was estimated, and what the plan expected.** Stage 5 left 0 of 36 cards passing, so Stage 6 could
-not run the plan's three families as written. What it ran instead is the subset the landed data can
+**What was estimated, and what the plan expected.** Stage 5 left 0 of 36 cards passing (at the vintage
+Stage 6 was fitted against), so Stage 6 could not run the plan's three families as written. What it ran instead is the subset the landed data can
 carry, declared before the numbers were read:
 
 - **Design A — state dose-response** (the Family A estimand, on 3,456 state-months from 2016-12 to

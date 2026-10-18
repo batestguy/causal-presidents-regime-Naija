@@ -172,10 +172,11 @@ scripts/verify.sh                                # all of the above, one exit st
 ## Conventions & gotchas
 
 - **Stage 5 runs every test on the native observation, never the monthly spine** (`analysis/specs/diagnostics.yml`,
-  `analysis/R/02_diagnostics.R`). Testing interpolated rows tests the interpolator. **0 of 36 cards pass
-  their pre-check at vintage 2026-10-17** — the dose's specified axis is empty (the nominal one is landed
-  and gated), the VECM family is annual-grain and has no catalogue entry for FAAC, and the synthetic
-  control is infeasible. `docs/design-memo.md` is the source of truth for
+  `analysis/R/02_diagnostics.R`). Testing interpolated rows tests the interpolator. **1 of 36 cards passes
+  its pre-check at vintage 2026-10-18** (`u5mr` under Design C; 14 fail, 9 degraded, 12 not attempted) —
+  the dose's specified axis is empty (the nominal one is landed and gated), the VECM family is
+  annual-grain and has no catalogue entry for FAAC, and the synthetic control is a `candidate` rather
+  than infeasible. `docs/design-memo.md` is the source of truth for
   which design is credible per outcome; the summary is computed from the cards, never asserted.
 - **The `mmr` Johansen rank is marginal** (the deciding statistic sits ~9% over its critical value) and
   an independent implementation reaches a different rank under a different deterministic-term convention.
