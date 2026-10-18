@@ -2,10 +2,10 @@
   "dag_id": "fatalities__C",
   "schema_version": "0.3.0",
   "vintage_date": "2026-10-18",
-  "generated_at": "2026-10-18T11:40:19+0100",
+  "generated_at": "2026-10-18T12:37:07+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "e0c9e68"
+    "git_sha": "1295af7"
   },
   "outcome": {
     "id": "fatalities",
@@ -60,7 +60,7 @@
       "short": "Donor-pool paths",
       "role": "confounder",
       "observed": true,
-      "source": "Donor panel: 13 countries x 5 predictors (World Bank)",
+      "source": "Donor panel: 99 candidate countries x 5 predictors (World Bank), widened 2026-10-18",
       "source_status": "acquired"
     },
     {

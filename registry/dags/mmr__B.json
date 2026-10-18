@@ -2,10 +2,10 @@
   "dag_id": "mmr__B",
   "schema_version": "0.3.0",
   "vintage_date": "2026-10-18",
-  "generated_at": "2026-10-18T11:40:19+0100",
+  "generated_at": "2026-10-18T12:37:07+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "e0c9e68"
+    "git_sha": "1295af7"
   },
   "outcome": {
     "id": "mmr",

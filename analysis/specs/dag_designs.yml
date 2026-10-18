@@ -174,7 +174,7 @@ designs:
     nodes:
       - {id: common, label: "Common factors (global oil / commodity cycle)", short: "Common factors (oil cycle)", role: confounder, observed: true, pos: "0,1.8", source: "Derived from the donor-panel paths and the FRED Brent crude cycle (node 'oil')", source_status: derived}
       - {id: countryfe, label: "Country fixed effects", short: "Country FE", role: confounder, observed: true, pos: "0,0.6", source: "Design construct: country fixed effects", source_status: construct}
-      - {id: donors, label: "Donor-pool outcome paths (synthetic weights)", short: "Donor-pool paths", role: confounder, observed: true, pos: "0,-0.8", source: "Donor panel: 13 countries x 5 predictors (World Bank)", source_status: acquired}
+      - {id: donors, label: "Donor-pool outcome paths (synthetic weights)", short: "Donor-pool paths", role: confounder, observed: true, pos: "0,-0.8", source: "Donor panel: 99 candidate countries x 5 predictors (World Bank), widened 2026-10-18", source_status: acquired}
       - {id: treat, label: "Nigeria under administration X (treated)", short: "Nigeria treated (tenure)", role: exposure, observed: true, pos: "1.8,1.8", source: "Administration spine (base spec section 7)", source_status: acquired}
       - {id: "Y", label: "{{outcome_label}}", short: "{{outcome_short}}", role: outcome, observed: true, pos: "3.6,0.6", source: "{{outcome_source}}", source_status: acquired}
       - {id: u_ng, label: "Nigeria-specific shock coinciding with treatment", short: "Nigeria-specific shock", role: confounder, observed: false, pos: "1.8,-0.9", source: "Unobserved: assumed absent by the synthetic-control assumption", source_status: unobserved}

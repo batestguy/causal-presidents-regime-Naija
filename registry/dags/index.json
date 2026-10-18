@@ -2,10 +2,10 @@
   "schema_version": "0.3.0",
   "layer": "causal DAGs + published results (the app's data contract)",
   "vintage_date": "2026-10-18",
-  "generated_at": "2026-10-18T11:40:19+0100",
+  "generated_at": "2026-10-18T12:37:07+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "e0c9e68"
+    "git_sha": "1295af7"
   },
   "diagnostics": {
     "vintage": "2026-10-18",
@@ -83,7 +83,7 @@
         "gates": {
           "pretreatment_fit": {
             "passed": null,
-            "detail": "2 outcomes pass the pre-fit threshold of 0.10 x pre-period SD"
+            "detail": "1 outcomes pass the pre-fit threshold of 0.10 x pre-period SD"
           },
           "donor_pool_coverage": {
             "passed": true,
@@ -94,20 +94,20 @@
         "diagnostics_that_decide": "pretreatment_fit",
         "next_step": "Stage 6 fits the synthetic control where pre-fit passes",
         "card_status_counts": {
-          "fail": 1,
+          "fail": 2,
           "not_attempted": 9,
-          "pass": 2
+          "pass": 1
         },
-        "n_outcomes_pass": 2,
+        "n_outcomes_pass": 1,
         "n_outcomes_attempted": 3,
-        "status_basis": "computed from the 12 cards: fail=1, not_attempted=9, pass=2"
+        "status_basis": "computed from the 12 cards: fail=2, not_attempted=9, pass=1"
       }
     },
     "status_counts": {
       "degraded": 9,
-      "fail": 13,
+      "fail": 14,
       "not_attempted": 12,
-      "pass": 2
+      "pass": 1
     }
   },
   "counts": {
@@ -679,8 +679,8 @@
       "assumption_required": [
         "u_ng"
       ],
-      "diagnostics_status": "pass",
-      "diagnostics_blocker": null
+      "diagnostics_status": "fail",
+      "diagnostics_blocker": "no candidate treated window lets any convex combination of the donors track Nigeria's pre-treatment path: best pre-RMSPE exceeds 0.10 x the pre-period outcome SD"
     },
     {
       "dag_id": "cpi_yoy__A",
@@ -781,7 +781,7 @@
     "Youth literacy (15-24) [NBS / UNESCO UIS]"
   ],
   "registry": {
-    "generated_at": "2026-10-18T12:04:28+0100",
+    "generated_at": "2026-10-18T12:38:54+0100",
     "generated_by": "analysis/R/05_registry.R",
     "spec": "analysis/specs/registry.yml",
     "rule": "A card with design `A` is `estimated` **iff** the estimates artifact publishes a Design A specification whose `outcome` is the card's outcome id. The number, interval and sample are copied from that specification, not from anywhere else.",

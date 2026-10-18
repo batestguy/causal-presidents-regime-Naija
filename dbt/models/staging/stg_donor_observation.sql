@@ -1,9 +1,10 @@
 -- Country-year observations for the Design C donor pool, typed, at the native grain.
 --
 -- The donor panel is a separate source (`worldbank_donors`) holding the same five screening predictors
--- for each of 13 candidate comparison countries. It is kept apart from the national series on purpose:
--- these rows are not outcomes of the thing being estimated, they are the donor pool's pre-treatment
--- paths, and mixing them into the national spine would put 13 countries' outcomes on Nigeria's chart.
+-- for each of 99 candidate comparison countries (widened from 13 on 2026-10-18). It is kept apart from
+-- the national series on purpose: these rows are not outcomes of the thing being estimated, they are
+-- the donor pool's pre-treatment paths, and mixing them into the national spine would put 99
+-- countries' outcomes on Nigeria's chart.
 --
 -- Country-level rows are keyed by ISO3 plus the country name the source returned, because the synthetic
 -- control stage has to state which countries entered the pool and a bare code is not auditable at a glance.

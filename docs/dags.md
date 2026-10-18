@@ -127,7 +127,7 @@ machine-checkable rather than asserted. The generator refuses to emit a card wit
 | `admin`, `treat` | Administration spine (base spec §7) | acquired |
 | `donor` | World Bank `DT.ODA.ALLD.CD` (net ODA) | acquired — **contaminated, see below** |
 | `fx` | World Bank `PA.NUS.FCRF` (annual); CBN for monthly | acquired |
-| `donors` (pool) | Donor panel: 13 countries × 5 predictors | acquired |
+| `donors` (pool) | Donor panel: 99 candidate countries × 5 predictors (widened 2026-10-18) | acquired — 27,352 country-metric-years, 1960–2025; 62 countries carry all five across 1990–2015 |
 | `Y` | the outcome's own source, from `outcomes.yml` | per outcome |
 | `inherit`, `lagY`, `oilxadmin` | derived from other nodes | derived |
 | `statefe`, `timefe`, `trend`, `countryfe` | design artefacts, not data | construct |
@@ -187,7 +187,8 @@ elasticity (S6-06).
 Probing closed seven of the gaps (see `ingestion/flows/probe_missing_variables.py` and decisions
 C-17…C-20). Best of the batch: `donor` had **no source at all** but is now landed, and the entire
 Design C donor pool is in hand — all 13 candidate countries carry all 5 screening predictors to
-2015, except Venezuela's oil-rents series.
+2015, except Venezuela's oil-rents series. *(That was the pool as landed on 2026-10-11; it was widened
+to 99 candidates on 2026-10-18 — the inventory table above is the current one.)*
 
 The eighth closed by **registration rather than probing**: the oil price had no keyless route at all
 (C-20), so a free FRED key was obtained and Brent crude is now landed as a daily series through

@@ -2,10 +2,10 @@
   "dag_id": "gdp_growth__C",
   "schema_version": "0.3.0",
   "vintage_date": "2026-10-18",
-  "generated_at": "2026-10-18T11:40:19+0100",
+  "generated_at": "2026-10-18T12:37:07+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "e0c9e68"
+    "git_sha": "1295af7"
   },
   "outcome": {
     "id": "gdp_growth",
@@ -60,7 +60,7 @@
       "short": "Donor-pool paths",
       "role": "confounder",
       "observed": true,
-      "source": "Donor panel: 13 countries x 5 predictors (World Bank)",
+      "source": "Donor panel: 99 candidate countries x 5 predictors (World Bank), widened 2026-10-18",
       "source_status": "acquired"
     },
     {
@@ -150,7 +150,7 @@
   "dagitty_full": "dag {\n  common [pos = \"0,1.8\"]\n  countryfe [pos = \"0,0.6\"]\n  donors [pos = \"0,-0.8\"]\n  treat [pos = \"1.8,1.8\", exposure]\n  Y [pos = \"3.6,0.6\", outcome]\n  u_ng [pos = \"1.8,-0.9\", unobserved]\n  common -> treat\n  common -> donors\n  common -> Y\n  countryfe -> donors\n  countryfe -> Y\n  donors -> Y\n  treat -> Y\n  u_ng -> treat\n  u_ng -> Y\n}",
   "dagitty_assumed": "dag {\n  common [pos = \"0,1.8\"]\n  countryfe [pos = \"0,0.6\"]\n  donors [pos = \"0,-0.8\"]\n  treat [pos = \"1.8,1.8\", exposure]\n  Y [pos = \"3.6,0.6\", outcome]\n  common -> treat\n  common -> donors\n  common -> Y\n  countryfe -> donors\n  countryfe -> Y\n  donors -> Y\n  treat -> Y\n}",
   "diagnostics": {
-    "status": "pass",
+    "status": "fail",
     "checks": [
       {
         "id": "pretreatment_fit:obasanjo",
@@ -183,8 +183,8 @@
         "detail": "99 donors x 5 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
       }
     ],
-    "blocker": null,
-    "note": "Pre-treatment fit passes at window(s): yaradua",
+    "blocker": "no candidate treated window lets any convex combination of the donors track Nigeria's pre-treatment path: best pre-RMSPE exceeds 0.10 x the pre-period outcome SD",
+    "note": "Reported infeasible rather than estimated, per PHASES.md's Stage 5 gate",
     "coverage_status": "ok",
     "vintage": "2026-10-18",
     "source": "registry/diagnostics/2026-10-18/diagnostics.json"

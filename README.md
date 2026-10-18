@@ -80,7 +80,7 @@ PY="conda run -p C:/Users/TOSHIBA/ds-general python"
 # Pull a World Bank vintage (raw payloads + provenance manifest + coverage report)
 $PY ingestion/flows/pull_worldbank.py
 
-# Pull the synthetic-control donor panel (13 countries x 5 screening predictors)
+# Pull the synthetic-control donor panel (99 candidate countries x 5 screening predictors)
 $PY ingestion/flows/pull_worldbank_donors.py
 
 # Pull the oil covariate (Brent crude, daily) - needs a free FRED key in .env
