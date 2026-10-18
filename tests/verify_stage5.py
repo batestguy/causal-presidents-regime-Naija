@@ -638,9 +638,14 @@ def check_cards_and_verdicts(diag, failures):
             else:
                 recomputed = "pass"
         else:  # C
+            # The declared rollup (`diagnostics.yml` `outcome_rollup`): a strict majority of the runnable
+            # windows. Re-derived here from the card's own check rows, so a card credited on a single window
+            # fails the verifier rather than passing on the old "any window" rule.
             wv = [c["verdict"] for c in checks if c["id"].startswith("pretreatment_fit")]
-            recomputed = ("pass" if "pass" in wv
-                          else "fail" if "weak_fit" in wv
+            runnable = sum(1 for v in wv if v in ("pass", "weak_fit"))
+            passed = sum(1 for v in wv if v == "pass")
+            recomputed = ("pass" if runnable and passed > runnable / 2
+                          else "fail" if runnable
                           else "not_attempted")
         if recomputed != cd["status"]:
             failures.append(f"{dag_id}: card status {cd['status']} != recomputed {recomputed}")

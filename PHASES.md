@@ -243,14 +243,27 @@ ACLED geocoding quality determines how many events can be attributed to a state.
 
 ## Stage 5 — Pre-analysis diagnostics and design validation
 
-**STATUS: BUILT 2026-10-11 · RE-RUN at vintage 2026-10-16 (2026-10-17).** The memo is
+**STATUS: BUILT 2026-10-11 · RE-RUN at vintage 2026-10-16 (2026-10-17) · RE-RUN at vintage 2026-10-18** over
+a widened Design C donor pool. The memo is
 `docs/design-memo.md`; the machine-readable result is
 `registry/diagnostics/<vintage>/diagnostics.json` + `report.md`, attached to all 36 cards. Config in
 `analysis/specs/diagnostics.yml`, engine in `analysis/R/02_diagnostics.R`, independent verifier
 `tests/verify_stage5.py`. Exit criteria met: **every one of the 36 (outcome × design) cards carries a
 pre-check verdict, and none passes** — 15 fail, 7 degraded, 14 not attempted, 0 pass.
 
-**What the re-run changed, and why it was not optional.** The 2026-10-11 verdicts were computed against a
+**What the 2026-10-18 re-run changed (the donor pool).** Design C's `infeasible` verdict was always a
+statement about the *pool*: with 13 countries chosen on GDP comparability, no convex combination could track
+Nigeria's pre-treatment path. The candidate set is now **99 countries** in four declared groups (West
+African neighbours, oil exporters, African comparators, large lower-middle-income countries) screened on oil
+dependence, region/income band and coverage, and the gate answers differently: **`u5mr` passes 3 of its 4
+runnable windows, `gdp_growth` 1 of 4, `cpi_yoy` 0 of 4** — under a rollup rule (`outcome_rollup`) that is
+now **declared** as a strict majority of the runnable windows, where the previous rule ("any window
+passes") was undeclared and would have credited `gdp_growth` on one window of four (S5-12). Design C is
+still not estimated: the estimator and the placebos Stage 5 deferred to Stage 6 are the next build, and the
+pass carries the warning that a 99-donor simplex can fit almost any pre-period, so the gate is now weaker
+evidence than it was at 13 donors (C-59).
+
+**What the 2026-10-17 re-run changed, and why it was not optional.** The 2026-10-11 verdicts were computed against a
 base that no longer exists: Family A read "dropped — 0 of 12,358 dose values present" and Family B read
 "FAAC is absent". The dose has since landed and been Stage 3 gated, so the *reasons* were wrong even where
 the verdicts were not, and `tests/verify_stage5.py` was failing rather than tolerating the drift. Two
@@ -439,14 +452,23 @@ sensitivity computed on the preferred specification stays design-level (S8-03). 
 `01_build_dags.R` resets the estimate block, so the assembler runs after it — is checked by
 `validate_artifacts.py` and `verify_registry.py` rather than documented and hoped for (S8-01).
 
-**Still to do in this stage:** the remaining figures (forest plot, event-study panels — the specification
-curve landed with Stage 7), the RAG corpus with the registry's vintage stamp, the RAGAS evaluation set, and
-the limitations-before-findings narrative.
+**The tenure-comparison half is now built (Stage 8b, 2026-10-18).** `analysis/specs/events.yml`,
+`analysis/R/06_events.R`, `tests/verify_events.py`, `registry/events/2026-10-17/`, `docs/events.md`. It
+answers the one tenure-shaped question the monthly data can carry — did conflict move after each transition
+relative to its own path just before it — over the four in-window transitions, with exhaustive placebo
+inference over 58 eligible months, a pre-trend placebo per event, a reporting-divergence check and the
+party split published as description with no test. **2 of 8 event-outcome cells pass both checks, 4 fail the
+pre-trend, 1 cannot be checked at all.** The level question ("which tenure was better?") is still refused,
+because it needs the counterfactual Design C cannot supply (S8b-01).
+
+**Still to do in this stage:** the remaining figures (forest plot — the specification curve landed with
+Stage 7, the transition panels with Stage 8b), the RAG corpus with the registry's vintage stamp, the RAGAS
+evaluation set, and the limitations-before-findings narrative.
 
 **Work**
 
 - **Model registry assembly** — the app's complete data contract.
-- Figures: forest plot with intervals, event-study panels, specification curve.
+- Figures: forest plot with intervals, ✅ event-study panels (Stage 8b), ✅ specification curve (Stage 7).
 - **Limitations drafted before findings** (base spec §19 ordering discipline: limitations longer than
   findings). Write what cannot be identified first; then what holds.
 - **RAG corpus** — one chunk per model card, plus methodology, data dictionary, shock annotations,

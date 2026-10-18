@@ -126,12 +126,21 @@ elasticity mixes the price channel with the exchange-rate channel, and the naira
 window. A monthly NGN/USD series would separate them; it does not exist on any keyless source
 (C-46). The confidence bounds are also wide, and 114 months is not many.
 
-### Design C — synthetic control, not run
+### Design C — synthetic control: no longer infeasible, still not estimated
 
-Stage 5 recorded it `infeasible`: the pre-treatment fit fails on every outcome and every window, with the
-best single donor beating the fitted simplex. A synthetic control whose pre-period it cannot reproduce
-has no post-period to believe, and nothing that landed since changes the donor pool. The next step is the
-donor pool (screened on oil dependence and conflict exposure rather than GDP alone), not the estimator.
+The reason changed on 2026-10-18, and the change is the point. Stage 5 first recorded `infeasible`: the
+pre-treatment fit failed on every outcome and every window against a 13-country pool, with the best single
+donor beating the fitted simplex. The pool has since been widened to **99 candidates** screened on oil
+dependence, region/income band and coverage, and the gate re-run passes **`u5mr` on 3 of its 4 runnable
+windows** (ratios 0.0014–0.0042 against the declared 0.10 threshold), leaves `gdp_growth` at 1 of 4 and
+`cpi_yoy` at 0 of 4, and still records that the estimator the spec names does not beat a single donor
+(`docs/design-memo.md` §4).
+
+It is not estimated here for a different reason than before: the estimator and its placebos are not built.
+`Synth`/`coresynth` has to be fitted, and the in-space and in-time placebos Stage 5 deferred to Stage 6
+have not been run. The pass is **permission to build the design, not evidence that its fit is real** — a
+99-donor simplex can fit almost any pre-period, so the pre-fit gate is weaker evidence now than it was
+with 13 donors.
 
 ## 3. The answer, in one paragraph
 
@@ -139,7 +148,10 @@ donor pool (screened on oil dependence and conflict exposure rather than GDP alo
 effects on national annual outcomes), one is now estimable but not identified (does federal money reduce
 local violence), and one is answerable and answered (an oil-price shock reaches Nigeria's states with an
 elasticity of roughly 0.5 at a two-to-three-month lag).** The fourth — synthetic control against a donor
-pool — is blocked on the donor pool, and that is a stated next step rather than a silent failure.
+pool — cleared its pre-fit gate on one outcome once the pool was widened (2026-10-18) and now waits on an
+estimator rather than on data. **A fifth question turned out to be answerable and is answered: did
+conflict move inside each tenure?** (`docs/events.md`: two of eight event-outcome cells survive both the
+placebo and the pre-trend check.)
 
 The tenure question is not "unsupported by evidence yet". It is *not answerable* from national annual
 data with four administrations, and the only route to an answer is sub-national monthly outcomes, which

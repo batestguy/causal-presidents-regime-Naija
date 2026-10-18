@@ -213,6 +213,19 @@ pretrend:
     reported_alongside: [best_single_donor_rmse, treated_outside_donor_mean_interval, level_gap,
                          ratio_on_differences, synth_v_optimized_rmse]
     placebos_deferred_to: stage_6
+    # Declared 2026-10-18, when the widened donor pool made the difference visible. Until then the
+    # outcome-level rollup was **undeclared** and the engine used "any window passes": with a 13-country
+    # pool nothing passed so it never showed, and with a 99-country pool it would have reported
+    # `gdp_growth: pass` while three of its four windows failed. The rule is now a **strict majority of the
+    # windows that could be run** (a window with too few pre-years is neither a pass nor a failure), and the
+    # counts travel with every verdict. Declared here because the alternative — a rule nobody wrote down,
+    # whose answer depends on which pool was landed — is a verdict about the pool rather than the design.
+    outcome_rollup: strict_majority_of_runnable_windows
+    outcome_rollup_rule: >-
+      Outcome verdict = `pass` when more than half of the runnable windows pass; otherwise
+      `infeasible_weak_pre_fit` when at least one window was runnable, and `not_run` when none was. Windows
+      that could not be run (too few pre- or post-years) are excluded from the denominator rather than
+      counted as failures. `n_windows_pass` / `n_windows_runnable` are published on every outcome.
 
 # ---------------------------------------------------------------------------------------------
 # Degrees of freedom and the detectable effect (PHASES.md: "write it down before seeing any

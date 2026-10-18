@@ -1,15 +1,15 @@
 {
   "schema_version": "0.3.0",
   "layer": "causal DAGs + published results (the app's data contract)",
-  "vintage_date": "2026-10-17",
-  "generated_at": "2026-10-17T07:33:43+0100",
+  "vintage_date": "2026-10-18",
+  "generated_at": "2026-10-18T11:40:19+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "ba5741f"
+    "git_sha": "e0c9e68"
   },
   "diagnostics": {
-    "vintage": "2026-10-17",
-    "source": "registry/diagnostics/2026-10-17/diagnostics.json",
+    "vintage": "2026-10-18",
+    "source": "registry/diagnostics/2026-10-18/diagnostics.json",
     "spec": "analysis/specs/diagnostics.yml",
     "design_verdicts": {
       "A": {
@@ -79,33 +79,35 @@
       },
       "C": {
         "design_id": "C",
-        "status": "infeasible",
+        "status": "candidate",
         "gates": {
           "pretreatment_fit": {
             "passed": null,
-            "detail": "0 outcomes pass the pre-fit threshold of 0.10 x pre-period SD"
+            "detail": "2 outcomes pass the pre-fit threshold of 0.10 x pre-period SD"
           },
           "donor_pool_coverage": {
             "passed": true,
-            "detail": "13 donor countries x 5 predictors"
+            "detail": "99 donor countries x 5 predictors"
           }
         },
-        "blocker": "no candidate treated window lets any convex combination of the donors track Nigeria's pre-treatment path: best pre-RMSPE exceeds 0.10 x the pre-period outcome SD",
+        "blocker": null,
         "diagnostics_that_decide": "pretreatment_fit",
-        "next_step": "either a wider donor pool, or an estimand the pool can support (the fit on first differences is far better than on levels for u5mr, which is a different question)",
+        "next_step": "Stage 6 fits the synthetic control where pre-fit passes",
         "card_status_counts": {
-          "fail": 3,
-          "not_attempted": 9
+          "fail": 1,
+          "not_attempted": 9,
+          "pass": 2
         },
-        "n_outcomes_pass": 0,
+        "n_outcomes_pass": 2,
         "n_outcomes_attempted": 3,
-        "status_basis": "computed from the 12 cards: fail=3, not_attempted=9"
+        "status_basis": "computed from the 12 cards: fail=1, not_attempted=9, pass=2"
       }
     },
     "status_counts": {
       "degraded": 9,
-      "fail": 15,
-      "not_attempted": 12
+      "fail": 13,
+      "not_attempted": 12,
+      "pass": 2
     }
   },
   "counts": {
@@ -266,8 +268,8 @@
       "assumption_required": [
         "u_ng"
       ],
-      "diagnostics_status": "fail",
-      "diagnostics_blocker": "no candidate treated window lets any convex combination of the donors track Nigeria's pre-treatment path: best pre-RMSPE exceeds 0.10 x the pre-period outcome SD"
+      "diagnostics_status": "pass",
+      "diagnostics_blocker": null
     },
     {
       "dag_id": "mmr__A",
@@ -677,8 +679,8 @@
       "assumption_required": [
         "u_ng"
       ],
-      "diagnostics_status": "fail",
-      "diagnostics_blocker": "no candidate treated window lets any convex combination of the donors track Nigeria's pre-treatment path: best pre-RMSPE exceeds 0.10 x the pre-period outcome SD"
+      "diagnostics_status": "pass",
+      "diagnostics_blocker": null
     },
     {
       "dag_id": "cpi_yoy__A",
@@ -779,7 +781,7 @@
     "Youth literacy (15-24) [NBS / UNESCO UIS]"
   ],
   "registry": {
-    "generated_at": "2026-10-18T09:09:15+0100",
+    "generated_at": "2026-10-18T12:04:28+0100",
     "generated_by": "analysis/R/05_registry.R",
     "spec": "analysis/specs/registry.yml",
     "rule": "A card with design `A` is `estimated` **iff** the estimates artifact publishes a Design A specification whose `outcome` is the card's outcome id. The number, interval and sample are copied from that specification, not from anywhere else.",
@@ -796,8 +798,8 @@
     "card_wins": "The card wins over prose (PHASES.md Stage 8). Every number here is copied from the artifact it names."
   },
   "estimates": {
-    "artifact": "registry/estimates/2026-10-17/estimates.json",
-    "vintage": "2026-10-17",
+    "artifact": "registry/estimates/2026-10-18/estimates.json",
+    "vintage": "2026-10-18",
     "design_status": {
       "A": "estimated_not_identified",
       "B": "estimated",
@@ -816,7 +818,7 @@
       "result_is_card_level": true,
       "specifications": [
         {
-          "artifact": "registry/estimates/2026-10-17/estimates.json",
+          "artifact": "registry/estimates/2026-10-18/estimates.json",
           "spec_index": 1,
           "design": "A",
           "outcome": "fatalities",
@@ -835,7 +837,7 @@
           "covariance": "cluster by state (36 clusters)"
         },
         {
-          "artifact": "registry/estimates/2026-10-17/estimates.json",
+          "artifact": "registry/estimates/2026-10-18/estimates.json",
           "spec_index": 2,
           "design": "A",
           "outcome": "incidents",
@@ -854,7 +856,7 @@
           "covariance": "cluster by state (36 clusters)"
         },
         {
-          "artifact": "registry/estimates/2026-10-17/estimates.json",
+          "artifact": "registry/estimates/2026-10-18/estimates.json",
           "spec_index": 3,
           "design": "A",
           "outcome": "fatalities_civilians",
@@ -874,15 +876,15 @@
         }
       ],
       "artifacts": {
-        "estimates": "registry/estimates/2026-10-17/estimates.json",
-        "robustness": "registry/robustness/2026-10-17/robustness.json"
+        "estimates": "registry/estimates/2026-10-18/estimates.json",
+        "robustness": "registry/robustness/2026-10-18/robustness.json"
       },
       "specifications_without_a_card": [
         {
           "outcome": "fatalities_civilians",
           "why": "Stage 6 published a specification on civilian fatalities, which is a UCDP item carried inside the `fatalities` outcome rather than one of the 12 catalogue outcomes the registry holds cards for, so no card can carry it. It is published on the index and named here rather than dropped: a published specification no card carries is the registry's version of a declared gap.",
           "specification": {
-            "artifact": "registry/estimates/2026-10-17/estimates.json",
+            "artifact": "registry/estimates/2026-10-18/estimates.json",
             "spec_index": 3,
             "design": "A",
             "outcome": "fatalities_civilians",
@@ -903,7 +905,7 @@
         }
       ],
       "robustness": {
-        "artifact": "registry/robustness/2026-10-17/robustness.json",
+        "artifact": "registry/robustness/2026-10-18/robustness.json",
         "support": {
           "n": 81,
           "n_positive": 45,
@@ -1122,7 +1124,7 @@
       "result_is_card_level": false,
       "specifications": [
         {
-          "artifact": "registry/estimates/2026-10-17/estimates.json",
+          "artifact": "registry/estimates/2026-10-18/estimates.json",
           "spec_index": 4,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=0",
@@ -1141,7 +1143,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-17/estimates.json",
+          "artifact": "registry/estimates/2026-10-18/estimates.json",
           "spec_index": 5,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=1",
@@ -1160,7 +1162,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-17/estimates.json",
+          "artifact": "registry/estimates/2026-10-18/estimates.json",
           "spec_index": 6,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=2",
@@ -1179,7 +1181,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-17/estimates.json",
+          "artifact": "registry/estimates/2026-10-18/estimates.json",
           "spec_index": 7,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=3",
@@ -1198,7 +1200,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-17/estimates.json",
+          "artifact": "registry/estimates/2026-10-18/estimates.json",
           "spec_index": 8,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=4",
@@ -1217,7 +1219,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-17/estimates.json",
+          "artifact": "registry/estimates/2026-10-18/estimates.json",
           "spec_index": 9,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=5",
@@ -1236,7 +1238,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-17/estimates.json",
+          "artifact": "registry/estimates/2026-10-18/estimates.json",
           "spec_index": 10,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=6",
@@ -1255,7 +1257,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-17/estimates.json",
+          "artifact": "registry/estimates/2026-10-18/estimates.json",
           "spec_index": 11,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=9",
@@ -1274,7 +1276,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-17/estimates.json",
+          "artifact": "registry/estimates/2026-10-18/estimates.json",
           "spec_index": 12,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=12",
@@ -1294,13 +1296,13 @@
         }
       ],
       "artifacts": {
-        "estimates": "registry/estimates/2026-10-17/estimates.json",
-        "robustness": "registry/robustness/2026-10-17/robustness.json"
+        "estimates": "registry/estimates/2026-10-18/estimates.json",
+        "robustness": "registry/robustness/2026-10-18/robustness.json"
       },
       "result_outcome": "cumulative log change in national FAAC (the channel), national-month grain",
       "cards_that_carry_no_number": 12,
       "robustness": {
-        "artifact": "registry/robustness/2026-10-17/robustness.json",
+        "artifact": "registry/robustness/2026-10-18/robustness.json",
         "support": {
           "n": 24,
           "n_positive": 24,
@@ -1712,11 +1714,11 @@
         "failed_checks": null
       },
       "result_is_card_level": false,
-      "why": "Stage 5 recorded `infeasible`: the pre-treatment fit fails on every outcome and window (the best single donor beats the fitted simplex on the ratio that decides the gate), so a synthetic control whose pre-period it cannot reproduce has no post-period to believe. Nothing landed since Stage 5 changes the donor pool, so re-running it would produce the same number and the same reason. The next step is the donor pool, not the estimator.",
-      "next_step": "A donor pool screened on oil dependence and conflict exposure rather than on GDP alone",
+      "why": "The reason changed on 2026-10-18, and the change is the point. With the original 13-country pool Stage 5 recorded `infeasible`: the pre-treatment fit failed on every outcome and window. The pool has since been widened to 99 candidates screened on oil dependence, region/income band and coverage (`ingestion/flows/pull_worldbank_donors.py`), and re-running the gate (vintage 2026-10-18) passes **u5mr on 3 of its 4 runnable windows** (ratios 0.0014-0.0042 against the declared 0.10 threshold, ratio-on-differences 0.013-0.024) and fails `gdp_growth` (1 of 4) and `cpi_yoy` (0 of 4) — so the design is no longer infeasible *for want of a pool*. It is not estimated here because the estimator and its placebos are not built: `Synth`/`coresynth` still has to be fitted, and the in-space and in-time placebos Stage 5 deferred to Stage 6 have not been run. Two cautions travel with the pass and are on the artifact: a 99-donor simplex can fit any pre-period (the yaradua gdp_growth window reaches a ratio of 1.7e-06, which is interpolation rather than validation), and the gate was always declared necessary-not-sufficient. The pass is permission to build Design C, not evidence that its fit is real.",
+      "next_step": "Build the Design C estimator and its placebos on the `u5mr` windows the gate now passes",
       "specifications": [],
       "artifacts": {
-        "estimates": "registry/estimates/2026-10-17/estimates.json",
+        "estimates": "registry/estimates/2026-10-18/estimates.json",
         "robustness": null
       }
     }

@@ -24,7 +24,11 @@ against the artifacts on disk:
      counts it publishes must equal the counts of its own specification rows, exactly one specification
      per design may be flagged pre-registered, and the specification curve it names must exist and be a
      real SVG with at least one point per specification;
-  6. every registry JSON validates against its declared JSON Schema.
+  6. the same invariant for the Stage 8b transition event study, plus its own shape: every row carries the
+     contract fields, every declared event x horizon cell is either fitted or published as a declared skip
+     with a reason, the rows sit inside the windows the spec's rules produce, and the pre-trend check is
+     reported as unavailable rather than as a pass where it cannot be run;
+  7. every registry JSON validates against its declared JSON Schema.
 
 Checks that need the raw layer (1) are **reported as skipped** when ``data/raw`` is absent, which is the
 normal case in CI: raw payloads are gitignored per the design spec's redistribution constraint. A skip is
@@ -47,6 +51,7 @@ QUALITY_ROOT = REPO_ROOT / "registry" / "quality"
 DIAG_ROOT = REPO_ROOT / "registry" / "diagnostics"
 ESTIMATES_ROOT = REPO_ROOT / "registry" / "estimates"
 ROBUSTNESS_ROOT = REPO_ROOT / "registry" / "robustness"
+EVENTS_ROOT = REPO_ROOT / "registry" / "events"
 CARDS_DIR = REPO_ROOT / "registry" / "dags"
 SCHEMA_DIR = REPO_ROOT / "registry" / "schema"
 
@@ -364,6 +369,114 @@ def check_stage8_registry(failures: list[str]) -> None:
           f"recomputed from the cards")
 
 
+def check_events(failures: list[str], quality_vintage: str | None) -> None:
+    """The transition event study: same vintage invariant, plus the shape of the design itself.
+
+    `tests/verify_events.py` re-fits all 32 specifications and re-enumerates the placebo distribution. This
+    checks what a summary can lose without a fit going wrong: rows missing their contract fields, an
+    event x horizon cell that is neither fitted nor declared, a window that drifted from the spec's rule, and
+    a pre-trend check that quietly disappeared instead of being declared unavailable.
+    """
+    newest = newest_dir(EVENTS_ROOT)
+    if newest is None:
+        print("stage 8b artifact: none yet (registry/events/ is empty)")
+        return
+    if not DATE_LABEL.match(newest.name):
+        failures.append(
+            f"registry/events/{newest.name}: the vintage is not a date, so a consumer that selects the "
+            "newest by date will skip it (C-44, S4-20)"
+        )
+    document_path = newest / "events.json"
+    if not document_path.exists():
+        failures.append(f"{document_path.relative_to(REPO_ROOT)}: missing")
+        return
+    document = json.loads(document_path.read_text(encoding="utf-8"))
+    if document.get("vintage") != newest.name:
+        failures.append(
+            f"registry/events/{newest.name}: the artifact's own vintage is {document.get('vintage')!r}, "
+            "which disagrees with the directory holding it"
+        )
+    if quality_vintage and document.get("vintage") != quality_vintage:
+        failures.append(
+            f"registry/events/{document.get('vintage')}: computed against a different gate vintage than the "
+            f"newest ({quality_vintage}) — re-run analysis/R/06_events.R"
+        )
+
+    specs = document.get("specifications") or []
+    required = {"event", "outcome", "horizon", "variant", "beta", "se", "proportional", "ci_low",
+                "ci_high", "mde_proportional", "pre_months", "post_months", "n_parameters",
+                "window_start", "window_end", "truncated_by_next_transition"}
+    for row in specs:
+        missing = required - set(row)
+        if missing:
+            failures.append(
+                f"registry/events/{newest.name}: specification {row.get('event')!r} / {row.get('outcome')!r} "
+                f"/ h={row.get('horizon')} is missing {sorted(missing)} — the json_contract in "
+                "analysis/specs/events.yml requires them on every row"
+            )
+
+    events = document.get("events") or []
+    horizons = [int(h) for h in (document.get("windows") or {}).get("focus_horizons", [])]
+    outcomes = (document.get("series") or {}).get("outcomes") or []
+    if not horizons or not outcomes:
+        failures.append(f"registry/events/{newest.name}: the artifact does not declare its horizons/outcomes")
+    else:
+        fitted = {(row.get("event"), row.get("horizon")) for row in specs}
+        declared = {(skip.get("event"), skip.get("horizon"))
+                    for skip in (document.get("windows") or {}).get("skips", [])}
+        for event in events:
+            for horizon in horizons:
+                cell = (event.get("id"), horizon)
+                if cell not in fitted and cell not in declared:
+                    failures.append(
+                        f"registry/events/{newest.name}: {cell[0]} / h={horizon} is neither fitted nor "
+                        "declared as a skip — a missing cell has to say why it is missing"
+                    )
+        for cell in declared:
+            skip = [s for s in (document.get("windows") or {}).get("skips", [])
+                    if (s.get("event"), s.get("horizon")) == cell][0]
+            if not str(skip.get("why", "")).strip():
+                failures.append(f"registry/events/{newest.name}: skip {cell} carries no reason")
+        for row in specs:
+            if row.get("event") is None or row.get("outcome") not in outcomes \
+                    or row.get("horizon") not in horizons:
+                failures.append(
+                    f"registry/events/{newest.name}: a specification names an undeclared "
+                    f"event/outcome/horizon ({row.get('event')!r} / {row.get('outcome')!r} / "
+                    f"{row.get('horizon')!r})"
+                )
+            if not str(row.get("window_start", "")).strip() or not str(row.get("window_end", "")).strip():
+                failures.append(
+                    f"registry/events/{newest.name}: a specification has no window_start/window_end"
+                )
+
+    unavailable = {str(u.get("event")) for u in (document.get("checks") or {}).get("pre_trend_unavailable", [])}
+    placebo_rows = {(str(p.get("event")), p.get("outcome")) for p in document.get("pre_trend_placebo") or []}
+    for event in events:
+        for outcome in outcomes:
+            if (str(event.get("id")), outcome) not in placebo_rows and str(event.get("id")) not in unavailable:
+                failures.append(
+                    f"registry/events/{newest.name}: {event.get('id')} / {outcome} has neither a pre-trend "
+                    "placebo row nor a declared reason for its absence"
+                )
+
+    if (document.get("party_split") or {}).get("no_test_computed") is not True:
+        failures.append(
+            f"registry/events/{newest.name}: the party split does not declare `no_test_computed` — two "
+            "events against two events carries no inference and must not be presented as if it did"
+        )
+
+    figure = document.get("figure") or {}
+    figure_path = newest / str(figure.get("path", ""))
+    if not figure_path.exists() or figure_path.stat().st_size == 0:
+        failures.append(
+            f"registry/events/{newest.name}: the figure {figure.get('path')!r} is missing or empty — the "
+            "exit criterion is a rendered figure, not a table"
+        )
+    print(f"stage 8b artifact: {newest.name} ({len(specs)} specifications over {len(events)} transitions, "
+          f"{len(unavailable)} declared uncheckable pre-trend(s), cells accounted for)")
+
+
 def check_schemas(failures: list[str]) -> int:
     """Every registry JSON against its declared schema."""
     try:
@@ -388,6 +501,14 @@ def check_schemas(failures: list[str]) -> int:
     for artifact in sorted(ROBUSTNESS_ROOT.glob("*/robustness.json")):
         document = json.loads(artifact.read_text(encoding="utf-8"))
         for error in robustness_validator.iter_errors(document):
+            failures.append(f"{artifact.relative_to(REPO_ROOT)}: {error.message[:200]}")
+        validated += 1
+
+    events_schema = json.loads((SCHEMA_DIR / "events.schema.json").read_text(encoding="utf-8"))
+    events_validator = jsonschema.Draft202012Validator(events_schema)
+    for artifact in sorted(EVENTS_ROOT.glob("*/events.json")):
+        document = json.loads(artifact.read_text(encoding="utf-8"))
+        for error in events_validator.iter_errors(document):
             failures.append(f"{artifact.relative_to(REPO_ROOT)}: {error.message[:200]}")
         validated += 1
     return validated
@@ -415,6 +536,7 @@ def main() -> int:
         print(f"stage 5 artifact : {newest_diag.name} (must equal the newest gate report vintage)")
     check_stage6_matches_stage3(failures, quality_vintage)
     check_stage7(failures, quality_vintage)
+    check_events(failures, quality_vintage)
     check_stage8_registry(failures)
 
     validated = check_schemas(failures)
@@ -429,7 +551,7 @@ def main() -> int:
             print(f"  … and {len(failures) - 40} more")
         return 1
     print("PASS — payloads match their declared readers, the newest gate report is reachable by date, "
-          "Stage 5 describes it, the registry's counts match its cards, and every registry document "
+          "Stages 5-8 describe it, the registry's counts match its cards, and every registry document "
           "matches its schema")
     return 0
 

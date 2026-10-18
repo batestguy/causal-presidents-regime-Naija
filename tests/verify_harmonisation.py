@@ -601,8 +601,18 @@ def main() -> int:
         f"""select count(*), count(distinct country_iso3), count(*) filter (where is_treated_unit),
                    count(distinct metric_id) from {SCHEMA}.fact_donor_panel"""
     ).fetchone()
-    if donors[1] != 13 or donors[2] != 0:
-        failures.append(f"donor panel: {donors[1]} countries, {donors[2]} treated-unit rows (expected 13, 0)")
+    # The expected pool size is the *landed candidate set*, read from the raw layer rather than typed here:
+    # the flow's candidate list is a design decision that changes (it went from 13 to 99 candidates on
+    # 2026-10-18, and the treated unit is excluded by name), and a literal in the verifier is exactly the
+    # kind of copy that goes stale without anyone noticing (C-54, C-58).
+    expected_donor_countries = {code for code, _metric, _year in raw["donors"]}
+    if donors[1] != len(expected_donor_countries) or donors[2] != 0:
+        failures.append(
+            f"donor panel: {donors[1]} countries, {donors[2]} treated-unit row(s) "
+            f"(expected {len(expected_donor_countries)} from the raw layer, 0)"
+        )
+    if "NG" in expected_donor_countries:
+        failures.append("the treated unit (NG) is inside the landed candidate pool")
     expected_donor_keys = {(c, m, y) for (c, m, y), v in raw["donors"].items()}
     built_donor_keys = {
         (c, m, y) for c, m, y in con.execute(

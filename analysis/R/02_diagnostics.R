@@ -805,11 +805,20 @@ for (o in outcomes) {
     entry$windows[[wkey]] <- c(list(window = wkey, from = w$from), res)
   }
   verdicts <- vapply(entry$windows, function(x) x$verdict, character(1))
+  # The declared rollup (diagnostics.yml `outcome_rollup`): a strict majority of the windows that could be
+  # run. The first version of this block used "any window passes", which is not what the gate means and is
+  # exactly the kind of rule whose answer changes with the pool: with 13 donors nothing passed so it never
+  # surfaced, and with 99 donors it would have credited an outcome on one window out of four.
+  runnable <- sum(verdicts %in% c("pass", "weak_fit"))
+  passed <- sum(verdicts == "pass")
+  entry$n_windows_runnable <- runnable
+  entry$n_windows_pass <- passed
+  entry$rollup_rule <- "strict majority of runnable windows (diagnostics.yml `outcome_rollup`)"
   if (length(verdicts) == 0) {
     entry$verdict <- "not_attempted"
-  } else if (any(verdicts == "pass")) {
+  } else if (runnable > 0 && passed > runnable / 2) {
     entry$verdict <- "pass"
-  } else if (any(verdicts == "weak_fit")) {
+  } else if (runnable > 0) {
     entry$verdict <- "infeasible_weak_pre_fit"
   } else {
     entry$verdict <- "not_run"
@@ -821,6 +830,12 @@ cat(sprintf("5. pre-treatment fit — %d outcomes attempted, %d pass, %d infeasi
             sum(vapply(prefit, function(p) length(p$windows) > 0, logical(1))),
             sum(vapply(prefit, function(p) identical(p$verdict, "pass"), logical(1))),
             sum(vapply(prefit, function(p) identical(p$verdict, "infeasible_weak_pre_fit"), logical(1)))))
+for (pid in names(prefit)) {
+  p <- prefit[[pid]]
+  if (!is.null(p$n_windows_runnable) && p$n_windows_runnable > 0)
+    cat(sprintf("     %-18s %-26s %d of %d runnable window(s) pass\n", pid, p$verdict,
+                p$n_windows_pass, p$n_windows_runnable))
+}
 # ------------------------------------------------------------------------------------------
 # 6. degrees of freedom and the detectable effect (Family B)
 # ------------------------------------------------------------------------------------------

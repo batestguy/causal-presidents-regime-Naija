@@ -1,0 +1,376 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/causal-presidents-regime-Naija/registry/schema/events.schema.json",
+  "title": "Causal Presidents — Stage 8b transition event study (within-tenure timing) artifact",
+  "description": "One row per fitted specification around each in-window transition on the monthly conflict series, with the exhaustive placebo distribution, the pre-trend placebo, the verdicts and the party description. Schema version 0.1.0 (2026-10-18).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "stage",
+    "layer",
+    "vintage",
+    "generated_at",
+    "generator",
+    "spec",
+    "verifier",
+    "series",
+    "windows",
+    "events",
+    "excluded",
+    "placebo",
+    "specifications",
+    "pre_trend_placebo",
+    "verdict_rule",
+    "verdicts",
+    "checks",
+    "party_split",
+    "figure",
+    "not_claimed"
+  ],
+  "properties": {
+    "stage": { "type": "string", "const": "8b" },
+    "layer": { "type": "string", "const": "events (within-tenure timing)" },
+    "vintage": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "generated_at": { "type": "string" },
+    "generator": { "type": "string" },
+    "spec": { "type": "string" },
+    "verifier": { "type": "string" },
+    "input": { "type": "object" },
+    "series": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start_month", "end_month", "outcomes", "n_months", "months_filled_with_zero",
+                   "filled_by_year", "blank_months_rule"],
+      "properties": {
+        "start_month": { "type": "string" },
+        "end_month": { "type": "string" },
+        "outcomes": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "n_months": { "type": "integer", "minimum": 1 },
+        "months_filled_with_zero": { "type": "integer", "minimum": 0 },
+        "filled_by_year": {
+          "type": "array",
+          "description": "Where the blank months are, because the fill rule is the one discretionary step in the series.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["year", "months"],
+            "properties": {
+              "year": { "type": "integer" },
+              "months": { "type": "integer", "minimum": 1 }
+            }
+          }
+        },
+        "blank_months_rule": { "type": "string", "minLength": 1 }
+      }
+    },
+    "windows": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pre_months", "focus_horizons", "min_post_fraction", "min_post_months_by_horizon",
+                   "min_post_rule", "post_end_rule", "skips"],
+      "properties": {
+        "pre_months": { "type": "integer", "minimum": 1 },
+        "focus_horizons": { "type": "array", "minItems": 1, "items": { "type": "integer", "minimum": 1 } },
+        "min_post_fraction": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+        "min_post_months_by_horizon": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "type": "integer", "minimum": 1 }
+        },
+        "min_post_rule": { "type": "string", "minLength": 1 },
+        "post_end_rule": { "type": "string", "minLength": 1 },
+        "skips": {
+          "type": "array",
+          "description": "Every declared cell that is not fitted, with the reason. A cell that is merely absent is a silent omission.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["event", "horizon", "post_months_available", "post_months_required", "why"],
+            "properties": {
+              "event": { "type": "string" },
+              "horizon": { "type": "integer" },
+              "post_months_available": { "type": "integer", "minimum": 0 },
+              "post_months_required": { "type": "integer", "minimum": 1 },
+              "why": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "date", "label", "tenure_stratum", "term_id", "transition_month",
+                     "pre_months_available", "post_window_end", "truncated_by_next_transition",
+                     "place_in_series"],
+        "properties": {
+          "id": { "type": "string" },
+          "date": { "type": "string" },
+          "label": { "type": "string" },
+          "tenure_stratum": { "type": "string" },
+          "term_id": { "type": "integer" },
+          "note": { "type": ["string", "null"] },
+          "transition_month": { "type": "string" },
+          "pre_months_available": { "type": "integer", "minimum": 0 },
+          "post_window_end": { "type": "string" },
+          "truncated_by_next_transition": { "type": "boolean" },
+          "place_in_series": { "type": "object" }
+        }
+      }
+    },
+    "excluded": {
+      "type": "array",
+      "description": "Transitions that exist in the base but cannot be compared, each with its reason.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "date", "why"],
+        "properties": {
+          "id": { "type": "string" },
+          "date": { "type": "string" },
+          "why": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "placebo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule", "direction", "direction_why", "p_definition", "eligible_months_rule",
+                   "exclusion_buffer_months", "eligible_months", "first_eligible", "last_eligible",
+                   "deterministic", "distributions", "family_wise"],
+      "properties": {
+        "rule": { "type": "string", "minLength": 1 },
+        "direction": { "type": "string", "const": "same_side_tail" },
+        "direction_why": { "type": "string", "minLength": 1 },
+        "p_definition": { "type": "string", "minLength": 1 },
+        "eligible_months_rule": { "type": "string", "minLength": 1 },
+        "exclusion_buffer_months": { "type": "integer", "minimum": 0 },
+        "eligible_months": { "type": "integer", "minimum": 1 },
+        "first_eligible": { "type": "string" },
+        "last_eligible": { "type": "string" },
+        "deterministic": { "type": "boolean", "const": true },
+        "distributions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["outcome", "horizon", "n", "mean_beta", "sd_beta", "quantiles", "abs_quantiles"],
+            "properties": {
+              "outcome": { "type": "string" },
+              "horizon": { "type": "integer" },
+              "n": { "type": "integer", "minimum": 1 },
+              "mean_beta": { "type": "number" },
+              "sd_beta": { "type": "number", "minimum": 0 },
+              "quantiles": { "type": "array", "minItems": 5, "items": { "type": "number" } },
+              "abs_quantiles": { "type": "array", "minItems": 4, "items": { "type": "number", "minimum": 0 } }
+            }
+          }
+        },
+        "family_wise": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["outcome", "horizon", "largest_event", "largest_beta", "largest_proportional",
+                         "p", "n_placebo", "direction"],
+            "properties": {
+              "outcome": { "type": "string" },
+              "horizon": { "type": "integer" },
+              "largest_event": { "type": "string" },
+              "largest_beta": { "type": "number" },
+              "largest_proportional": { "type": "number" },
+              "p": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+              "n_placebo": { "type": "integer", "minimum": 1 },
+              "direction": { "type": "string", "enum": ["increase", "decrease"] }
+            }
+          }
+        }
+      }
+    },
+    "specifications": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["event", "date", "label", "tenure_stratum", "horizon", "outcome", "variant",
+                     "pre_months", "post_months", "window_start", "window_end",
+                     "truncated_by_next_transition", "beta", "se", "proportional", "ci_low", "ci_high",
+                     "mde_proportional", "n_pre", "n_post", "n_parameters"],
+        "properties": {
+          "event": { "type": "string" },
+          "date": { "type": "string" },
+          "label": { "type": "string" },
+          "tenure_stratum": { "type": "string" },
+          "horizon": { "type": "integer", "minimum": 1 },
+          "outcome": { "type": "string" },
+          "variant": { "type": "string" },
+          "pre_months": { "type": "integer", "minimum": 1 },
+          "post_months": { "type": "integer", "minimum": 1 },
+          "window_start": { "type": "string" },
+          "window_end": { "type": "string" },
+          "truncated_by_next_transition": { "type": "boolean" },
+          "beta": { "type": "number" },
+          "se": { "type": "number", "minimum": 0 },
+          "proportional": { "type": "number" },
+          "ci_low": { "type": "number" },
+          "ci_high": { "type": "number" },
+          "mde_proportional": { "type": "number" },
+          "n_pre": { "type": "integer", "minimum": 1 },
+          "n_post": { "type": "integer", "minimum": 1 },
+          "n_parameters": { "type": "integer", "minimum": 1 },
+          "placebo_p": { "type": ["number", "null"], "exclusiveMinimum": 0, "maximum": 1 },
+          "placebo_tail": { "type": ["string", "null"], "enum": ["increase", "decrease", null] },
+          "placebo_n": { "type": ["integer", "null"], "minimum": 1 },
+          "in_placebo_95": { "type": ["boolean", "null"] },
+          "verdict": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "pre_trend_placebo": {
+      "type": "array",
+      "description": "The same statistic with the post window placed 24 months before the transition. Rows exist only where the series reaches back far enough; the rest are declared in checks.pre_trend_unavailable.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["event", "outcome", "variant", "window_start", "window_end", "pre_months",
+                     "post_months", "proportional", "se"],
+        "properties": {
+          "event": { "type": "string" },
+          "outcome": { "type": "string" },
+          "variant": { "type": "string" },
+          "window_start": { "type": "string" },
+          "window_end": { "type": "string" },
+          "pre_months": { "type": "integer", "minimum": 1 },
+          "post_months": { "type": "integer", "minimum": 1 },
+          "proportional": { "type": "number" },
+          "se": { "type": "number", "minimum": 0 }
+        }
+      }
+    },
+    "verdict_rule": { "type": "string", "minLength": 1 },
+    "verdicts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["event", "outcome", "status", "place", "pre_trend", "placebo_p", "why"],
+        "properties": {
+          "event": { "type": "string" },
+          "outcome": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["shift_detected", "not_interpretable_pre_trend", "no_shift_detected",
+                     "check_not_available", "not_estimated"]
+          },
+          "place": { "type": ["number", "null"] },
+          "pre_trend": { "type": ["number", "null"] },
+          "placebo_p": { "type": ["number", "null"] },
+          "why": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pre_trend_placebo", "pre_trend_unavailable", "reporting_divergence", "mde", "divergence"],
+      "properties": {
+        "pre_trend_placebo": { "type": "string", "minLength": 1 },
+        "pre_trend_unavailable": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["event", "months_available", "months_required", "why"],
+            "properties": {
+              "event": { "type": "string" },
+              "months_available": { "type": "integer", "minimum": 0 },
+              "months_required": { "type": "integer", "minimum": 1 },
+              "why": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "reporting_divergence": { "type": "string", "minLength": 1 },
+        "mde": { "type": "string", "minLength": 1 },
+        "divergence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["event", "fatalities", "incidents", "signs_agree"],
+            "properties": {
+              "event": { "type": "string" },
+              "fatalities": { "type": "number" },
+              "incidents": { "type": "number" },
+              "signs_agree": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "party_split": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule", "why", "no_test_computed", "events", "by_party"],
+      "properties": {
+        "rule": { "type": "string", "minLength": 1 },
+        "why": { "type": "string", "minLength": 1 },
+        "no_test_computed": { "type": "boolean", "const": true },
+        "events": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["event", "tenure_stratum", "party", "shift_fatalities_h12", "placebo_p", "verdict"],
+            "properties": {
+              "event": { "type": "string" },
+              "tenure_stratum": { "type": "string" },
+              "party": { "type": "string" },
+              "shift_fatalities_h12": { "type": ["number", "null"] },
+              "placebo_p": { "type": ["number", "null"] },
+              "verdict": { "type": ["string", "null"] }
+            }
+          }
+        },
+        "by_party": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["party", "n_events", "median_shift_h12", "shifts"],
+            "properties": {
+              "party": { "type": "string" },
+              "n_events": { "type": "integer", "minimum": 1 },
+              "median_shift_h12": { "type": ["number", "null"] },
+              "shifts": { "type": "array", "items": { "type": ["number", "null"] } }
+            }
+          }
+        }
+      }
+    },
+    "figure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "bytes", "layout"],
+      "properties": {
+        "path": { "type": "string" },
+        "bytes": { "type": "integer", "minimum": 1 },
+        "layout": { "type": "string", "minLength": 1 }
+      }
+    },
+    "not_claimed": {
+      "type": "array",
+      "minItems": 4,
+      "description": "What this stage refuses to claim. Four entries is the floor: the stage's value is partly in what it does not say.",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

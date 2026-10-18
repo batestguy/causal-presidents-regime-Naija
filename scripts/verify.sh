@@ -97,10 +97,16 @@ if command -v Rscript >/dev/null 2>&1; then
   # should carry a number does not — which is what a reset looks like from the outside.
   step "stage 8: registry assembly"
   Rscript analysis/R/05_registry.R
+  # Stage 8b is the transition event study — the within-tenure timing half of "compare the tenures". It is
+  # independent of the card registry (it writes its own artifact under registry/events/), so it can run
+  # after it without ordering risk, and it needs no source that Stage 6 did not already need.
+  step "stage 8b: transition event study"
+  Rscript analysis/R/06_events.R
 else
   printf '\n=== stage 6: SKIPPED — no Rscript on PATH; verify_stage6.py will check the committed estimates\n'
   printf '\n=== stage 7: SKIPPED — no Rscript on PATH; verify_stage7.py will check the committed grid\n'
   printf '\n=== stage 8: SKIPPED — no Rscript on PATH; verify_registry.py will check the committed registry\n'
+  printf '\n=== stage 8b: SKIPPED — no Rscript on PATH; verify_events.py will check the committed artifact\n'
 fi
 
 step "verifiers (each re-derives its numbers independently)"
@@ -112,6 +118,7 @@ $PYTHON tests/verify_harmonisation.py
 $PYTHON tests/verify_faac.py
 $PYTHON tests/verify_dags.py
 $PYTHON tests/verify_stage5.py
+$PYTHON tests/verify_events.py
 $PYTHON tests/verify_provenance.py
 
 printf '\nall checks passed\n'

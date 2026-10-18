@@ -1,11 +1,11 @@
 {
   "dag_id": "ner_primary__A",
   "schema_version": "0.3.0",
-  "vintage_date": "2026-10-17",
-  "generated_at": "2026-10-17T07:33:43+0100",
+  "vintage_date": "2026-10-18",
+  "generated_at": "2026-10-18T11:40:19+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "ba5741f"
+    "git_sha": "e0c9e68"
   },
   "outcome": {
     "id": "ner_primary",
@@ -213,8 +213,8 @@
     "blocker": "specified_dose_axis_absent:D1",
     "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
     "coverage_status": "declared_gap",
-    "vintage": "2026-10-17",
-    "source": "registry/diagnostics/2026-10-17/diagnostics.json"
+    "vintage": "2026-10-18",
+    "source": "registry/diagnostics/2026-10-18/diagnostics.json"
   },
   "assets": {
     "svg": "registry/dags/ner_primary__A.svg"

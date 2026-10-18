@@ -50,7 +50,7 @@ a result. It is the boundary inside which results will be obtained at Stage 6.
 |---|---|---|---|
 | **A** — state dose-response DiD | **dropped** | dose validation: **0 of 12,358** values on the specified axis (`D1`, per capita) across 37 states — the nominal axis is present and gated | the state-population denominator decision (X-09), **and** a state-attributed outcome (the security series are the route and are credential-blocked) |
 | **B** — national VECM / ARDL | **degraded** | cointegration rank, DoF, collinearity; the base-spec Tier-3 system has no FAAC — the series exists and is gated, but has **no catalogue entry** | a metric-catalogue entry for the FAAC panel, and a decision on whether an annual-grain estimate is worth publishing |
-| **C** — synthetic control | **infeasible** | pre-treatment fit: **0 of 3** testable outcomes pass the fit threshold on any window | a wider donor pool, or an estimand the pool can support |
+| **C** — synthetic control | **feasible on one outcome** (re-run 2026-10-18) | pre-treatment fit over a **99-country** pool: `u5mr` passes **3 of its 4** windows; `gdp_growth` 1 of 4 and `cpi_yoy` 0 of 4 do not pass the declared strict-majority rollup | build the estimator and its placebos on the `u5mr` windows |
 
 All **36** (outcome × design) cards carry their own pre-check verdict: **15 fail, 7 degraded,
 14 not attempted, 0 pass.** No outcome clears its gate under any design at this vintage. That is the
@@ -198,41 +198,54 @@ gate, but it belongs in the memo because it bounds what a Design B health estima
 
 ---
 
-## 4. Family C — synthetic control — **infeasible**
+## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened
 
-The gate is the **globally optimal** simplex fit to the pre-treatment path (a quadratic program), so a
-failure is a statement about the donor pool, not an optimiser. `ratio` = pre-RMSPE ÷ pre-period
-outcome SD; the threshold is 0.10.
+**Re-run 2026-10-18** against a **99-country** candidate pool screened on oil dependence, region/income
+band and coverage (`ingestion/flows/pull_worldbank_donors.py`, S5-11), where the first run had 13 chosen
+on GDP comparability and geography. The gate is the **globally optimal** simplex fit to the
+pre-treatment path (a quadratic program), so a failure is a statement about the donor pool, not an
+optimiser. `ratio` = pre-RMSPE ÷ pre-period outcome SD; the threshold is 0.10.
 
 | Outcome | Window | Pre yrs | Pre-RMSPE | Pre SD | ratio | best 1 donor | ratio on diffs | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| `u5mr` | yaradua | 8 | 10.18 | 15.19 | 0.67 | 10.52 | 0.18 | weak fit |
-| `u5mr` | jonathan | 11 | 18.82 | 18.51 | 1.02 | 19.62 | 0.18 | weak fit |
-| `u5mr` | buhari | 16 | 26.99 | 21.41 | 1.26 | 28.46 | 0.16 | weak fit |
-| `u5mr` | tinubu | 24 | 33.16 | 21.42 | 1.55 | 33.16 | 0.30 | weak fit |
-| `gdp_growth` | yaradua → tinubu | 8–24 | 2.42–2.83 | 2.99–4.22 | 0.58–0.81 | 2.61–3.40 | 0.48–0.76 | weak fit |
-| `cpi_yoy` | yaradua → tinubu | 8–24 | 4.10–5.29 | 3.92–4.81 | 0.95–1.35 | 6.51–7.52 | 0.64–0.79 | weak fit |
+| `u5mr` | yaradua | 8 | 0.026 | 15.19 | **0.0017** | 3.874 | 0.024 | **pass** |
+| `u5mr` | jonathan | 11 | 0.027 | 18.51 | **0.0014** | 3.439 | 0.018 | **pass** |
+| `u5mr` | buhari | 16 | 0.089 | 21.41 | **0.0042** | 6.313 | 0.013 | **pass** |
+| `u5mr` | tinubu | 24 | 4.250 | 21.42 | 0.198 | 9.737 | 0.064 | weak fit |
+| `gdp_growth` | yaradua | 8 | ~0 | 2.96 | **~0** | 2.958 | ~0 | **pass** |
+| `gdp_growth` | jonathan → tinubu | 11–24 | 2.06–2.80 | 2.60–3.20 | 0.29–0.51 | 2.60–3.19 | 0.08–0.43 | weak fit |
+| `cpi_yoy` | yaradua → tinubu | 8–24 | 2.94–4.90 | 3.92–5.11 | 0.56–0.74 | 3.85–6.20 | 0.52–0.71 | weak fit |
 
-**No outcome passes.** The best achievable convex combination of the 13 donors does not reproduce
-Nigeria's pre-treatment path within 0.10 of its SD on any candidate window. The donor pool is **not**
-the problem — all 13 countries carry all 5 screening predictors (C-19) — so the next step is either a
-wider pool or an estimand the pool can support.
+**The verdict is `pass` on `u5mr` (3 of 4 windows, ratios 0.0014–0.0042 against the 0.10 threshold),
+and not a pass on `gdp_growth` (1 of 4) or `cpi_yoy` (0 of 4).** That is the honest reading of a
+sharp change, and it carries its own warning:
 
-Two things the diagnostic isolates for Stage 6:
-
-- **Levels vs changes.** The fit on **first differences** is far better than on levels (e.g. `u5mr`
-  ratio 0.67 on levels vs 0.18 on diffs). A pool that tracks *changes* but not *levels* supports a
-  narrower claim than a pool that tracks neither — that is a different question, and Stage 6 should
-  decide which one it is answering.
-- **The estimator the spec names does not beat a single donor.** `Synth::synth` — design spec §11's
-  estimator for this family — returns a fit *worse than the best single donor* on every window tested
-  (`u5mr/jonathan`: Synth RMSPE 32.98 vs best single donor 19.62). Its default V search failed on this
-  pool. Recorded as a finding for Stage 6, not relied upon. The gate rests on the QP, which is a global
-  optimum.
+- **A 99-donor simplex can fit almost any pre-period.** The `gdp_growth`/yaradua window reaches a ratio of
+  1.7e-06 and `u5mr`/yaradua 0.0017, i.e. the fit is interpolation, not validation. The gate was declared
+  necessary-not-sufficient when the pool had 13 members; with 99 it is **weaker evidence than it was**,
+  and the numbers that can still fail are the ones reported beside it: the fit on **first differences**
+  (0.013–0.064 on the passing `u5mr` windows), the cross-check against the estimator the spec names, and
+  the placebos Stage 5 defers to Stage 6. The verdict below is permission to build the design, not
+  evidence that its fit is real.
+- **The rollup rule was undeclared until now.** The engine used "any window passes" and nothing said so;
+  with 13 donors nothing passed, so it never showed. With 99 it would have reported `gdp_growth: pass`
+  while three of its four windows failed. The rule is now declared as a **strict majority of the runnable
+  windows** (`diagnostics.yml` `outcome_rollup`), the engine and the Stage 5 verifier both implement it,
+  a break-test mutates a minority-pass card to `pass` and requires the verifier to reject it, and the
+  counts (`n_windows_pass` / `n_windows_runnable`) travel on every verdict.
+- **The estimator the spec names still does not beat a single donor.** `Synth::synth` returns a fit worse
+  than the best single donor (`u5mr`/yaradua: 85.22 vs 3.87). Its default V search failed on this pool too.
+  Recorded as a finding for Stage 6, not relied upon: the gate rests on the QP, which is a global optimum.
+- **The API blocked part of the pool and the block is recorded.** A content-based WAF rejects some country
+  combinations (`LK;LR` → 200, `LK;LR;LS` → 403 every time); the flow splits and retries, and the manifest
+  carries the split depth per request (C-60). Libya, Lesotho and Sri Lanka therefore land through narrower
+  requests rather than being dropped silently.
 
 Outcomes not in the donor panel (`mmr`, `immun_penta3`, `skilled_birth`, `literacy_youth`,
 `primary_completion`, `ner_primary`, `fatalities`, `incidents`, `unemp`) are `not_attempted`: no
-donor path exists to synthesise against.
+donor path exists to synthesise against. `fatalities` and `incidents` are in the UCDP *outcome* but not in
+the World Bank predictor set, so a Design C for the conflict outcomes needs a donor conflict path — a
+separate acquisition this re-run did not make.
 
 ---
 
@@ -258,7 +271,8 @@ is why the 2023 window is not monthly-visible on the landed CPI.
 
 - **Family A** — dropped. PHASES.md Stage 5 dose validation: a dose with near-zero cross-state
   variance cannot support a dose-response design, and no estimator fixes that. (0 of 12,358 values.)
-- **Family C** — infeasible. No candidate treated window lets any convex combination of the donors
+- **Family C** — feasible on `u5mr` only (re-run 2026-10-18 over a 99-country pool): 3 of its 4 windows
+  pass the pre-fit gate, `gdp_growth` passes 1 of 4 and `cpi_yoy` none. No candidate treated window lets any convex combination of the donors
   track Nigeria's pre-treatment path. Reported infeasible rather than estimated, per the Stage 6 gate.
 - **Family B** — degraded, not dropped. It can be estimated, but at annual grain and without FAAC, and
   with a ~38–99 SD detectable effect on the Tier-3 design. The deviations are named on every card.

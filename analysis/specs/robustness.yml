@@ -40,7 +40,7 @@
 # the curve cannot tell a reader whether the per-capita estimand behaves the same way. That is recorded
 # in `unbuilt_axes` and repeated in the report, not left to be inferred from a missing level.
 version: 1
-labelled: "2026-10-17"
+labelled: "2026-10-18"
 spec_path: "analysis/specs/robustness.yml"
 engine: "analysis/R/04_robustness.R"
 verifier: "tests/verify_stage7.py"

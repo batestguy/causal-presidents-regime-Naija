@@ -14,8 +14,8 @@ coefficient tables, intervals, diagnostics and sensitivity bounds.
 
 ## Status: Stage 8 of 8, begun — the registry the app reads exists, and it carries two numbers
 
-> **The headline finding (2026-10-18): an oil-price shock reaches Nigeria's states, and federal money does
-> not visibly buy peace.** A 10 % rise in Brent reaches state allocations as roughly **5 % more money, two
+> **The headline finding (2026-10-18): an oil-price shock reaches Nigeria's states, federal money does not
+> visibly buy peace, and the tenure question has one answerable half.** A 10 % rise in Brent reaches state allocations as roughly **5 % more money, two
 > to three months later** (cumulative elasticity +0.518 at h=2, HAC SE 0.166; C-48), and that sign holds in
 > **all 24** specifications of the robustness grid — though the *timing* is its weak part: an in-time
 > placebo across 48 shifted alignments returns p = 0.0625. The state dose-response question *can* be
@@ -23,26 +23,34 @@ coefficient tables, intervals, diagnostics and sensitivity bounds.
 > as well, because what survives the fixed effects is the 13 % derivation share moving with the oil price
 > (C-47). Asked 81 ways, **its sign does not survive at all** — 45 positive against 36 negative, negative in
 > every window once the dose is lagged a month. The presidential-tenure question is **not answerable at all**
-> from 4–5 administrations and 27 annual observations. Full write-ups:
-> [`docs/estimates.md`](docs/estimates.md) and [`docs/robustness.md`](docs/robustness.md).
+> from 4–5 administrations and 27 annual observations — though **the timing half of it is answerable**: on
+> the one monthly outcome, two of eight transition-outcome cells survive both the placebo and the pre-trend
+> check (`registry/events/2026-10-18/`). And the synthetic-control design that could not be built is no
+> longer blocked on data: widening the donor pool from 13 countries to **99** took it from `infeasible` to
+> passing its pre-fit gate on `u5mr` (3 of 4 windows). Full write-ups:
+> [`docs/estimates.md`](docs/estimates.md), [`docs/robustness.md`](docs/robustness.md) and
+> [`docs/events.md`](docs/events.md).
 
 | | |
 |---|---|
 | Specification | ✅ Complete (`nigeria-causal-inference-spec.md`, `PHASES.md`) |
-| Ingestion | ✅ **Five** sources working, provenance-verified: 22 national indicators + a 13-country donor panel + the Brent crude oil series + 174 FAAC disbursement documents (the state fiscal dose) + the UCDP GED security events (the state-attributed outcome — **keyless**, C-45) |
+| Ingestion | ✅ **Five** sources working, provenance-verified: 22 national indicators + a **99-country** synthetic-control candidate panel + the Brent crude oil series + 174 FAAC disbursement documents (the state fiscal dose) + the UCDP GED security events (the state-attributed outcome — **keyless**, C-45) |
 | Assumption layer | ✅ **36 causal graphs** — 3 identification designs × 12 outcomes, with the adjustment set computed from each graph |
-| Quality gates | ✅ **Stage 3** — 5 gates over **242 series**: 60 ok, 182 flagged, 0 silently dropped (37 are the FAAC dose; 117 are the UCDP scopes, flagged on monthly volatility as any count series is) |
+| Quality gates | ✅ **Stage 3** — 5 gates over **672 series**: 357 ok, 313 flagged, 2 empty, 0 silently dropped (the donor pool's 495 country-series join the 37 FAAC ones and the 117 UCDP scopes; the 2 empty are `Eritrea`/`Somalia` CPI, declared with no data at all) |
 | Analytical base | ✅ **Stage 4** — one monthly table, 8,350 rows (25 metrics × 334 months), index-anchored, with the party-by-tenure strata, the Stage 3 quality status and the 37 × 334 state panel carrying both the dose and the outcome |
-| Pre-analysis diagnostics | ✅ **Stage 5** — every design validated before estimation, **re-run at vintage 2026-10-17** after both series landed. **0 of 36 cards pass their pre-check** (15 fail, 7 degraded, 14 not attempted): Family A dropped on the dose *axis* (per capita waits on X-09) with the outcome blocker now cleared, B degraded (annual grain, a 38–99 SD detectable effect), C infeasible (donor pool can't track Nigeria) |
+| Pre-analysis diagnostics | ✅ **Stage 5** — every design validated before estimation, **re-run at vintage 2026-10-18** after the donor pool was widened from 13 countries to **99 candidates**. **0 of 36 cards pass their pre-check** (15 fail, 7 degraded, 14 not attempted): Family A dropped on the dose *axis* (per capita waits on X-09) with the outcome blocker now cleared, B degraded (annual grain, a 38–99 SD detectable effect), and **C moved from `infeasible` to `pass` on `u5mr` (3 of its 4 windows)** while `gdp_growth` (1 of 4) and `cpi_yoy` (0 of 4) still fail the gate — with the rollup now a **declared strict-majority rule** and the caveat that a 99-donor simplex can fit almost any pre-period |
 | Estimation | ✅ **Stage 6** — 12 specifications across two designs (3 Design A outcomes, 9 Design B horizons), every one published with its interval and the check that decided its verdict. Verifier recomputes every number to 1e-12 |
 | Robustness | ✅ **Stage 7** — **105 specifications** declared before fitting and all published, with the specification curve drawn and the support counts computed from the fitted rows: Design B 24/24 positive, Design A 45 positive / 36 negative with five majority sign-flip levels (6 of the 105 sit inside a declared ±0.02 near-zero band and are counted as such). Verifier re-fits every one of them (worst coefficient gap 6.5e-9) |
+| Within-tenure timing | ✅ **Stage 8b** — the transition event study: **4 in-window transitions** on 312 months of UCDP conflict (1999-01→2024-12, the only monthly outcome), 32 specifications, inference by **exhaustive placebo assignment** over 58 eligible months. **2 of 8 event-outcome cells survive both the placebo and the pre-trend check**, 4 fail the pre-trend, 1 event cannot be checked at all (declared, not scored as a pass), and the party split is published as **description with no test**. Verifier re-fits all 32 and re-enumerates the placebo distribution (worst HAC SE gap 0.002 %) |
 | Registry / dashboard | 🔨 **Stage 8, registry half built** — **2 of 36 cards carry a published number, 34 carry a reason** (both Design A cards that can: fatalities +0.4793, incidents +0.5460, each with its interval, its `estimated_not_identified` verdict and the Stage 7 grid summary for its own outcome); Design B's nine specifications are published on the index as **channel-level** (`result_is_card_level: false`, because on every B card FAAC is a mediator) and Design C's non-run likewise; every card without a number names a reason from a closed set. Verifier re-derives the mapping and checks every number against the artifact it names. Still to come: the RAG corpus, the remaining figures |
 
 **There is no dashboard to look at yet.** Ingestion works end to end, the causal-graph assumption layer
 is built, the harmonised analytical base the models and the app will read exists, Stage 5 established what
 the data can support **before** estimating anything, Stage 6 estimated the part of it that is estimable —
 publishing a null and an unidentified estimate beside the one clean result — and Stage 7 asked whether
-either survives its own choices, 105 specifications of them. See
+either survives its own choices, 105 specifications of them. Stage 8b then answered the one tenure-shaped
+question the data can carry, on monthly conflict around the four transitions, and refused the rest in
+writing. See
 [`PROGRESS.md`](PROGRESS.md) for what is verified and what is blocked,
 [`docs/estimates.md`](docs/estimates.md) for the answer to "what can this data actually say?",
 [`docs/robustness.md`](docs/robustness.md) for what survives that answer's choices,
@@ -55,6 +63,14 @@ monthly spine is only **16.2 % observed** (1,349 of 8,350 rows; it was 10.1 % be
 FAAC and UCDP landings). The national sources are annual, so a monthly model on `cpi_yoy` cannot see the
 2023 fuel-subsidy window — the spine exists, most of its values are interpolation, and the base says which
 months those are (`observation_type`) rather than presenting them as data.
+
+**And the first tenure-comparison numbers the project can publish.** Asked *"did conflict change after each
+swearing-in?"* on the only monthly outcome, **two of eight event-outcome cells survive both checks**:
+reported incidents rose 391 % in the 12 months after the 2010 transition and fatalities 77 % after the 2023
+one, each against a 58-month placebo distribution at p = 0.017 — the floor of what 58 placebo months can
+resolve. Four cells fail the pre-trend placebo (the 2015 fall in fatalities is real but already under way 24
+months earlier), one transition cannot be checked at all, and **no party comparison is made**: two events
+against two events has no sampling distribution. [`docs/events.md`](docs/events.md).
 
 ## What works today
 
@@ -100,6 +116,10 @@ $PY tests/verify_stage6.py
 Rscript analysis/R/04_robustness.R      # -> registry/robustness/<vintage>/
 $PY tests/verify_stage7.py
 
+# Stage 8b: the transition event study - what moved inside each tenure - then re-fit all 32 independently
+Rscript analysis/R/06_events.R          # -> registry/events/<vintage>/
+$PY tests/verify_events.py
+
 # Everything above, in order, with one exit status
 scripts/verify.sh
 ```
@@ -140,7 +160,7 @@ ingestion/flows/      stage runners that land a vintage, and the Stage 3 gate ru
 ingestion/quality/    the five Stage 3 gates, as pure functions
 analysis/specs/       outcome registry, the three identification designs, gate config, harmonisation rules
 analysis/R/           one script per stage that runs in R: DAG generator, Stage 5 diagnostics,
-                      Stage 6 estimates, Stage 7 robustness grid
+                      Stage 6 estimates, Stage 7 robustness grid, Stage 8b transition event study
 dbt/                  the transformation project: seeds (spine, catalogue, shocks, states),
                       models/staging (raw payloads -> typed observations) and models/analytics
                       (dimensions, the spine, the index anchor, the analytical base table)
@@ -149,11 +169,14 @@ registry/quality/     the vintage quality report (gate results per series)
 registry/diagnostics/ the Stage 5 pre-check result (diagnostics.json + report.md)
 registry/estimates/   the Stage 6 estimates (estimates.json + report.md), one dir per vintage
 registry/robustness/  the Stage 7 multiverse (robustness.json + report.md + specification_curve.svg)
+registry/events/      the Stage 8b transition event study (events.json + report.md + event_study.svg)
 docs/design-memo.md   the Stage 5 output - which design family is credible per outcome, and why
 docs/estimates.md     the Stage 6 output - what the data can actually answer, and what it cannot
 docs/robustness.md    the Stage 7 output - what survives the choices, and where the sign changes
+docs/events.md        the Stage 8b output - comparing tenures on the one monthly outcome, and its limits
 docs/data-dictionary.md  every column of the analytical base, its grain and its imputation rules
-tests/                one independent verifier per stage (provenance, DAGs, quality, harmonisation, Stage 5, Stage 6, Stage 7)
+tests/                one independent verifier per stage (provenance, DAGs, quality, harmonisation,
+                      Stage 5, Stage 6, Stage 7, Stage 8b events, registry)
 ```
 
 ## Two things worth knowing about the data
@@ -203,5 +226,10 @@ may not be republished, so the repository ships code, derived aggregates and acq
 - [`PHASES.md`](PHASES.md) — the build plan and its stage gates
 - [`nigeria-causal-inference-spec.md`](nigeria-causal-inference-spec.md) — design decisions, including
   which original constraints were deliberately overridden
+- [`docs/estimates.md`](docs/estimates.md) — which causal question this data can carry, and why not the one
+  the brief asked for
+- [`docs/robustness.md`](docs/robustness.md) — what survives the choices the estimates did not pin down
+- [`docs/events.md`](docs/events.md) — comparing tenures, part 1: what changed *inside* a tenure, on the only
+  monthly outcome
 - [`docs/decisions.md`](docs/decisions.md) — the decision log
 - [`PROGRESS.md`](PROGRESS.md) — current state, verification evidence, blockers

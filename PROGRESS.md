@@ -1,8 +1,17 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-10-18 (fifth session) · **Stage:** 8 of 8, begun — the registry the app will read
+**Last updated:** 2026-10-18 (sixth session) · **Stage:** 8 of 8, begun — the registry the app will read
 exists: 36 cards, **2 carrying a published number and 34 carrying a reason**, the design-level results on
-the index · **verified by `scripts/verify.sh`**
+the index, **plus Stage 8b's tenure-timing artifact** · **verified by `scripts/verify.sh` at vintage
+2026-10-18**: 10 verifiers, 0 failures, 41 registry documents schema-validated
+
+**This session, in one line:** two things were built — **the transition event study** (`docs/events.md`:
+did conflict move after each swearing-in?) and **a widened Design C donor pool** (`docs/design-memo.md` §4:
+13 → 99 candidates, which took the design from `infeasible` to passing its pre-fit gate on `u5mr`). Both
+were declared before they were fitted, both are independently verified, and both changed a published
+verdict — which is why the whole chain was re-run at the new vintage rather than left describing the old
+one.
+
 **One-line status:** specification complete; ingestion working and provenance-verified on **five**
 sources — **203 payloads**, 0 orphaned files — the newest being **UCDP GED**, whose bulk archive turned
 out to be keyless (C-45), so the state-attributed security outcome exists. **Stage 6 has published its
@@ -52,6 +61,41 @@ on a card, beside the assumption it rests on, with the artifact it was copied fr
 - **The engine found the omission before publication.** The first assembly wrote 2 of 3 Design A numbers and
   reported success, because the declared expectation counted *published specifications* rather than *cards*.
   The count that matters is now declared separately and checked in both directions (S8-02, C-55).
+
+**Current action (2026-10-18, sixth session): comparing tenures, and the donor pool that unblocked Design C.**
+
+Two builds, both declared before anything was fitted, and both because the previous session's write-ups ended
+with a stated next step rather than a silent gap.
+
+- **Stage 8b — the transition event study** (`analysis/specs/events.yml`, `analysis/R/06_events.R`,
+  `registry/schema/events.schema.json`, `tests/verify_events.py`, `docs/events.md`). The tenure question needs
+a counterfactual and has none; its **timing** half is answerable on the one monthly outcome. Four in-window
+transitions, 96 pre-months each, post windows of 12 and 24 months truncated at the successor, inference by
+**exhaustive placebo assignment** over 58 eligible months — enumerated, not sampled, so there is no seed.
+**2 of 8 event-outcome cells survive both the placebo and the pre-trend check** (2010 incidents +391 %,
+2023 fatalities +77 %, each p = 0.017, the floor at 58 placebo months); four fail the pre-trend placebo,
+including the largest shift in the series (2015 fatalities −67 %); one event cannot be checked at all and
+says so. **No party comparison is published** — two events against two events has no sampling distribution.
+- **Design C's donor pool, widened from 13 countries to 99** (`ingestion/flows/pull_worldbank_donors.py`,
+  `analysis/specs/diagnostics.yml`, `analysis/R/02_diagnostics.R`). Stage 5's `infeasible` verdict was always
+about the pool, so the pool was rebuilt on declared groups (West African neighbours, oil exporters, African
+comparators, large lower-middle-income countries) screened on oil dependence, region/income band and
+coverage. The gate moved: **`u5mr` passes 3 of its 4 runnable windows** (ratios 0.0014–0.0042 against the
+declared 0.10), `gdp_growth` 1 of 4, `cpi_yoy` 0 of 4 — under a rollup rule that is now **declared** as a
+strict majority of the runnable windows, where the old rule ("any window passes") was undeclared and would
+have credited `gdp_growth` on one window of four (S5-12). Design C is still not estimated: the estimator and
+the placebos are the next build, and the pass carries the warning that a 99-donor simplex can fit almost any
+pre-period (C-59).
+- **Everything was re-run at vintage 2026-10-18** because the donor vintage changed the base, and the
+discipline is that a published number names the vintage it was computed on: quality (672 series now, up from
+242), dbt, Stage 5, Stage 6, Stage 7, the registry and Stage 8b. **All 10 verifiers pass, 41 registry
+documents validate against their schemas, and the two break-test suites catch all six mutations they apply**
+(5 on the events artifact, 1 on the newly declared Design C rollup).
+- Three defects were found by the chain rather than by review and are recorded with their causes: the
+**`dataset_id` join** that silently emptied the donor panel under a green `dbt build` (C-61), a Stage 3
+**coverage count** that described a request shape rather than the data (S5-14), and the **undeclared
+gate rollup** itself (S5-12). Each one is the same failure class this project keeps finding: a claim that was
+true when written and quietly false later.
 
 **Previous action (2026-10-18, fourth session): Stage 7 — robustness and the multiverse. The grid was fitted,
 and it turned one design's verdict into a different one.**
@@ -365,14 +409,14 @@ effect that the design cannot support.
 | `ingestion/flows/pull_ucdp.py` | Lands the UCDP GED bulk archive — keyless, 28 MB, CC-BY — which is the state-attributed security outcome | Exit 0, 1/1 |
 | `ingestion/parsers/ucdp_events.py` | Filters to Nigeria, aggregates to scope × month × item, and carries the 47 unattributed events as their own scope rather than dropping them (S6-04) | Exit 0, 37,734 rows |
 | `tests/verify_faac.py` | Re-reads the parsed documents and re-derives the dose, the publisher rule and the cross-publisher differences | Exit 0 |
-| `analysis/specs/quality.yml` | Stage 3 gate configuration: study window, thresholds, grains, frozen resample rules, definition breaks, spike adjudications, and the `document_sources` block that gates a PDF/XLSX source from its parsed artifact | 242 series configured |
+| `analysis/specs/quality.yml` | Stage 3 gate configuration: study window, thresholds, grains, frozen resample rules, definition breaks, spike adjudications, and the `document_sources` block that gates a PDF/XLSX source from its parsed artifact | 672 series configured |
 | `ingestion/quality/gates.py` | The five gates (gap · spike · revision · definition-drift · provenance) as pure functions | covered by `verify_quality.py` |
-| `ingestion/flows/check_quality.py` | Runs the gates over every landed series; enforces the exit criterion in code | Exit 0, 242/242 |
-| `registry/quality/2026-10-17/` | The vintage quality report — `report.json` + a human-readable `report.md` (older vintages are kept) | 242 series: 60 ok, 182 flagged, 0 empty |
+| `ingestion/flows/check_quality.py` | Runs the gates over every landed series; enforces the exit criterion in code (the multi-country count is per retrieval, C-62) | Exit 0, 672/672 |
+| `registry/quality/2026-10-18/` | The vintage quality report — `report.json` + a human-readable `report.md` (older vintages are kept) | 672 series: 357 ok, 313 flagged, 2 empty (Eritrea/Somalia CPI; the donors' 495 country-series are gated like any other) |
 | `tests/verify_quality.py` | Recomputes the gap and spike results from the raw payloads independently of the gate module | Exit 0 |
 | `tests/verify_provenance.py` | Re-derives every sha256, for every source, and detects orphaned files | Exit 0, 5 sources / 203 payloads |
 | `data/raw/worldbank/2026-10-11/` | 22 payloads + manifest + coverage report | Gitignored, never committed |
-| `data/raw/worldbank_donors/2026-10-11/` | 5 payloads (13 donors each) + manifest + coverage | Gitignored, never committed |
+| `data/raw/worldbank_donors/2026-10-18/` | 60 payloads over 40 requests in **5 chunks of 20 candidates** (99 donors), plus the WAF-split requests, + manifest + coverage | Gitignored, never committed |
 | `data/raw/fred/2026-10-11/` | 1 payload (Brent, 10,275 rows) + manifest + coverage profile | Gitignored, never committed |
 | `analysis/specs/outcomes.yml` | Outcome registry for the DAG layer — 12 catalogue outcomes with Stage-1 coverage status | 12/12 |
 | `analysis/specs/dag_designs.yml` | The three identification designs as node/edge templates, with assumption text | 36/36 instantiated |
@@ -394,7 +438,7 @@ effect that the design cannot support.
 | `dbt/models/analytics/dim_administration_term.sql` | Term-level spans carrying the four LOCKED party-by-tenure strata | 7 terms |
 | `dbt/models/analytics/dim_metric.sql` | The metric dimension, with the Stage 3 quality status and definition breaks travelling on it | 25 rows |
 | `dbt/models/analytics/state_panel.sql` | 37 × 334 panel: the FAAC dose and the UCDP outcome where their sources cover the month, the rest typed and declared | 12,358 rows, 4,104 doses observed |
-| `dbt/models/analytics/fact_donor_panel.sql` | Design C's donor pool, kept off the national spine | 3,866 rows, 13 countries |
+| `dbt/models/analytics/fact_donor_panel.sql` | Design C's donor pool, kept off the national spine | 27,352 rows, 99 countries |
 | `dbt/models/analytics/faac_state_allocation.sql` | The dose itself: one publisher chosen per state-month by the declared rule, the other measured beside it | 4,104 rows |
 | `dbt/models/analytics/faac_national_monthly.sql` | The dose summed over the 36 states — the fiscal transfer channel on a national spine | 114 months |
 | `dbt/models/analytics/ucdp_state_month.sql` | The security outcome at state-month grain, `observed` / `not_covered` distinguished | 15,244 rows |
@@ -403,16 +447,18 @@ effect that the design cannot support.
 | `tests/verify_harmonisation.py` | Recomputes the whole base from `data/raw/` + the specs, independently of dbt and of the gate module | Exit 0 |
 | `analysis/specs/diagnostics.yml` | Stage 5's declared parameters: grain, unit-root reconciliation, cointegration rule, dose thresholds, pre-fit gate, DoF/power, collinearity, candidate windows, design gates | 9 thresholds echoed |
 | `analysis/R/02_diagnostics.R` | The Stage 5 engine: integration order, Johansen, shock visibility, dose validation, pre-fit QP, DoF/power, collinearity — then attaches a verdict to every card | Exit 0, 36/36 cards |
-| `registry/diagnostics/2026-10-17/` | The Stage 5 result, re-run after the security outcome landed — `diagnostics.json` + a human-readable `report.md` | 0 of 36 pass (15 fail, 7 degraded, 14 not attempted) |
+| `registry/diagnostics/2026-10-18/` | The Stage 5 result, re-run over the widened donor pool — `diagnostics.json` + a human-readable `report.md` | 0 of 36 pass (15 fail, 7 degraded, 14 not attempted); **Design C: `u5mr` pass (3/4 windows), `gdp_growth` 1/4, `cpi_yoy` 0/4** |
 | `docs/design-memo.md` | The Stage 5 output: per outcome, which family is credible, which is not attempted, and the diagnostic that decides it | Complete |
 | `analysis/specs/estimation.yml` | Stage 6's declared parameters: the 12 specifications, horizons, HAC lags, the placebo and null designs, and the rule that decides a design's verdict | 12 specifications |
 | `analysis/R/03_estimate.R` | The Stage 6 engine: local projections, PPML count models, the placebo, the time-shift null, the power bound | Exit 0, 12 specifications |
-| `registry/estimates/2026-10-17/` | The Stage 6 result — `estimates.json` + a human-readable `report.md`, each estimate carrying the check that decided its verdict | 12 specifications: 3 Design A outcomes, 9 Design B horizons |
+| `registry/estimates/2026-10-18/` | The Stage 6 result — `estimates.json` + a human-readable `report.md`, each estimate carrying the check that decided its verdict | 12 specifications: 3 Design A outcomes, 9 Design B horizons; Design C's reason rewritten from "the pool fails" to "the pool passes on `u5mr`; the estimator and its placebos are next" |
 | `docs/estimates.md` | The Stage 6 output: what the data can answer, what it cannot, and the check behind each verdict | Complete |
 | `tests/verify_stage6.py` | Recomputes every coefficient, sample size, horizon and verdict from the base to within 1e-12 | Exit 0 |
 | `analysis/specs/robustness.yml` | Stage 7's declared multiverse: the 4 live axes per design, the windows, the two Oster analogues, the placebo and leave-one-out rules, the support-count rule, and the 6 axes that are dead or unbuilt with their reasons | 105 specifications declared |
 | `analysis/R/04_robustness.R` | The Stage 7 engine: fits the whole grid, computes the sensitivity checks, the support counts and the majority-flip rule, draws the specification curve | Exit 0, 81 A + 24 B |
-| `registry/robustness/2026-10-17/` | The Stage 7 result — `robustness.json`, `report.md` and `specification_curve.svg` (two panels, axis strips beneath, pre-registered cell marked) | 105 specifications: A 45 positive / 36 negative, B 24 positive; 6 inside the declared ±0.02 near-zero band |
+| `registry/robustness/2026-10-18/` | The Stage 7 result — `robustness.json`, `report.md` and `specification_curve.svg` (two panels, axis strips beneath, pre-registered cell marked) | 105 specifications: A 45 positive / 36 negative, B 24 positive; 6 inside the declared ±0.02 near-zero band |
+| `analysis/specs/events.yml` · `analysis/R/06_events.R` · `registry/events/2026-10-18/` | **Stage 8b — the transition event study**: 4 in-window transitions on 312 months of UCDP conflict, 32 specifications, exhaustive placebo inference over 58 eligible months, a pre-trend placebo, a reporting-divergence check and the party split as description | 2 of 8 cells `shift_detected`, 4 `not_interpretable_pre_trend`, 1 event `check_not_available`, 1 `no_shift_detected` |
+| `registry/schema/events.schema.json` · `tests/verify_events.py` | The Stage 8b contract and its independent verifier (re-fits all 32 specifications and re-enumerates the placebo distribution; worst HAC SE gap 0.002 % against a stated 5 % allowance) | Exit 0 |
 | `registry/schema/robustness.schema.json` | The Stage 7 contract: every row carries its axis levels, its interval and its sign; the preferred cell is flagged; an unbuilt axis is listed rather than omitted | Validated by `validate_artifacts.py` |
 | `tests/verify_stage7.py` | Re-fits all 81 PPML specifications (statsmodels, not fixest), all 24 local projections, 36 leave-one-state-out refits and 48 placebo alignments, and recomputes both Oster bounds and every count | Exit 0, worst coefficient gap 6.5e-9 |
 | `docs/robustness.md` | The Stage 7 output: what survived, what did not, and the checks behind each | Complete |
@@ -853,6 +899,50 @@ Note: `conda run -n ds-general` does **not** work — `ds-general` is a prefix e
 
 ## 5. Findings so far
 
+**Design C's donor pool, widened (2026-10-18).** Full write-up: `docs/design-memo.md` §4;
+artifact `registry/diagnostics/2026-10-18/`.
+
+- **The `infeasible` verdict was about the pool, and the pool was fixable.** Against 13 countries chosen on
+  GDP comparability no window could track Nigeria (ratios 0.58–1.55 against a 0.10 threshold). Against **99
+  candidates** screened on oil dependence, region/income band and coverage: `u5mr` **passes 3 of its 4
+  runnable windows** (ratios 0.0014–0.0042; ratio-on-differences 0.013–0.064), `gdp_growth` passes 1 of 4,
+  `cpi_yoy` none (C-59).
+- **A pass the design cannot celebrate yet.** A 99-donor simplex can fit almost any pre-period — the
+  `gdp_growth`/yaradua window reaches a ratio of 1.7e-06, which is interpolation rather than validation — so
+  the pre-fit gate is **weaker evidence than it was with 13 donors**, `Synth` still loses to the best single
+  donor, and Design C remains **not estimated**: the estimator and the placebos Stage 5 deferred to Stage 6
+  are the next build.
+- **The rollup rule was undeclared, and the widened pool is what made that matter.** With 13 donors nothing
+  passed, so the engine's "any window passes" rule never showed; with 99 it would have reported
+  `gdp_growth: pass` on one window of four. It is now declared as a strict majority of the runnable windows,
+  implemented by the engine and the Stage 5 verifier, and break-tested (S5-12).
+- **Two acquisition defects were found by the chain, not by review.** The World Bank WAF rejects some country
+  *combinations* deterministically (`LK;LR` 200, `LK;LR;LS` 403), so the flow splits and retries and records
+  the split depth (C-60); and the chunked landing silently broke the `dataset_id` join, emptying the donor
+  panel under a green `dbt build` with every Stage 5 outcome reported `not_attempted` rather than failing
+  (C-61). The second was found by reading a reason string, and the flow now checks its own landing contract.
+
+**Stage 8b — comparing tenures on the one monthly outcome (2026-10-18).** Full write-up: `docs/events.md`;
+artifact `registry/events/2026-10-18/`.
+
+- **Two of eight event-outcome cells survive both checks.** Reported incidents rose **+391 %** in the 12
+  months after the 2010 transition and fatalities **+77 %** after the 2023 one, each at p = 0.017 — the
+  floor of what 58 placebo months can resolve — with the pre-trend placebo smaller than the post-window
+  shift (C-56).
+- **Four cells fail the pre-trend placebo**, including the largest shift in the series: the 2015 fall in
+  fatalities (−67 %, family-wise p = 0.017) was already under way 24 months before the transition. Buhari
+  2015 on incidents and Tinubu 2023 on incidents fail for the same reason, in the other direction (C-56).
+- **One transition cannot be checked at all.** Yar'Adua 2007 has 100 months of history and the pre-trend
+  placebo needs 120; the artifact reports `check_not_available` rather than scoring the missing check as a
+  null (S8b-05).
+- **The placebo null drifts down by 32 %**, so the first inference rule written for this stage — two-sided
+  in magnitude — was discarded before publication: it scored the largest fall in the series as unremarkable
+  while its own left tail said the opposite (C-57). The published rule is the same-side signed tail in the
+  add-one form, and the reason is on the artifact.
+- **No party comparison is published.** Two events against two events has no sampling distribution; the
+  PDP/APC medians (+55.3 % / +4.6 %) are published as description with `no_test_computed: true`, and the
+  verifier fails if a test statistic appears in that block (S8b-06).
+
 **Stage 7 — what survives the choices (2026-10-18).** Full write-up: `docs/robustness.md`.
 
 - **Design B's sign is invariant; its timing is not.** 24 of 24 specifications positive, all 24 intervals
@@ -972,6 +1062,82 @@ unsourced nodes**; designs A and B are each down to one, the FAAC fiscal dose.
   percentage points for series already in percent) brought it to 28 and let the real signals through.
 - **60 of 67 spikes are deliberately left unadjudicated.** The immunisation and primary-completion
   swings have no documented cause, so the report says `UNADJUDICATED` rather than inventing one.
+
+**Donor pool and re-vintage verification (2026-10-18, sixth session) — transcript.**
+
+```
+$ python ingestion/flows/pull_worldbank_donors.py
+vintage: 2026-10-18   donors: 99   predictors: 5   chunk size: 20
+  group neighbour_west_africa       13 candidate(s)
+  group oil_exporter                29 candidate(s)
+  group africa_comparator           28 candidate(s)
+  group lower_middle_income_large   35 candidate(s)
+  treated unit NG excluded from the pool
+  note gdp_growth  NY.GDP.MKTP.KD.ZG-p03s01  5 country(ies) landed after 2 WAF split(s)
+  ok   u5mr        SH.DYN.MORT        chunks=5 rows=6534 donors=99/99 reaching_2015=99/99
+succeeded: 5/5 predictor(s) in 40 request(s)   failures: 0
+
+$ dbt build                -> 165 PASS, 0 ERROR   (donor panel 27,352 rows / 99 countries)
+$ ingestion/flows/check_quality.py   -> 672 series gated: 357 ok, 313 flagged, 2 empty
+$ Rscript analysis/R/02_diagnostics.R
+5. pre-treatment fit — 3 outcomes attempted, 1 pass, 2 infeasible on pre-fit
+     u5mr               pass                       3 of 4 runnable window(s) pass
+     gdp_growth         infeasible_weak_pre_fit    1 of 4 runnable window(s) pass
+     cpi_yoy            infeasible_weak_pre_fit    0 of 4 runnable window(s) pass
+
+$ all verifiers (vintage 2026-10-18)
+validate_artifacts -> 0   quality -> 0   stage6 -> 0   stage7 -> 0   registry -> 0
+harmonisation -> 0        faac -> 0      dags -> 0     stage5 -> 0    events -> 0   provenance -> 0
+registry schemas : 41 document(s) validated
+
+$ python .probe/break_events.py     -> all 5 mutations caught, restored byte-for-byte
+$ python .probe/break_stage5_c.py   -> caught: status -> pass while 0 of 4 runnable window(s) pass
+```
+
+**Stage 8b verification (2026-10-18) — transcript.**
+
+```
+$ Rscript analysis/R/06_events.R
+series: 312 months 1999-01 -> 2024-12, 25 blank month(s) filled with zero
+events: 4 | specifications fitted: 32 (h=12: 16, h=24: 16) | declared skips: 0
+placebo: 58 eligible month(s) per outcome/horizon, enumerated (no RNG)
+figure: event_study.svg (196379 bytes)
+
+verdicts (h=12, baseline):
+  yaradua_2007   fatalities   check_not_available          post=-0.1712 pre=—      p=0.610
+  yaradua_2007   incidents    check_not_available          post=-0.3434 pre=—      p=0.186
+  jonathan_2010  fatalities   not_interpretable_pre_trend  post=1.2770  pre=1.9558 p=0.017
+  jonathan_2010  incidents    shift_detected               post=3.9125  pre=0.8758 p=0.017
+  buhari_2015    fatalities   not_interpretable_pre_trend  post=-0.6747 pre=0.8381 p=0.017
+  buhari_2015    incidents    no_shift_detected            post=-0.4795 pre=0.4041 p=0.085
+  tinubu_2023    fatalities   shift_detected               post=0.7664  pre=0.5275 p=0.017
+  tinubu_2023    incidents    not_interpretable_pre_trend  post=0.0671  pre=0.2547 p=0.169
+
+$ python tests/verify_events.py                              -> exit 0
+artifact         : registry/events/2026-10-18/events.json (32 specifications)
+series           : 312 months 1999-01 -> 2024-12, 25 blank month(s) filled, 10 year(s) affected
+transitions      : 4 of 4 bound to dim_administration_term at the declared dates and strata
+specifications   : 32 rows re-fitted from the base; worst SE gap 0.002%, allowance 5%
+placebo          : 58 month(s) re-enumerated per outcome/horizon, distributions and quantiles reproduced
+inference        : 8 verdict(s) re-derived; 6 pre-trend placebo(row)s reproduced, 1 event declared uncheckable
+party split      : 4 event(s) grouped into 2 group(s), medians and shifts reproduced, no test field present
+PASS
+
+$ python scripts/validate_artifacts.py                       -> exit 0
+stage 8b artifact: 2026-10-17 (32 specifications over 4 transitions, 1 declared uncheckable pre-trend,
+                   cells accounted for)
+registry schemas : 39 document(s) validated
+PASS
+
+$ python .probe/break_events.py                              -> exit 0
+1. coefficient moved 2 %                         verifier=1 contract=1  caught
+2. one row deleted (silent omission)             verifier=1 contract=1  caught
+3. uncheckable pre-trend scored as a pass        verifier=1 contract=1  caught
+4. test statistic added to the party description verifier=1 contract=1  caught
+5. figure deleted                                verifier=1 contract=1  caught
+restored byte-for-byte: True True
+PASS — all 5 mutations caught by at least one guard
+```
 
 **Stage 4 harmonisation (2026-10-11) — what building the base measured.** The stage's job was to build
 a table; what it produced that matters is one constraint and two confirmations.

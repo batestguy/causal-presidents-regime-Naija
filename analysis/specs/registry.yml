@@ -27,7 +27,7 @@
 #
 # ---------------------------------------------------------------------------------------------
 version: 1
-labelled: "2026-10-17"
+labelled: "2026-10-18"
 spec_path: "analysis/specs/registry.yml"
 engine: "analysis/R/05_registry.R"
 verifier: "tests/verify_registry.py"

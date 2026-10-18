@@ -488,11 +488,19 @@ def main(argv: list[str] | None = None) -> int:
         for retrieval in manifest["retrievals"]:
             expected += 1
         if source in MULTI_COUNTRY_SOURCES:
-            # one retrieval fans out into one series per donor
+            # One retrieval fans out into one series per country in *that retrieval*. The first version of
+            # this line multiplied the pool-wide country count by the number of retrievals, which is only
+            # the same number while every retrieval covers every country — true for one request per
+            # predictor and false the moment the pool is landed in chunks (2026-10-18: 99 candidates in 5
+            # chunks, so the old formula expected 495 series per predictor and the real answer is 99). The
+            # count is therefore read from each retrieval's own payloads, which is also what makes an
+            # accidental overlap between chunks visible as a mismatch rather than absorbed by a heuristic.
             expected -= len(manifest["retrievals"])
-            expected += len({r["scope"] for r in rows if r["source"] == source} ) * len(
-                manifest["retrievals"]
-            )
+            for retrieval in manifest["retrievals"]:
+                countries: set[str] = set()
+                for payload in read_payloads(RAW_ROOT / source / vintage, retrieval["page_files"]):
+                    countries.update(parse_worldbank_by_country(payload))
+                expected += len(countries)
     reported = len({(r["source"], r["metric_id"], r["scope"]) for r in rows})
     if reported != expected:
         failures.append(

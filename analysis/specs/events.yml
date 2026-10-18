@@ -1,0 +1,219 @@
+# Stage 9-prep — comparing tenures, part 1: what changed *inside* a tenure
+#
+# The question people ask is "which tenure did better?". Stage 5 answered the version of that which needs a
+# counterfactual: not identifiable, because there are four to five administrations against 21-23 annual
+# observations, and the synthetic control that would have supplied the counterfactual fails its pre-fit
+# gate. This stage asks the version the data *can* carry, and only for the one domain that has monthly
+# coverage: **did monthly conflict move after each transition, relative to that series' own path just
+# before it?**
+#
+#   * It is a **timing** statement, not a level effect and not a party effect. "Violence was 40 % higher in
+#     the 12 months after the 2015 transition than in the 96 months before it" is a sentence this design can
+#     support or fail to support. "The APC caused more violence" is not, and is not attempted anywhere here.
+#   * The comparison unit is the **transition**, of which there are four inside the series. Four events is
+#     the binding constraint, so inference is by **exhaustive placebo assignment** — every eligible month in
+#     the series is tried as if it were the transition — rather than by a t-statistic that assumes the
+#     events are independent draws.
+#   * Nothing here is pooled into a single "tenure effect". Four event-level estimates and their placebo
+#     distribution are published, and the party split is reported as **description with no test**, because
+#     two events against two events carries no inference at all.
+#
+# ---------------------------------------------------------------------------------------------
+version: 1
+labelled: "2026-10-18"
+spec_path: "analysis/specs/events.yml"
+engine: "analysis/R/06_events.R"
+verifier: "tests/verify_events.py"
+
+input:
+  database: "data/analytics.duckdb"
+  national_conflict_table: "main_analytics.ucdp_national_monthly"
+  oil_metric_id: oil
+  fact_metric_table: "main_analytics.fact_metric"
+  administration_term_table: "main_analytics.dim_administration_term"
+
+# ---------------------------------------------------------------------------------------------
+# The series
+# ---------------------------------------------------------------------------------------------
+# UCDP GED national monthly counts, from the start of the civilian era to the end of the archive. The
+# conflict series is the only monthly outcome in the base (`analysis/specs/outcomes.yml`: 22 of 25 metrics
+# are annual-native), and the FAAC panel is not used as an outcome here because it begins in 2016-12 and
+# would leave two transitions with no pre-period.
+series:
+  start_month: "1999-01"
+  end_month: "2024-12"
+  outcomes: [fatalities, incidents]
+  # The archive emits only months it covers: a month with no Nigeria event at all is absent, not zero.
+  blank_months_rule: >-
+    An absent month is filled with **zero** for the 1999-01 -> 2024-12 window and the count of filled months
+    is published on the artifact. The rule is declared rather than assumed because it is the only
+    discretionary step in the series: UCDP emits no row when no event was recorded, and dropping those
+    months instead would silently turn "no reported event" into "not in the sample" — which is the
+    difference between a mean and a conditional mean.
+  blank_months_why: >-
+    25 of the 312 months in the window have no row (all before 2010-01). UCDP GED coverage for Nigeria is
+    continuous over this window, so an absent month is read as a zero count, and the artifact prints the
+    per-year count of filled months so a reader can see where they are.
+
+# ---------------------------------------------------------------------------------------------
+# The events — one entry per in-window transition, with the reason for anything excluded
+# ---------------------------------------------------------------------------------------------
+events:
+  - id: yaradua_2007
+    term_id: 21
+    date: "2007-05-29"
+    label: "Yar'Adua sworn in"
+    tenure_stratum: PDP_first
+  - id: jonathan_2010
+    term_id: 31
+    date: "2010-05-06"
+    label: "Jonathan sworn in"
+    tenure_stratum: PDP_first
+    note: >-
+      Acting from 2010-02-09; the sworn-in date is the single decided boundary (`dim_administration`, S3-04)
+      and is not re-litigated here.
+  - id: buhari_2015
+    term_id: 41
+    date: "2015-05-29"
+    label: "Buhari sworn in"
+    tenure_stratum: APC_first
+  - id: tinubu_2023
+    term_id: 51
+    date: "2023-05-29"
+    label: "Tinubu sworn in"
+    tenure_stratum: APC_first
+    note: >-
+      The post-window is truncated by the end of the UCDP archive (2024-12): 19 months, below the 24-month
+      focus horizon, so this event is reported at h=12 only and that is stated rather than silently dropped.
+excluded:
+  - id: obasanjo_1999
+    date: "1999-05-29"
+    why: >-
+      No pre-period. The conflict series begins 1999-01, four months before the transition, and the design
+      needs 96 pre-months. This is the reason the earliest tenure cannot be compared on monthly conflict at
+      all — not a modelling choice but where the data starts.
+
+# ---------------------------------------------------------------------------------------------
+# Windows and the statistic
+# ---------------------------------------------------------------------------------------------
+windows:
+  pre_months: 96
+  focus_horizons: [12, 24]
+  post_end_rule: >-
+    A post-window is truncated at the next transition, so an event is never compared against months that
+    belong to its successor. With four transitions 36 to 96 months apart, the truncated windows are the
+    honest ones: sharing months between two events would double-count the same violence.
+  min_post_fraction: 0.75
+  min_post_rule: >-
+    A truncated post-window is kept only when it still covers **75 % of the requested horizon** — 9 of 12
+    months, 18 of 24. The floor is a fraction rather than a month count because the two horizons are of
+    different lengths: a rule stated in months would either admit four months as an "h = 24" estimate or
+    reject a 20-month window out of 24. Every kept row carries `truncated_by_next_transition`; a window
+    below the floor is published as `not_estimated` with its reason and the number of months it had, and
+    is never fitted.
+  min_pre_months: 96
+
+statistic:
+  estimator: "Poisson ML (quasi-likelihood); `glm(family = poisson)` in R, `statsmodels.GLM(Poisson)` in the verifier"
+  formula: "count ~ post + factor(month_of_year) + trend"
+  trend: "months since the series start, linear; declared rather than selected"
+  report: "exp(beta_post) - 1, the proportional monthly shift in the count over the post window"
+  covariance: "Newey-West (HAC), 12 lags, computed by `sandwich::NeweyWest(prewhite = FALSE)` and `statsmodels` HAC"
+  hac_lags: 12
+  covariance_note: >-
+    The two implementations apply different small-sample corrections to the HAC weights, so the coefficient
+    is compared at 1e-6 and the standard error at a **stated 5 % allowance**, with the observed gap printed
+    — the same comparison Stage 6 and Stage 7 use, and for the same reason: a tolerance that is stated and
+    measured is a check, while matching to numerical precision would fail on a convention.
+  controls_variants:
+    seasonality_trend: "the declared baseline"
+    seasonality_trend_oil: >-
+      adds log(Brent). The fiscal channel reaches the states with a two-to-three-month lag (C-48), so a
+      post-window shift could be the oil price rather than the transition; this variant is the check on that
+      and is reported beside the baseline in every row.
+
+# ---------------------------------------------------------------------------------------------
+# Inference: exhaustive placebo assignment, not a t-statistic
+# ---------------------------------------------------------------------------------------------
+inference:
+  rule: >-
+    Every eligible month in the series is tried as if it were a transition, with the same windows, statistic
+    and controls. The p-value is the **tail in the direction of the estimate** — for an increase, the share of
+    placebo statistics at least as large; for a decline, the share at most as small — and it is reported per
+    event and for the largest of the four real events, the latter because a reader looking at four estimates
+    is looking at the largest of them whether or not the artifact says so. The p-value is the add-one
+    randomisation form, `(1 + #{tail}) / (n + 1)`, so it is never zero: with 58 placebo months the smallest
+    attainable value is 1/59 = 0.017, and the artifact may not claim more resolution than that.
+  direction: same_side_tail
+  direction_why: >-
+    Declared as the same-side tail rather than one-sided on increase, because the headline case people ask
+    about — the 2015 transition — is a **fall** in reported violence, and an increase-only rule would report
+    every decline as "no shift" by construction. It is also not tested in absolute magnitude: the placebo
+    null is not centred on zero (reported fatalities drift down through the window, so the placebo
+    distribution sits near a 32 % decline), and a magnitude test against an off-centre null would score a
+    large fall as "easily matched" while its own left tail says the opposite. The signed tail uses the
+    empirical null as it actually is.
+  buffer_months: 24
+  eligible_months: >-
+    A month is eligible when it has `pre_months` before it and enough months after it inside the series to
+    satisfy `min_post_fraction` at the **longest** declared horizon (18 months), and it lies more than
+    `buffer_months` from any real transition. Requiring the strictest horizon of every placebo month keeps
+    the placebo distribution identical across horizons, so a p-value at h = 12 and one at h = 24 are drawn
+    from the same set. The exclusion buffer is declared so that a placebo cannot be a real transition
+    wearing a different hat.
+  deterministic: >-
+    The placebo set is **enumerated, not sampled**: no random number generator is involved, so the engine and
+    the verifier compute the same distribution from the same data. A sampled placebo set would make the
+    published p-value a property of the seed.
+
+# ---------------------------------------------------------------------------------------------
+# The two checks that decide whether an estimate means anything
+# ---------------------------------------------------------------------------------------------
+verdict_rule: >-
+  Per event, per outcome, at the h=12 focus horizon in the declared baseline variant: **`shift_detected`**
+  when the per-event placebo p-value is <= 0.05 *and* the pre-trend placebo shift is smaller in magnitude
+  than the post-window shift; **`not_interpretable_pre_trend`** when the pre-trend shift is at least as large;
+  **`check_not_available`** when the pre-trend placebo cannot be run at all (it needs 120 months before the
+  transition and the series is shorter behind the earliest event) — a missing check is reported as missing,
+  not as a null; **`no_shift_detected`** otherwise. The family-wise p-value is published for every event
+  regardless of its verdict, because four events read together are the largest of four whatever the rule says.
+
+checks:
+  pre_trend_placebo: >-
+    For each event the same statistic is estimated with the post-window placed 24 months *before* the real
+    transition (so the real transition is not inside the pseudo-post window). If a shift of comparable size
+    is already there, the post-window shift is a continuation, not a change, and the event is reported with
+    that check failed rather than with a coefficient. The check needs `pre_months + 24` months of history
+    before the transition; where the series does not reach back that far the event is marked
+    `check_not_available` with the months it had, and no verdict is attached.
+  reporting_divergence: >-
+    Both outcomes are estimated at every event. A violation of the archive's reporting — a change in what the
+    archive records rather than in what happened — can move one series without moving the other; the artifact
+    reports the two shifts side by side and flags any event where their signs disagree.
+  mde: >-
+    The minimum detectable proportional shift at 80 % power is computed per event from the pre-window residual
+    scale and published beside the estimate, as in Stage 5, because "not significant" and "not detectable"
+    are different statements and the second is what four events buys.
+
+# ---------------------------------------------------------------------------------------------
+# The party split is description, and it is declared as description
+# ---------------------------------------------------------------------------------------------
+party_split:
+  rule: >-
+    The four estimates are grouped by the incoming tenure stratum (PDP for 2007 and 2010, APC for 2015 and
+    2023) and reported as counts and their median. **No test statistic is computed**, because two events
+    against two events has no sampling distribution: any p-value would be a number manufactured by an
+    assumption. The verifier asserts that no test field is populated.
+  why: >-
+    This is the closest the artifact comes to the question a reader is asking, and the honest answer is a
+    description with its n printed. It is here rather than omitted so that the temptation is answered in the
+    artifact instead of in prose.
+
+# ---------------------------------------------------------------------------------------------
+# What this stage does not claim
+# ---------------------------------------------------------------------------------------------
+not_claimed:
+  - "A causal effect of a tenure, a party or a president on conflict. The design is a within-series timing comparison and nothing here identifies a counterfactual."
+  - "That conflict is measured without reporting bias. UCDP GED is a reported-events archive; the divergence check is a guard, not a fix."
+  - "A pooled 'tenure effect'. Four event-level estimates are published; there is no average."
+  - "Anything about the annual outcome domains. They have no monthly series, which is the same wall Stage 5 hit."

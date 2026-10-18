@@ -22,7 +22,7 @@ documents, which are the state fiscal dose, and the UCDP GED security events, wh
 state-attributed outcome (keyless: its bulk archive needs no token, C-45) — 36 causal graphs are generated
 and verified, 242 series are quality-gated, `dbt/` builds the analytical base the models and the app read,
 and Stage 5 has attached a **pre-check verdict to every card — 0 of 36 pass** (15 fail, 7 degraded, 14 not
-attempted; `docs/design-memo.md`). The verdicts have been re-run three times, once per data delivery (the
+attempted; `docs/design-memo.md`; re-run at vintage 2026-10-18 over the widened donor pool). The verdicts have been re-run three times, once per data delivery (the
 artifact on disk is `registry/diagnostics/2026-10-17/`), and the totals never moved while the reasons did:
 Family A is dropped because the dose's per-capita axis waits on the population denominator (X-09), not for
 want of a dose or an outcome.
@@ -51,6 +51,24 @@ channel**, which is a *mediator* node on every B card, and Design C was not run.
 once instead of implying them nine times, every `not_estimated` card names a reason from a closed set, and
 `tests/verify_registry.py` re-derives the mapping and checks each number against the artifact it names. Read
 `PROGRESS.md` for what is verified and what is blocked.
+
+**Stage 5 has since been re-run against a widened Design C donor pool (vintage 2026-10-18).** The candidate
+set went from 13 GDP-selected countries to **99 candidates screened on oil dependence, region/income band
+and coverage**, and the pre-fit gate moved from `infeasible` on everything to **`pass` on `u5mr` (3 of its
+4 runnable windows)** with `gdp_growth` (1 of 4) and `cpi_yoy` (0 of 4) still failing — under a rollup rule
+that is now **declared** (strict majority of runnable windows). Two cautions travel with it and are on the
+artifact: a 99-donor simplex can fit almost any pre-period, so the gate is weaker evidence than it was at
+13 donors; and Design C is still **not estimated** — the estimator and its placebos are the next build. The
+quality gate now covers **672 series** (was 242) and the donor panel is 27,352 rows.
+
+**Stage 8b has since answered the one tenure-shaped question the data can carry** (`docs/events.md`,
+`registry/events/2026-10-17/`): monthly conflict around the four in-window transitions, 32 specifications,
+inference by exhaustive placebo assignment over 58 eligible months. **2 of 8 event-outcome cells survive both
+the placebo and the pre-trend check** (2010 incidents +391 %, 2023 fatalities +77 %, each p = 0.017), four
+fail the pre-trend, one transition cannot be checked at all (Yar'Adua 2007 — 100 months of history against a
+120-month requirement, reported as `check_not_available`, never as a null). The party split is published as
+description with `no_test_computed: true`. If someone asks to *compare the tenures*, start here and say what
+the four events can and cannot carry; do not produce a party effect.
 
 **Scope upgrade (2026-10-10):** it is no longer a comparison dashboard. It is an
 interactive causal-inference explorer — visitors ask causal questions of a model *and*
