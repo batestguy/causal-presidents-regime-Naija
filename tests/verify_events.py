@@ -600,6 +600,53 @@ def main() -> int:
     if not str(document.get("verdict_rule", "")).strip() or not str(document.get("verifier", "")).strip():
         fail(failures, "claims: the artifact does not carry its verdict rule and verifier path")
 
+    # ---- the narrative cannot drift from the verdicts it quotes ------------------------------
+    # `docs/events.md` said "four of the eight fail on the pre-trend" while the artifact had three
+    # failing and two that could not be checked, and every verifier passed, because none of them read
+    # the prose. The counts below are recomputed from the verdicts this run just re-derived and then
+    # required to appear in the documents that quote them — a literal typed here would only catch a
+    # document that changed, not a verdict that moved underneath one that did not.
+    status_counts: dict[str, int] = {}
+    for verdict in verdict_rows.values():
+        status_counts[str(verdict["status"])] = status_counts.get(str(verdict["status"]), 0) + 1
+    shifted = status_counts.get("shift_detected", 0)
+    pre_trend = status_counts.get("not_interpretable_pre_trend", 0)
+    unavailable = status_counts.get("check_not_available", 0)
+    no_shift = status_counts.get("no_shift_detected", 0)
+    n_cells = len(verdict_rows)
+    words = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight",
+             9: "nine", 10: "ten"}
+    w = lambda n: words.get(n, str(n))  # noqa: E731 — a two-word helper, not a policy
+    claims = {
+        "docs/events.md": [
+            (f"**{w(shifted)} of the {w(n_cells)} cells survive both checks**",
+             "the number of cells surviving both checks"),
+            (f"{w(pre_trend)} of the {w(n_cells)} fail on the pre-trend",
+             "the number of cells failing the pre-trend check"),
+        ],
+        "docs/limitations.md": [
+            (f"**{w(shifted).capitalize()} of {w(n_cells)} event-outcome cells**",
+             "the number of cells surviving both checks"),
+            (f"{w(pre_trend)} fail the pre-trend",
+             "the number of cells failing the pre-trend check"),
+        ],
+    }
+    for rel, required in claims.items():
+        path = REPO_ROOT / rel
+        if not path.exists():
+            fail(failures, f"claims: {rel} is missing, so its claims cannot be checked")
+            continue
+        # Whitespace-normalised: the documents wrap prose, and a claim must not fail because a line
+        # break moved. Bold markers are kept, so "**two of the eight cells**" still means that phrase.
+        text = " ".join(path.read_text(encoding="utf-8").split())
+        for needle, what in required:
+            if needle not in text:
+                fail(failures, f"claims: {rel} does not carry {needle!r} — {what} has moved under the "
+                               f"narrative")
+    print(f"narrative        : {shifted} shift / {pre_trend} pre-trend / {unavailable} unavailable / "
+          f"{no_shift} no-shift of {n_cells} cells, quoted counts checked in docs/events.md and "
+          f"docs/limitations.md")
+
     return finish(failures)
 
 

@@ -439,7 +439,8 @@ flips visible in the figure rather than buried in a table.
 
 ## Stage 8 — Analysis products and interpretation
 
-**STATUS: IN PROGRESS (2026-10-18).** The registry half is built: spec `analysis/specs/registry.yml`,
+**STATUS: BUILT (2026-10-21) — the registry, the three figures, the limitations narrative, the transition
+event study and the retrieval corpus.** Stage 9 can be built without R. The registry half is built: spec `analysis/specs/registry.yml`,
 engine `analysis/R/05_registry.R`, verifier `tests/verify_registry.py`, output `docs/registry.md`, cards and
 index at schema 0.3.0. **Two of 36 cards carry a published number; 34 carry a reason**, and the two
 design-level results (Design B's channel, Design C's non-run) sit on the index where they cannot be mistaken
@@ -464,20 +465,68 @@ party split published as description with no test. **2 of 8 event-outcome cells 
 pre-trend, 1 cannot be checked at all.** The level question ("which tenure was better?") is still refused,
 because it needs the counterfactual Design C cannot supply (S8b-01).
 
-**Still to do in this stage:** the remaining figures (forest plot — the specification curve landed with
-Stage 7, the transition panels with Stage 8b), the RAG corpus with the registry's vintage stamp, the RAGAS
-evaluation set, and the limitations-before-findings narrative.
+**The forest plot is now built (2026-10-18), and it is the last figure this stage asked for.**
+`registry/estimates/2026-10-18/forest_plot.svg`, declared in `analysis/specs/estimation.yml` and rendered by
+`analysis/R/03_estimate.R` from the artifact's own rows. Two panels rather than one axis, because Design
+A's coefficient is a state-month elasticity and Design B's is a national cumulative response — both
+log-points, but a shared axis would invite a comparison the artifact never makes. Each design's decisive
+check is drawn **hollow** beside its estimate (A: the 24-month mis-timed dose that returns an estimate as
+large as the published one; B: the 6-month lead placebo), because a forest plot of estimates alone would
+show a number its own artifact says is not identified without showing why. Labels are text, not glyph
+outlines — the verifier asserts every published specification appears in the file, so a render loop that
+stopped early fails rather than shipping a picture that looks complete.
+
+**The limitations narrative is built (2026-10-20), before the RAG corpus that has to embed it.**
+`docs/limitations.md` is the boundary the findings sit inside: the arithmetic that makes the tenure
+question unanswerable, the 16.2 %-observed spine, the coverage table node by node, Design A's failed
+timing check and its interval that crosses zero, Design B's 0.0625 timing bound, Design C's
+permission-not-result, the inference floors (36 clusters, Oster δ negative, Rosenbaum not applicable,
+four events with a 1/59 p-floor), the 45/36 sign split, and what reproduction still cannot do. It is
+longer than the findings page on purpose (base spec §19). **Its numbers are checked as claims**: the
+needles are derived from the artifacts in `tests/verify_registry.py`, `tests/verify_events.py` and
+`tests/verify_stage5.py`, so prose cannot stay still while an artifact moves. Writing it found two such
+drifts already — `docs/events.md` claimed four pre-trend failures where the artifact has three (plus two
+uncheckable), and `docs/design-memo.md` still described the pre-FAAC base's 10.1 % observed share.
+
+**The retrieval layer is now built (Stage 8c, 2026-10-21).** `analysis/specs/rag.yml`,
+`analysis/specs/rag_eval.yml`, `scripts/build_rag_corpus.py`, `scripts/eval_rag.py`,
+`tests/verify_rag.py`, `registry/rag/2026-10-18/`, `docs/rag.md`. **441 chunks from 51 attributed sources** at
+the registry's vintage — one document per model card (179 parts), the three design results, the narrative
+(178), the data dictionary (47), the transition events (13), the administration and shock tables (8), the
+two coverage counts and the scope paragraph. No chunk is authored by hand: every one is a serialisation of an
+artifact whose sha256 is recorded, and a source edited without a rebuild fails the verifier. Two numbers
+changed the design before anything shipped: the base spec's `all-MiniLM-L6-v2` caps at **256 tokens**, which
+would have truncated every chunk past ~1,000 characters, so the corpus uses `multi-qa-MiniLM-L6-cos-v1`
+(512 tokens, same 384 dims), and `--embed` counts the model's own tokens and fails the build rather than
+truncating — which it did once, at a 935-token table chunk.
+
+**The measured answer is mixed, and published as such.** Embedding retrieval recall@5 is **0.944** against a
+BM25 baseline's 0.833 (MRR 0.724 / 0.676), so the model earns its place. The two refusal gates **fail**: the
+refusal-with-reason recall is **0.5** (one compound question retrieves the tenure-limitations passage instead
+of the Design C one) and out-of-scope refusal is **0.25**, because a forecast or a recommendation about a
+covered outcome embeds closer to the corpus than some genuine questions do — similarity alone cannot refuse
+an on-topic out-of-scope question, and the app will need an intent gate. RAGAS is **not run**: it needs a
+generation step and a judge model and this repository has no LLM key, so the artifact declares it `not_run`
+with that reason and the eval set carries the `ground_truth` column a RAGAS run would need.
+
+**Still to do in this stage:** nothing blocking Stage 9. The remaining items are the generation half of the
+RAG evaluation (a key away) and adding families the corpus currently summarises rather than chunks (the donor
+panel, the robustness grid).
 
 **Work**
 
 - **Model registry assembly** — the app's complete data contract.
-- Figures: forest plot with intervals, ✅ event-study panels (Stage 8b), ✅ specification curve (Stage 7).
-- **Limitations drafted before findings** (base spec §19 ordering discipline: limitations longer than
-  findings). Write what cannot be identified first; then what holds.
-- **RAG corpus** — one chunk per model card, plus methodology, data dictionary, shock annotations,
-  administration table, limitations. Share the registry's `vintage_date` stamp so a stale answer cannot
-  outlive the model it quotes.
-- **RAGAS evaluation set** — question/answer pairs authored against the finished registry, wired into CI.
+- Figures: ✅ forest plot with intervals (Stage 8), ✅ event-study panels (Stage 8b), ✅ specification curve (Stage 7).
+- ✅ **Limitations drafted before findings** (`docs/limitations.md`, 2026-10-20; base spec §19 ordering
+  discipline: limitations longer than findings).
+- ✅ **RAG corpus** — `registry/rag/2026-10-18/`: one document per model card (split into parts at the
+  embedding budget), plus the design results, methodology, data dictionary, shock annotations, administration
+  table and the limitations page, all sharing the registry's `vintage_date` so a stale answer cannot outlive
+  the model it quotes. See `docs/rag.md`.
+- **RAGAS evaluation set** — ✅ authored and wired (22 questions: 16 answerable, 2 refusals with a cited
+  reason, 4 out of scope) and ✅ measured on the retrieval half in CI. ⏳ The generation half (faithfulness,
+  answer relevance) is declared `not_run` in the artifact until an LLM key exists; the reference answers are
+  already in the set.
 
 **Exit criteria.** Stage 9 can be built without opening R. If a card and the narrative disagree, the
 **card wins** and the narrative is regenerated.

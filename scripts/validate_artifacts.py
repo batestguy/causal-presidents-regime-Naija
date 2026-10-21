@@ -19,7 +19,8 @@ against the artifacts on disk:
   2. the newest Stage 3 report's own label is a date (S4-20), and the report agrees with its directory;
   3. the newest Stage 5 diagnostics describe the newest Stage 3 report (the C-44 invariant);
   4. the newest Stage 6 estimates describe the newest Stage 3 report (the same invariant, second
-     consumer);
+     consumer), and the forest plot they name is a real SVG whose byte count is the one the artifact
+     recorded — a figure that outlives its rows is a picture of a different result;
   5. the same invariant for the Stage 7 robustness artifact, plus its internal arithmetic: the support
      counts it publishes must equal the counts of its own specification rows, exactly one specification
      per design may be flagged pre-registered, and the specification curve it names must exist and be a
@@ -40,6 +41,7 @@ Usage:
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import zipfile
@@ -52,6 +54,7 @@ DIAG_ROOT = REPO_ROOT / "registry" / "diagnostics"
 ESTIMATES_ROOT = REPO_ROOT / "registry" / "estimates"
 ROBUSTNESS_ROOT = REPO_ROOT / "registry" / "robustness"
 EVENTS_ROOT = REPO_ROOT / "registry" / "events"
+RAG_ROOT = REPO_ROOT / "registry" / "rag"
 CARDS_DIR = REPO_ROOT / "registry" / "dags"
 SCHEMA_DIR = REPO_ROOT / "registry" / "schema"
 
@@ -222,7 +225,38 @@ def check_stage6_matches_stage3(failures: list[str], quality_vintage: str | None
                 f"registry/estimates/{newest.name}: a specification is missing {sorted(missing)} — the "
                 "json_contract in analysis/specs/estimation.yml requires them on every row"
             )
-    print(f"stage 6 artifact : {newest.name} ({len(specs)} specifications, contract fields present)")
+    # The figure block (added 2026-10-18 with the forest plot). The verifier checks that every published
+    # specification is labelled in the file; this is the cheaper invariant that the picture belongs to the
+    # rows beside it at all. Recorded bytes against bytes on disk is what a stale figure looks like from
+    # the outside — the same content, one re-fit behind.
+    figure = document.get("figure") or {}
+    figure_path = newest / str(figure.get("path", ""))
+    if not figure:
+        failures.append(
+            f"registry/estimates/{newest.name}: the spec declares a figure but the artifact carries no "
+            "figure block — analysis/R/03_estimate.R was re-run before the `figure` block existed"
+        )
+    elif not figure_path.exists() or figure_path.stat().st_size == 0:
+        failures.append(
+            f"registry/estimates/{newest.name}: {figure.get('path')!r} is missing or empty — every "
+            "published estimate group ships with the interval figure it is read from"
+        )
+    else:
+        svg = figure_path.read_text(encoding="utf-8", errors="replace")
+        if "<svg" not in svg:
+            failures.append(f"registry/estimates/{newest.name}: {figure.get('path')} is not an SVG")
+        # Canonical (LF) size: the index stores eol=lf, so a raw size is true only on a Windows checkout.
+        actual_bytes = len(figure_path.read_bytes().replace(b"\r\n", b"\n"))
+        if figure.get("bytes") != actual_bytes:
+            failures.append(
+                f"registry/estimates/{newest.name}: the artifact records {figure.get('bytes')} bytes for "
+                f"{figure.get('path')} and the file is {actual_bytes} — the figure is stale against the rows"
+            )
+        if not specs:
+            failures.append(f"registry/estimates/{newest.name}: a figure is published for zero specifications")
+
+    print(f"stage 6 artifact : {newest.name} ({len(specs)} specifications, contract fields present, "
+          f"figure {figure.get('path', '—')})")
 
 
 def check_stage7(failures: list[str], quality_vintage: str | None) -> None:
@@ -477,6 +511,73 @@ def check_events(failures: list[str], quality_vintage: str | None) -> None:
           f"{len(unavailable)} declared uncheckable pre-trend(s), cells accounted for)")
 
 
+def check_rag(failures: list[str], quality_vintage: str | None) -> None:
+    """The retrieval corpus: same vintage invariant, plus the two pointers a rebuild can break silently.
+
+    `tests/verify_rag.py` re-hashes every source and recomputes every metric. What is checked here is the
+    cheap cross-artifact contract: the corpus is stamped with the newest gate vintage, the vectors it names
+    exist and hash to what it recorded, and the retrieval evaluation describes the corpus that is on disk.
+    A rebuild that regenerated the text but left the old vectors (or vice versa) is the failure this catches.
+    """
+    newest = newest_dir(RAG_ROOT)
+    if newest is None:
+        print("stage 8c artifact: none yet (registry/rag/ is empty)")
+        return
+    if not DATE_LABEL.match(newest.name):
+        failures.append(
+            f"registry/rag/{newest.name}: the vintage is not a date, so a consumer that selects the newest "
+            "by date will skip it (C-44, S4-20)"
+        )
+    corpus_path = newest / "corpus.json"
+    if not corpus_path.exists():
+        failures.append(f"{corpus_path.relative_to(REPO_ROOT)}: missing")
+        return
+    corpus = json.loads(corpus_path.read_text(encoding="utf-8"))
+    if corpus.get("vintage") != newest.name:
+        failures.append(
+            f"registry/rag/{newest.name}: the corpus vintage is {corpus.get('vintage')!r}, which disagrees "
+            "with the directory holding it"
+        )
+    if quality_vintage and corpus.get("vintage") != quality_vintage:
+        failures.append(
+            f"registry/rag/{corpus.get('vintage')}: built against a different gate vintage than the newest "
+            f"({quality_vintage}) — re-run scripts/build_rag_corpus.py"
+        )
+
+    embedding = corpus.get("embedding") or {}
+    if embedding.get("status") == "built":
+        vectors = newest / "embeddings.npz"
+        if not vectors.exists():
+            failures.append(f"registry/rag/{newest.name}: the corpus says the vectors are built and "
+                            "embeddings.npz is missing")
+        elif embedding.get("sha256") != hashlib.sha256(vectors.read_bytes()).hexdigest():
+            failures.append(f"registry/rag/{newest.name}: the recorded embeddings sha256 does not match the "
+                            "file — the text and the vectors are one edit apart")
+        if embedding.get("n_chunk_vectors") != corpus.get("counts", {}).get("chunks"):
+            failures.append(f"registry/rag/{newest.name}: {embedding.get('n_chunk_vectors')} vectors for "
+                            f"{corpus.get('counts', {}).get('chunks')} chunks")
+
+    eval_path = newest / "eval_set.json"
+    retrieval_path = newest / "retrieval_eval.json"
+    if not eval_path.exists() or not retrieval_path.exists():
+        failures.append(f"registry/rag/{newest.name}: eval_set.json and/or retrieval_eval.json missing")
+        return
+    eval_set = json.loads(eval_path.read_text(encoding="utf-8"))
+    retrieval = json.loads(retrieval_path.read_text(encoding="utf-8"))
+    if eval_set.get("vintage") != corpus.get("vintage"):
+        failures.append(f"registry/rag/{newest.name}: eval set vintage {eval_set.get('vintage')!r} != "
+                        f"corpus vintage {corpus.get('vintage')!r}")
+    if retrieval.get("corpus", {}).get("sha256") != hashlib.sha256(corpus_path.read_bytes()).hexdigest():
+        failures.append(f"registry/rag/{newest.name}: retrieval_eval.json describes a different corpus — "
+                        "re-run scripts/eval_rag.py")
+    if retrieval.get("eval_set", {}).get("sha256") != hashlib.sha256(eval_path.read_bytes()).hexdigest():
+        failures.append(f"registry/rag/{newest.name}: retrieval_eval.json describes a different eval set")
+
+    print(f"stage 8c artifact: {newest.name} ({corpus.get('counts', {}).get('chunks')} chunks, "
+          f"{len(corpus.get('sources') or [])} attributed sources, embedding "
+          f"{embedding.get('status')}, retrieval eval describes this corpus)")
+
+
 def check_schemas(failures: list[str]) -> int:
     """Every registry JSON against its declared schema."""
     try:
@@ -511,6 +612,17 @@ def check_schemas(failures: list[str]) -> int:
         for error in events_validator.iter_errors(document):
             failures.append(f"{artifact.relative_to(REPO_ROOT)}: {error.message[:200]}")
         validated += 1
+
+    for name, pattern in (("rag_corpus.schema.json", "*/corpus.json"),
+                          ("rag_eval.schema.json", "*/eval_set.json"),
+                          ("rag_retrieval.schema.json", "*/retrieval_eval.json")):
+        schema = json.loads((SCHEMA_DIR / name).read_text(encoding="utf-8"))
+        validator = jsonschema.Draft202012Validator(schema)
+        for artifact in sorted(RAG_ROOT.glob(pattern)):
+            document = json.loads(artifact.read_text(encoding="utf-8"))
+            for error in validator.iter_errors(document):
+                failures.append(f"{artifact.relative_to(REPO_ROOT)}: {error.message[:200]}")
+            validated += 1
     return validated
 
 
@@ -538,6 +650,7 @@ def main() -> int:
     check_stage7(failures, quality_vintage)
     check_events(failures, quality_vintage)
     check_stage8_registry(failures)
+    check_rag(failures, quality_vintage)
 
     validated = check_schemas(failures)
     print(f"registry schemas : {validated} document(s) validated")

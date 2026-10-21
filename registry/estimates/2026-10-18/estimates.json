@@ -2,7 +2,7 @@
   "stage": 6,
   "layer": "estimation",
   "vintage": "2026-10-18",
-  "generated_at": "2026-10-18T12:04:10+0100",
+  "generated_at": "2026-10-21T03:34:59+0100",
   "generator": "analysis/R/03_estimate.R",
   "spec": "analysis/specs/estimation.yml",
   "verifier": "tests/verify_stage6.py",
@@ -597,6 +597,11 @@
       "next_step": "Build the Design C estimator and its placebos on the `u5mr` windows the gate now passes"
     }
   ],
+  "figure": {
+    "path": "forest_plot.svg",
+    "bytes": 12699,
+    "layout": "two panels side by side, one per design, each with its own axis. One row per published specification: the estimate as a filled point with its 95 % interval, and the zero rule. The decisive check of each design is drawn **hollow** beside its estimate (A: the 24-month mis-timed dose that returns an estimate as large as the published one; B: the 6-month lead placebo), because a forest plot of estimates alone would show a number whose own artifact says it is not identified without showing why."
+  },
   "specifications": [
     {
       "design": "A",

@@ -1,0 +1,251 @@
+# Stage 8 — the RAG evaluation set: questions the corpus must be able to answer, and to refuse
+#
+# Authored against the finished registry and limitations page, before any retrieval number is measured.
+# `scripts/build_rag_corpus.py` validates every question against the corpus it just built: a `gold` chunk id
+# that does not exist, a needle that does not appear in its gold chunk, or a refusal that cites nothing is a
+# build failure. That is deliberate — an eval set pointing at chunks that do not exist measures nothing, and
+# a needle that has drifted from the corpus would fail the harness for the wrong reason.
+#
+# The three types, and why the refusal ones are not an afterthought:
+#
+#   * `answerable` — the gold chunk(s) must be retrieved and the assembled answer must contain the needles.
+#     These are the questions the app's starter prompts are taken from.
+#   * `refusal_with_reason` — the question is one the data cannot answer, and the gold chunk is the passage
+#     that says *why*. The answer must be the refusal template citing it. This is the chunk family that
+#     makes "I don't have a model for that" a citation rather than a shrug (R-04, docs/limitations.md).
+#   * `out_of_scope` — nothing in the corpus supports it: a forecast, a mid-century fact, a normative
+#     recommendation. No gold chunk by construction; the check is that the top-1 similarity falls below the
+#     declared refusal threshold, i.e. the layer refuses instead of retrieving the nearest plausible text.
+#
+# `reference_answer` is not used by the offline harness (there is no generation step yet, and no LLM key).
+# It is carried so the RAGAS half can be wired the day a key exists: question, contexts, answer, ground_truth.
+version: 1
+labelled: "2026-10-18"
+spec_path: "analysis/specs/rag_eval.yml"
+corpus_spec: "analysis/specs/rag.yml"
+
+questions:
+  # ---------------------------------------------------------------------------------------------
+  # The published numbers — the two cards that carry one, and the design-level results
+  # ---------------------------------------------------------------------------------------------
+  - id: q01_fatalities_elasticity
+    type: answerable
+    question: "What did the published estimate find for the effect of FAAC allocations on reported fatalities?"
+    gold: ["card:fatalities__A"]
+    must_contain: ["+0.4793", "[-0.1132, +1.0718]"]
+    reference_answer: >-
+      The published Design A specification is a PPML elasticity of fatalities to the logged gross FAAC
+      allocation of +0.4793 (SE 0.3023), 95 % interval [-0.1132, +1.0718], p = 0.1129, on 3,456 state-months
+      for 36 states from 2016-12 to 2024-12. The interval crosses zero and the verdict is
+      `estimated_not_identified`.
+
+  - id: q02_fatalities_identified
+    type: answerable
+    question: "Is the fatality estimate identified, and which check decided that?"
+    gold: ["card:fatalities__A"]
+    must_contain: ["estimated_not_identified", "the lead-shift p-value is 0.133"]
+    reference_answer: >-
+      No. The pre-declared rule requires a lead-shift p-value below 0.05 and a 24-month placebo smaller than
+      the estimate; the lead-shift p-value is 0.133, with 8 of 60 mis-timed doses returning an estimate at
+      least as large as the published one. The verdict is `estimated_not_identified`.
+
+  - id: q03_incidents_interval
+    type: answerable
+    question: "What is the point estimate and 95 % interval for the effect on the number of reported incidents?"
+    gold: ["card:incidents__A"]
+    must_contain: ["+0.5460", "[+0.1211, +0.9709]"]
+    reference_answer: >-
+      +0.5460 with a 95 % interval of [+0.1211, +0.9709], p = 0.0118, on the same 3,456 state-months. The
+      interval excludes zero, but the same lead-shift check fails (p = 0.133), so the card still reads
+      `estimated_not_identified`.
+
+  - id: q04_oil_to_states
+    type: answerable
+    question: "How much of a Brent crude oil shock reaches state governments, and after how long?"
+    gold: ["result:B"]
+    must_contain: ["+0.5181", "cumulative log change in national FAAC"]
+    reference_answer: >-
+      Design B is a local projection of the cumulative log change in national FAAC on the Brent shock. The
+      response is -0.1600 at h = 0, +0.5181 at h = 2 (interval [+0.1919, +0.8443]) and +0.4698 at h = 3, so
+      roughly a 10 % Brent move reaches the states as about 5 % more money two to three months later. Only
+      h = 2 and h = 3 exclude zero.
+
+  - id: q05_design_b_robust
+    type: answerable
+    question: "Did Design B's result survive the robustness grid?"
+    gold: ["result:B", "doc:robustness#s02"]
+    must_contain: ["24 of 24"]
+    reference_answer: >-
+      Its sign did: 24 of 24 specifications are positive and all 24 intervals exclude zero. Its timing is
+      weaker — the in-time placebo over 48 shifted alignments returns p = 0.0625, published as a bound
+      rather than widened until it passed.
+
+  - id: q06_design_c_status
+    type: answerable
+    question: "Was the synthetic control estimated, and if not, why not?"
+    gold: ["result:C", "doc:estimates#s02", "doc:design-memo#s04"]
+    must_contain: ["not_run", "3 of its 4 runnable windows"]
+    reference_answer: >-
+      Not run. The donor pool was widened to 99 candidates and the pre-fit gate now passes u5mr on 3 of its
+      4 runnable windows, so the design is no longer infeasible for want of a pool — but the estimator and
+      the in-space and in-time placebos are not built. The pass is permission to build, not a result.
+
+  - id: q07_u5mr_synthetic_control
+    type: answerable
+    question: "Can you show me an estimate for under-5 mortality under the synthetic-control design?"
+    gold: ["card:u5mr__C"]
+    must_contain: ["design_not_run"]
+    reference_answer: >-
+      No. The card carries no number: the design was not run, so the reason code is `design_not_run` and the
+      design-level reason is on the index.
+
+  # ---------------------------------------------------------------------------------------------
+  # Coverage, quality and the limitations — the chunks that make refusal answerable
+  # ---------------------------------------------------------------------------------------------
+  - id: q08_observed_share
+    type: answerable
+    question: "How much of the monthly data series is actually observed rather than interpolated?"
+    gold: ["doc:limitations#s02"]
+    must_contain: ["16.2 %"]
+    reference_answer: >-
+      1,349 of 8,350 rows are observed (16.2 %); 4,389 are interpolated and 2,612 unobserved. The app draws
+      interpolated months dashed and Stage 7 excludes them on a robustness axis.
+
+  - id: q09_tenure_comparison
+    type: answerable
+    question: "Why can't you tell me whether PDP or APC tenures did better?"
+    gold: ["doc:limitations#s01"]
+    must_contain: ["arithmetic, not a null result"]
+    reference_answer: >-
+      There are four to five administrations against 22–23 annual observations per outcome, and the mandated
+      oil x tenure interactions are collinear with the tenure dummies at R² 0.997–0.999, so the smallest
+      detectable effect is 35–99 residual standard deviations. It is a statement about arithmetic, not a
+      null result.
+
+  - id: q10_flagged_series
+    type: answerable
+    question: "How many of the landed series did the quality gates flag?"
+    gold: ["doc:limitations#s04"]
+    must_contain: ["313"]
+    reference_answer: >-
+      672 series are gated: 357 ok, 313 flagged and 2 empty. A flag means a rule fired and the reason
+      travels with the series; it does not mean the series was removed.
+
+  - id: q11_cards_with_numbers
+    type: answerable
+    question: "How many of the 36 model cards carry a published number?"
+    gold: ["coverage:registry", "doc:registry#s02"]
+    must_contain: ["2 cards carry a published estimate", "two `estimated` cards"]
+    reference_answer: >-
+      Two of 36. Both are Design A cards whose outcome Stage 6 published a specification for; the other 34
+      carry a reason from a closed set, and the two design-level results sit on the index.
+
+  - id: q12_interpolation_visible
+    type: answerable
+    question: "How can I tell an interpolated value from an observed one in the app?"
+    gold: ["doc:data-dictionary#imputation-and-how-to-tell-it-apart-from-data"]
+    must_contain: ["dashed"]
+    reference_answer: >-
+      Every row carries `observation_type`; the app draws `interpolated` segments dashed and Stage 7 excludes
+      them on a robustness axis. Interpolation is linear and only between two observations exactly twelve
+      months apart, and never for a count.
+
+  - id: q13_buhari_fatalities
+    type: answerable
+    question: "Did fatalities change after Buhari was sworn in in 2015, and can that shift be interpreted?"
+    gold: ["event:buhari_2015"]
+    must_contain: ["not_interpretable_pre_trend"]
+    reference_answer: >-
+      Fatalities fell 67.5 % over the 12 months after the transition (placebo p = 0.017), but the pre-trend
+      placebo moves 83.8 % over the same span, so the cell is `not_interpretable_pre_trend`: the series was
+      already moving that way before the transition.
+
+  - id: q14_covid_shock_band
+    type: answerable
+    question: "Which period does the COVID-19 shock band cover?"
+    gold: ["shock:2"]
+    must_contain: ["COVID-19", "2020-03-01"]
+    reference_answer: >-
+      The annotated COVID-19 band runs from 2020-03-01 to 2020-12-01; Brent averaged $18.38 in April 2020.
+      It is a declared annotation on the charts, not a break detected by a test.
+
+  - id: q15_president_2012
+    type: answerable
+    question: "Who was president in 2012, and for which party?"
+    gold: ["admin:3"]
+    must_contain: ["Goodluck Jonathan", "2010-05-06"]
+    reference_answer: >-
+      Goodluck Jonathan (PDP), from 2010-05-06 to 2015-05-29. Acting from 2010-02-09; the sworn-in date is
+      the single decided boundary of the administration spine.
+
+  - id: q16_u5mr_unit
+    type: answerable
+    question: "What unit is under-5 mortality measured in, and which direction is better?"
+    gold: ["card:u5mr__A"]
+    must_contain: ["per 1,000 live births", "down (lower is better)"]
+    reference_answer: >-
+      Per 1,000 live births, annual, and lower is better. The card's coverage status is `partial` because the
+      annual series is largely interpolation across a five-yearly NDHS cycle.
+
+  # ---------------------------------------------------------------------------------------------
+  # Refusals that must cite a reason
+  # ---------------------------------------------------------------------------------------------
+  - id: r01_which_president_better
+    type: refusal_with_reason
+    question: "Which president had the better record on child mortality?"
+    gold: ["doc:limitations#s01", "doc:estimates#s01"]
+    must_contain: ["not answerable", "annual observations per national outcome"]
+    refusal_must_cite: "doc:limitations#s01"
+    reference_answer: >-
+      I don't have a model for that. The tenure comparison needs a counterfactual the data cannot supply:
+      four to five administrations against 22–23 annual observations per national outcome. See
+      docs/limitations.md §1.
+
+  - id: r02_synthetic_control_tenure
+    type: refusal_with_reason
+    question: "Can the synthetic control tell me whether Buhari's tenure caused the fall in under-5 mortality?"
+    gold: ["result:C", "doc:estimates#s02"]
+    must_contain: ["not estimated here because the estimator", "still not estimated"]
+    refusal_must_cite: "result:C"
+    reference_answer: >-
+      I don't have a model for that. Design C passes its pre-fit gate on u5mr but is not estimated here
+      because the estimator and its placebos are not built; the pass is permission to build, not a result.
+      See the Design C published result.
+
+  # ---------------------------------------------------------------------------------------------
+  # Out of scope — no chunk supports these, and the layer must refuse rather than retrieve
+  # ---------------------------------------------------------------------------------------------
+  - id: o01_inflation_forecast
+    type: out_of_scope
+    question: "What will inflation be in 2030?"
+    gold: []
+    must_contain: []
+    reference_answer: >-
+      Refusal. The project holds historical series and published estimates; it makes no forecasts, and no
+      chunk supports one.
+
+  - id: o02_population_1960
+    type: out_of_scope
+    question: "What was Nigeria's population in 1960?"
+    gold: []
+    must_contain: []
+    reference_answer: >-
+      Refusal. The study window starts in 1999 and the corpus carries no 1960 population figure.
+
+  - id: o03_kano_population
+    type: out_of_scope
+    question: "How many people live in Kano today?"
+    gold: []
+    must_contain: []
+    reference_answer: >-
+      Refusal. No current sub-national population series is in the corpus (the state population denominator
+      is the unmade decision X-09).
+
+  - id: o04_normative_allocation
+    type: out_of_scope
+    question: "Should the federal government increase the FAAC allocation to the states?"
+    gold: []
+    must_contain: []
+    reference_answer: >-
+      Refusal. This is a normative question; the project publishes estimates with intervals and assumptions,
+      not recommendations.

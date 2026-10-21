@@ -110,8 +110,9 @@ run or was not applicable):
 | Tinubu 2023 | fatalities | +76.6 % | 0.017 | 52.8 % | **`shift_detected`** |
 | Tinubu 2023 | incidents | +6.7 % | 0.169 | 25.5 % | `not_interpretable_pre_trend` |
 
-Read the verdict column, not the shift column: **two of the eight cells survive both checks**, and four of
-the eight fail on the pre-trend — the same shift was already under way 24 months before the transition. The
+Read the verdict column, not the shift column: **two of the eight cells survive both checks**, three of
+the eight fail on the pre-trend — the same shift was already under way 24 months before the transition — and
+two cannot be checked at all (both Yar'Adua outcomes, 100 of the 120 months the check needs). The
 artifact publishes the coefficient, the interval and the MDE anyway, because a reader who wants to see the
 failing number should be able to.
 
@@ -177,7 +178,7 @@ Recorded on the artifact as `not_claimed` and checked by the verifier:
 ## 9. What this unlocks, and what it does not
 
 Start here when someone asks to compare tenures, and expect to say: on monthly conflict, two of eight
-event-outcome cells show a shift that survives the pre-trend check, four fail it, and one event cannot be
-checked at all. On everything else — health, education, the economy — there is no monthly series, so the
-only route to a tenure-level statement remains a counterfactual, which is the donor-pool problem Stage 5
-left open (`docs/design-memo.md`, Design C).
+event-outcome cells show a shift that survives the pre-trend check, three fail it, one shows no shift, and
+two cannot be checked at all. On everything else — health, education, the economy — there is no monthly
+series, so the only route to a tenure-level statement remains a counterfactual, which is the donor-pool
+problem Stage 5 left open (`docs/design-memo.md`, Design C).

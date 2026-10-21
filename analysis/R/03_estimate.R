@@ -319,6 +319,101 @@ checks$design_b$verdict <- list(
 )
 
 # ---------------------------------------------------------------------------------------------
+# Figure — the CI forest plot
+# ---------------------------------------------------------------------------------------------
+# Declared in the spec's `figure` block, rendered from `specs` and nothing else: this function reads the
+# artifact's own rows, so the picture cannot disagree with the table beside it. Base graphics on purpose —
+# no extra dependency for a figure whose whole content is points, segments and labels — and the labels are
+# drawn as text so that a verifier can look for every published specification in the rendered file rather
+# than trusting that the loop ran.
+fig_path <- file.path(out_dir, spec$figure$path)
+# `svglite`, not the base `svg()` device the Stage 8b panels use: the cairo device converts text to glyph
+# outlines, which renders identically but leaves no searchable label in the file — and the spec requires
+# this figure to carry every specification's label as text. Stage 7's curve already renders this way.
+svglite::svglite(fig_path, width = 11, height = 7.5)
+par(mfrow = c(1, 2), mar = c(4.2, 11.5, 3.4, 1.2))
+
+# `par("usr")` is only meaningful after a plot exists, so each panel takes its x-limits from its own rows
+# and pads them by the widest interval, which keeps a row's whisker off the frame edge.
+forest_panel <- function(rows, placebo_row, main, xlab, band = NULL) {
+  est <- vapply(rows, function(r) r$coefficient, numeric(1))
+  lo <- vapply(rows, function(r) r$ci_low, numeric(1))
+  hi <- vapply(rows, function(r) r$ci_high, numeric(1))
+  labs <- vapply(rows, function(r) r$label, character(1))
+  # Top row first: a reader scans a forest plot downward, so the first published row must be at the top.
+  y <- rev(seq_along(est))
+  vals <- c(lo, hi, 0, if (!is.null(placebo_row)) placebo_row$coefficient else NULL)
+  pad <- max(diff(range(vals)) * 0.06, 0.05)
+  plot(NA, xlim = range(vals) + c(-pad, pad), ylim = c(0.4, length(est) + 1.6), yaxt = "n",
+       xlab = xlab, ylab = "", main = main)
+  if (!is.null(band))
+    rect(par("usr")[1], min(y[band]) - 0.5, par("usr")[2], max(y[band]) + 0.5,
+         col = "#f0f0f0", border = NA)
+  abline(v = 0, col = "grey50")
+  segments(lo, y, hi, y, lwd = 2, col = "black")
+  points(est, y, pch = 19, cex = 1.1)
+  if (!is.null(placebo_row)) {
+    py <- length(est) + 1
+    segments(placebo_row$coefficient, py, placebo_row$coefficient, py, lwd = 2)
+    points(placebo_row$coefficient, py, pch = 1, cex = 1.2, lwd = 1.6)
+    labs <- c(paste0(placebo_row$label, " (hollow)"), labs)
+    y <- c(py, y)
+  }
+  axis(2, at = y, labels = labs, las = 1, cex.axis = 0.78)
+}
+
+a_rows <- Filter(function(s) s$design == "A", specs)
+for (i in seq_along(a_rows)) a_rows[[i]]$label <- gsub("_", " ", a_rows[[i]]$outcome)
+forest_panel(
+  a_rows,
+  list(label = sprintf("%d-month placebo", lead), coefficient = placebo_est),
+  main = sprintf("A — state dose-response\n(%d state-months, %s to %s)",
+                 nrow(panel), format(min(panel$period_month), "%Y-%m"), format(max(panel$period_month), "%Y-%m")),
+  xlab = "elasticity of conflict to the state's allocation (log-points)"
+)
+# Spaced, not the artifact's snake_case: this text is read by a person, and `not identified` is the
+# phrase the spec requires the figure to carry. (S8's rule that a card and the narrative must agree does
+# not apply here — the figure states the same verdict string, only reformatted.)
+mtext(sprintf("verdict: %s", gsub("_", " ", checks$design_a$verdict$status)), side = 3, line = -1.4,
+      adj = 0.02, cex = 0.75, col = "#b2182b")
+
+# The horizon lives in `lp_rows` and in the coefficient's name, not in the specification row, so it is
+# read back out of the name rather than assumed to be present.
+b_rows <- Filter(function(s) s$design == "B", specs)
+for (i in seq_along(b_rows))
+  b_rows[[i]]$horizon <- as.integer(sub("^.*_h", "", b_rows[[i]]$coefficient_name))
+for (i in seq_along(b_rows)) b_rows[[i]]$label <- sprintf("h = %d", b_rows[[i]]$horizon)
+band_idx <- which(vapply(b_rows, function(r) r$horizon >= peak_band[1] && r$horizon <= peak_band[2], logical(1)))
+forest_panel(
+  b_rows,
+  list(label = sprintf("%d-month lead placebo", lead_b), coefficient = pest),
+  main = sprintf("B — oil to state allocations\n(%d national months, %s to %s)",
+                 nrow(national), format(min(national$period_month), "%Y-%m"),
+                 format(max(national$period_month), "%Y-%m")),
+  xlab = "cumulative response of the allocation to a 1 % oil move (log-points)",
+  band = band_idx
+)
+mtext(sprintf("verdict: %s (declared peak band h = %d-%d, shaded)",
+              gsub("_", " ", checks$design_b$verdict$status), peak_band[1], peak_band[2]),
+      side = 3, line = -1.4, adj = 0.02, cex = 0.75)
+mtext("filled = published estimate with its 95 % CI · hollow = the design's decisive check",
+      side = 1, line = 2.6, adj = 0, cex = 0.72, col = "grey30")
+invisible(dev.off())
+# The figure's size is recorded on its *canonical* bytes (CRLF collapsed to LF), because `.gitattributes`
+# stores this repository's text with `eol=lf`. A raw `file.info()$size` is true only on the Windows checkout
+# that produced it: after any clone or the Linux runner the file is a few hundred bytes smaller and the
+# contract test would call a fresh figure stale. The Python consumers apply the same rule.
+canonical_bytes <- function(path) {
+  raw <- readBin(path, "raw", n = file.info(path)$size)
+  if (length(raw) == 0) return(0L)
+  is_cr <- raw == as.raw(13)
+  is_lf <- raw == as.raw(10)
+  crlf <- is_cr & c(is_lf[-1], FALSE)
+  sum(!crlf)
+}
+cat(sprintf("figure: %s (%d canonical bytes)\n", basename(fig_path), canonical_bytes(fig_path)))
+
+# ---------------------------------------------------------------------------------------------
 # Write
 # ---------------------------------------------------------------------------------------------
 estimates <- list(
@@ -348,6 +443,11 @@ estimates <- list(
          checks = checks$design_b[setdiff(names(checks$design_b), "verdict")]),
     list(id = "C", status = "not_run", why = spec$design_c$why, next_step = spec$design_c$next_step)
   ),
+  # The figure block is the artifact's own record that the picture it ships was rendered from these rows:
+  # the verifier compares the recorded byte count to the file on disk, so a stale figure fails rather than
+  # being noticed by a reader.
+  figure = list(path = spec$figure$path, bytes = canonical_bytes(fig_path),
+                layout = gsub("\\s+", " ", trimws(spec$figure$layout))),
   specifications = specs,
   notes = list(
     "Every estimate is a pre-declared specification from analysis/specs/estimation.yml.",

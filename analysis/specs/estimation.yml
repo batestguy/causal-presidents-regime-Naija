@@ -204,11 +204,32 @@ design_c:
   gate_artifact: "registry/diagnostics/2026-10-18/diagnostics.json"
 
 # ---------------------------------------------------------------------------------------------
+# Figure — the CI forest plot
+# ---------------------------------------------------------------------------------------------
+# Stage 8's remaining figure, declared here because it is a view of *these* numbers and nothing else:
+# it reads the artifact this spec produces, renders no estimate of its own, and would be wrong the
+# moment the artifact moved. Two panels rather than one axis, because Design A's coefficient is a
+# state-month elasticity and Design B's is a national cumulative response at a horizon — both are
+# log-points, but a shared axis would invite a comparison the artifact never makes.
+figure:
+  path: "forest_plot.svg"
+  layout: >-
+    two panels side by side, one per design, each with its own axis. One row per published
+    specification: the estimate as a filled point with its 95 % interval, and the zero rule. The
+    decisive check of each design is drawn
+    **hollow** beside its estimate (A: the 24-month mis-timed dose that returns an estimate as large
+    as the published one; B: the 6-month lead placebo), because a forest plot of estimates alone
+    would show a number whose own artifact says it is not identified without showing why.
+  must_show:
+    - "every published specification's outcome/horizon label, as text"
+    - "the design A verdict phrasing (`not identified`)"
+
+# ---------------------------------------------------------------------------------------------
 # Output
 # ---------------------------------------------------------------------------------------------
 output:
   root: "registry/estimates"
-  format: [estimates.json, report.md]
+  format: [estimates.json, report.md, forest_plot.svg]
   json_contract:
     - "one row per estimated specification, keyed by (design, outcome, estimator, controls)"
     - "every row carries n_obs, coefficient, standard_error, ci_low, ci_high, p_value"

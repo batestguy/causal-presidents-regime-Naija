@@ -109,6 +109,24 @@ else
   printf '\n=== stage 8b: SKIPPED — no Rscript on PATH; verify_events.py will check the committed artifact\n'
 fi
 
+# Stage 8c — the retrieval corpus. The text half needs only Python and PyYAML; the vectors need
+# sentence-transformers, which lives in its own CPU conda env on this machine (docs/rag.md §5). A rebuild in
+# an interpreter without it is *refused* by the builder rather than silently dropping the published vectors,
+# so this step runs only when an embedding interpreter is available — and `tests/verify_rag.py` checks the
+# committed corpus and vectors in every case.
+RAG_PYTHON="${RAG_PYTHON:-}"
+if [ -z "$RAG_PYTHON" ] && [ -x "/c/conda-envs/drlca-rag/python.exe" ]; then
+  RAG_PYTHON="/c/conda-envs/drlca-rag/python.exe"
+fi
+if [ -n "$RAG_PYTHON" ]; then
+  step "stage 8c: RAG corpus"
+  "$RAG_PYTHON" scripts/build_rag_corpus.py --embed
+  step "stage 8c: retrieval evaluation"
+  $PYTHON scripts/eval_rag.py
+else
+  printf '\n=== stage 8c: SKIPPED — no RAG_PYTHON with sentence-transformers; verify_rag.py will check the committed corpus and vectors\n'
+fi
+
 step "verifiers (each re-derives its numbers independently)"
 $PYTHON tests/verify_quality.py
 $PYTHON tests/verify_stage6.py
@@ -120,5 +138,6 @@ $PYTHON tests/verify_dags.py
 $PYTHON tests/verify_stage5.py
 $PYTHON tests/verify_events.py
 $PYTHON tests/verify_provenance.py
+$PYTHON tests/verify_rag.py
 
 printf '\nall checks passed\n'

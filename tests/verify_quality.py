@@ -455,6 +455,17 @@ def main() -> int:
     if recount != report["counts"]:
         failures.append(f"report counts {report['counts']} disagree with its own rows {recount}")
 
+    # ---- 6. the limitations page quotes these counts, and is checked ---------------------------------
+    # The narrative is only as good as the number it repeats; deriving the needle from the recount means a
+    # gate result that changes cannot leave `docs/limitations.md` describing the previous vintage.
+    needle = (f"**{report['n_series_gated']} series** are gated: **{recount['ok']} `ok`, "
+              f"{recount['flagged']} `flagged`, {recount['empty']} `empty`**")
+    claims_path = REPO_ROOT / "docs" / "limitations.md"
+    if not claims_path.exists():
+        failures.append("docs/limitations.md is missing, so the gate counts it quotes cannot be checked")
+    elif needle not in " ".join(claims_path.read_text(encoding="utf-8").split()):
+        failures.append(f"docs/limitations.md does not carry {needle!r} — the gate counts moved under it")
+
     print()
     if failures:
         print(f"FAILED — {len(failures)} problem(s):")

@@ -1,6 +1,6 @@
 # Vintage quality report — 2026-10-18
 
-Stage 3 gate results for every series in the raw layer. Generated 2026-10-18T11:02:17+00:00 by `ingestion/flows/check_quality.py` from `analysis/specs/quality.yml`.
+Stage 3 gate results for every series in the raw layer. Generated 2026-10-21T01:56:31+00:00 by `ingestion/flows/check_quality.py` from `analysis/specs/quality.yml`.
 
 **Study window:** 1999-01-01 → open. Gates for gaps and spikes are evaluated *inside* this window only.
 

@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='792.00pt' height='540.00pt' viewBox='0 0 792.00 540.00'>
+<g class='svglite'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+    .svglite text {
+      white-space: pre;
+    }
+    .svglite g.glyphgroup path {
+      fill: inherit;
+      stroke: none;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHw3OTIuMDB8MC4wMHw1NDAuMDA='>
+    <rect x='0.00' y='0.00' width='792.00' height='540.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw3OTIuMDB8MC4wMHw1NDAuMDA=)'>
+<line x1='195.05' y1='479.52' x2='337.94' y2='479.52' style='stroke-width: 0.75;' />
+<line x1='195.05' y1='479.52' x2='195.05' y2='486.72' style='stroke-width: 0.75;' />
+<line x1='242.68' y1='479.52' x2='242.68' y2='486.72' style='stroke-width: 0.75;' />
+<line x1='290.31' y1='479.52' x2='290.31' y2='486.72' style='stroke-width: 0.75;' />
+<line x1='337.94' y1='479.52' x2='337.94' y2='486.72' style='stroke-width: 0.75;' />
+<text x='195.05' y='505.44' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='20.67px' lengthAdjust='spacingAndGlyphs'>-0.5</text>
+<text x='242.68' y='505.44' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='16.67px' lengthAdjust='spacingAndGlyphs'>0.0</text>
+<text x='290.31' y='505.44' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='16.67px' lengthAdjust='spacingAndGlyphs'>0.5</text>
+<text x='337.94' y='505.44' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='16.67px' lengthAdjust='spacingAndGlyphs'>1.0</text>
+<polygon points='165.60,479.52 378.72,479.52 378.72,48.96 165.60,48.96 ' style='stroke-width: 0.75;' />
+</g>
+<defs>
+  <clipPath id='cpMC4wMHwzOTYuMDB8MC4wMHw1NDAuMDA='>
+    <rect x='0.00' y='0.00' width='396.00' height='540.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHwzOTYuMDB8MC4wMHw1NDAuMDA=)'>
+<text x='272.16' y='20.99' text-anchor='middle' style='font-size: 14.40px; font-weight: bold; font-family: "Arial";' textLength='172.22px' lengthAdjust='spacingAndGlyphs'>A — state dose-response</text>
+<text x='272.16' y='38.27' text-anchor='middle' style='font-size: 14.40px; font-weight: bold; font-family: "Arial";' textLength='271.16px' lengthAdjust='spacingAndGlyphs'>(3456 state-months, 2016-12 to 2024-12)</text>
+<text x='272.16' y='534.24' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='288.36px' lengthAdjust='spacingAndGlyphs'>elasticity of conflict to the state's allocation (log-points)</text>
+</g>
+<defs>
+  <clipPath id='cpMTY1LjYwfDM3OC43Mnw0OC45Nnw0NzkuNTI='>
+    <rect x='165.60' y='48.96' width='213.12' height='430.56' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMTY1LjYwfDM3OC43Mnw0OC45Nnw0NzkuNTI=)'>
+<line x1='242.68' y1='479.52' x2='242.68' y2='48.96' style='stroke-width: 0.75; stroke: #7F7F7F;' />
+<line x1='231.89' y1='216.78' x2='344.78' y2='216.78' style='stroke-width: 1.50;' />
+<line x1='254.21' y1='311.70' x2='335.17' y2='311.70' style='stroke-width: 1.50;' />
+<line x1='184.06' y1='406.62' x2='360.26' y2='406.62' style='stroke-width: 1.50;' />
+<circle cx='288.34' cy='216.78' r='2.97' style='stroke-width: 0.75; fill: #000000;' />
+<circle cx='294.69' cy='311.70' r='2.97' style='stroke-width: 0.75; fill: #000000;' />
+<circle cx='272.16' cy='406.62' r='2.97' style='stroke-width: 0.75; fill: #000000;' />
+<line x1='271.46' y1='121.86' x2='271.46' y2='121.86' style='stroke-width: 1.50;' />
+<circle cx='271.46' cy='121.86' r='3.24' style='stroke-width: 1.20;' />
+</g>
+<g clip-path='url(#cpMC4wMHw3OTIuMDB8MC4wMHw1NDAuMDA=)'>
+<line x1='165.60' y1='406.62' x2='165.60' y2='121.86' style='stroke-width: 0.75;' />
+<line x1='165.60' y1='406.62' x2='158.40' y2='406.62' style='stroke-width: 0.75;' />
+<line x1='165.60' y1='311.70' x2='158.40' y2='311.70' style='stroke-width: 0.75;' />
+<line x1='165.60' y1='216.78' x2='158.40' y2='216.78' style='stroke-width: 0.75;' />
+<line x1='165.60' y1='121.86' x2='158.40' y2='121.86' style='stroke-width: 0.75;' />
+<text x='151.20' y='409.97' text-anchor='end' style='font-size: 9.36px; font-family: "Arial";' textLength='69.69px' lengthAdjust='spacingAndGlyphs'>fatalities civilians</text>
+<text x='151.20' y='315.05' text-anchor='end' style='font-size: 9.36px; font-family: "Arial";' textLength='36.94px' lengthAdjust='spacingAndGlyphs'>incidents</text>
+<text x='151.20' y='220.13' text-anchor='end' style='font-size: 9.36px; font-family: "Arial";' textLength='34.31px' lengthAdjust='spacingAndGlyphs'>fatalities</text>
+<text x='151.20' y='125.21' text-anchor='end' style='font-size: 9.36px; font-family: "Arial";' textLength='110.23px' lengthAdjust='spacingAndGlyphs'>24-month placebo (hollow)</text>
+<text x='167.38' y='66.24' style='font-size: 9.00px;fill: #B2182B; font-family: "Arial";' textLength='124.00px' lengthAdjust='spacingAndGlyphs'>verdict: estimated not identified</text>
+</g>
+<defs>
+  <clipPath id='cpNTYxLjYwfDc3NC43Mnw0OC45Nnw0NzkuNTI='>
+    <rect x='561.60' y='48.96' width='213.12' height='430.56' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNTYxLjYwfDc3NC43Mnw0OC45Nnw0NzkuNTI=)'>
+</g>
+<g clip-path='url(#cpMC4wMHw3OTIuMDB8MC4wMHw1NDAuMDA=)'>
+<line x1='567.63' y1='479.52' x2='757.80' y2='479.52' style='stroke-width: 0.75;' />
+<line x1='567.63' y1='479.52' x2='567.63' y2='486.72' style='stroke-width: 0.75;' />
+<line x1='631.02' y1='479.52' x2='631.02' y2='486.72' style='stroke-width: 0.75;' />
+<line x1='694.41' y1='479.52' x2='694.41' y2='486.72' style='stroke-width: 0.75;' />
+<line x1='757.80' y1='479.52' x2='757.80' y2='486.72' style='stroke-width: 0.75;' />
+<text x='567.63' y='505.44' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='20.67px' lengthAdjust='spacingAndGlyphs'>-0.5</text>
+<text x='631.02' y='505.44' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='16.67px' lengthAdjust='spacingAndGlyphs'>0.0</text>
+<text x='694.41' y='505.44' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='16.67px' lengthAdjust='spacingAndGlyphs'>0.5</text>
+<text x='757.80' y='505.44' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='16.67px' lengthAdjust='spacingAndGlyphs'>1.0</text>
+<polygon points='561.60,479.52 774.72,479.52 774.72,48.96 561.60,48.96 ' style='stroke-width: 0.75;' />
+</g>
+<defs>
+  <clipPath id='cpMzk2LjAwfDc5Mi4wMHwwLjAwfDU0MC4wMA=='>
+    <rect x='396.00' y='0.00' width='396.00' height='540.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMzk2LjAwfDc5Mi4wMHwwLjAwfDU0MC4wMA==)'>
+<text x='668.16' y='20.99' text-anchor='middle' style='font-size: 14.40px; font-weight: bold; font-family: "Arial";' textLength='183.95px' lengthAdjust='spacingAndGlyphs'>B — oil to state allocations</text>
+<text x='668.16' y='38.27' text-anchor='middle' style='font-size: 14.40px; font-weight: bold; font-family: "Arial";' textLength='283.16px' lengthAdjust='spacingAndGlyphs'>(114 national months, 2016-12 to 2026-06)</text>
+<text x='668.16' y='534.24' text-anchor='middle' style='font-size: 12.00px; font-family: "Arial";' textLength='356.11px' lengthAdjust='spacingAndGlyphs'>cumulative response of the allocation to a 1 % oil move (log-points)</text>
+</g>
+<g clip-path='url(#cpNTYxLjYwfDc3NC43Mnw0OC45Nnw0NzkuNTI=)'>
+<rect x='561.60' y='186.07' width='213.12' height='117.25' style='stroke-width: 0.75; stroke: none; fill: #F0F0F0;' />
+<line x1='631.02' y1='479.52' x2='631.02' y2='48.96' style='stroke-width: 0.75; stroke: #7F7F7F;' />
+<line x1='580.06' y1='127.44' x2='641.42' y2='127.44' style='stroke-width: 1.50;' />
+<line x1='619.19' y1='166.53' x2='682.69' y2='166.53' style='stroke-width: 1.50;' />
+<line x1='655.35' y1='205.61' x2='738.06' y2='205.61' style='stroke-width: 1.50;' />
+<line x1='651.41' y1='244.70' x2='729.74' y2='244.70' style='stroke-width: 1.50;' />
+<line x1='611.22' y1='283.78' x2='691.59' y2='283.78' style='stroke-width: 1.50;' />
+<line x1='588.33' y1='322.87' x2='682.00' y2='322.87' style='stroke-width: 1.50;' />
+<line x1='606.10' y1='361.95' x2='714.59' y2='361.95' style='stroke-width: 1.50;' />
+<line x1='606.21' y1='401.04' x2='756.26' y2='401.04' style='stroke-width: 1.50;' />
+<line x1='592.95' y1='440.12' x2='751.36' y2='440.12' style='stroke-width: 1.50;' />
+<circle cx='610.74' cy='127.44' r='2.97' style='stroke-width: 0.75; fill: #000000;' />
+<circle cx='650.94' cy='166.53' r='2.97' style='stroke-width: 0.75; fill: #000000;' />
+<circle cx='696.70' cy='205.61' r='2.97' style='stroke-width: 0.75; fill: #000000;' />
+<circle cx='690.58' cy='244.70' r='2.97' style='stroke-width: 0.75; fill: #000000;' />
+<circle cx='651.40' cy='283.78' r='2.97' style='stroke-width: 0.75; fill: #000000;' />
+<circle cx='635.17' cy='322.87' r='2.97' style='stroke-width: 0.75; fill: #000000;' />
+<circle cx='660.34' cy='361.95' r='2.97' style='stroke-width: 0.75; fill: #000000;' />
+<circle cx='681.23' cy='401.04' r='2.97' style='stroke-width: 0.75; fill: #000000;' />
+<circle cx='672.16' cy='440.12' r='2.97' style='stroke-width: 0.75; fill: #000000;' />
+<line x1='643.10' y1='88.36' x2='643.10' y2='88.36' style='stroke-width: 1.50;' />
+<circle cx='643.10' cy='88.36' r='3.24' style='stroke-width: 1.20;' />
+</g>
+<g clip-path='url(#cpMC4wMHw3OTIuMDB8MC4wMHw1NDAuMDA=)'>
+<line x1='561.60' y1='440.12' x2='561.60' y2='88.36' style='stroke-width: 0.75;' />
+<line x1='561.60' y1='440.12' x2='554.40' y2='440.12' style='stroke-width: 0.75;' />
+<line x1='561.60' y1='401.04' x2='554.40' y2='401.04' style='stroke-width: 0.75;' />
+<line x1='561.60' y1='361.95' x2='554.40' y2='361.95' style='stroke-width: 0.75;' />
+<line x1='561.60' y1='322.87' x2='554.40' y2='322.87' style='stroke-width: 0.75;' />
+<line x1='561.60' y1='283.78' x2='554.40' y2='283.78' style='stroke-width: 0.75;' />
+<line x1='561.60' y1='244.70' x2='554.40' y2='244.70' style='stroke-width: 0.75;' />
+<line x1='561.60' y1='205.61' x2='554.40' y2='205.61' style='stroke-width: 0.75;' />
+<line x1='561.60' y1='166.53' x2='554.40' y2='166.53' style='stroke-width: 0.75;' />
+<line x1='561.60' y1='127.44' x2='554.40' y2='127.44' style='stroke-width: 0.75;' />
+<line x1='561.60' y1='88.36' x2='554.40' y2='88.36' style='stroke-width: 0.75;' />
+<text x='547.20' y='443.47' text-anchor='end' style='font-size: 9.36px; font-family: "Arial";' textLength='26.27px' lengthAdjust='spacingAndGlyphs'>h = 12</text>
+<text x='547.20' y='404.39' text-anchor='end' style='font-size: 9.36px; font-family: "Arial";' textLength='21.06px' lengthAdjust='spacingAndGlyphs'>h = 9</text>
+<text x='547.20' y='365.30' text-anchor='end' style='font-size: 9.36px; font-family: "Arial";' textLength='21.06px' lengthAdjust='spacingAndGlyphs'>h = 6</text>
+<text x='547.20' y='326.22' text-anchor='end' style='font-size: 9.36px; font-family: "Arial";' textLength='21.06px' lengthAdjust='spacingAndGlyphs'>h = 5</text>
+<text x='547.20' y='287.13' text-anchor='end' style='font-size: 9.36px; font-family: "Arial";' textLength='21.06px' lengthAdjust='spacingAndGlyphs'>h = 4</text>
+<text x='547.20' y='248.05' text-anchor='end' style='font-size: 9.36px; font-family: "Arial";' textLength='21.06px' lengthAdjust='spacingAndGlyphs'>h = 3</text>
+<text x='547.20' y='208.96' text-anchor='end' style='font-size: 9.36px; font-family: "Arial";' textLength='21.06px' lengthAdjust='spacingAndGlyphs'>h = 2</text>
+<text x='547.20' y='169.88' text-anchor='end' style='font-size: 9.36px; font-family: "Arial";' textLength='21.06px' lengthAdjust='spacingAndGlyphs'>h = 1</text>
+<text x='547.20' y='130.79' text-anchor='end' style='font-size: 9.36px; font-family: "Arial";' textLength='21.06px' lengthAdjust='spacingAndGlyphs'>h = 0</text>
+<text x='547.20' y='91.71' text-anchor='end' style='font-size: 9.36px; font-family: "Arial";' textLength='125.31px' lengthAdjust='spacingAndGlyphs'>6-month lead placebo (hollow)</text>
+<text x='561.40' y='66.24' style='font-size: 9.00px; font-family: "Arial";' textLength='223.25px' lengthAdjust='spacingAndGlyphs'>verdict: estimated (declared peak band h = 2-4, shaded)</text>
+<text x='561.60' y='528.48' style='font-size: 8.64px;fill: #4D4D4D; font-family: "Arial";' textLength='307.47px' lengthAdjust='spacingAndGlyphs'>filled = published estimate with its 95 % CI · hollow = the design's decisive check</text>
+</g>
+</g>
+</svg>

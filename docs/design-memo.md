@@ -63,11 +63,12 @@ rather than evidence its fit is real. No other card clears its gate. That is the
 ## 1. The grain the tests run on
 
 Every test runs on the **native observation** a source actually published — never on the monthly
-spine. The spine used by the app is only **10.1 % observed** (775 of 7,682 rows; 4,389 interpolated,
-2,518 empty). A unit-root or cointegration test on interpolated rows reports the properties of the
-interpolator, not of the data: linear interpolation induces near-perfect serial correlation by
-construction, so ADF would fail to reject stationarity for a series that is strongly mean-reverting,
-and Johansen would find rank in a system of straight lines.
+spine. The spine used by the app is only **16.2 % observed** (1,349 of 8,350 rows; 4,389 interpolated,
+2,612 empty — it was 10.1 % of 7,682 before the monthly Brent, FAAC and UCDP landings). A unit-root or
+cointegration test on interpolated rows reports the properties of the interpolator, not of the data:
+linear interpolation induces near-perfect serial correlation by construction, so ADF would fail to reject
+stationarity for a series that is strongly mean-reverting, and Johansen would find rank in a system of
+straight lines.
 
 **Consequence.** Family B is evaluated at its **annual** cross-check (~26 observations), which base
 spec §9 already assumes and its sample-size constraint already discloses — *not* monthly. This is the

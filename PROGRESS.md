@@ -1,9 +1,52 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-10-18 (sixth session) · **Stage:** 8 of 8, begun — the registry the app will read
-exists: 36 cards, **2 carrying a published number and 34 carrying a reason**, the design-level results on
-the index, **plus Stage 8b's tenure-timing artifact** · **verified by `scripts/verify.sh` at vintage
-2026-10-18**: 10 verifiers, 0 failures, 41 registry documents schema-validated
+**Last updated:** 2026-10-21 (eighth session) · **Stage:** 8 of 8, **built** — the registry the app will
+read: 36 cards, **2 carrying a published number and 34 carrying a reason**, the design-level results on the
+index, the tenure-timing artifact, the forest plot, the limitations narrative and **the retrieval corpus** ·
+**verified at vintage 2026-10-18**: 11 verifiers, 0 failures, 44 registry documents schema-validated
+
+**This session, in one line:** the **RAG corpus, its eval set and the measured retrieval numbers** — 441
+chunks from 51 attributed sources, embedding recall@5 **0.944** against a BM25 baseline's 0.833, and **two of
+four refusal gates failing, published rather than tuned away**.
+
+**What this session changed, and the two defects it found before they shipped.**
+
+- **The corpus is generated, never authored.** `scripts/build_rag_corpus.py` serialises the cards, the three
+  design results, the seeds and the narrative into chunks and records the sha256 of all 51 sources; a source
+  edited without a rebuild fails `tests/verify_rag.py`. A card is one *document*, split into parts at the
+  embedding budget, and every part opens with its parent and part number.
+- **The model the base spec named would have silently truncated every chunk.** `all-MiniLM-L6-v2` caps at
+  **256 tokens** — about 1,000 characters — so a 1,800-character chunk would have been indexed with its tail
+  dropped and nothing in the artifact would have said so. The corpus uses `multi-qa-MiniLM-L6-cos-v1` (512
+  tokens, same 384 dims), and `--embed` counts the model's own tokens and **fails the build** rather than
+  truncating. It caught a 935-token table chunk on the first run; the budget is now 950 characters, chosen
+  from the measured 0.53 tokens/character of the densest text.
+- **Two refusal rules, not one.** The first harness applied a single similarity threshold to both kinds of
+  refusal and reported 0 of 2 reason-bearing questions as "refused" while the reason chunk ranked **first** —
+  which is what a good refusal looks like. The rules are now separate: reason-bearing refusals are measured
+  by whether the reason chunk is retrieved and cited, and only out-of-scope questions use the threshold.
+- **The numbers.** Embedding recall@5 **0.944**, gold coverage 0.432, MRR 0.724; BM25 0.833 / 0.364 / 0.676.
+  The model earns its place. **Refusal-with-reason recall 0.5** — one compound question ("did Buhari's tenure
+  cause the fall in under-5 mortality") retrieves the tenure-limitations passage instead of the Design C one.
+  **Out-of-scope refusal 0.25** — a 2030 forecast and a policy recommendation embed closer to the corpus
+  than some genuine questions do, so similarity alone cannot refuse an on-topic out-of-scope question; the
+  app needs an intent gate. Both are published as misses; editing the questions until they passed would have
+  measured the edit.
+- **RAGAS is declared `not_run`, not faked.** It needs a generation step and a judge model; there is no LLM
+  key, so the artifact says so and the eval set already carries the `ground_truth` column a RAGAS run needs.
+- **A destructive path was closed.** A plain (non-`--embed`) rebuild on a machine without torch would have
+  overwritten a corpus that had vectors with one that did not, leaving the published retrieval numbers
+  describing a corpus nobody could reproduce. The builder now refuses that without `--allow-embedding-drop`,
+  and the harness refuses to overwrite embedding metrics with a BM25-only run.
+- **`docs/rag.md` is checked as claims**, not prose: the verifier requires the page to quote the chunk count,
+  source count, eval-set size, both recalls, coverage, MRR, the refusal numbers and the threshold — all
+  derived from the artifact, so the page cannot drift from the corpus the way two documents had by
+  2026-10-20.
+
+**This session, in one line:** the **forest plot** — the last figure Stage 8 asked for, with the checks
+that make it an artifact rather than a picture — and **the limitations narrative**, written before the
+findings it constrains and wired into three verifiers as derived claims, which immediately caught two
+stale prose facts (the events cell split and the memo's old observed share).
 
 **This session, in one line:** two things were built — **the transition event study** (`docs/events.md`:
 did conflict move after each swearing-in?) and **a widened Design C donor pool** (`docs/design-memo.md` §4:
@@ -65,7 +108,76 @@ on a card, beside the assumption it rests on, with the artifact it was copied fr
   reported success, because the declared expectation counted *published specifications* rather than *cards*.
   The count that matters is now declared separately and checked in both directions (S8-02, C-55).
 
-**Current action (2026-10-18, sixth session): comparing tenures, and the donor pool that unblocked Design C.**
+**Current action (2026-10-20, seventh session): the forest plot, and the stale figure it caught on the way in.**
+
+The figure Stage 8 still owed. Declared in `analysis/specs/estimation.yml`, rendered by
+`analysis/R/03_estimate.R` from the artifact's own `specifications` rows — nothing is typed and no estimate
+is recomputed for the picture, so the figure cannot disagree with the table beside it.
+
+- **Two panels, not one axis.** Design A's coefficient is a state-month elasticity and Design B's is a
+  national cumulative response at a horizon. Both are log-points and a shared axis would invite a
+  comparison the artifact never makes, so each panel takes its x-limits from its own rows.
+- **The decisive check is drawn hollow beside each estimate** — Design A's 24-month mis-timed dose
+  (+0.302, nearly the size of the published +0.479) and Design B's 6-month lead placebo (+0.095 against a
+  peak of +0.518). A forest plot of estimates alone would show a number the artifact says is *not
+  identified* without showing the number that decided it. Design B's declared peak band (h = 2–4) is
+  shaded on the panel rather than described in a caption.
+- **`svglite`, not the base `svg()` device Stage 8b's panels use.** Cairo converts text to glyph outlines:
+  the file renders identically and contains no searchable label, so a row that never got drawn could not be
+  detected. The spec requires every published specification's label as text, and the verifier asserts it —
+  all 12 labels plus the recomputed verdict string.
+- **The artifact records the figure's byte count**, and `tests/verify_stage6.py` compares it to the file on
+  disk: a figure one re-fit behind fails instead of being noticed by a reader. `scripts/validate_artifacts.py`
+  now carries the same invariant (path, presence, real SVG, recorded bytes vs disk, a figure for zero
+  specifications), which is the cheap cross-artifact check the Stage 7 curve already had.
+- **The re-run was necessary, not cosmetic.** The working copy's `estimates.json` had been rewritten by a
+  probe in a different serialisation and carried **no figure block**, while `report.md` beside it carried a
+  fresh timestamp — the artifact and its narrative one edit apart. `scripts/verify.sh` re-ran the engine at
+  2026-10-20T03:14 and the artifact now carries the block; the new contract check names this failure rather
+  than trusting that the two files were written by the same run.
+- **Break-tested, and restored byte-for-byte each time.** A label cut out of the SVG, a byte count moved by
+  one, a wrong figure path — all three caught by the contract test; a dropped row label, a stale byte count,
+  a figure with no text elements — all caught by the verifier (`.probe/break_forest.py`,
+  `.probe/break_artifact_figure.py`, gitignored; the mutations they apply are described here so the record
+  survives them).
+- **`docs/estimates.md` retargeted to the 2026-10-18 artifacts** after checking that all 12 specifications'
+  coefficients are identical across the two vintages — the pointer had still been to 2026-10-17, and the
+  figure's path is now in the header paragraph.
+
+**Then, same session — the limitations, written before the findings, and checked as claims.**
+
+Base spec §19 asks for the limitations to be drafted before the findings and to outrun them in length.
+`docs/limitations.md` is that page: 14 sections, every count traced to an artifact, and the findings
+reduced to a single short section at the end. It is deliberately longer than `docs/estimates.md`.
+
+- **What it says, in order:** the tenure question is arithmetically unanswerable (22–23 annual rows per
+  outcome, Tier-3 MDE 35–99 residual SDs); the spine is **1,349 of 8,350 rows observed (16.2 %)** and three
+  frequency gaps are declared; coverage limits node by node (FAAC begins 2016-12, `dose_status` observed on
+  4,104 of 12,358 state-months, per-capita **0 rows**, UCDP ends 2024-12, ACLED unwired, education series
+  stop in 2010, no monthly NGN/USD); **313 of 672 series flagged** and 8 definition breaks; Design A
+  published as `estimated_not_identified` with an interval that crosses zero on its own (+0.4793,
+  [−0.1132, +1.0718], p = 0.113), a 24-month placebo at +0.3021 and 8 of 60 mis-timed doses at least as
+  large (p = **0.133**); Design B's channel with only h = 2 and h = 3 excluding zero and a timing bound of
+  **p = 0.0625**; Design C as permission, not result; the inference floors; the **45 positive / 36
+  negative** grid result and the 24-of-24 sign survival for B; reproduction limits including the expired
+  OAGF certificate and R-less CI.
+- **The claims are derived, not typed.** `tests/verify_registry.py` now computes its needles from the
+  estimates and robustness artifacts (support counts, the published coefficient, the lead-shift p and its
+  8-of-60 count, the 34 cards carrying a reason); `tests/verify_events.py` derives the cell-status counts
+  from the verdicts it just re-derived; `tests/verify_stage5.py` derives the observed share from the base
+  and requires the memo to quote it. A literal typed into a verifier only catches a document that
+  changed — deriving it catches an artifact moving under a document that did not, which is the failure
+  this repository has actually had (C-44, C-49).
+- **It found two drifts immediately, both in prose that every verifier had passed:** `docs/events.md`
+  claimed **four** cells fail the pre-trend where the artifact has **three** failing, **two** that cannot be
+  checked (Yar'Adua, 100 of the required 120 months) and one showing no shift; and `docs/design-memo.md`
+  still described the spine as **10.1 % observed (775 of 7,682)** from the pre-FAAC base. Both corrected
+  here, and both are now registered so the next drift fails rather than being re-read.
+- **Break-tested.** Five mutations — the events count, Design A's split, the lead-shift p, the Stage 7
+  count and the memo's grain — each failed the verifier that owns the claim, each restored byte-for-byte
+  (`.probe/break_narrative.py`, gitignored).
+
+**Previous action (2026-10-18, sixth session): comparing tenures, and the donor pool that unblocked Design C.**
 
 Two builds, both declared before anything was fitted, and both because the previous session's write-ups ended
 with a stated next step rather than a silent gap.
@@ -1358,7 +1470,13 @@ that turn estimates into a product.
    sharper than `estimated_not_identified` — its **sign** does not survive the grid. **What is still open
    from this stage:** the per-capita dose axis (X-09), the IGR instrument (D2), and a donor pool that would
    let Design C run at all.
-9. **Stage 8 — the registry, narrative and RAG corpus.**
+9. **Stage 8 — the registry, narrative and RAG corpus.** The registry, all three figures and the
+   limitations narrative are built (forest plot and `docs/limitations.md` as of 2026-10-20). **What
+   remains is the retrieval layer, and it is the next session's work:** the RAG corpus — one chunk per
+   model card plus methodology, data dictionary, shock annotations, administration table and the
+   limitations page, sharing the registry's `vintage_date` so a stale answer cannot outlive the model it
+   quotes — and the RAGAS evaluation set wired into CI. The limitations page is the corpus chunk that
+   makes refusal answerable: it is where the app's "I don't have a model for that" gets its reasons.
 10. **Stage 9 — the app**, reading `registry/dags/index.json`: pick an outcome → pick a causal model →
    read the assumption and adjustment set → then the estimate under that model.
 

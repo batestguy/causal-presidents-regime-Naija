@@ -195,6 +195,25 @@ def check_grain(con, diag, failures):
         failures.append("grain_decision.primary is not 'native'")
     if frac >= 0.5:
         failures.append(f"spine is {frac:.1%} observed; treating 'native' as the grain is unjustified")
+    decision = diag.get("grain_decision", {})
+    if (decision.get("observed_rows"), decision.get("spine_rows")) != (observed, total):
+        failures.append(
+            f"grain_decision records {decision.get('observed_rows')} of {decision.get('spine_rows')} "
+            f"observed and the base has {observed} of {total} — the artifact and the base disagree"
+        )
+    # The memo quotes this number in the present tense, and it went stale once (10.1 % of 7,682 rows for
+    # a base at 16.2 % of 8,350): the Stage 5 report was fixed at C-49, the memo beside it was not, and no
+    # verifier read the prose. The needle is derived here, so the claim has to move with the base.
+    claims = {
+        "docs/design-memo.md": f"**{frac * 100:.1f} % observed** ({observed:,} of {total:,} rows",
+        "docs/limitations.md": f"**{observed:,} rows ({frac * 100:.1f} %) are observed**",
+    }
+    for rel, needle in claims.items():
+        path = REPO_ROOT / rel
+        if not path.exists():
+            failures.append(f"{rel} is missing, so its grain claim cannot be checked")
+        elif needle not in " ".join(path.read_text(encoding="utf-8").split()):
+            failures.append(f"{rel} does not carry {needle!r} — the measured grain moved under the document")
 
 
 def check_shock_visibility(con, diag, failures):

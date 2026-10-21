@@ -281,18 +281,43 @@ def main() -> int:
     # The rule PHASES.md Stage 8 states is that when a card and the narrative disagree the card wins. It
     # can only be checked where the narrative is machine-readable: the two documents that quote a Stage 7
     # number must quote the one the artifact carries. A mismatch is reported as a stale narrative.
+    # The needles are **derived from the artifacts**, not typed here. A literal in this verifier would
+    # only catch a document that changed; deriving it catches the artifact moving under a document that
+    # did not — which is the failure this repository has actually had (C-44, C-49, and the events cell
+    # split corrected on 2026-10-20). Whitespace is normalised because the documents wrap their prose.
+    a_support = robustness["support"]["by_design"]["A"]
+    b_support = robustness["support"]["by_design"]["B"]
+    preferred_a = next(s for s in estimates["specifications"]
+                       if s["design"] == "A" and s["outcome"] == "fatalities")
+    lead = estimates["designs"][0]["checks"]["lead_shift"]
+    n_as_large = round(float(lead["p_value"]) * int(lead["n_draws"]))
     narrative_numbers = {
-        "docs/estimates.md": ("45 specifications positive, 36 negative", None),
+        "docs/estimates.md": [
+            (f"{a_support['n_positive']} specifications positive, {a_support['n_negative']} negative",
+             "Stage 7's Design A support count"),
+        ],
+        "docs/limitations.md": [
+            (f"{a_support['n_positive']} positive against {a_support['n_negative']} negative",
+             "Design A's sign split in the grid"),
+            (f"{b_support['n_positive']} of {b_support['n']}", "Design B's support count"),
+            (f"+{preferred_a['coefficient']:.4f}", "Design A's published coefficient"),
+            (f"**{lead['p_value']:.3f}**", "Design A's lead-shift p-value"),
+            (f"{n_as_large} return an estimate at least as large", "the lead-shift count"),
+            (f"{counts['not_estimated']} cards carry a reason, not a number",
+             "the number of cards with a reason instead of a number"),
+        ],
     }
-    for rel, (needle, _) in narrative_numbers.items():
+    for rel, required in narrative_numbers.items():
         path = REPO_ROOT / rel
         if not path.exists():
+            fail(failures, f"the narrative {rel} is missing, so its claims cannot be checked")
             continue
-        text = path.read_text(encoding="utf-8")
-        if needle in text:
-            continue
-        fail(failures, f"{rel} does not carry {needle!r}; the card wins, so the narrative is stale "
-                       f"(PHASES.md Stage 8)")
+        text = " ".join(path.read_text(encoding="utf-8").split())
+        for needle, what in required:
+            if needle in text:
+                continue
+            fail(failures, f"{rel} does not carry {needle!r} — {what} has moved under the narrative; "
+                           f"the card wins, so the narrative is stale (PHASES.md Stage 8)")
 
     if failures:
         print(f"\nFAILED — {len(failures)} problem(s):")

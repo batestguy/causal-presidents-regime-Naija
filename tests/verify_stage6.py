@@ -312,6 +312,51 @@ def main() -> int:
             fail(failures, f"design A / {s['outcome']}: |coefficient| {s['coefficient']:.3f} is out of "
                            "range for a count elasticity — check for a units or scale error")
 
+    # ---- 7. the forest plot is this artifact's own figure ----------------------------------
+    # The figure is declared in the spec and rendered by the engine from `specs`, so the checks here are
+    # the three ways that can go wrong: the declared path is ignored, the file is stale (recorded bytes
+    # disagree with what is on disk), or the render loop stopped early and silently dropped rows. The
+    # last one is why the labels are asserted as text rather than counted as marks — a forest plot missing
+    # its last three rows still looks like a forest plot.
+    figure = report.get("figure")
+    if not figure:
+        fail(failures, "figure: the spec declares one but the artifact carries no figure block")
+    else:
+        declared = spec["figure"]["path"]
+        if figure.get("path") != declared:
+            fail(failures, f"figure: artifact publishes {figure.get('path')!r}, spec declares {declared!r}")
+        figure_path = report_path.parent / str(figure.get("path", ""))
+        if not figure_path.exists():
+            fail(failures, f"figure: {figure_path.name} is declared but missing")
+        else:
+            svg = figure_path.read_text(encoding="utf-8", errors="replace")
+            if "<svg" not in svg:
+                fail(failures, f"figure: {figure_path.name} is not an SVG")
+            # Canonical (LF) size — the same rule the engine records, so the check survives the CRLF -> LF
+            # conversion .gitattributes applies to every checkout.
+            actual_bytes = len(figure_path.read_bytes().replace(b"\r\n", b"\n"))
+            if figure.get("bytes") != actual_bytes:
+                fail(failures, f"figure: artifact records {figure.get('bytes')} bytes, {figure_path.name} is "
+                               f"{actual_bytes} — the figure is stale against the artifact")
+            if "<text" not in svg:
+                fail(failures, "figure: no text elements — labels were rendered as outlines, so a row that "
+                               "never got drawn cannot be detected")
+            for s in report["specifications"]:
+                # The engine spaces the underscores out because these labels are read by a person; the
+                # check has to apply the same transform rather than assume the raw outcome id appears.
+                label = (s["outcome"].replace("_", " ") if s["design"] == "A"
+                         else f"h = {s['coefficient_name'].rsplit('_h', 1)[-1]}")
+                if label not in svg:
+                    fail(failures, f"figure: no label for the published specification {s['design']}/{label}")
+            # The verdict on the figure is the verdict this verifier just recomputed, not a typed string.
+            phrase = str(report["designs"][0]["status"]).replace("_", " ")
+            if phrase not in svg:
+                fail(failures, f"figure: does not carry design A's recomputed verdict {phrase!r}")
+            if "hollow" not in svg:
+                fail(failures, "figure: the decisive-check markers are not explained in the figure itself")
+            print(f"figure: {figure_path.name} — {actual_bytes} bytes, {svg.count('<text')} text elements, "
+                  f"every published specification labelled")
+
     print()
     if failures:
         print(f"FAILED — {len(failures)} problem(s):")

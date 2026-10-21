@@ -1,0 +1,313 @@
+# Stage 8 — the retrieval corpus: what the chat layer is allowed to quote
+#
+# Stage 8's exit criterion is that Stage 9 can be built without opening R. The registry is the app's data
+# contract for *numbers*; this corpus is its contract for *prose*. Every answer the chat layer gives is
+# assembled from chunks declared here, and each chunk names the artifact and vintage it was copied from, so
+# a stale answer cannot outlive the model it quotes.
+#
+# ---------------------------------------------------------------------------------------------
+# The failure this layer exists to prevent
+# ---------------------------------------------------------------------------------------------
+# The project's whole honesty argument is that a number travels with the assumption it rests on. A RAG
+# layer is the one component that can undo that in a sentence: retrieve the estimate, drop the verdict,
+# and answer "a larger federal allocation reduced fatalities" with a citation that looks authoritative.
+# Three things follow from that, and they are the reason this spec is longer than the corpus:
+#
+#   1. **A model-card chunk is generated from the card, not written about it.** The text is a
+#      serialisation of the card's own fields — assumption, adjustment set, cannot-rule-out, estimate
+#      block, verdict — so the chunk cannot disagree with the card. `the_number_is_for_this_card` is
+#      carried into the chunk and quoted.
+#   2. **No chunk is authored by hand.** Cards, results, tables and narrative are all read from files on
+#      disk whose sha256 is recorded in the corpus manifest. Editing `docs/limitations.md` and not
+#      rebuilding the corpus makes `tests/verify_rag.py` fail, which is the same invariant the registry
+#      uses for numbers (C-44, C-53).
+#   3. **The refusal is part of the corpus.** The chunks that make "I don't have a model for that"
+#      answerable are `docs/limitations.md` — the arithmetic that makes the tenure question unanswerable is
+#      *retrievable*, so a refusal quotes a reason rather than asserting one. `analysis/specs/rag_eval.yml`
+#      tests exactly that with `refusal_with_reason` questions.
+#
+# ---------------------------------------------------------------------------------------------
+version: 1
+labelled: "2026-10-18"
+spec_path: "analysis/specs/rag.yml"
+engine: "scripts/build_rag_corpus.py"
+verifier: "tests/verify_rag.py"
+harness: "scripts/eval_rag.py"
+eval_spec: "analysis/specs/rag_eval.yml"
+
+# ---------------------------------------------------------------------------------------------
+# Inputs — every chunk is derived from one of these, and none of them is typed into the builder
+# ---------------------------------------------------------------------------------------------
+input:
+  registry_index: "registry/dags/index.json"
+  cards_dir: "registry/dags"
+  estimates_root: "registry/estimates"
+  events_root: "registry/events"
+  quality_root: "registry/quality"
+  estimates_artifact: "estimates.json"
+  events_artifact: "events.json"
+  quality_artifact: "report.json"
+  seeds:
+    administration: "dbt/seeds/raw_administration.csv"
+    shock_bands: "dbt/seeds/raw_shock_bands.csv"
+  # Narrative sources. `docs/rag.md` is deliberately NOT here: it documents this layer, and including it
+  # would make the corpus contain a description of itself that goes stale every time the layer changes.
+  docs:
+    - "docs/design-memo.md"
+    - "docs/estimates.md"
+    - "docs/robustness.md"
+    - "docs/events.md"
+    - "docs/registry.md"
+    - "docs/limitations.md"
+    - "docs/data-dictionary.md"
+    - "docs/dags.md"
+
+output:
+  root: "registry/rag"
+  corpus: "corpus.json"
+  embeddings: "embeddings.npz"
+  eval_set: "eval_set.json"
+  retrieval_eval: "retrieval_eval.json"
+  report: "report.md"
+
+# A declared source that does not exist is a stop, not a skip: it means the corpus would silently lose a
+# whole family of chunks while still looking complete. The builder fails on the first missing input.
+
+# ---------------------------------------------------------------------------------------------
+# Vintage — one stamp for the corpus, the cards and every chunk
+# ---------------------------------------------------------------------------------------------
+source_hash_rule: >-
+  Every source is hashed **after normalising CRLF to LF**, because `.gitattributes` stores this repository's
+  text with `eol=lf` while it is authored on Windows. Hashing the working-tree bytes would record a hash that
+  a fresh clone or the Linux runner can never reproduce — a corpus that verifies on one machine and nowhere
+  else. The rule is declared on the artifact as well, so a consumer knows which bytes the hash covers.
+
+vintage_rule: >-
+  The corpus vintage is the registry index's `vintage_date`, and every chunk carries it. It must also equal
+  the vintage of the estimates, events and quality artifacts the chunks quote, so a corpus built against one
+  data vintage cannot sit in a directory labelled with another. Answers are stamped from the chunk they were
+  assembled from, not from the clock: an answer quoting a 2026-10-18 card is a statement about that vintage
+  whatever day it is read.
+
+# ---------------------------------------------------------------------------------------------
+# Chunk families — the enumeration is closed, and each family has a rule
+# ---------------------------------------------------------------------------------------------
+chunk_families:
+  model_card:
+    id: "card:<dag_id>"
+    count_rule: "one chunk per card on disk, split into `#p2`, `#p3` ... only when the card exceeds the chunk budget, and every card on disk must produce at least one"
+    derives_from: "registry/dags/<dag_id>.json"
+    why: >-
+      The unit of the whole project. A question about an outcome under a design resolves to one chunk that
+      carries the assumption, the adjustment set, the number, the interval and the verdict together, so the
+      number cannot be retrieved without the reason it is or is not a finding.
+  published_result:
+    id: "result:<design_id>"
+    count_rule: "one per design that reached a verdict (A, B, C — three today)"
+    derives_from: "registry/dags/index.json#published_results"
+    why: >-
+      Design B's nine specifications measure the national FAAC channel; on every B card FAAC is a mediator,
+      so the B result has no card to live on. It is one chunk, once, exactly as it is one entry on the index.
+  methodology:
+    id: "doc:<file-stem>#<anchor>"
+    count_rule: "one per H2 section of each declared narrative document, split further only when a section exceeds max_chars"
+    derives_from: "docs/*.md"
+    why: >-
+      Stage 5's design memo, Stage 6-8's findings pages, the registry's own explanation and the limitations.
+      These are the chunks that let an answer say *why* a number is weak, not only what it is.
+  data_dictionary:
+    id: "doc:data-dictionary#<anchor>"
+    derives_from: "docs/data-dictionary.md"
+    why: >-
+      Definitions, imputation rules and declared gaps. A question about what a column means or why a series
+      is interpolated has to resolve here rather than be improvised.
+  administration:
+    id: "admin:<admin_id>"
+    count_rule: "one per row of dbt/seeds/raw_administration.csv"
+    derives_from: "dbt/seeds/raw_administration.csv"
+    why: >-
+      The exposure every design is written about. Dates are the decided boundaries (S3-04), so the corpus
+      quotes the seed rather than re-deriving terms.
+  shock:
+    id: "shock:<shock_id>"
+    count_rule: "one per row of dbt/seeds/raw_shock_bands.csv"
+    derives_from: "dbt/seeds/raw_shock_bands.csv"
+    why: >-
+      The annotated windows the charts shade. A question about 2020 or 2014 resolves to the band's declared
+      start, end and note rather than to an opinion about when the shock began.
+  event_study:
+    id: "event:<event_id>"
+    count_rule: "one per in-window transition on the events artifact"
+    derives_from: "registry/events/<vintage>/events.json"
+    why: >-
+      The tenure-timing result is the closest published thing to the question readers actually ask. Each
+      chunk carries the event's cells *with* their status (`shift_detected`, `not_interpretable_pre_trend`,
+      `check_not_available`), so the answer cannot quote a shift without its check.
+  coverage:
+    id: "coverage:quality"
+    count_rule: "exactly one"
+    derives_from: "registry/quality/<vintage>/report.json"
+    why: >-
+      "How much of this is data?" is answerable only if the gate counts are in the corpus. The chunk carries
+      the ok/flagged/empty split and the study window, and it names the limitations section that explains
+      what a flag means.
+  scope:
+    id: "scope:answer"
+    count_rule: "exactly one"
+    derives_from: "analysis/specs/rag.yml#answer_contract.scope"
+    why: >-
+      The scope paragraph is what a refusal should be able to *retrieve*. A layer that refuses by score alone
+      can only say "nothing matched"; one that can retrieve its own scope can say why. The chunk is the spec's
+      own text, so the corpus cannot promise a different scope than the one declared (R-04).
+  registry_coverage:
+    id: "coverage:registry"
+    count_rule: "exactly one"
+    derives_from: "registry/dags/index.json#registry.card_estimate_counts"
+    why: >-
+      The ratio the whole layer is built around — how many cards carry a published number and what the rest
+      say instead — is a *count on the index*, not a sentence in a document. It is derived so the corpus can
+      answer it from the artifact the app reads, rather than only from prose that could drift from it.
+
+# ---------------------------------------------------------------------------------------------
+# Chunking rules — deterministic, so a rebuild produces byte-identical chunk ids and texts
+# ---------------------------------------------------------------------------------------------
+chunking:
+  # The budget is set by the model's token limit, not chosen for taste, and it is expressed in characters
+  # only because the plain build (no torch) cannot tokenize. 950 characters is safe for *this* corpus
+  # because its densest text is tables and citation lists at ~0.53 tokens per character, measured on the
+  # first build: 950 x 0.53 = 504 tokens, inside the 512-token limit. Prose sits near 0.26 tokens per
+  # character, so a prose chunk uses about half its window. `--embed` re-checks every chunk with the model's
+  # own tokenizer and fails the build if this arithmetic ever stops holding — which it did at 1,800
+  # characters, where a table chunk needed 935 tokens.
+  max_chars: 950
+  min_chars: 180
+  # A part of a split document is allowed to be shorter than a standalone chunk: the header that made a
+  # 100-character fragment look like a chunk is carried separately, so what is left is real content. The
+  # floor is still enforced, at the length below which a part is a sentence torn out of its argument.
+  min_part_chars: 60
+  split_rule: >-
+    Markdown documents split on H2 headings, except when a document has no H2 (then the whole body is one
+    chunk). The document's H1 and the section heading are prepended to every chunk so a retrieved fragment
+    carries its own title. Any text over the budget — a section *or* a model card — splits on blank-line
+    paragraph boundaries, keeping tables whole where they fit; a single block longer than the budget is split
+    on sentence ends. Parts after the first are ided `<chunk_id>#p2`, `<chunk_id>#p3`, and every part opens
+    with a one-line prefix naming the parent document and its part number, so a part retrieved on its own is
+    still identifiable.
+  merge_rule: >-
+    A tail fragment shorter than min_chars is merged back into the previous chunk of the same section rather
+    than shipped as a header with no body. The exception is a chunk that is already at max_chars, which is
+    left as is: merging would break the budget the embedding model was declared with.
+  determinism: >-
+    Chunk ids depend only on the source path and the anchor, never on iteration order or a timestamp, so a
+    rebuild over unchanged sources produces identical ids and identical text. The manifest's `generated_at`
+    is the only field allowed to change.
+  text_normalisation: >-
+    Line endings are normalised to `\n` and trailing whitespace stripped. Nothing else is altered: markdown
+    emphasis is left in place because the answer layer renders it and because stripping it would make the
+    chunk's text differ from the document it cites.
+
+# ---------------------------------------------------------------------------------------------
+# Embeddings — production path, and what is actually built
+# ---------------------------------------------------------------------------------------------
+embedding:
+  # `multi-qa-MiniLM-L6-cos-v1`: 384 dims, 512-token input, trained for question-to-passage retrieval. The
+  # base spec named `all-MiniLM-L6-v2`, which is the same size but caps at **256 tokens** — at ~4 chars per
+  # token that is ~1,000 characters, so every chunk this corpus produces would have been truncated on the
+  # way into the index. Substituting a 512-token model of the same dimension keeps the serving cost and the
+  # free-tier promise while making the whole chunk reachable.
+  model: "sentence-transformers/multi-qa-MiniLM-L6-cos-v1"
+  dim: 384
+  max_tokens: 512
+  truncation: "forbidden — the builder asserts every chunk fits the model's limit and fails the build otherwise"
+  normalise: true
+  metric: "cosine"
+  status_rule: >-
+    The vectors are written by `scripts/build_rag_corpus.py --embed` and stored beside the corpus so the
+    verifier can recompute retrieval without re-loading the model. The manifest records the model name, the
+    dimension, the token limit and the sha256 of the vector file; `tests/verify_rag.py` recomputes every
+    published retrieval metric from the stored vectors. A corpus rebuilt without `--embed` declares
+    `status: not_built` and the verifier reports embedding retrieval as absent rather than as passing.
+  truncation_check: >-
+    `--embed` counts the model's own tokenization of every chunk and fails the build if any exceeds
+    `max_tokens`. This is the check that would have caught the 256-token model the base spec named: encoding
+    an over-long chunk silently drops its tail, and retrieval then searches a document the author cannot
+    see. It is also what chose `max_chars: 950` over the 1,800 first declared — the tokenizer, not a
+    character heuristic, decides where a chunk ends.
+  why_not_a_service: >-
+    Local embeddings keep the free-tier promise and remove an API dependency from the one component that
+    runs on every question (base spec §13). The install is pinned in `docs/rag.md`; the vector store is a
+    file, because the corpus is ~100 chunks and a hosted index would be infrastructure for its own sake
+    (the same reasoning as S4-01 for the warehouse).
+
+# ---------------------------------------------------------------------------------------------
+# Retrieval
+# ---------------------------------------------------------------------------------------------
+retrieval:
+  k: 5
+  production: "cosine over the all-MiniLM-L6-v2 vectors"
+  baseline: "BM25 (k1=1.5, b=0.75) over the same chunks, dependency-free"
+  baseline_why: >-
+    The lexical baseline exists so the embedding numbers have something to beat. If BM25 retrieves the gold
+    chunk as often as the embeddings do, the corpus is keyword-addressable and the model is not adding
+    anything — a fact that should be measured rather than assumed, and one this project's chunk sizes make
+    plausible.
+  refusal_rule:
+    out_of_scope: >-
+      Refuse when the top-1 similarity is below `0.5 x the median top-1 similarity of the answerable eval
+      questions`, **or** when the top-1 chunk is `scope:answer`. The threshold is scale-free and is
+      calibrated on the eval set, which makes refusal recall optimistic; the artifact publishes the
+      threshold, the median it came from and that caveat. BM25 scores are not comparable to cosine, so the
+      baseline reports retrieval only and does not make a refusal decision.
+    refusal_with_reason: >-
+      **Not a score decision at all.** A question the data cannot answer should retrieve the passage that
+      says why with *high* similarity — that is the point of putting the limitations page in the corpus. So
+      this type is measured by whether the reason chunk is in the top 5, and the answer is required to cite
+      it; using "low similarity" as the test here would score a well-argued refusal as a failure.
+    measured: >-
+      The first build made exactly that mistake: one score threshold was applied to both kinds of refusal
+      and reported 0 of 2 reason-bearing questions as "refused" while the reason chunk was ranked first.
+      The two rules are separate because the two questions are different questions.
+
+# ---------------------------------------------------------------------------------------------
+# The answer contract (R-03, R-04) — enforced in Stage 9, declared here
+# ---------------------------------------------------------------------------------------------
+answer_contract:
+  order: [question, estimate_with_interval, identifying_assumption, what_it_cannot_rule_out, citation]
+  post_check: >-
+    Every assembled answer is checked for an interval, an identifying assumption and at least one chunk
+    citation. A response missing any of the three is replaced by the refusal template, whatever the model
+    produced (R-04).
+  refusal_template: >-
+    "I don't have a model for that. {reason} — see {citation}."
+  scope: >-
+    The corpus can answer questions about the 12 catalogue outcomes, the three identification designs, the
+    published results and their checks, the data's coverage and quality, the administration and shock
+    tables, and why a question cannot be answered. It cannot answer forecast questions, questions about
+    countries outside the donor panel, or anything requiring an estimate that was never fitted; those must
+    refuse.
+
+# The answer-shape check itself is Stage 9 code. This spec declares what it must assert so the eval set
+# can carry the needles now; `retrieval_eval.json` declares `answer_shape: not_measured` with the reason
+# (no generation step and no LLM key yet) rather than reporting an unmeasured contract as satisfied.
+
+# ---------------------------------------------------------------------------------------------
+# Gates — declared before the numbers are read
+# ---------------------------------------------------------------------------------------------
+# These are retrieval-quality targets. The verifier checks that each `met` flag is computed correctly from
+# the measured rows; it does not fail the build when a target is missed, because a missed target is a
+# finding to publish (the Stage 7 precedent: p = 0.0625 was published, not widened until it passed).
+gates:
+  recall_at_5: 0.90        # fraction of answerable questions whose gold chunk is in the top 5
+  refusal_reason_recall: 1.0  # refusal_with_reason questions whose reason chunk is in the top 5
+  out_of_scope_refusal: 1.0   # out_of_scope questions whose top-1 falls below the refusal threshold
+  answerable_not_refused: 1.0 # answerable questions whose top-1 clears the threshold
+
+# ---------------------------------------------------------------------------------------------
+# What the corpus must never contain
+# ---------------------------------------------------------------------------------------------
+#   * Raw ACLED or DHS/NDHS content (licence: derived aggregates publish, raw rows do not — docs/licences.md).
+#   * A number that is not on the card or artifact it claims to quote. The builder serialises artifacts; it
+#     never computes a new statistic.
+#   * A chunk whose source is absent from the manifest's sha256 table, so every sentence is attributable to a
+#     file that was read at a recorded vintage.
+#   * A refusal with no reason. The limitations page is the chunk that makes "no" a citation.

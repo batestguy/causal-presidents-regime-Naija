@@ -1,9 +1,13 @@
 # What this project can actually answer
 
-**Vintage 2026-10-17.** Written from the artifacts: `registry/estimates/2026-10-17/estimates.json`
+**Vintage 2026-10-18.** Written from the artifacts: `registry/estimates/2026-10-18/estimates.json`
 (produced by `analysis/R/03_estimate.R` from `analysis/specs/estimation.yml`), every number recomputed
-independently by `tests/verify_stage6.py`. Stage 5's verdicts are in `docs/design-memo.md` and
-`registry/diagnostics/2026-10-17/`.
+independently by `tests/verify_stage6.py`. The intervals are drawn as well as tabulated —
+`registry/estimates/2026-10-18/forest_plot.svg`, one panel per design and one row per published
+specification, with each design's decisive check (A's 24-month mis-timed dose, B's 6-month lead placebo)
+drawn hollow beside its estimate: a forest plot of estimates alone would show a number that the artifact
+beside it says is not identified, without showing the reason. Stage 5's verdicts are in
+`docs/design-memo.md` and `registry/diagnostics/2026-10-18/`.
 
 The question this answers is the one the data has to be asked before anything is estimated: **which
 causal question can these artifacts carry?** The answer is not "the one the brief asked for".
@@ -87,7 +91,7 @@ violence, and this design cannot distinguish that from any other timing. The que
 
 #### Stage 7 pushed on this, and the sign did not survive
 
-`docs/robustness.md` refits this question 81 ways (`registry/robustness/2026-10-17/`). The result:
+`docs/robustness.md` refits this question 81 ways (`registry/robustness/2026-10-18/`). The result:
 **45 specifications positive, 36 negative**, and the estimate is negative in all three windows when the
 dose is lagged one month rather than contemporaneous — while the pre-registered same-month specification
 is positive. The 36 leave-one-state-out refits do *not* flip the sign (range [0.1234, 0.6254]), so the

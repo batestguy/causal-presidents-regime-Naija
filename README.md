@@ -29,7 +29,8 @@ coefficient tables, intervals, diagnostics and sensitivity bounds.
 > longer blocked on data: widening the donor pool from 13 countries to **99** took it from `infeasible` to
 > passing its pre-fit gate on `u5mr` (3 of 4 windows). Full write-ups:
 > [`docs/estimates.md`](docs/estimates.md), [`docs/robustness.md`](docs/robustness.md) and
-> [`docs/events.md`](docs/events.md).
+> [`docs/events.md`](docs/events.md) — and the boundary all three sit inside,
+> [`docs/limitations.md`](docs/limitations.md).
 
 | | |
 |---|---|
@@ -42,7 +43,8 @@ coefficient tables, intervals, diagnostics and sensitivity bounds.
 | Estimation | ✅ **Stage 6** — 12 specifications across two designs (3 Design A outcomes, 9 Design B horizons), every one published with its interval and the check that decided its verdict. Verifier recomputes every number to 1e-12 |
 | Robustness | ✅ **Stage 7** — **105 specifications** declared before fitting and all published, with the specification curve drawn and the support counts computed from the fitted rows: Design B 24/24 positive, Design A 45 positive / 36 negative with five majority sign-flip levels (6 of the 105 sit inside a declared ±0.02 near-zero band and are counted as such). Verifier re-fits every one of them (worst coefficient gap 6.5e-9) |
 | Within-tenure timing | ✅ **Stage 8b** — the transition event study: **4 in-window transitions** on 312 months of UCDP conflict (1999-01→2024-12, the only monthly outcome), 32 specifications, inference by **exhaustive placebo assignment** over 58 eligible months. **2 of 8 event-outcome cells survive both the placebo and the pre-trend check**, 4 fail the pre-trend, 1 event cannot be checked at all (declared, not scored as a pass), and the party split is published as **description with no test**. Verifier re-fits all 32 and re-enumerates the placebo distribution (worst HAC SE gap 0.002 %) |
-| Registry / dashboard | 🔨 **Stage 8, registry half built** — **2 of 36 cards carry a published number, 34 carry a reason** (both Design A cards that can: fatalities +0.4793, incidents +0.5460, each with its interval, its `estimated_not_identified` verdict and the Stage 7 grid summary for its own outcome); Design B's nine specifications are published on the index as **channel-level** (`result_is_card_level: false`, because on every B card FAAC is a mediator) and Design C's non-run likewise; every card without a number names a reason from a closed set. Verifier re-derives the mapping and checks every number against the artifact it names. Still to come: the RAG corpus, the remaining figures |
+| Retrieval corpus | ✅ **Stage 8c** — **441 chunks from 51 attributed sources** at the registry's vintage: one document per model card (179 parts), the three design results, the narrative, the data dictionary, the transition events, the tables, the two coverage counts and the scope paragraph. Every chunk records its source's sha256, so a document edited without a rebuild fails the verifier. Measured on `multi-qa-MiniLM-L6-cos-v1`: **recall@5 0.944** (BM25 baseline 0.833), MRR 0.724; **two refusal gates fail and are published** — reason-bearing refusals 0.5, out-of-scope 0.25, because a forecast about a covered outcome embeds closer than some real questions do. RAGAS declared `not_run` (no LLM key). `docs/rag.md` |
+| Registry / dashboard | 🔨 **Stage 8, registry half built** — **2 of 36 cards carry a published number, 34 carry a reason** (both Design A cards that can: fatalities +0.4793, incidents +0.5460, each with its interval, its `estimated_not_identified` verdict and the Stage 7 grid summary for its own outcome); Design B's nine specifications are published on the index as **channel-level** (`result_is_card_level: false`, because on every B card FAAC is a mediator) and Design C's non-run likewise; every card without a number names a reason from a closed set. Verifier re-derives the mapping and checks every number against the artifact it names. Still to come: Stage 9's app |
 
 **There is no dashboard to look at yet.** Ingestion works end to end, the causal-graph assumption layer
 is built, the harmonised analytical base the models and the app will read exists, Stage 5 established what
@@ -52,6 +54,7 @@ either survives its own choices, 105 specifications of them. Stage 8b then answe
 question the data can carry, on monthly conflict around the four transitions, and refused the rest in
 writing. See
 [`PROGRESS.md`](PROGRESS.md) for what is verified and what is blocked,
+[`docs/limitations.md`](docs/limitations.md) for what cannot be said and why, before any finding,
 [`docs/estimates.md`](docs/estimates.md) for the answer to "what can this data actually say?",
 [`docs/robustness.md`](docs/robustness.md) for what survives that answer's choices,
 [`docs/design-memo.md`](docs/design-memo.md) for the per-design verdict,
@@ -170,13 +173,16 @@ registry/diagnostics/ the Stage 5 pre-check result (diagnostics.json + report.md
 registry/estimates/   the Stage 6 estimates (estimates.json + report.md), one dir per vintage
 registry/robustness/  the Stage 7 multiverse (robustness.json + report.md + specification_curve.svg)
 registry/events/      the Stage 8b transition event study (events.json + report.md + event_study.svg)
+registry/rag/         the Stage 8c retrieval corpus, its eval set and the measured retrieval numbers
 docs/design-memo.md   the Stage 5 output - which design family is credible per outcome, and why
+docs/limitations.md   the boundary, written before the findings - what cannot be said, and what would change it
 docs/estimates.md     the Stage 6 output - what the data can actually answer, and what it cannot
 docs/robustness.md    the Stage 7 output - what survives the choices, and where the sign changes
 docs/events.md        the Stage 8b output - comparing tenures on the one monthly outcome, and its limits
+docs/rag.md           the Stage 8c output - what the chat layer may quote, and what retrieval cannot yet do
 docs/data-dictionary.md  every column of the analytical base, its grain and its imputation rules
 tests/                one independent verifier per stage (provenance, DAGs, quality, harmonisation,
-                      Stage 5, Stage 6, Stage 7, Stage 8b events, registry)
+                      Stage 5, Stage 6, Stage 7, Stage 8b events, registry, Stage 8c retrieval)
 ```
 
 ## Two things worth knowing about the data
@@ -225,10 +231,14 @@ may not be republished, so the repository ships code, derived aggregates and acq
 - [`PHASES.md`](PHASES.md) — the build plan and its stage gates
 - [`nigeria-causal-inference-spec.md`](nigeria-causal-inference-spec.md) — design decisions, including
   which original constraints were deliberately overridden
+- [`docs/limitations.md`](docs/limitations.md) — the limitations, written before the findings: the
+  arithmetic, the coverage gaps, the identification failures and what would change each answer
 - [`docs/estimates.md`](docs/estimates.md) — which causal question this data can carry, and why not the one
   the brief asked for
 - [`docs/robustness.md`](docs/robustness.md) — what survives the choices the estimates did not pin down
 - [`docs/events.md`](docs/events.md) — comparing tenures, part 1: what changed *inside* a tenure, on the only
   monthly outcome
+- [`docs/rag.md`](docs/rag.md) — the retrieval corpus: what the chat layer is allowed to quote, the model
+  and budget decisions behind it, and the two refusal gates it does not yet meet
 - [`docs/decisions.md`](docs/decisions.md) — the decision log
 - [`PROGRESS.md`](PROGRESS.md) — current state, verification evidence, blockers

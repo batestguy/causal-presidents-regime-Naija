@@ -20,3 +20,7 @@
 *.parquet binary
 *.gz binary
 *.zip binary
+# The RAG vectors are a zipped numpy archive; git would usually detect that, but the corpus records the
+# file's sha256, so "usually" is not good enough: a normalising checkout would break the artifact's own
+# hash. Declared binary for the same reason as the payloads above.
+*.npz binary
