@@ -1,7 +1,8 @@
 # causal-presidents — Phase Plan: Data Collection → Analysis
 
-**Scope of this document.** Stages 0–8: from an empty repo to a defensible set of analysis products.
-The interactive app is Stage 9, downstream, and **consumes Stage 8 output only** — it never touches R.
+**Scope of this document.** Stages 0–9: from an empty repo to a defensible set of analysis products, and the
+app that renders them. The interactive app is Stage 9, downstream, and **consumes Stage 8 output only** — it
+never touches R, a database or a model.
 Companions: `nigeria-causal-inference-spec.md` (design decisions), `#CausalPresidents.txt` (base spec),
 `knowledge.md` (environment).
 
@@ -30,6 +31,7 @@ Stages 3 and 5 exist at all.
 | 6 | Model registry (R) | robustness | Every card satisfies the six-item rigor floor |
 | 7 | Spec curve + sensitivity | products | Preferred spec marked, support count computed |
 | 8 | Registry, narrative, RAG corpus | the app | App buildable without touching R again |
+| 9 | The read-only app | the chat layer | Every card reachable, every number traceable to a card field |
 
 **Critical path:** 0 → 1 → 2 → 3 → 4 → 5 → 6. Stage 5 is where models die cheaply. Skipping it is the
 single most likely way this project becomes indefensible.
@@ -530,6 +532,47 @@ panel, the robustness grid).
 
 **Exit criteria.** Stage 9 can be built without opening R. If a card and the narrative disagree, the
 **card wins** and the narrative is regenerated.
+
+---
+
+## Stage 9 — The read-only app
+
+**STATUS: READ-ONLY HALF BUILT (2026-10-21).** `app/streamlit_app.py` + `app/registry_data.py`,
+`tests/verify_app.py`, `docs/app.md`. Outcome → design → assumption → adjustment set → cannot-rule-out →
+the published number or the reason there is none, plus one tab for the two design-level results. It reads
+`registry/dags/` and nothing else: no database, no network, no model, and no coefficient typed into the UI.
+
+**Why read-only first.** The page a reader can use today is the one Stage 8 was built to make possible, and
+it has no failing gate in front of it. The chat tab does: out-of-scope refusal measures **0.25**, so a
+question like "what will inflation be in 2030?" is not refused by similarity alone. Building the chat first
+would ship the exact failure the corpus exists to prevent, so the tab waits for an intent gate and a
+re-measurement against the declared eval set.
+
+**What the verifier establishes.** It renders all 36 cards through Streamlit's own test harness and compares
+the output with the card JSON, formatting the card's values itself rather than importing the app's formatter:
+every coefficient, interval, p-value, verdict *and the failed check behind it*, every reason code *and its
+detail sentence*, every adjustment node resolved to `label (node_id)`, and every caveat. Two negative
+checks matter as much: the published coefficients are searched for as literals in the app's source (the card
+wins), and the source is scanned for database, network and fitting imports (base spec §18). A design-level
+result is also checked never to appear on a card: pointing the results tab at another design while each B
+card renders is what makes that check real rather than vacuous.
+
+**Not built, and declared as such in `docs/app.md`:** the chat tab (gate not passed), node-level graph
+interaction, links from the card to the narrative that explains each design, and any deployment — serving a
+stale vintage is a governance decision, not a packaging one.
+
+**Work**
+
+- ✅ App skeleton reading the index and cards, with the vintage cross-check in the loader.
+- ✅ Model-card tab: assumption, computed adjustment set, assumed-absent node, caveats, Stage 5 pre-check,
+  the number with its verdict, the whole specification in an expander, the Stage 7 grid line, the SVG graph.
+- ✅ Design-level results tab: A's failed timing check, B's channel-level specifications and support count,
+  C's reason and next step.
+- ✅ `docs/app.md` — the ratio, the rules, and the limits the page does not fix.
+- ⏳ Chat tab, after the intent gate passes its refusal targets.
+
+**Exit criteria.** A reader can reach any card, and no number appears anywhere that is not a field of that
+card. Nothing is fitted at render time.
 
 ---
 

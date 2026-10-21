@@ -1,0 +1,300 @@
+"""Causal Presidents — the read-only app over the published registry.
+
+What this is: outcome → identification design → the assumption it rests on → the published number, or the
+reason there is not one. Every value is read from `registry/dags/`; nothing is fitted at render time (base
+spec §18), nothing is computed, and no number is typed into this file — `tests/verify_app.py` greps for the
+published coefficients to keep it that way.
+
+What it deliberately is not: a dashboard of the raw series (the monthly spine is 16.2 % observed, which is a
+plot about coverage rather than about presidents) and not yet the chat layer. The retrieval half of the chat
+is measured in `registry/rag/`, but out-of-scope refusal does not pass its gate — see `docs/rag.md`.
+
+Run:
+    /c/Users/TOSHIBA/ds-general/python.exe -m streamlit run app/streamlit_app.py
+"""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+import streamlit as st
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from registry_data import (  # noqa: E402  (the path is set above so the app runs from any cwd)
+    RegistryError,
+    coverage_words,
+    direction_words,
+    estimate_rows,
+    interval,
+    load_registry,
+    precheck_lines,
+    reason_text,
+    result_spec_rows,
+    robustness_text,
+    signed,
+    verdict_text,
+)
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+st.set_page_config(page_title="Causal Presidents", layout="wide")
+
+
+@st.cache_data(show_spinner=False)
+def _registry(root: str):
+    return load_registry(root)
+
+
+try:
+    registry = _registry(str(REPO_ROOT))
+except RegistryError as exc:  # a registry mid-rebuild is shown, never rendered around
+    st.error(f"The registry cannot be rendered faithfully: {exc}")
+    st.stop()
+
+counts = registry.card_counts()
+total_cards = int(counts.get("estimated", 0)) + int(counts.get("not_estimated", 0))
+designs = registry.designs()
+design_short = {row["id"]: row["short"] for row in designs}
+
+# ---------------------------------------------------------------------------------------------
+# Sidebar — what the page is about
+# ---------------------------------------------------------------------------------------------
+with st.sidebar:
+    st.markdown("### Choose a question")
+    outcome_id = st.selectbox(
+        "Outcome",
+        key="outcome",
+        options=[row["id"] for row in registry.outcomes()],
+        format_func=lambda oid: f"{registry.outcome(oid)['label']} · {registry.outcome(oid)['domain']}",
+        help="The 12 catalogue outcomes. A declared coverage gap is a stated absence, not a null result.",
+    )
+    design_id = st.radio(
+        "Causal model",
+        key="causal_model",
+        options=[row["id"] for row in designs],
+        format_func=lambda did: f"{did} — {registry.design(did)['name']}",
+    )
+    st.divider()
+    st.caption(
+        f"Registry vintage **{registry.vintage}**. Every number below is copied from the card it is shown "
+        f"on; nothing is re-fitted here."
+    )
+
+card = registry.card(outcome_id, design_id)
+outcome = card.get("outcome") or registry.outcome(outcome_id)
+design = card.get("design") or registry.design(design_id)
+estimate = card.get("estimate") or {}
+status = estimate.get("status", "not_estimated")
+
+st.title("Causal Presidents")
+st.caption(
+    "Presidential transitions and national outcomes in Nigeria, 1999–present. "
+    "Read the assumption before the number."
+)
+st.markdown(
+    f"**{counts.get('estimated')} of {total_cards} model cards carry a published number; the rest say why "
+    f"not.** This page is showing *{outcome['label']}* under **Design {design_id} — {design['name']}**."
+)
+
+card_tab, result_tab, about_tab = st.tabs(["Model card", "Design-level results", "What this reads"])
+
+# ---------------------------------------------------------------------------------------------
+# Model card
+# ---------------------------------------------------------------------------------------------
+with card_tab:
+    st.subheader(f"{outcome['label']} — Design {design_id}: {design['name']}")
+    st.markdown(
+        f"**Outcome.** `{outcome['id']}`. Unit: {outcome.get('unit', 'not stated')}. "
+        f"Direction: {direction_words(outcome.get('direction'))}. "
+        f"Frequency: {outcome.get('frequency', 'not stated')}. "
+        f"Source: {outcome.get('source', 'not stated')}."
+    )
+    st.markdown(f"**Coverage.** {coverage_words(outcome.get('coverage_status'))}.")
+    if outcome.get("coverage_note"):
+        st.caption(outcome["coverage_note"])
+    st.markdown(
+        f"**Estimand.** {design.get('estimand', 'not stated')}  \n"
+        f"**Estimator.** {design.get('estimator', 'not stated')}  \n"
+        f"**Unit.** {design.get('unit', 'not stated')}"
+    )
+
+    assumption_col, number_col = st.columns([3, 2], gap="large")
+
+    with assumption_col:
+        st.markdown("#### The assumption this rests on")
+        st.markdown(card.get("identifying_assumption", "not stated"))
+        st.markdown(
+            f"**Adjustment set** — {design.get('adjustment_criterion', 'the declared')} criterion, resolved by "
+            f"dagitty on the assumed graph in this card:"
+        )
+        labels = registry.adjustment_labels(card)
+        st.markdown("\n".join(f"- {label}" for label in labels) or "- none")
+        st.markdown("**Assumed absent** — the node this design needs not to exist:")
+        absent = registry.assumed_absent_labels(card)
+        st.markdown("\n".join(f"- {label}" for label in absent) or "- none")
+        st.markdown("**What this design cannot rule out:**")
+        caveats = card.get("cannot_rule_out") or []
+        st.markdown("\n".join(f"- {item}" for item in caveats) or "- not stated")
+
+    with number_col:
+        st.markdown("#### The published number" if status == "estimated" else "#### A number for this pair")
+        if status == "estimated":
+            spec = estimate.get("specification") or {}
+            st.markdown(f"### {signed(spec['coefficient'])}")
+            st.markdown(
+                f"95 % interval **{interval(spec['ci_low'], spec['ci_high'])}** · p = {spec['p_value']:.4f}"
+            )
+            st.markdown(
+                f"{spec['n_obs']:,} observations over {spec['n_units']} units, "
+                f"{spec.get('first_month', '?')} to {spec.get('last_month', '?')}."
+            )
+            verdict = (estimate.get("verdict") or {}).get("status", "not stated")
+            if verdict == "estimated_not_identified":
+                st.warning(
+                    f"**Verdict: `{verdict}`.** A number exists for this pair and the design does not "
+                    f"identify it. The check that decided that came first:"
+                )
+            else:
+                st.info(f"**Verdict: `{verdict}`.**")
+            st.markdown(verdict_text(estimate))
+            with st.expander("Every field of the published specification"):
+                for label, value in estimate_rows(estimate):
+                    st.markdown(f"- **{label}:** {value}")
+            grid = robustness_text(estimate)
+            if grid:
+                st.caption(grid)
+        else:
+            code, detail = reason_text(estimate)
+            st.info(f"**Reason: `{code}`**")
+            st.markdown(detail)
+            if estimate.get("published_result"):
+                st.markdown(
+                    f"The design's own result is published once, on the index, at "
+                    f"`{estimate['published_result']}` — see the *Design-level results* tab. It is not an "
+                    f"estimate for this outcome."
+                )
+
+    st.divider()
+    st.markdown("#### Stage 5 pre-check, run before anything was estimated")
+    for line in precheck_lines(card):
+        st.markdown(line)
+
+    svg_path = registry.svg_path(card)
+    if svg_path.exists():
+        st.markdown("#### The assumed causal graph")
+        st.html(
+            "<div style='max-height:430px;overflow:auto'>"
+            + svg_path.read_text(encoding="utf-8")
+            + "</div>"
+        )
+        st.caption(
+            "The unobserved node is drawn and named rather than omitted. Adjustment sets are computed on the "
+            "assumed graph, never hand-listed."
+        )
+    else:
+        st.caption(f"The card names a figure at `{svg_path}` that is not on disk.")
+
+    st.caption(
+        f"Card: `registry/dags/{card['dag_id']}.json` · vintage {registry.vintage} · "
+        f"schema {card.get('schema_version', '?')}"
+    )
+
+# ---------------------------------------------------------------------------------------------
+# Design-level results
+# ---------------------------------------------------------------------------------------------
+with result_tab:
+    st.subheader("The results that are not about a single card")
+    st.markdown(
+        "Design B's published result measures the **national FAAC channel**, and on every B card FAAC is a "
+        "mediator rather than the outcome; Design C was not run. Both are published here, once, rather than "
+        "on twelve cards each where they could be mistaken for that card's estimate."
+    )
+    result_design = st.radio(
+        "Design",
+        options=[row["id"] for row in designs],
+        horizontal=True,
+        format_func=lambda did: f"{did} — {design_short.get(did, did)}",
+        key="result_design",
+    )
+    result = registry.design_result(result_design)
+    if not result:
+        st.info("The index carries no published result for this design.")
+    else:
+        st.markdown(
+            f"**Status: `{result.get('status')}`** · card-level: "
+            f"`{str(result.get('result_is_card_level')).lower()}`"
+        )
+        if result.get("result_outcome"):
+            st.markdown(f"**What the number is about:** {result['result_outcome']}")
+        verdict = result.get("verdict") or {}
+        if verdict.get("rule"):
+            st.markdown(f"**Verdict rule, fixed before the numbers were read:** {verdict['rule']}")
+        failed = verdict.get("failed_checks")
+        if isinstance(failed, list):
+            st.markdown(f"**Failed checks:** {', '.join(failed) if failed else 'none'}")
+        elif failed:
+            st.markdown(f"**Failed check:** {failed}")
+
+        rows = result_spec_rows(result)
+        if rows:
+            st.markdown("#### Published specifications")
+            st.dataframe(rows, width="stretch", hide_index=True)
+            for row in rows:
+                st.markdown(
+                    f"- {row['specification']}: {row['estimate']} {row['95 % interval']} "
+                    f"(p = {row['p']}, n = {row['n']}, {row['window']})"
+                )
+        elif result_design == "C":
+            st.markdown("**Published specifications:** none — the design was not run.")
+
+        robustness = result.get("robustness") or {}
+        support = robustness.get("support") or {}
+        if support:
+            st.markdown(
+                f"#### Robustness\n{support.get('n_positive')} of the design's {support.get('n')} "
+                f"specifications are positive and {support.get('n_negative')} negative; "
+                f"{support.get('n_positive_ci')} have an interval entirely above zero and "
+                f"{support.get('n_negative_ci')} entirely below it. "
+                f"{robustness.get('sign_flip_levels')} axis levels flip against the preferred specification."
+            )
+        if result.get("why"):
+            st.markdown("#### Why it was not run" if result.get("status") == "not_run" else "#### Why")
+            st.markdown(result["why"])
+        if result.get("next_step"):
+            st.markdown(f"**Next step:** {result['next_step']}")
+        artifact = (result.get("artifacts") or {}).get("estimates")
+        if artifact:
+            st.caption(f"Source: `{artifact}` · registry vintage {registry.vintage}")
+
+# ---------------------------------------------------------------------------------------------
+# What this reads
+# ---------------------------------------------------------------------------------------------
+with about_tab:
+    st.subheader("What this page reads, and what it refuses to do")
+    st.markdown(
+        f"- `registry/dags/index.json` — the registry index, vintage **{registry.vintage}**\n"
+        f"- `registry/dags/<outcome>__<design>.json` — **{len(registry.cards)}** model cards\n"
+        f"- `registry/dags/<outcome>__<design>.svg` — the assumed causal graph beside each card"
+    )
+    st.markdown(
+        "**Nothing is fitted at render time.** The app holds no model, opens no database and makes no network "
+        "call. A number on this page is a field of a card written by an R stage; if the page and the card ever "
+        "disagree, the card wins and this code is wrong."
+    )
+    st.markdown(
+        f"**The ratio the app exists to state:** {counts.get('estimated')} of {total_cards} cards carry a "
+        "published number. The rest carry a reason from a closed set, so an absent estimate is never silent:"
+    )
+    for code, count in (counts.get("not_estimated_by_reason") or {}).items():
+        st.markdown(f"- `{code}` — {count} card(s)")
+    st.divider()
+    st.markdown(
+        "**What this page does not answer.** It renders published estimates and the assumptions they rest on. "
+        "It does not compare tenures, forecast, or recommend policy. The tenure comparison is not identifiable "
+        "with this data — four to five administrations against 22–23 annual observations per outcome — and "
+        "`docs/limitations.md` is where that arithmetic is written down. The chat layer over the published "
+        "corpus is a later stage: its retrieval numbers are in `docs/rag.md`, including the two refusal gates "
+        "that do not pass yet."
+    )

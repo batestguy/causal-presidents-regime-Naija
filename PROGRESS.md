@@ -1,11 +1,50 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-10-21 (eighth session) · **Stage:** 8 of 8, **built** — the registry the app will
-read: 36 cards, **2 carrying a published number and 34 carrying a reason**, the design-level results on the
-index, the tenure-timing artifact, the forest plot, the limitations narrative and **the retrieval corpus** ·
-**verified at vintage 2026-10-18**: 11 verifiers, 0 failures, 44 registry documents schema-validated
+**Last updated:** 2026-10-21 (ninth session) · **Stage:** 9, the **read-only app built** — every one of the
+36 cards renders its own assumption, adjustment set, caveats and number or reason, and the page holds no
+model of its own · **verified at vintage 2026-10-18**: 12 verifiers, 0 failures, 44 registry documents
+schema-validated
 
-**This session, in one line:** the **RAG corpus, its eval set and the measured retrieval numbers** — 441
+**This session, in one line:** the **read-only app** — `app/streamlit_app.py`, a `docs/app.md` that states the
+ratio it leads with, and `tests/verify_app.py`, which renders **all 36 cards** through Streamlit's own test
+harness and compares the page against the card JSON.
+
+**What this session built, and the two checks that had to be sharpened before they meant anything.**
+
+- **The page leads with the ratio, not a coefficient:** *2 of 36 model cards carry a published number; the rest
+  say why not.* A reader who opens one card otherwise cannot tell whether the project estimated two things or
+  failed to estimate thirty-four — and the four reason codes (12 `outcome_series_absent`, 10
+  `no_specification_declared`, 9 `design_result_is_channel_level`, 3 `design_not_run`) are listed with their
+  counts on the third tab.
+- **Left column is the argument, right column is the number.** Assumption → backdoor adjustment set resolved
+  from the card's own nodes to `label (node_id)` → the node assumed absent → cannot-rule-out → the Stage 5
+  pre-check, including its blocker. Only then the estimate, its interval, its verdict *and the check that
+  decided the verdict*, the full specification in an expander, one Stage 7 grid line, and the SVG graph.
+- **Design-level results get their own tab, and the verifier keeps them there.** B's channel-level number and
+  C's non-run are shown once, with their specifications, support counts and declared next step. The check
+  only became real after it was sharpened: pointing the *results* tab at a different design while each B card
+  renders is what proves the number is not being lent to a card — before that, a B coefficient found on the
+  page could have come from the results tab, where it belongs.
+- **Two verifier misses found by breaking it, not by reading it.** (1) The failed-check needle was satisfied
+  by the results tab repeating Design A's verdict sentence, so a card could lose that sentence and still
+  pass; the needle now carries the `Failed check:` prefix and the results tab is pointed elsewhere. (2) The
+  first harness addressed widgets by position — and tabs register their widgets on every run, so index 0 was
+  the results tab's radio, and 24 of the 36 cards were being checked against a page showing a different
+  design. Widgets now carry keys, and the loop drives them by key.
+- **Seven break-tests, all caught, files restored byte-for-byte** (`.probe/break_app.py`, gitignored): a
+  typed coefficient, a dropped adjustment set, a reason code without its detail, a verdict without its
+  failed check, a `duckdb` import, a drifted ratio in `docs/app.md`, and a drifted count in its reason
+  table — the last added because the table's four numbers are prose too, and prose that is not derived from
+  the index is prose that drifts.
+- **The app was not shipped with a chat tab.** Out-of-scope refusal measures 0.25, so a 2030 forecast about a
+  covered outcome is not refused by similarity alone; building the tab now would ship the failure the corpus
+  exists to prevent. `docs/app.md` §3 says so where a reader will find it, and the eval set is ready to judge
+  the intent gate when it exists.
+- **Environment:** `streamlit==1.60.0` added to `requirements.txt` (the verifier renders the app, so the
+  verified environment has to carry the framework) and `app/*.py` added to the compile gate in `verify.sh` and
+  CI.
+
+**Previous session, in one line:** the **RAG corpus, its eval set and the measured retrieval numbers** — 441
 chunks from 51 attributed sources, embedding recall@5 **0.944** against a BM25 baseline's 0.833, and **two of
 four refusal gates failing, published rather than tuned away**.
 

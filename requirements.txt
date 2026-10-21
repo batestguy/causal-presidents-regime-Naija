@@ -24,3 +24,8 @@ lxml==6.1.2
 # Transformation (dbt) and the local warehouse.
 dbt-duckdb==1.11.0
 duckdb==1.5.5
+
+# Stage 9's app. It reads the registry and nothing else, but it is part of the deliverable, and
+# tests/verify_app.py renders it through Streamlit's own test harness — so the verified environment has to
+# contain the framework the app runs on. Pinned to the version the verification was written against.
+streamlit==1.60.0

@@ -37,7 +37,7 @@ step() { printf '\n=== %s\n' "$1"; }
 
 step "static: compile"
 $PYTHON -m py_compile ingestion/clients/*.py ingestion/flows/*.py ingestion/parsers/*.py \
-  ingestion/quality/*.py tests/*.py scripts/*.py
+  ingestion/quality/*.py tests/*.py scripts/*.py app/*.py
 
 step "static: artifacts and contracts"
 $PYTHON scripts/validate_artifacts.py
@@ -127,6 +127,8 @@ else
   printf '\n=== stage 8c: SKIPPED — no RAG_PYTHON with sentence-transformers; verify_rag.py will check the committed corpus and vectors\n'
 fi
 
+# Stage 9 has no engine: the app is hand-written and reads the registry. So its step is the verifier alone,
+# which renders all 36 cards through Streamlit's test harness and compares the page against the card JSON.
 step "verifiers (each re-derives its numbers independently)"
 $PYTHON tests/verify_quality.py
 $PYTHON tests/verify_stage6.py
@@ -139,5 +141,6 @@ $PYTHON tests/verify_stage5.py
 $PYTHON tests/verify_events.py
 $PYTHON tests/verify_provenance.py
 $PYTHON tests/verify_rag.py
+$PYTHON tests/verify_app.py
 
 printf '\nall checks passed\n'

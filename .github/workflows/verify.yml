@@ -44,7 +44,7 @@ jobs:
         run: >-
           python -m py_compile
           ingestion/clients/*.py ingestion/flows/*.py ingestion/parsers/*.py
-          ingestion/quality/*.py tests/*.py scripts/*.py
+          ingestion/quality/*.py tests/*.py scripts/*.py app/*.py
       - name: artifact contracts
         run: python scripts/validate_artifacts.py
       - name: lint

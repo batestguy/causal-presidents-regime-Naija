@@ -12,7 +12,7 @@ coefficient tables, intervals, diagnostics and sensitivity bounds.
 
 ---
 
-## Status: Stage 8 of 8, begun — the registry the app reads exists, and it carries two numbers
+## Status: Stages 0–9, the analysis chain verified and the read-only app built — the registry carries two numbers
 
 > **The headline finding (2026-10-18): an oil-price shock reaches Nigeria's states, federal money does not
 > visibly buy peace, and the tenure question has one answerable half.** A 10 % rise in Brent reaches state allocations as roughly **5 % more money, two
@@ -44,9 +44,20 @@ coefficient tables, intervals, diagnostics and sensitivity bounds.
 | Robustness | ✅ **Stage 7** — **105 specifications** declared before fitting and all published, with the specification curve drawn and the support counts computed from the fitted rows: Design B 24/24 positive, Design A 45 positive / 36 negative with five majority sign-flip levels (6 of the 105 sit inside a declared ±0.02 near-zero band and are counted as such). Verifier re-fits every one of them (worst coefficient gap 6.5e-9) |
 | Within-tenure timing | ✅ **Stage 8b** — the transition event study: **4 in-window transitions** on 312 months of UCDP conflict (1999-01→2024-12, the only monthly outcome), 32 specifications, inference by **exhaustive placebo assignment** over 58 eligible months. **2 of 8 event-outcome cells survive both the placebo and the pre-trend check**, 4 fail the pre-trend, 1 event cannot be checked at all (declared, not scored as a pass), and the party split is published as **description with no test**. Verifier re-fits all 32 and re-enumerates the placebo distribution (worst HAC SE gap 0.002 %) |
 | Retrieval corpus | ✅ **Stage 8c** — **441 chunks from 51 attributed sources** at the registry's vintage: one document per model card (179 parts), the three design results, the narrative, the data dictionary, the transition events, the tables, the two coverage counts and the scope paragraph. Every chunk records its source's sha256, so a document edited without a rebuild fails the verifier. Measured on `multi-qa-MiniLM-L6-cos-v1`: **recall@5 0.944** (BM25 baseline 0.833), MRR 0.724; **two refusal gates fail and are published** — reason-bearing refusals 0.5, out-of-scope 0.25, because a forecast about a covered outcome embeds closer than some real questions do. RAGAS declared `not_run` (no LLM key). `docs/rag.md` |
-| Registry / dashboard | 🔨 **Stage 8, registry half built** — **2 of 36 cards carry a published number, 34 carry a reason** (both Design A cards that can: fatalities +0.4793, incidents +0.5460, each with its interval, its `estimated_not_identified` verdict and the Stage 7 grid summary for its own outcome); Design B's nine specifications are published on the index as **channel-level** (`result_is_card_level: false`, because on every B card FAAC is a mediator) and Design C's non-run likewise; every card without a number names a reason from a closed set. Verifier re-derives the mapping and checks every number against the artifact it names. Still to come: Stage 9's app |
+| Registry / dashboard | 🔨 **Stage 8, registry half built** — **2 of 36 cards carry a published number, 34 carry a reason** (both Design A cards that can: fatalities +0.4793, incidents +0.5460, each with its interval, its `estimated_not_identified` verdict and the Stage 7 grid summary for its own outcome); Design B's nine specifications are published on the index as **channel-level** (`result_is_card_level: false`, because on every B card FAAC is a mediator) and Design C's non-run likewise; every card without a number names a reason from a closed set. Verifier re-derives the mapping and checks every number against the artifact it names |
+| The app | ✅ **Stage 9, read-only half** — `app/streamlit_app.py`: pick an outcome, pick one of the three designs, and get the assumption, the digraph-computed adjustment set, the cannot-rule-out list and the Stage 5 pre-check — then the number with the verdict and the failed check behind it, or the reason there is none. Reads `registry/dags/` only: no database, no network, no model, no coefficient typed into the UI. `tests/verify_app.py` renders **all 36 cards** through Streamlit's own harness and compares the page against the card JSON. **The chat tab is not built**: out-of-scope refusal measures 0.25, so a forecast about a covered outcome is not refused by similarity alone — and shipping that would be the failure the corpus exists to prevent |
 
-**There is no dashboard to look at yet.** Ingestion works end to end, the causal-graph assumption layer
+**The app runs, read-only, and it leads with the ratio instead of a number.** `2 of 36 model cards carry a
+published number; the rest say why not` is the first line on the page, because a reader who scans one card
+otherwise cannot tell whether this project estimated two things or failed to estimate thirty-four. There is no
+chat tab yet — see `docs/app.md` §3 for why that wait is deliberate.
+
+```bash
+conda run -p C:/Users/TOSHIBA/ds-general python -m streamlit run app/streamlit_app.py
+python tests/verify_app.py     # renders all 36 cards and compares the page with the cards
+```
+
+Ingestion works end to end, the causal-graph assumption layer
 is built, the harmonised analytical base the models and the app will read exists, Stage 5 established what
 the data can support **before** estimating anything, Stage 6 estimated the part of it that is estimable —
 publishing a null and an unidentified estimate beside the one clean result — and Stage 7 asked whether
@@ -79,6 +90,9 @@ against two events has no sampling distribution. [`docs/events.md`](docs/events.
 
 ```bash
 PY="conda run -p C:/Users/TOSHIBA/ds-general python"
+
+# Stage 9: the read-only app over the published registry (no database, no R, no keys)
+$PY -m streamlit run app/streamlit_app.py
 
 # Pull a World Bank vintage (raw payloads + provenance manifest + coverage report)
 $PY ingestion/flows/pull_worldbank.py
@@ -180,9 +194,12 @@ docs/estimates.md     the Stage 6 output - what the data can actually answer, an
 docs/robustness.md    the Stage 7 output - what survives the choices, and where the sign changes
 docs/events.md        the Stage 8b output - comparing tenures on the one monthly outcome, and its limits
 docs/rag.md           the Stage 8c output - what the chat layer may quote, and what retrieval cannot yet do
+docs/app.md           the Stage 9 output - what the app shows, the rules it is held to, and its limits
+app/                  the Stage 9 read-only app: registry_data.py (the loader) and streamlit_app.py
 docs/data-dictionary.md  every column of the analytical base, its grain and its imputation rules
 tests/                one independent verifier per stage (provenance, DAGs, quality, harmonisation,
-                      Stage 5, Stage 6, Stage 7, Stage 8b events, registry, Stage 8c retrieval)
+                      Stage 5, Stage 6, Stage 7, Stage 8b events, registry, Stage 8c retrieval,
+                      Stage 9 app)
 ```
 
 ## Two things worth knowing about the data
@@ -238,6 +255,8 @@ may not be republished, so the repository ships code, derived aggregates and acq
 - [`docs/robustness.md`](docs/robustness.md) — what survives the choices the estimates did not pin down
 - [`docs/events.md`](docs/events.md) — comparing tenures, part 1: what changed *inside* a tenure, on the only
   monthly outcome
+- [`docs/app.md`](docs/app.md) — the app: the ratio it leads with, the rules its verifier enforces, and why
+  the chat tab waits for a gate that does not pass yet
 - [`docs/rag.md`](docs/rag.md) — the retrieval corpus: what the chat layer is allowed to quote, the model
   and budget decisions behind it, and the two refusal gates it does not yet meet
 - [`docs/decisions.md`](docs/decisions.md) — the decision log
