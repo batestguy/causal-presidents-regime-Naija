@@ -7,7 +7,19 @@ schema-validated
 
 **This session, in one line:** the **read-only app** — `app/streamlit_app.py`, a `docs/app.md` that states the
 ratio it leads with, and `tests/verify_app.py`, which renders **all 36 cards** through Streamlit's own test
-harness and compares the page against the card JSON.
+harness and compares the page against the card JSON — followed by the framework question itself, reopened
+and **settled on the record** rather than left implicit.
+
+**"Must it be Streamlit?" — asked and answered, in the decision log (UI-01…UI-08).** It was chosen, not forced,
+so the reason is now written down where a reversal would be visible. **UI-01: Streamlit**, because `AppTest`
+renders the real app **without a browser**, which is what makes the 36-card contract check a step in
+`verify.sh` and CI instead of a manual ritual — Dash, Shiny and React all need a Selenium/Playwright driver
+for the same evidence, and neither is installed here. **UI-05: the costs are accepted explicitly** — no
+per-card URL (`st.query_params` is the fix, not done), coarse layout, a static SVG rather than a clickable
+graph. **UI-06: the alternatives are recorded with the condition that would revive each** — static export if
+the deliverable becomes "publish a page", Dash if the interactive graph becomes the product, React if someone
+else maintains it as one. What makes the decision cheap to reverse is that `app/registry_data.py` is
+framework-free: the loader and the assertions survive a port unchanged.
 
 **What this session built, and the two checks that had to be sharpened before they meant anything.**
 

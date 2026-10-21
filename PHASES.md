@@ -557,9 +557,17 @@ wins), and the source is scanned for database, network and fitting imports (base
 result is also checked never to appear on a card: pointing the results tab at another design while each B
 card renders is what makes that check real rather than vacuous.
 
+**Framework decided on the record (2026-10-21, `docs/decisions.md` UI-01…UI-06).** Streamlit, because
+`AppTest` renders the real app without a browser — which is why the 36-card contract check runs in
+`verify.sh` and CI instead of by hand — and because a page that is a pure function of the registry has no
+state for the rerun model to desynchronise. Its costs are written down rather than glossed: no per-card URL
+(`st.query_params` is the fix, not done), coarse layout, a static SVG graph. The trigger to leave the
+framework is the interactive graph becoming the product, not styling; Dash is the smallest honest jump from
+there, and `app/registry_data.py` is framework-free so it would survive the move.
+
 **Not built, and declared as such in `docs/app.md`:** the chat tab (gate not passed), node-level graph
-interaction, links from the card to the narrative that explains each design, and any deployment — serving a
-stale vintage is a governance decision, not a packaging one.
+interaction, links from the card to the narrative that explains each design, per-card URLs, and any
+deployment — serving a stale vintage is a governance decision, not a packaging one.
 
 **Work**
 

@@ -92,6 +92,8 @@ card is right and the app is wrong.
 
 - **It renders; it does not explain.** A reader who does not know what a backdoor set is will not learn it
   here. `docs/design-memo.md` and `docs/limitations.md` are the explanation; the page links to neither yet.
+- **A card cannot be linked.** The outcome and design live in widget state, not the URL, so "fatalities under
+  Design A" has no address to send anyone. `st.query_params` fixes it; it is not done.
 - **The graph is not interactive.** The SVG is the R-generated figure, drawn on the assumed graph, with the
   unobserved node labelled rather than hidden. Clicking a node to see which edge the assumption lives on is not
   built.
@@ -100,4 +102,26 @@ card is right and the app is wrong.
   administrations.
 - **The app is not deployed.** It runs locally against the committed registry; a hosted instance would need a
   decision about whether a stale vintage may ever be served, which is a governance question, not a packaging
-  one.
+  one (decision log, UI-08).
+
+## 6. Why Streamlit, and what that costs
+
+The framework question was reopened on 2026-10-21 and settled on the record (`docs/decisions.md`, UI-01…UI-06).
+The short version:
+
+**Chosen because it is verifiable without a browser.** `streamlit.testing.v1.AppTest` renders the real script
+and hands back the element tree in pure Python, so the 36-card contract check is a step in `verify.sh` and in
+CI rather than a manual ritual. Every alternative — Dash, Shiny, React — needs a Selenium or Playwright
+driver for the same evidence, and neither is installed here. A check nobody runs is a claim, not a check
+(C-42).
+
+**Also because the page has no state.** It is a pure function of the registry, so Streamlit's rerun-everything
+model — the thing that makes it a poor fit for dashboards that hold a lot of state — has nothing to
+desynchronise here. One Python process, no build step, no API layer, no keys, and the chat tab's streaming
+and session state are native when it arrives.
+
+**What it costs, honestly:** no URL routing per card (fixable with `st.query_params`), coarse layout control,
+and the causal graph is a static SVG rather than a clickable object. None of those is a correctness problem;
+the first is the one a reader will notice. The condition for leaving the framework is *the interactive graph
+becoming the product*, not styling — at that point Plotly Dash is the smallest honest jump, and
+`app/registry_data.py` (which is framework-free) would survive it unchanged.
