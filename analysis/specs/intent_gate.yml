@@ -115,8 +115,8 @@ rules:
       the topic.
     conditions:
       all_of:
-        - ['\bwhy (?:can|could|would)(?:n|) ?(?:you|we|it|this|that|the (?:corpus|project|registry|model))\b',
-           '\bwhy (?:is|are|was|were|do|does|did) (?:it|this|that|the (?:corpus|project|registry|model)) not\b',
+        - ['\bwhy cant? (?:you|we|it|this|that|the (?:corpus|project|registry|model))\b',
+           '\bwhy (?:is|are|was|were|do|does|did) .+ not\b',
            '\bwhy not\b']
       none_of: []
     route: null
@@ -127,15 +127,20 @@ rules:
     implements: "the scope clause 'It cannot answer forecast questions'"
     why: >-
       The project holds historical series and published estimates; it makes no forecasts, and no chunk
-      supports one (analysis/specs/rag.yml#answer_contract.scope). A question that asks for a future
-      value is refused and cites the scope statement rather than asserting a reason.
+      supports one (analysis/specs/rag.yml#answer_contract.scope). A question that asks for a forecast
+      is refused and cites the scope statement rather than asserting a reason. The rule is the forecast
+      *vocabulary* — "forecast", "predict", "projection", "extrapolate" — and it excludes the two frames
+      in which the word is not a request for a forecast: a question about the corpus's own scope ("does
+      the corpus publish a forecast?", which the scope chunk answers) and the model card's own language
+      ("what does the specification predict?", which the card answers). A forecast asked for with no
+      year in it — "predict the inflation rate" — is caught here; a forecast asked for with a year
+      beyond the window is caught by G05.
     conditions:
       all_of:
-        - ['\b(?:forecast|forecasts|forecasting|predicts?|predicted|prediction|predictions|projection|projections|projected|extrapolat\w+)\b']
-        - ['\b(?:will|would|going to|expected to|likely to)\b']
-      any_of:
-        - ['\b(?:rise|rises|rising|fall|falls|falling|grow|grows|growing|increase|increases|increasing|decrease|decreases|decreasing|reach|reaches|happen|remains|stays|surge|drop|plummet)\b']
-      none_of: []
+        - ['\b(?:forecast|forecasts|forecasting|predict|predicts|predicted|prediction|predictions|projection|projections|projected|extrapolate|extrapolates|extrapolated)\b']
+      none_of:
+        - ['\b(?:does|do|did|can|could|will|would|is|are) the (?:corpus|project|registry|model|card|chat layer) (?:publish|make|produce|offer|provide|carry|predict|forecast)\b',
+           '\b(?:model card|model|estimator|specification|model estimate) predicts?\b']
     route: "scope:answer"
 
   - id: "G03"
@@ -164,11 +169,16 @@ rules:
       asks for advice the project has no basis to give, so it refuses and cites the scope statement.
       The rule asks for a *policy actor* as well as the normative verb: "which check should I read" is
       a question about the evidence and is answerable, while "should the government …" is a request
-      for a decision.
+      for a decision. The actor test is what keeps the rule from refusing the reader's own questions;
+      the advice vocabulary that needs no actor is G08.
     conditions:
       all_of:
-        - ['\bshould\b|\bshouldn\b|\bought to\b|\brecommend\w*\b|\badvise\b|\bbest (?:way|approach|policy|strategy) to\b|\bwhat(?:s| is) the best\b']
-        - ['\bthe (?:federal |state |federal government|government|ministry|authorities|policy ?makers?|fgn)\b|\bnigeria\b|\bthe (?:allocation|allocations|faac allocation|faac allocations|budget|revenue)\b']
+        - ['\bshould\b|\bshouldn\b']
+        - ['\b(?:federal |state |central |federal government|state government|government|ministry|authorities|policy ?makers?|fgn)\b',
+           '\bnigeria\b',
+           '\bthe states\b',
+           '\bfaac allocations?\b',
+           '\bbudget\b']
       none_of: []
     route: "scope:answer"
 
@@ -209,6 +219,25 @@ rules:
       document: "docs/limitations.md"
       heading_contains: "not answerable with this data"
       fallback: "answerable"
+
+  - id: "G08"
+    priority: 45
+    intent: "out_of_scope"
+    implements: "the scope clause 'the corpus can answer questions about …' — a request for a recommendation is not a request for an estimate"
+    why: >-
+      Some normative asks name the actor ("should the federal government …") and some do not ("recommend
+      a policy for …", "what is the best way to …"). The vocabulary of asking for advice is itself
+      unambiguous, so this rule needs no actor; the actor test belongs to G04, where the same word
+      ("should") can also be the reader asking which check to read.
+    conditions:
+      all_of:
+        - ['\brecommend\w*\b',
+           '\badvise\b',
+           '\bbest (?:way|approach|policy|strategy) to\b',
+           '\bwhat(?:s| is) the best\b',
+           '\bought to\b']
+      none_of: []
+    route: "scope:answer"
 
   - id: "G07"
     priority: 70
