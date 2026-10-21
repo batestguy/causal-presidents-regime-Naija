@@ -1,0 +1,342 @@
+# Stage 9 — the intent gate: what the chat layer may refuse, and on what evidence
+#
+# The RAG layer's two published refusal gates are failed by measurement, not by opinion:
+#
+#   * `out_of_scope_refusal`   0.25 (target 1.0) — three of the four out-of-scope questions were
+#     *not* refused, because the decision was a similarity score, and a question about 1960 or a
+#     normative question about FAAC allocations still has a plausible nearest neighbour in a
+#     441-chunk corpus.
+#   * `refusal_reason_recall`   0.5  (target 1.0) — one of the two reason-bearing questions did not
+#     retrieve its reason chunk in the top 5, because "can the synthetic control tell me whether
+#     Buhari's tenure caused …" retrieves tenure prose rather than the sentence that says the
+#     estimator was never run.
+#
+# Both failures have the same cause: **the decision is made by the retriever.** The retriever answers
+# "what is similar to this text?"; a refusal needs "can this corpus answer this question at all?".
+# Those are different questions, and the second has to be asked *before* retrieval, from the question's
+# own words, using rules the project declares and can defend.
+#
+# This spec declares that gate. It is deliberately a **rule set, not a model**:
+#
+#   * No LLM key, no network, no inference at request time — the same promise the app layer makes.
+#   * Every rule names the clause of `analysis/specs/rag.yml#answer_contract.scope` it implements and
+#     the project fact that justifies it, so a reviewer can argue with the rule rather than with a
+#     probability.
+#   * The safe default is `answerable`. The gate may **add** a refusal; it may never **remove** one.
+#     A rule that misfires on an answerable question is a worse failure than a rule that misses an
+#     out-of-scope question, because it takes away an answer the corpus could have given.
+#   * A refusal is only allowed when it can **cite a reason chunk that exists**. If the route cannot
+#     be resolved, the gate answers instead of refusing (R-04's rule, applied to the gate itself).
+#
+# The gate does not generate answers. It decides an intent and, for a refusal, pins the chunk the
+# answer must cite. The answer layer (not built) assembles from the pinned chunk.
+
+version: 1
+labelled: "2026-10-18"
+spec_path: "analysis/specs/intent_gate.yml"
+engine: "app/intent_gate.py"
+harness: "scripts/eval_intent.py"
+verifier: "tests/verify_intent.py"
+eval_spec: "analysis/specs/intent_gate_eval.yml"
+built_on: "analysis/specs/rag.yml"
+
+# ---------------------------------------------------------------------------------------------
+# What the gate is for — the two failures it exists to fix
+# ---------------------------------------------------------------------------------------------
+purpose:
+  replaces: "a similarity threshold as the refusal decision"
+  keeps: "the retriever as the *answer* mechanism; the gate only decides whether to retrieve at all"
+  because: >-
+    A refusal decided by score is a coincidence; a refusal decided by a declared rule is a policy. The
+    corpus's own scope paragraph already says what must refuse — the gate makes that paragraph
+    operative at request time instead of leaving it as prose in a spec.
+
+# ---------------------------------------------------------------------------------------------
+# The decision procedure — declared, ordered, and total
+# ---------------------------------------------------------------------------------------------
+decision:
+  steps:
+    - "Normalise the question: lowercase, drop apostrophes, replace every other non-alphanumeric character with a space, collapse whitespace. No stemming and no synonyms — a rule must be auditable in its literal form, and a normaliser that changes the words is a rule that cannot be read."
+    - "Evaluate the rules in `priority` order. The first rule whose conditions are all met decides the intent. `priority` is unique per rule, so the order is total and the decision is deterministic."
+    - "If no rule matches, the intent is `answerable`. This is the default and it is deliberate: the gate can add a refusal, never remove one."
+    - "For `refusal_with_reason`, resolve the rule's `route` to a chunk id. If the route does not resolve to exactly one existing chunk, the intent falls back to `answerable` — the gate will not refuse without a citable reason."
+    - "For `out_of_scope`, the route is the corpus's own scope chunk (`scope:answer`), which exists by construction: the corpus builder fails if it cannot be built."
+  intents:
+    answerable: "Retrieve normally. The question is within the declared scope and the retriever decides what answers it."
+    refusal_with_reason: "The question is within the corpus's subject but cannot be answered with this data. Refuse, and cite the pinned reason chunk — the passage that says why."
+    out_of_scope: "The question is outside the declared scope entirely. Refuse, and cite the scope statement that says what the corpus covers and does not cover."
+  why_not_a_score: >-
+    The published threshold is calibrated on the same eval set that measures it, so its refusal number
+    is optimistic by construction, and it cannot tell a question that is out of scope from a question
+    that is merely phrased unlike the corpus. The gate's rules are written against the scope clause
+    they implement, not against a similarity distribution, so a miss is a miss in the open.
+  output: >-
+    `{"intent": ..., "rule_id": ..., "route": <chunk_id or null>, "route_status": ..., "reason": ...}`
+    where `reason` is the project fact the rule cites, carried through to the refusal template.
+
+# ---------------------------------------------------------------------------------------------
+# Conditions — the vocabulary the rules are written in
+# ---------------------------------------------------------------------------------------------
+conditions:
+  all_of: "Every group must be satisfied. A group is satisfied when at least one of its patterns matches."
+  any_of: "At least one group must be satisfied."
+  none_of: "No pattern may match."
+  year_window: >-
+    A condition satisfied by the *years* the question names, compared with the window the corpus
+    covers. The bounds are read from the artifacts at run time, never typed here:
+    `past` is before the study window's start (`registry/quality/<vintage>/report.json#study_window.start`),
+    `future` is after the vintage year (`registry/dags/index.json#vintage_date`). A question that names no
+    year never satisfies it.
+  year_window_caveat: >-
+    The bound is the *vintage* year, not the end of the outcome series. The study window is open
+    (`study_window.end` is null) and the registry's own state in 2025-2026 is answerable, so a year
+    inside the window is inside the window for every subject. The cost is that a question about a 2025
+    outcome *value* is not refused by G05 — it is left answerable, and the answer layer fails to find a
+    chunk and refuses there. That is the safe direction: a missed refusal costs an answer, a wrong
+    refusal costs a question the corpus could have answered.
+
+# ---------------------------------------------------------------------------------------------
+# The rule set
+# ---------------------------------------------------------------------------------------------
+#
+# Each rule declares the intent it decides, the scope clause it implements, the project fact that
+# justifies it, the conditions that must hold, and — for a reason-bearing refusal — the route to the
+# chunk the refusal must cite.
+rules:
+  - id: "G01"
+    priority: 10
+    intent: "answerable"
+    implements: "the scope clause 'why a question cannot be answered' — the corpus answers questions *about* its own limits"
+    why: >-
+      A question that asks *why* the corpus cannot answer something is a question the corpus answers
+      (docs/limitations.md §1, §13). This rule is placed first because the same words appear in a
+      question that must refuse: "why can't you tell me whether PDP or APC tenures did better?" is
+      answerable, while "which president had the better record?" is not. The difference is the ask, not
+      the topic.
+    conditions:
+      all_of:
+        - ['\bwhy (?:can|could|would)(?:n|) ?(?:you|we|it|this|that|the (?:corpus|project|registry|model))\b',
+           '\bwhy (?:is|are|was|were|do|does|did) (?:it|this|that|the (?:corpus|project|registry|model)) not\b',
+           '\bwhy not\b']
+      none_of: []
+    route: null
+
+  - id: "G02"
+    priority: 20
+    intent: "out_of_scope"
+    implements: "the scope clause 'It cannot answer forecast questions'"
+    why: >-
+      The project holds historical series and published estimates; it makes no forecasts, and no chunk
+      supports one (analysis/specs/rag.yml#answer_contract.scope). A question that asks for a future
+      value is refused and cites the scope statement rather than asserting a reason.
+    conditions:
+      all_of:
+        - ['\b(?:forecast|forecasts|forecasting|predicts?|predicted|prediction|predictions|projection|projections|projected|extrapolat\w+)\b']
+        - ['\b(?:will|would|going to|expected to|likely to)\b']
+      any_of:
+        - ['\b(?:rise|rises|rising|fall|falls|falling|grow|grows|growing|increase|increases|increasing|decrease|decreases|decreasing|reach|reaches|happen|remains|stays|surge|drop|plummet)\b']
+      none_of: []
+    route: "scope:answer"
+
+  - id: "G03"
+    priority: 30
+    intent: "out_of_scope"
+    implements: "the scope clause 'the 12 catalogue outcomes …' — a question about a measure the corpus does not carry"
+    why: >-
+      The corpus carries a closed inventory: the 12 catalogue outcomes, the three designs, the published
+      results, the coverage and quality artifacts, the administration and shock tables, and the
+      limitations. It carries no population series — the per-capita denominator is an *unmade decision*
+      (X-09, docs/limitations.md §3 and §12), not an unavailable source. A question about the size of a
+      population has no chunk that could answer it, so it is refused and cites the scope statement.
+    conditions:
+      all_of:
+        - ['\bpopulation\b|\bpopulations\b|\bhow many people\b|\bhow many inhabitants\b|\bhow many residents\b|\bhow many citizens\b|\bhow many households\b|\bheadcount\b|\bpeople live\b']
+      none_of: []
+    route: "scope:answer"
+
+  - id: "G04"
+    priority: 40
+    intent: "out_of_scope"
+    implements: "the scope clause 'the corpus can answer questions about …' — a request for a recommendation is not a request for an estimate"
+    why: >-
+      The project publishes estimates with intervals and assumptions; it publishes no recommendation
+      (docs/limitations.md §12 states what is still claimed, narrowly). "Should the government do X"
+      asks for advice the project has no basis to give, so it refuses and cites the scope statement.
+      The rule asks for a *policy actor* as well as the normative verb: "which check should I read" is
+      a question about the evidence and is answerable, while "should the government …" is a request
+      for a decision.
+    conditions:
+      all_of:
+        - ['\bshould\b|\bshouldn\b|\bought to\b|\brecommend\w*\b|\badvise\b|\bbest (?:way|approach|policy|strategy) to\b|\bwhat(?:s| is) the best\b']
+        - ['\bthe (?:federal |state |federal government|government|ministry|authorities|policy ?makers?|fgn)\b|\bnigeria\b|\bthe (?:allocation|allocations|faac allocation|faac allocations|budget|revenue)\b']
+      none_of: []
+    route: "scope:answer"
+
+  - id: "G05"
+    priority: 50
+    intent: "out_of_scope"
+    implements: "the scope clause 'It cannot answer forecast questions' — a value at a year the corpus does not cover"
+    why: >-
+      A forecast is a value at a time the data does not reach, and the corpus reaches from 1999 to the
+      vintage. A question about a year outside that span cannot be answered by any chunk, and guessing
+      a value for it is exactly the failure the vintage discipline exists to prevent. The bounds come
+      from the artifacts (the quality report's study window and the registry's vintage), not from here.
+    conditions:
+      all_of:
+        - ['\b(?:19|20)\d{2}\b']
+      none_of: []
+    year_window: "outside"
+    route: "scope:answer"
+
+  - id: "G06"
+    priority: 60
+    intent: "refusal_with_reason"
+    implements: "the scope clause 'why a question cannot be answered' — the tenure comparison the data cannot support"
+    why: >-
+      docs/limitations.md §1 is the arithmetic: four to five administrations and one annual
+      observation per national outcome means the tenure question is an arithmetic problem, not a null
+      result. A question asking which administration did better must be refused, and must cite that
+      section — the refusal quotes a reason rather than asserting one. The rule asks for a comparative
+      alongside the tenure vocabulary, so a factual question about who was in power in 2012 stays
+      answerable.
+    conditions:
+      all_of:
+        - ['\btenures?\b|\badministrations?\b|\bpresidents?\b|\bgovernments?\b|\bpdps?\b|\bapcs?\b|\bpart(?:y|ies)\b']
+        - ['\bbetter\b|\bbest\b|\bworst\b|\bcompare\b|\bcomparison\b|\bversus\b|\bvs\.?\b|\boutperform\w*\b|\bmost successful\b|\brank(?:ed|ing|s)?\b|\boutdid\b']
+      none_of: []
+    route:
+      selector: "section"
+      document: "docs/limitations.md"
+      heading_contains: "not answerable with this data"
+      fallback: "answerable"
+
+  - id: "G07"
+    priority: 70
+    intent: "refusal_with_reason"
+    implements: "the scope clause 'anything requiring an estimate that was never fitted'"
+    why: >-
+      Design C was never run — Stage 5's pre-check recorded it as infeasible and the published result
+      says so (registry/dags/index.json#published_results.C, docs/limitations.md §7). A question asking
+      that design to deliver a causal answer must be refused, and the refusal must cite the result
+      that records that it was not estimated. The rule asks for a causal verb alongside the design, so
+      a question about the design's *status* ("was it estimated, and if not, why not?") stays
+      answerable — the corpus answers that.
+    conditions:
+      all_of:
+        - ['\bsynthetic[- ]control\b|\bdesign c\b|\bmatched control\b|\bsynth\b']
+        - ['\bcaus(?:e|es|ed|al|ally|ation|ations)\b|\battributabl\w+\b|\bled to\b|\bresponsible for\b|\bcounterfactual\b|\beffect of\b|\bimpact of\b']
+      none_of: []
+    route:
+      selector: "chunk"
+      chunk_id: "result:C"
+      fallback: "answerable"
+
+# ---------------------------------------------------------------------------------------------
+# Routing — how a refusal finds the chunk it must cite
+# ---------------------------------------------------------------------------------------------
+routing:
+  scope_answer:
+    chunk_id: "scope:answer"
+    why: "The corpus's own scope statement — the chunk that says what it covers and what it does not."
+  section:
+    why: >-
+      A route that names a documentation section by its heading, not by a typed chunk id. The section
+      is located in the corpus by matching the heading in the chunk's title, so a document that renames
+      its sections makes the route *fail to resolve* — and a route that cannot resolve falls back to
+      `answerable` rather than refusing without a reason.
+    resolve: "the corpus chunk whose id is `doc:<stem>#<anchor>` and whose title contains `heading_contains`; a section that has been split into parts is named by its first part"
+  chunk:
+    why: "A route that names a chunk id the corpus publishes directly (a published result)."
+  unresolved_route: "answerable"
+  why_unresolved_is_safe: >-
+    An uncited refusal is the failure mode this project is built to avoid (R-04). A route that cannot
+    be resolved means the gate has no reason to quote, so it does not refuse.
+
+# ---------------------------------------------------------------------------------------------
+# Gates — declared before the numbers are read
+# ---------------------------------------------------------------------------------------------
+#
+# The targets are set here, in the spec, before `scripts/eval_intent.py` has run on the held-out set.
+# `tests/verify_intent.py` recomputes every number from the artifact and checks each `met` flag; it
+# does **not** fail the build when a target is missed, because a missed target is a finding to publish
+# (the Stage 7 precedent: p = 0.0625 was published, not widened until it passed).
+gates:
+  intent_accuracy: 0.90          # fraction of held-out questions routed to the expected intent
+  out_of_scope_refusal: 0.90     # fraction of held-out out-of-scope questions refused as out of scope
+  answerable_not_refused: 1.0    # fraction of held-out answerable questions left answerable
+  refusal_route_resolved: 1.0    # fraction of held-out reason-bearing questions whose route resolves
+  refusal_reason_cited: 1.0      # fraction of held-out reason-bearing questions whose route chunk carries the reason
+
+# ---------------------------------------------------------------------------------------------
+# The two sets the gate is measured on
+# ---------------------------------------------------------------------------------------------
+#
+# The gate is measured twice, on two different sets, for two different reasons:
+#
+#   1. `analysis/specs/intent_gate_eval.yml` — the **held-out** set. It is not used to write the
+#      rules; it answers "does the rule set generalise, or did it only learn the 22 published
+#      questions?". Its expected labels come from the artifacts, not from a human's opinion of a rule.
+#   2. `registry/rag/<vintage>/eval_set.json` — the **published** set. It is the set the failed gates
+#      were measured on, so the gate's effect on the published numbers is directly comparable, and the
+#      answerable questions' retrieval is unchanged (the gate decides whether to retrieve, not what).
+#
+published_set:
+  path: "registry/rag/<vintage>/eval_set.json"
+  measures:
+    - "the two failed gates under the gate's decision, on the same questions"
+    - "recall@5 for the answerable questions, which the gate must not change (it is a refusal gate, not a retrieval gate)"
+  what_it_cannot_show: >-
+    The published set is the set the rules were written against, so its numbers are not a generalisation
+    estimate. They are reported as "the gate does what it was built to do on the questions it was built
+    from", and the held-out set is the generalisation estimate.
+
+# ---------------------------------------------------------------------------------------------
+# Known gaps — the classes the scope names that this gate does not yet detect
+# ---------------------------------------------------------------------------------------------
+known_gaps:
+  - id: "KG01"
+    scope_clause: "'questions about countries outside the donor panel'"
+    status: "not_active"
+    why: >-
+      The donor panel is 99 candidate countries and the corpus names none of them — it says "99 candidate
+      countries x 5 screening predictors". The country list lives in the acquisition manifest under
+      `data/`, which is gitignored, so a rule built on it would behave differently on a fresh clone
+      than on this machine and the published metric would not be reproducible. Until the panel's
+      membership is committed as an artifact, the class is declared and undetected.
+    what_would_close_it: "commit the donor pool's country list as a registry artifact, then activate a rule that refuses a question naming a country outside the panel"
+  - id: "KG02"
+    scope_clause: "the whole of the answer contract's post-check"
+    status: "not_built"
+    why: >-
+      The gate decides an intent and a citation. It does not assemble an answer, so it cannot check an
+      answer for an interval, an identifying assumption and a citation (R-04). That check belongs to the
+      answer layer, which is not built.
+    what_would_close_it: "build the answer layer and run the declared post-check over its output"
+  - id: "KG03"
+    scope_clause: "the rules are lexical"
+    status: "accepted"
+    why: >-
+      The gate matches literal patterns, so a paraphrase that avoids the declared words is not detected.
+      The alternative — a classifier trained on the eval set — would score better on the eval set and
+      mean less, and the project's rule is that a number must not be tuned into existence.
+    what_would_close_it: "a paraphrased held-out set, published beside the lexical one"
+  - id: "KG04"
+    scope_clause: "'It cannot answer forecast questions'"
+    status: "accepted"
+    why: >-
+      G05 refuses a value at a year outside the window, and G02 refuses a question that forecasts in
+      words. A question that asks for a value in a year the window covers but the outcome series does
+      not (2025-2026) is left answerable, because the study window is open and the registry's own state
+      in those years is answerable. The answer layer refuses it when no chunk answers it.
+    what_would_close_it: "read the outcome series' own end month from the cards and refuse a value at a year it does not reach — the risk is refusing a question about the registry's own 2025-2026 state"
+
+# ---------------------------------------------------------------------------------------------
+# What the gate must never do
+# ---------------------------------------------------------------------------------------------
+#
+#   * Refuse a question it cannot cite a reason for.
+#   * Remove a refusal the retriever would have made — the gate only adds refusals.
+#   * Answer anything. It decides an intent; the answer layer quotes a chunk.
+#   * Contain a number. Every figure it reads (the study window, the vintage) comes from an artifact,
+#     and none is typed into the rules.
+#   * Call a model. No inference, no key, no network, at request time or at build time.
