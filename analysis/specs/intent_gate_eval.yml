@@ -1,0 +1,285 @@
+# Stage 9 — the held-out set for the intent gate
+#
+# The gate's rules were frozen at commit `30afc23` (see `analysis/specs/intent_gate.yml`). This file is
+# the set of questions the rules were **not** written against, so it can answer the only question that
+# matters about a rule set: does it generalise, or did it only learn the 22 published questions?
+#
+# ---------------------------------------------------------------------------------------------
+# How this set is built, and why it is built this way
+# ---------------------------------------------------------------------------------------------
+#
+# The published eval set (`registry/rag/<vintage>/eval_set.json`) is the set the rules were written
+# against — its questions were read while the rules were drafted, and two of them (q09, r01) are the
+# pair that forced the G01/G06 ordering. Measuring the gate on it would measure nothing.
+#
+# So this set is built from two sources that do not depend on the rules:
+#
+#   * **Mechanical** — templates filled from the artifacts. The expected intent is *derived from the
+#     artifact*, not from an opinion about a rule: a card exists, so the question is answerable; the
+#     corpus has no population series, so a population question is out of scope. A rule that fires on
+#     these is a rule that misfires, and no amount of hand-tuning could have made them agree.
+#   * **Authored** — questions written to be *hard*: answerable questions that contain a rule's trigger
+#     words in a frame the rule must not fire on ("which check should I read"), and out-of-scope
+#     questions that do not use the published set's wording.
+#
+# The authored questions are scored on **intent only**. A hand-written gold chunk for a paraphrase is a
+# judgement call, and a metric that depends on the author's judgement is not a measurement. The gold
+# is recorded for the reader, not scored.
+#
+# The mechanical questions carry a gold chunk, because the artifact that produced it is known: the card
+# that answers a card question is that card. Those golds are scored.
+#
+# ---------------------------------------------------------------------------------------------
+# The freeze, and what it forbids
+# ---------------------------------------------------------------------------------------------
+#
+# `authored_after` is the commit that froze the rules. `tests/verify_intent.py` reads the rule spec
+# *as of that commit* and compares it with the rule spec on disk. If they differ, the held-out numbers
+# no longer mean what they mean — the rules were changed after the questions were written — and the
+# verifier fails. Changing the rules therefore requires a new held-out set and a new freeze, which is
+# the discipline the whole project is built on: a number that moves because the thing it measures
+# moved is not a result.
+#
+# The limitation is stated rather than hidden: the rules and the questions have the same author. The
+# commit order is the audit trail, not an independent authorship. The mechanical families are the part
+# of the set that carries no such risk, and they are a third of it.
+
+version: 1
+spec_path: "analysis/specs/intent_gate_eval.yml"
+harness: "scripts/eval_intent.py"
+gate_spec: "analysis/specs/intent_gate.yml"
+authored_after: "30afc23"
+
+# ---------------------------------------------------------------------------------------------
+# Mechanical families — templates, sources and how the expected intent is derived
+# ---------------------------------------------------------------------------------------------
+#
+# The harness reads the sources named here, fills the templates in the order the source rows come,
+# and takes the first `count` of them. Nothing is typed in: an outcome label comes from the registry
+# index, a state name from the state seed, a president's name from the administration seed.
+#
+mechanical:
+  - id: "M1"
+    family: "card"
+    intent: "answerable"
+    count: 12
+    template: "What did the published estimate find for {outcome} under {design}?"
+    sources:
+      outcome: "registry/dags/index.json#outcomes"
+      design: "registry/dags/index.json#designs"
+    rotation: "the outcome at position i takes the design at position i mod 3, so each design carries four questions and every outcome carries one"
+    gold: "card:{dag_id}"
+    gold_scored: true
+    why: "A question about a card is answerable whether or not the card carries a number — the card is what says which, and why not."
+
+  - id: "M2"
+    family: "forecast"
+    intent: "out_of_scope"
+    count: 6
+    template: "What will {outcome} be in 2030?"
+    sources:
+      outcome: "registry/dags/index.json#outcomes"
+    rotation: "the first six outcomes"
+    gold: "scope:answer"
+    gold_scored: true
+    why: "A value at a year the corpus does not reach. 2030 is past the vintage, so no chunk can hold it."
+
+  - id: "M3"
+    family: "population"
+    intent: "out_of_scope"
+    count: 3
+    template: "How many people live in {state} today?"
+    sources:
+      state: "dbt/seeds/raw_state.csv#state_name"
+    rotation: "the states at positions 0, 12 and 24"
+    gold: "scope:answer"
+    gold_scored: true
+    why: "The corpus carries no population series — the per-capita denominator is an unmade decision (X-09)."
+
+  - id: "M4"
+    family: "past_year"
+    intent: "out_of_scope"
+    count: 3
+    template: "What was {outcome} in 1960?"
+    sources:
+      outcome: "registry/dags/index.json#outcomes"
+    rotation: "the outcomes at positions 1, 5 and 9"
+    gold: "scope:answer"
+    gold_scored: true
+    why: "A value before the study window. The spine starts in 1999; 1960 describes a different fiscal regime."
+
+  - id: "M5"
+    family: "tenure"
+    intent: "refusal_with_reason"
+    count: 4
+    template: "Which administration had the better record on {outcome}?"
+    sources:
+      outcome: "registry/dags/index.json#outcomes"
+    rotation: "the outcomes at positions 0, 3, 6 and 9"
+    gold: "doc:limitations#s01"
+    gold_scored: true
+    needle: "annual observations per national outcome"
+    why: "The tenure comparison the data cannot support. The refusal must cite the section that carries the arithmetic, not assert a reason."
+
+  - id: "M6"
+    family: "design_c"
+    intent: "refusal_with_reason"
+    count: 4
+    template: "Can the synthetic control tell me whether {admin} caused the change in {outcome}?"
+    sources:
+      outcome: "registry/dags/index.json#outcomes"
+      admin: "dbt/seeds/raw_administration.csv#president"
+    rotation: "the outcomes at positions 2, 5, 8 and 11; the presidents at positions 0, 1, 2 and 3 of the administration seed, so the family is not one sentence four times"
+    gold: "result:C"
+    gold_scored: true
+    needle: "not estimated here because the estimator"
+    why: "Design C was never run. A question asking it for a causal answer must be refused and must cite the published result that says so."
+
+# ---------------------------------------------------------------------------------------------
+# Authored questions — the hard cases
+# ---------------------------------------------------------------------------------------------
+#
+# Ten of these are answerable and contain a trigger word in a frame the rule must not fire on; they
+# are the test that the gate does not take away an answer the corpus could have given. Five are
+# out of scope and are worded unlike the published set's. One is a question about the population
+# *denominator* rather than the size of a population — it is answerable (the data dictionary says the
+# denominator is typed and empty, and X-09 is an unmade decision), and it is included because a gate
+# that cannot tell the two apart is a gate that has a real defect.
+#
+authored:
+  - id: "A01"
+    intent: "answerable"
+    question: "Which check should I read to decide whether the fatalities estimate is identified?"
+    gold: "card:fatalities__A"
+    why: "'Should' addressed to the reader. The corpus answers it: the card's failed checks are the decision."
+
+  - id: "A02"
+    intent: "answerable"
+    question: "What does the Design A specification predict for reported fatalities?"
+    gold: "card:fatalities__A"
+    why: "'Predict' in the model card's own language. The card is the answer, so the gate must not read this as a forecast request."
+
+  - id: "A03"
+    intent: "answerable"
+    question: "Which party was in power in 2012?"
+    gold: "admin:3"
+    why: "A comparative word would make it a tenure comparison; a factual lookup is not."
+
+  - id: "A04"
+    intent: "answerable"
+    question: "Which direction is better for under-5 mortality, up or down?"
+    gold: "card:u5mr__A"
+    why: "'Better' with no tenure vocabulary, and the card declares the direction."
+
+  - id: "A05"
+    intent: "answerable"
+    question: "Why is the tenure comparison not answerable with this data?"
+    gold: "doc:limitations#s01"
+    why: "The same section the tenure rule cites, asked *about*. The question is why, and the corpus answers why."
+
+  - id: "A06"
+    intent: "answerable"
+    question: "Will the registry carry a published number for the u5mr card under Design C?"
+    gold: "card:u5mr__C"
+    why: "A future tense about the registry's own contents, and the answer is a card that says there is no number."
+
+  - id: "A07"
+    intent: "answerable"
+    question: "What must the Design A specification assume for the estimate to be identified?"
+    gold: "card:fatalities__A"
+    why: "A modal about the assumption, which the card states."
+
+  - id: "A08"
+    intent: "answerable"
+    question: "Does the corpus publish a forecast for inflation?"
+    gold: "scope:answer"
+    why: "The forecast vocabulary, asked about the corpus's own scope. The scope chunk is the answer."
+
+  - id: "A09"
+    intent: "answerable"
+    question: "What are the two components of the FAAC allocation to a state?"
+    gold: null
+    why: "A question about the dose's construction, which the data dictionary carries."
+
+  - id: "A10"
+    intent: "answerable"
+    question: "Which check decided that the Design A fatalities estimate is not identified?"
+    gold: "card:fatalities__A"
+    why: "A 'why not' question about an estimate, and the card's failed checks are the answer."
+
+  - id: "A11"
+    intent: "out_of_scope"
+    question: "Predict the headline inflation rate for next year."
+    gold: "scope:answer"
+    why: "A forecast with no year in it — the published set's forecast question names 2030, this one does not."
+
+  - id: "A12"
+    intent: "out_of_scope"
+    question: "Recommend a policy for allocating FAAC revenue to the states."
+    gold: "scope:answer"
+    why: "Advice the project has no basis to give, asked without naming an actor."
+
+  - id: "A13"
+    intent: "out_of_scope"
+    question: "How many inhabitants does Lagos have?"
+    gold: "scope:answer"
+    why: "The same class as the published 'how many people live in Kano', worded differently."
+
+  - id: "A14"
+    intent: "out_of_scope"
+    question: "What was the under-5 mortality rate in 1975?"
+    gold: "scope:answer"
+    why: "A year before the window, asked about an outcome that exists."
+
+  - id: "A15"
+    intent: "out_of_scope"
+    question: "Should the federal government raise the FAAC allocation to the states?"
+    gold: "scope:answer"
+    why: "A normative request with a policy actor — the published set's version says 'increase' rather than 'raise'."
+
+  - id: "A16"
+    intent: "answerable"
+    question: "Is the population denominator for the per-capita axis built?"
+    gold: "doc:data-dictionary#fact-donor-panel-and-state-panel"
+    why: >-
+      Answerable, and deliberately so: the data dictionary says the denominator is typed and empty and
+      that X-09 is an unmade decision. The question asks *about* the denominator; the out-of-scope class
+      is a question about the *size of a population*. A gate that cannot tell the two apart refuses a
+      question the corpus answers, which is the worst thing this gate can do. It is in the set so that
+      the measurement says so if the gate cannot tell them apart.
+
+# ---------------------------------------------------------------------------------------------
+# Probes — questions whose class the gate declares it cannot detect
+# ---------------------------------------------------------------------------------------------
+#
+# A probe is scored like any other question. It is *labelled* with the gap that explains a miss, so
+# that a miss can be read as the declared gap it is rather than as an unexplained failure.
+#
+probes:
+  - id: "P01"
+    intent: "out_of_scope"
+    question: "What is the under-5 mortality rate in Chad?"
+    gold: "scope:answer"
+    expected_gap: "KG01"
+    why: >-
+      The scope names 'questions about countries outside the donor panel' as a class that must refuse.
+      The corpus names no country — it says "99 candidate countries" — and the country list is a
+      gitignored acquisition artifact, so no rule can be built on it without making the published
+      metric unreproducible. The class is therefore declared and undetected, and this probe is the
+      measurement of that.
+
+# ---------------------------------------------------------------------------------------------
+# What is measured, and how
+# ---------------------------------------------------------------------------------------------
+metrics:
+  intent_accuracy: "the fraction of held-out questions whose decided intent equals the expected intent"
+  out_of_scope_refusal: "the fraction of held-out out-of-scope questions refused as out_of_scope"
+  answerable_not_refused: "the fraction of held-out answerable questions left answerable"
+  refusal_route_resolved: "the fraction of held-out refusal_with_reason questions whose route resolved to a chunk that exists"
+  refusal_reason_cited: "the fraction of held-out refusal_with_reason questions whose route chunk, or one of its parts, carries the expected needle"
+  per_family: "the same intent_accuracy, computed within each family, so one family cannot carry the set"
+  scored: "every question in this file — mechanical, authored and probe — is scored. A probe is not excluded because it is expected to fail; it is labelled."
+
+# The published set, measured under the same gate, is declared in the gate spec
+# (`analysis/specs/intent_gate.yml#published_set`). Its numbers are reported as "what the gate does on
+# the questions it was built from" and are not a generalisation estimate.
