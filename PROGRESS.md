@@ -42,6 +42,13 @@ four refusal gates failing, published rather than tuned away**.
   source count, eval-set size, both recalls, coverage, MRR, the refusal numbers and the threshold — all
   derived from the artifact, so the page cannot drift from the corpus the way two documents had by
   2026-10-20.
+- **Break-tested before publishing.** Six mutations — a source edited without a rebuild, a chunk edited after
+  it was built, a published recall moved to 0.999, a gate's `met` flipped, a chunk dropped, and the vintage
+  changed — each failed `tests/verify_rag.py`, and each file was restored byte-for-byte
+  (`.probe/break_rag.py`, gitignored; the mutations are described here so the record survives it).
+- **The push was checked on a clone of the pushed commit**, not only in the working tree: the LF checkout
+  reproduces all 51 source hashes, every chunk hash and the forest plot's recorded size. Those were the last
+  two contracts that only held on this Windows checkout, and both are now canonical-byte based.
 
 **This session, in one line:** the **forest plot** — the last figure Stage 8 asked for, with the checks
 that make it an artifact rather than a picture — and **the limitations narrative**, written before the
