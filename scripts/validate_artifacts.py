@@ -573,6 +573,22 @@ def check_rag(failures: list[str], quality_vintage: str | None) -> None:
     if retrieval.get("eval_set", {}).get("sha256") != hashlib.sha256(eval_path.read_bytes()).hexdigest():
         failures.append(f"registry/rag/{newest.name}: retrieval_eval.json describes a different eval set")
 
+    # The intent gate's evaluation describes the same corpus and the same vintage. A gate measured
+    # against a different corpus would carry a refusal rate that says nothing about this one.
+    intent_path = newest / "intent_eval.json"
+    if intent_path.exists():
+        intent = json.loads(intent_path.read_text(encoding="utf-8"))
+        if intent.get("vintage") != corpus.get("vintage"):
+            failures.append(
+                f"registry/rag/{newest.name}: intent_eval.json carries vintage {intent.get('vintage')!r} and "
+                f"the corpus carries {corpus.get('vintage')!r}"
+            )
+        if intent.get("corpus", {}).get("sha256") != hashlib.sha256(corpus_path.read_bytes()).hexdigest():
+            failures.append(
+                f"registry/rag/{newest.name}: intent_eval.json describes a different corpus — re-run "
+                "scripts/eval_intent.py"
+            )
+
     print(f"stage 8c artifact: {newest.name} ({corpus.get('counts', {}).get('chunks')} chunks, "
           f"{len(corpus.get('sources') or [])} attributed sources, embedding "
           f"{embedding.get('status')}, retrieval eval describes this corpus)")
@@ -615,7 +631,8 @@ def check_schemas(failures: list[str]) -> int:
 
     for name, pattern in (("rag_corpus.schema.json", "*/corpus.json"),
                           ("rag_eval.schema.json", "*/eval_set.json"),
-                          ("rag_retrieval.schema.json", "*/retrieval_eval.json")):
+                          ("rag_retrieval.schema.json", "*/retrieval_eval.json"),
+                          ("intent_eval.schema.json", "*/intent_eval.json")):
         schema = json.loads((SCHEMA_DIR / name).read_text(encoding="utf-8"))
         validator = jsonschema.Draft202012Validator(schema)
         for artifact in sorted(RAG_ROOT.glob(pattern)):

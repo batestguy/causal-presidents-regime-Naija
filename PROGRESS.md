@@ -1,12 +1,65 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-10-21 (ninth session) · **Stage:** 9, the **read-only app built** — every one of the
-36 cards renders its own assumption, adjustment set, caveats and number or reason, and the page holds no
-model of its own · **verified at vintage 2026-10-18**: 12 verifiers, 0 failures, 44 registry documents
+**Last updated:** 2026-10-22 (tenth session) · **Stage:** 9, the **pre-retrieval intent gate built and
+measured** — the refusal decision is eight declared rules with a held-out measurement behind them instead of
+a similarity score · **verified at vintage 2026-10-18**: 13 verifiers, 0 failures, 45 registry documents
 schema-validated
 
-**This session, in one line:** the **read-only app** — `app/streamlit_app.py`, a `docs/app.md` that states the
-ratio it leads with, and `tests/verify_app.py`, which renders **all 36 cards** through Streamlit's own test
+**This session, in one line:** the **intent gate** — `app/intent_gate.py`, `analysis/specs/intent_gate.yml`,
+a **held-out set frozen after the rules** (`analysis/specs/intent_gate_eval.yml`, 49 questions),
+`scripts/eval_intent.py`, `tests/verify_intent.py` and `docs/intent.md` — which turns the corpus's two failed
+refusal gates (0.25 out-of-scope, 0.5 reason-cited) into **0.944 and 1.000 on questions the rules never saw**,
+and publishes the one target it misses rather than tuning it.
+
+**The gate exists because the retriever was answering the wrong question.** Stage 8c measured the failure:
+a 2030 forecast about a covered outcome embeds closer to the corpus than some genuine questions do, so any
+similarity threshold that refused it would refuse real questions with it. "What is similar to this text?"
+and "can this corpus answer this question at all?" are different questions, and the second has to be asked
+before retrieval, from the question's own words, by rules the project declares and can defend.
+
+- **The decision is total and deterministic.** Eight rules, unique priorities, first match decides, and
+  **no match means `answerable`** — the gate may add a refusal and may never remove one. A refusal must
+  resolve its route to exactly one existing chunk; an unresolved route falls back to `answerable`, because a
+  refusal without a citation is the failure this project is built to avoid (R-04 applied to the gate itself).
+  The year bounds are read from the artifacts — the quality report's study window and the registry's vintage —
+  so no number is typed into the rules.
+- **The rules were frozen before the questions existed, and the verifier checks that against git.** The
+  held-out set was written after commit `30afc23`; `tests/verify_intent.py` reads the rule spec **as of that
+  commit** and fails if the file on disk differs, and fails if the eval spec existed at the freeze. Changing
+  a rule therefore requires a new held-out set and a new freeze — which is the point.
+- **The held-out set is mechanical where it can be.** 32 of the 49 questions are templates filled from the
+  artifacts (one per card, six forecasts, three population questions, three past-year questions, four tenure
+  comparisons, four Design C questions), so their expected intent is derived rather than opined. The other
+  17 are authored hard cases — answerable questions carrying a trigger word in a frame the rule must not fire
+  on ("which check should I read", "what does the specification predict") — plus one probe.
+- **The numbers, on questions the rules never saw:** intent accuracy **0.959**, out-of-scope refusal
+  **0.944**, refusal route resolved **1.000**, refusal reason cited **1.000**. Every mechanical family is
+  exact. On the 22 published questions — the set the rules were written against, so not a generalisation
+  estimate — out-of-scope refusal goes **0.25 → 1.000** and reason-citation **0.5 → 1.000**, while answerable
+  recall@5 stays **1.000**: the gate changes what is refused, not what is retrieved.
+- **One target is missed and published: `answerable kept` 0.957 against 1.0.** A16 — "Is the population
+  denominator for the per-capita axis built?" — is answerable (the data dictionary says the denominator is
+  typed and empty), and G03 refuses it because it matches the same word as "how many people live in Lagos".
+  The rules are **not** edited to catch it: they were frozen before the question existed, and a fix applied
+  now would tune the rules to the held-out set. The closure is a denominator-frame exclusion **with a new
+  set and a new freeze**, recorded in `docs/intent.md` §4 and `docs/decisions.md` S9-05.
+- **A second miss is a declared gap, not a surprise.** P01 ("What is the under-5 mortality rate in Chad?") is
+  expected out of scope and is not refused — KG01, because the donor panel's country list lives in a
+  gitignored artifact and a rule built on it would not reproduce on a fresh clone.
+- **One metric is published with its reading rather than deleted.** `route_matches_gold` is 0.625 — 20 of 32 —
+  and all 12 misses are the card questions, where an answerable decision returns no route by design. Read
+  against the 20 questions that carry a route, the gate cites the expected chunk 20 of 20.
+- **The chain now measures it on every run.** `scripts/verify.sh` re-runs `scripts/eval_intent.py` (no model,
+  no key, no network) and then `tests/verify_intent.py`, which re-derives the 49 questions from the eval spec
+  and the artifacts, re-applies the rules with its own second implementation, checks the freeze against git,
+  recomputes every metric and `met` flag, and requires `docs/intent.md` to quote the artifact's own numbers,
+  every miss by id, and every declared gap.
+- **What this does not do:** it does not answer anything (no answer layer), and it does not build the chat tab
+  — `docs/app.md` §3 and `PHASES.md` Stage 9 still record the tab as unbuilt, now for the stated reason that
+  the answer layer is missing rather than that the refusal decision is a score.
+
+**Previous session, in one line:** the **read-only app** — `app/streamlit_app.py`, a `docs/app.md` that states
+the ratio it leads with, and `tests/verify_app.py`, which renders **all 36 cards** through Streamlit's own test
 harness and compares the page against the card JSON — followed by the framework question itself, reopened
 and **settled on the record** rather than left implicit.
 
@@ -56,7 +109,7 @@ framework-free: the loader and the assertions survive a port unchanged.
   verified environment has to carry the framework) and `app/*.py` added to the compile gate in `verify.sh` and
   CI.
 
-**Previous session, in one line:** the **RAG corpus, its eval set and the measured retrieval numbers** — 441
+**Two sessions back, in one line:** the **RAG corpus, its eval set and the measured retrieval numbers** — 441
 chunks from 51 attributed sources, embedding recall@5 **0.944** against a BM25 baseline's 0.833, and **two of
 four refusal gates failing, published rather than tuned away**.
 
@@ -566,6 +619,7 @@ effect that the design cannot support.
 | `docs/decisions.md` | Decision log — 40+ dated decisions: framing, method, data, access findings, coverage findings, infrastructure, RAG | Live, updated as evidence arrives |
 | `docs/licences.md` | Licence register — redistribution rights per source, plus 5 open licensing questions | Live |
 | `docs/data-dictionary.md` | Every column of the analytical base: grain, meaning, imputation rules, vintage conventions and the declared gaps | Complete |
+| `docs/intent.md` | What the chat layer may refuse and on what evidence — the rule set, the held-out measurement, the missed target and the declared gaps | Complete |
 | `knowledge.md` | Agent-facing repo context | Live |
 | `PROGRESS.md` | This file | Live |
 
@@ -642,17 +696,53 @@ effect that the design cannot support.
 | `docs/robustness.md` | The Stage 7 output: what survived, what did not, and the checks behind each | Complete |
 | `tests/verify_stage5.py` | Recomputes every Stage 5 headline number from the base in numpy/scipy and re-derives the design verdicts from the card statuses | Exit 0, 1 warning |
 | `scripts/validate_artifacts.py` | Contract test on names and shapes: every landed payload readable by the reader its **extension** declares, the newest gate report date-labelled and self-consistent, Stage 5 describing it, every registry JSON schema-valid | Exit 0 (1 check skipped without `data/raw`, which is the CI case) |
-| `scripts/verify.sh` | One command that runs the whole chain — compile, artifact contracts, acquisition when nothing is landed, Stage 3, dbt, Stages 6 and 7, every verifier — and returns the first failure's status | Exit 0 |
+| `scripts/verify.sh` | One command that runs the whole chain — compile, artifact contracts, acquisition when nothing is landed, Stage 3, dbt, Stages 6–8c, the Stage 9 intent gate, every verifier — and returns the first failure's status | Exit 0 |
 | `.github/workflows/verify.yml` | CI: installs the pinned requirements and runs `scripts/verify.sh` on a clean runner (the R engines are skipped there; every verifier still runs) | Wired, runs on push |
 | `requirements.txt` · `requirements-dev.txt` | The pinned Python dependencies (runtime · verification), beside the `ds-general` conda environment rather than replacing it | Pinned |
 | `docs/data-dictionary.md` | Every column of the base, documented — Stage 4's exit criterion and the Stage 0 data dictionary that was never written | Complete |
+| `analysis/specs/intent_gate.yml` · `app/intent_gate.py` | **Stage 9 — the pre-retrieval intent gate**: eight declared rules, unique priorities, first match decides, default `answerable`, and a refusal only when its route resolves to exactly one chunk | 8 rules, frozen at `30afc23` |
+| `analysis/specs/intent_gate_eval.yml` · `scripts/eval_intent.py` · `registry/rag/2026-10-18/intent_eval.json` | The held-out set (49 questions written after the rules froze) and the harness that scores both sets and writes one artifact | 0.959 intent accuracy, 0.944 out-of-scope refusal, 1.000 reason cited, 0.957 answerable kept |
+| `registry/schema/intent_eval.schema.json` · `tests/verify_intent.py` | The artifact's contract, and a verifier that re-derives the questions, re-applies the rules with a second implementation and checks the freeze against git | Exit 0; six break-tests caught |
+| `docs/intent.md` | The Stage 9 output: what may be refused and why, the measured numbers on both sets, the missed target published, and the four declared gaps | Complete |
 
 ## 4. Verification evidence
 
 Commands and their observed results — these are measurements, not assertions. Every exit status
 below was captured directly, not inferred from filtered output.
 
-**Vintage 2026-10-17 (current, second session) — the UCDP landing and Stage 6:**
+**Vintage 2026-10-18 (tenth session) — the intent gate:**
+
+```
+eval_intent.py             -> exit 0  49 held-out questions rebuilt from the eval spec, the index, the
+                                      state and administration seeds and the corpus; intent accuracy
+                                      0.959, out-of-scope refused 0.944 (17/18), answerable kept 0.957
+                                      (22/23), route resolved 1.000, reason cited 1.000, gold route
+                                      0.625; published-22: out-of-scope 1.000, reason cited 1.000,
+                                      answerable kept 1.000, answerable recall@5 1.000
+verify_intent.py           -> exit 0  49 questions re-derived, 8 rules re-applied by a second
+                                      implementation, the freeze at 30afc23 holds against git, every
+                                      metric and every `met` flag recomputed from the artifact's own
+                                      rows; 2 misses named (A16, P01); docs/intent.md quotes every rate
+validate_artifacts.py      -> exit 0  45 registry documents schema-validated (was 44); intent_eval.json
+                                      describes the corpus sha256 beside it
+```
+
+**Break-tests — six mutations, each caught, each file restored byte-for-byte** (`.probe/break_intent.py`,
+gitignored; the mutations are described here so the record survives it):
+
+```
+artifact: intent_accuracy 0.959184 -> 0.999        -> exit 1  recomputation from the rows gives 0.959184
+artifact: missed gate flagged met                  -> exit 1  met=True but 0.956522 against 1.0 gives False
+artifact: a held-out question dropped              -> exit 1  missing held-out question(s) ['M1_01']
+gate spec: one comment line added                  -> exit 1  the rule spec on disk is not the rule spec
+                                                              at the freeze commit 30afc23
+eval spec: an authored question reworded           -> exit 1  the spec moved after the measurement
+                                                              (sha256 differs from the artifact's)
+docs/intent.md: accuracy 0.959 -> 0.960            -> exit 1  the page has drifted from the artifact
+                                      each case restored -> exit 0  verifier green again
+```
+
+**Vintage 2026-10-17 (superseded for the base, retained for the UCDP landing and Stage 6):**
 
 ```
 pull_ucdp.py               -> exit 0  1/1 — GED 25.1 bulk archive, 28.0 MB, sha256 e256f1fb20a5,
@@ -1528,15 +1618,19 @@ that turn estimates into a product.
    sharper than `estimated_not_identified` — its **sign** does not survive the grid. **What is still open
    from this stage:** the per-capita dose axis (X-09), the IGR instrument (D2), and a donor pool that would
    let Design C run at all.
-9. **Stage 8 — the registry, narrative and RAG corpus.** The registry, all three figures and the
-   limitations narrative are built (forest plot and `docs/limitations.md` as of 2026-10-20). **What
-   remains is the retrieval layer, and it is the next session's work:** the RAG corpus — one chunk per
-   model card plus methodology, data dictionary, shock annotations, administration table and the
-   limitations page, sharing the registry's `vintage_date` so a stale answer cannot outlive the model it
-   quotes — and the RAGAS evaluation set wired into CI. The limitations page is the corpus chunk that
-   makes refusal answerable: it is where the app's "I don't have a model for that" gets its reasons.
-10. **Stage 9 — the app**, reading `registry/dags/index.json`: pick an outcome → pick a causal model →
-   read the assumption and adjustment set → then the estimate under that model.
+9. ~~**Stage 8 — the registry, narrative and RAG corpus.**~~ **Built.** The registry and all three
+   figures (2026-10-20), `docs/limitations.md` (2026-10-20), and the retrieval corpus — 441 chunks from
+   51 attributed sources at the registry's vintage (2026-10-21, `registry/rag/2026-10-18/`,
+   `docs/rag.md`). **What is still open from it:** the generation half of the RAG evaluation (RAGAS is
+   `not_run` — it needs an LLM key and a judge model), and chunks for the families the corpus currently
+   summarises (the donor panel, the robustness grid).
+10. **Stage 9 — the read-only app and the chat layer.** The app is built (2026-10-21,
+   `app/streamlit_app.py`, `docs/app.md`) and the **pre-retrieval intent gate** is built and measured
+   (2026-10-22, `analysis/specs/intent_gate.yml`, `app/intent_gate.py`, `docs/intent.md`). **What
+   remains:** the answer layer — assemble an answer from the pinned chunk and run the R-04 post-check —
+   and then the chat tab; a rule change that stops G03 refusing the population-denominator question,
+   which requires a new held-out set and a new freeze (S9-05); and the KG01 country-panel rule once the
+   donor list is committed as a registry artifact.
 
 ### The smallest credible end-to-end slice — revisited by Stage 4
 

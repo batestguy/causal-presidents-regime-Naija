@@ -93,9 +93,13 @@ a miss because the alternative — editing the question until it passed — woul
 threshold. The others — a 2030 inflation forecast, a 1960 population, a normative recommendation — embed
 *closer* to the corpus than some genuine questions do (0.39, 0.32, 0.42 against answerable questions at 0.37
 and 0.42). That is the finding: **similarity alone cannot refuse a question that is out of scope but on
-topic.** Any threshold that refused the forecast would refuse real questions with it. The app therefore needs
-an intent gate (the model's own instruction to refuse forecasts and recommendations, checked by the answer
-contract) rather than a score cut-off, and this eval set is what will measure it.
+topic.** Any threshold that refused the forecast would refuse real questions with it. The replacement is the
+pre-retrieval intent gate built in Stage 9 (`docs/intent.md`): a declared rule set that decides the intent
+from the question's own words before retrieval and pins the chunk a refusal must quote. Measured on a
+held-out set the rules never saw, it refuses **0.944** of out-of-scope questions and cites the reason
+**1.000** of the time, while keeping **0.957** of answerable questions — the one miss, a question *about*
+the population denominator, is published rather than tuned away. On this eval set, out-of-scope refusal goes
+**0.25 → 1.000** and reason-citation **0.5 → 1.000**, with answerable recall unchanged.
 
 The refusal threshold is `0.291464`, derived as 0.5 × the median answerable top-1 similarity (0.5829). It is
 calibrated on the eval set, so the refusal number is optimistic; that caveat travels in the artifact.

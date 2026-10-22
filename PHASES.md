@@ -537,7 +537,8 @@ panel, the robustness grid).
 
 ## Stage 9 — The read-only app
 
-**STATUS: READ-ONLY HALF BUILT (2026-10-21).** `app/streamlit_app.py` + `app/registry_data.py`,
+**STATUS: READ-ONLY APP BUILT (2026-10-21), REFUSAL GATE BUILT AND MEASURED (2026-10-22).**
+`app/streamlit_app.py` + `app/registry_data.py`,
 `tests/verify_app.py`, `docs/app.md`. Outcome → design → assumption → adjustment set → cannot-rule-out →
 the published number or the reason there is none, plus one tab for the two design-level results. It reads
 `registry/dags/` and nothing else: no database, no network, no model, and no coefficient typed into the UI.
@@ -545,8 +546,26 @@ the published number or the reason there is none, plus one tab for the two desig
 **Why read-only first.** The page a reader can use today is the one Stage 8 was built to make possible, and
 it has no failing gate in front of it. The chat tab does: out-of-scope refusal measures **0.25**, so a
 question like "what will inflation be in 2030?" is not refused by similarity alone. Building the chat first
-would ship the exact failure the corpus exists to prevent, so the tab waits for an intent gate and a
-re-measurement against the declared eval set.
+would ship the exact failure the corpus exists to prevent, so the tab waited for an intent gate and a
+re-measurement against the declared eval set — both now exist (below), and the tab's remaining blocker is
+the unbuilt answer layer rather than the refusal.
+
+**The refusal decision is a policy now (2026-10-22).** `analysis/specs/intent_gate.yml` declares eight rules
+with unique priorities; `app/intent_gate.py` applies them to the question before retrieval; a rule decides an
+intent (`answerable`, `out_of_scope`, `refusal_with_reason`) and, for a refusal, pins the chunk the refusal
+must quote. No rule matched means `answerable` — the gate may add a refusal, never remove one — and a refusal
+whose route does not resolve to exactly one existing chunk falls back to `answerable`, so the gate cannot
+refuse without a citation. The study window and the vintage are read from the artifacts; no number is typed.
+The rules were **frozen at commit `30afc23` before the held-out questions existed**, and `tests/verify_intent.py`
+reads the rule spec at that commit and fails if the file moved, so the measurement cannot be re-tuned after
+the fact. Measured on the **49 held-out questions**: intent accuracy **0.959**, out-of-scope refusal **0.944**,
+refusal route resolved **1.000**, reason cited **1.000**, answerable kept **0.957** — the last is a **missed
+target published as a finding** (A16, a question about the population denominator refused by G03), not fixed,
+because fixing it now would tune the rules to the set that measures them. On the 22 published questions the
+failed gates move 0.25 → **1.000** and 0.5 → **1.000** with answerable recall unchanged at 1.000. Four gaps
+are declared rather than hidden (KG01–KG04), including the one the probe measures: a question about a country
+outside the donor panel is not refused. Narrative: `docs/intent.md`; artifact:
+`registry/rag/2026-10-18/intent_eval.json`.
 
 **What the verifier establishes.** It renders all 36 cards through Streamlit's own test harness and compares
 the output with the card JSON, formatting the card's values itself rather than importing the app's formatter:
@@ -565,9 +584,10 @@ state for the rerun model to desynchronise. Its costs are written down rather th
 framework is the interactive graph becoming the product, not styling; Dash is the smallest honest jump from
 there, and `app/registry_data.py` is framework-free so it would survive the move.
 
-**Not built, and declared as such in `docs/app.md`:** the chat tab (gate not passed), node-level graph
-interaction, links from the card to the narrative that explains each design, per-card URLs, and any
-deployment — serving a stale vintage is a governance decision, not a packaging one.
+**Not built, and declared as such in `docs/app.md`:** the chat tab (the refusal gate is built and measured,
+but no layer assembles an answer from the chunk it pins), node-level graph interaction, links from the card to
+the narrative that explains each design, per-card URLs, and any deployment — serving a stale vintage is a
+governance decision, not a packaging one.
 
 **Work**
 
@@ -577,7 +597,12 @@ deployment — serving a stale vintage is a governance decision, not a packaging
 - ✅ Design-level results tab: A's failed timing check, B's channel-level specifications and support count,
   C's reason and next step.
 - ✅ `docs/app.md` — the ratio, the rules, and the limits the page does not fix.
-- ⏳ Chat tab, after the intent gate passes its refusal targets.
+- ✅ **The pre-retrieval intent gate** — `analysis/specs/intent_gate.yml`, `app/intent_gate.py`,
+  `analysis/specs/intent_gate_eval.yml` (49 held-out questions), `scripts/eval_intent.py`,
+  `tests/verify_intent.py`, `docs/intent.md`. Out-of-scope refusal 0.944 and reason-citation 1.000 on the
+  held-out set; `answerable kept` 0.957 against 1.0, published as the finding it is.
+- ⏳ Chat tab — the refusal decision is no longer what blocks it. The answer layer (assemble from the pinned
+  chunk, then run the R-04 post-check) is, plus the missed `answerable kept` target.
 
 **Exit criteria.** A reader can reach any card, and no number appears anywhere that is not a field of that
 card. Nothing is fitted at render time.

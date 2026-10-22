@@ -8,7 +8,7 @@
 # test reports itself as SKIPPED here rather than pretending to pass.
 #
 # `data` runs the full chain — acquire, parse, gate, build, estimate, fit the robustness grid, fit the
-# transition event study, and all ten verifiers — and needs
+# transition event study, the intent gate, and all thirteen verifiers — and needs
 # the raw layer: network access plus a FRED key (UCDP needs none: its bulk archive is keyless, C-45). It
 # runs on demand and weekly rather than on every push, because re-landing 174 FAAC documents and a 29 MB
 # archive costs minutes and the raw layer is immutable (X-07), so a re-run lands a NEW vintage rather
@@ -61,7 +61,7 @@ jobs:
           python-version: "3.12"
       - name: install ingestion, transformation and verification dependencies
         run: pip install -r requirements.txt -r requirements-dev.txt
-      - name: verify (acquire, parse, gate, build, all ten verifiers)
+      - name: verify (acquire, parse, gate, build, all thirteen verifiers)
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: scripts/verify.sh

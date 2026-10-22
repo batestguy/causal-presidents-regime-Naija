@@ -127,7 +127,14 @@ else
   printf '\n=== stage 8c: SKIPPED — no RAG_PYTHON with sentence-transformers; verify_rag.py will check the committed corpus and vectors\n'
 fi
 
-# Stage 9 has no engine: the app is hand-written and reads the registry. So its step is the verifier alone,
+# Stage 9's gate is pure Python (no model, no key, no network), so unlike the corpus it is re-measured on
+# every run: the held-out set is rebuilt from the artifacts and every rule re-applied. The artifact's
+# numbers therefore cannot describe a corpus or a rule set that has moved underneath them — and if the
+# gate itself moved, `tests/verify_intent.py` fails on the freeze instead of the numbers quietly changing.
+step "stage 9: intent gate evaluation"
+$PYTHON scripts/eval_intent.py
+
+# The app itself has no engine: it is hand-written and reads the registry. So its step is the verifier alone,
 # which renders all 36 cards through Streamlit's test harness and compares the page against the card JSON.
 step "verifiers (each re-derives its numbers independently)"
 $PYTHON tests/verify_quality.py
@@ -141,6 +148,7 @@ $PYTHON tests/verify_stage5.py
 $PYTHON tests/verify_events.py
 $PYTHON tests/verify_provenance.py
 $PYTHON tests/verify_rag.py
+$PYTHON tests/verify_intent.py
 $PYTHON tests/verify_app.py
 
 printf '\nall checks passed\n'
