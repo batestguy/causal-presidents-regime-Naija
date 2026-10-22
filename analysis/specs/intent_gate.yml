@@ -31,14 +31,43 @@
 # The gate does not generate answers. It decides an intent and, for a refusal, pins the chunk the
 # answer must cite. The answer layer (not built) assembles from the pinned chunk.
 
-version: 1
-labelled: "2026-10-18"
+version: 2
+labelled: "2026-10-22"
 spec_path: "analysis/specs/intent_gate.yml"
 engine: "app/intent_gate.py"
 harness: "scripts/eval_intent.py"
 verifier: "tests/verify_intent.py"
-eval_spec: "analysis/specs/intent_gate_eval.yml"
+eval_spec: "analysis/specs/intent_gate_eval_v2.yml"
 built_on: "analysis/specs/rag.yml"
+
+# ---------------------------------------------------------------------------------------------
+# Version 2 — the one rule change since the first freeze, and the set it cost
+# ---------------------------------------------------------------------------------------------
+#
+# v1 was frozen at commit `30afc23` and measured on 49 held-out questions. It missed one target:
+# `answerable kept` 0.957, because G03 refused A16 ("is the population denominator for the per-capita
+# axis built?") on the word "population"). The rules were deliberately not edited then (S9-05).
+#
+# This version makes the change the right way round: the rule is edited and **frozen at a new commit**
+# first, and the held-out set that measures it is written afterwards, from a new path. The v1 set is
+# retained — it is the set the change was made in response to, so it cannot measure v2 — and v2 carries a
+# `regression` block for the questions that are now published cases rather than held-out ones.
+revision:
+  version: 2
+  date: "2026-10-22"
+  previous: "version 1, frozen at 30afc23, measured on 49 questions"
+  changed: "G03 excludes the population-denominator frame"
+  why: >-
+    A16 asked whether the per-capita denominator is built and the corpus answers it (docs/data-dictionary.md:
+    the column is typed and empty; X-09 is an unmade decision). G03 refused it because it shared the word
+    "population" with the size-of-population class. Refusing an answerable question is the worse failure, so
+    the rule now excludes the frame where "population" modifies the denominator or the per-capita axis.
+  cost: >-
+    The v1 held-out set is spent: v2 cannot reuse its authored questions, because the rule change was made
+    with them in view. The mechanical families survive — they are filled from the artifacts and were not
+    tuned — and they are re-used with the same templates. The previously seen denominator and population
+    questions become a declared `regression` block, reported beside the held-out metrics and never inside
+    them.
 
 # ---------------------------------------------------------------------------------------------
 # What the gate is for — the two failures it exists to fix
@@ -153,10 +182,18 @@ rules:
       limitations. It carries no population series — the per-capita denominator is an *unmade decision*
       (X-09, docs/limitations.md §3 and §12), not an unavailable source. A question about the size of a
       population has no chunk that could answer it, so it is refused and cites the scope statement.
+      **v2:** the rule excludes the frame where "population" modifies the denominator or the per-capita
+      axis. v1 refused A16 on that frame, and A16 is answerable — the data dictionary says the denominator
+      is typed and empty. The exclusion is lexical like the rule: a size question that also says "per
+      capita" for some other reason is left answerable, which is the safe direction (a missed refusal
+      costs an answer; a wrong refusal costs a question the corpus could answer).
     conditions:
       all_of:
         - ['\bpopulation\b|\bpopulations\b|\bhow many people\b|\bhow many inhabitants\b|\bhow many residents\b|\bhow many citizens\b|\bhow many households\b|\bheadcount\b|\bpeople live\b']
-      none_of: []
+      none_of:
+        - ['\bpopulation denominator\b',
+           '\bdenominators?\b',
+           '\bper[- ]?capita\b']
     route: "scope:answer"
 
   - id: "G04"
@@ -302,9 +339,11 @@ gates:
 #
 # The gate is measured twice, on two different sets, for two different reasons:
 #
-#   1. `analysis/specs/intent_gate_eval.yml` — the **held-out** set. It is not used to write the
+#   1. `analysis/specs/intent_gate_eval_v2.yml` — the **held-out** set. It is not used to write the
 #      rules; it answers "does the rule set generalise, or did it only learn the 22 published
 #      questions?". Its expected labels come from the artifacts, not from a human's opinion of a rule.
+#      A `regression` block beside it re-checks the questions the ruling change was made in response to;
+#      those are reported separately and never inside the held-out metrics.
 #   2. `registry/rag/<vintage>/eval_set.json` — the **published** set. It is the set the failed gates
 #      were measured on, so the gate's effect on the published numbers is directly comparable, and the
 #      answerable questions' retrieval is unchanged (the gate decides whether to retrieve, not what).
