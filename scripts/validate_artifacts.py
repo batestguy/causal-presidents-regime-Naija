@@ -57,6 +57,8 @@ EVENTS_ROOT = REPO_ROOT / "registry" / "events"
 RAG_ROOT = REPO_ROOT / "registry" / "rag"
 CARDS_DIR = REPO_ROOT / "registry" / "dags"
 SCHEMA_DIR = REPO_ROOT / "registry" / "schema"
+REFERENCE_DIR = REPO_ROOT / "registry" / "reference"
+DONORS_DIR = REPO_ROOT / "registry" / "donors"
 
 DATE_LABEL = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
@@ -650,6 +652,15 @@ def check_schemas(failures: list[str]) -> int:
         document = json.loads(artifact.read_text(encoding="utf-8"))
         for error in events_validator.iter_errors(document):
             failures.append(f"{artifact.relative_to(REPO_ROOT)}: {error.message[:200]}")
+        validated += 1
+
+    for name, path in (("country_vocabulary.schema.json", REFERENCE_DIR / "countries.json"),
+                       ("donor_panel.schema.json", DONORS_DIR / "2026-10-18" / "panel.json")):
+        schema = json.loads((SCHEMA_DIR / name).read_text(encoding="utf-8"))
+        validator = jsonschema.Draft202012Validator(schema)
+        document = json.loads(path.read_text(encoding="utf-8"))
+        for error in validator.iter_errors(document):
+            failures.append(f"{path.relative_to(REPO_ROOT)}: {error.message[:200]}")
         validated += 1
 
     for name, pattern in (("rag_corpus.schema.json", "*/corpus.json"),

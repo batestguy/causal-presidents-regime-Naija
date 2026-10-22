@@ -1,0 +1,511 @@
+{
+ "schema_version": 1,
+ "layer": "donor-panel membership (Stage 5's Design C candidate set, committed for the gate)",
+ "vintage": "2026-10-18",
+ "generated_at": "2026-10-22T03:29:17+00:00",
+ "generator": {
+  "script": "scripts/build_country_vocabulary.py",
+  "source": "data/raw/worldbank_donors/2026-10-18/manifest.json",
+  "source_sha256": "f0100da152f9b8490d4b9812ad4ca16cc999fbe434e64a596ce9fb1c578a9e4a"
+ },
+ "counts": {
+  "members": 99
+ },
+ "members": [
+  {
+   "iso2": "AE",
+   "iso3": "ARE",
+   "name": "United Arab Emirates"
+  },
+  {
+   "iso2": "AO",
+   "iso3": "AGO",
+   "name": "Angola"
+  },
+  {
+   "iso2": "AZ",
+   "iso3": "AZE",
+   "name": "Azerbaijan"
+  },
+  {
+   "iso2": "BD",
+   "iso3": "BGD",
+   "name": "Bangladesh"
+  },
+  {
+   "iso2": "BF",
+   "iso3": "BFA",
+   "name": "Burkina Faso"
+  },
+  {
+   "iso2": "BI",
+   "iso3": "BDI",
+   "name": "Burundi"
+  },
+  {
+   "iso2": "BJ",
+   "iso3": "BEN",
+   "name": "Benin"
+  },
+  {
+   "iso2": "BN",
+   "iso3": "BRN",
+   "name": "Brunei Darussalam"
+  },
+  {
+   "iso2": "BO",
+   "iso3": "BOL",
+   "name": "Bolivia"
+  },
+  {
+   "iso2": "BR",
+   "iso3": "BRA",
+   "name": "Brazil"
+  },
+  {
+   "iso2": "BW",
+   "iso3": "BWA",
+   "name": "Botswana"
+  },
+  {
+   "iso2": "CD",
+   "iso3": "COD",
+   "name": "Congo, Dem. Rep."
+  },
+  {
+   "iso2": "CF",
+   "iso3": "CAF",
+   "name": "Central African Republic"
+  },
+  {
+   "iso2": "CG",
+   "iso3": "COG",
+   "name": "Congo, Rep."
+  },
+  {
+   "iso2": "CI",
+   "iso3": "CIV",
+   "name": "Cote d'Ivoire"
+  },
+  {
+   "iso2": "CM",
+   "iso3": "CMR",
+   "name": "Cameroon"
+  },
+  {
+   "iso2": "CO",
+   "iso3": "COL",
+   "name": "Colombia"
+  },
+  {
+   "iso2": "CV",
+   "iso3": "CPV",
+   "name": "Cabo Verde"
+  },
+  {
+   "iso2": "DJ",
+   "iso3": "DJI",
+   "name": "Djibouti"
+  },
+  {
+   "iso2": "DO",
+   "iso3": "DOM",
+   "name": "Dominican Republic"
+  },
+  {
+   "iso2": "DZ",
+   "iso3": "DZA",
+   "name": "Algeria"
+  },
+  {
+   "iso2": "EC",
+   "iso3": "ECU",
+   "name": "Ecuador"
+  },
+  {
+   "iso2": "EG",
+   "iso3": "EGY",
+   "name": "Egypt, Arab Rep."
+  },
+  {
+   "iso2": "ER",
+   "iso3": "ERI",
+   "name": "Eritrea"
+  },
+  {
+   "iso2": "ET",
+   "iso3": "ETH",
+   "name": "Ethiopia"
+  },
+  {
+   "iso2": "GA",
+   "iso3": "GAB",
+   "name": "Gabon"
+  },
+  {
+   "iso2": "GH",
+   "iso3": "GHA",
+   "name": "Ghana"
+  },
+  {
+   "iso2": "GM",
+   "iso3": "GMB",
+   "name": "Gambia, The"
+  },
+  {
+   "iso2": "GN",
+   "iso3": "GIN",
+   "name": "Guinea"
+  },
+  {
+   "iso2": "GQ",
+   "iso3": "GNQ",
+   "name": "Equatorial Guinea"
+  },
+  {
+   "iso2": "GT",
+   "iso3": "GTM",
+   "name": "Guatemala"
+  },
+  {
+   "iso2": "GY",
+   "iso3": "GUY",
+   "name": "Guyana"
+  },
+  {
+   "iso2": "HN",
+   "iso3": "HND",
+   "name": "Honduras"
+  },
+  {
+   "iso2": "ID",
+   "iso3": "IDN",
+   "name": "Indonesia"
+  },
+  {
+   "iso2": "IN",
+   "iso3": "IND",
+   "name": "India"
+  },
+  {
+   "iso2": "IQ",
+   "iso3": "IRQ",
+   "name": "Iraq"
+  },
+  {
+   "iso2": "IR",
+   "iso3": "IRN",
+   "name": "Iran, Islamic Rep."
+  },
+  {
+   "iso2": "JM",
+   "iso3": "JAM",
+   "name": "Jamaica"
+  },
+  {
+   "iso2": "JO",
+   "iso3": "JOR",
+   "name": "Jordan"
+  },
+  {
+   "iso2": "KE",
+   "iso3": "KEN",
+   "name": "Kenya"
+  },
+  {
+   "iso2": "KG",
+   "iso3": "KGZ",
+   "name": "Kyrgyz Republic"
+  },
+  {
+   "iso2": "KH",
+   "iso3": "KHM",
+   "name": "Cambodia"
+  },
+  {
+   "iso2": "KW",
+   "iso3": "KWT",
+   "name": "Kuwait"
+  },
+  {
+   "iso2": "KZ",
+   "iso3": "KAZ",
+   "name": "Kazakhstan"
+  },
+  {
+   "iso2": "LA",
+   "iso3": "LAO",
+   "name": "Lao PDR"
+  },
+  {
+   "iso2": "LK",
+   "iso3": "LKA",
+   "name": "Sri Lanka"
+  },
+  {
+   "iso2": "LR",
+   "iso3": "LBR",
+   "name": "Liberia"
+  },
+  {
+   "iso2": "LS",
+   "iso3": "LSO",
+   "name": "Lesotho"
+  },
+  {
+   "iso2": "LY",
+   "iso3": "LBY",
+   "name": "Libya"
+  },
+  {
+   "iso2": "MA",
+   "iso3": "MAR",
+   "name": "Morocco"
+  },
+  {
+   "iso2": "MG",
+   "iso3": "MDG",
+   "name": "Madagascar"
+  },
+  {
+   "iso2": "ML",
+   "iso3": "MLI",
+   "name": "Mali"
+  },
+  {
+   "iso2": "MM",
+   "iso3": "MMR",
+   "name": "Myanmar"
+  },
+  {
+   "iso2": "MN",
+   "iso3": "MNG",
+   "name": "Mongolia"
+  },
+  {
+   "iso2": "MR",
+   "iso3": "MRT",
+   "name": "Mauritania"
+  },
+  {
+   "iso2": "MW",
+   "iso3": "MWI",
+   "name": "Malawi"
+  },
+  {
+   "iso2": "MX",
+   "iso3": "MEX",
+   "name": "Mexico"
+  },
+  {
+   "iso2": "MY",
+   "iso3": "MYS",
+   "name": "Malaysia"
+  },
+  {
+   "iso2": "MZ",
+   "iso3": "MOZ",
+   "name": "Mozambique"
+  },
+  {
+   "iso2": "NA",
+   "iso3": "NAM",
+   "name": "Namibia"
+  },
+  {
+   "iso2": "NE",
+   "iso3": "NER",
+   "name": "Niger"
+  },
+  {
+   "iso2": "NI",
+   "iso3": "NIC",
+   "name": "Nicaragua"
+  },
+  {
+   "iso2": "NP",
+   "iso3": "NPL",
+   "name": "Nepal"
+  },
+  {
+   "iso2": "OM",
+   "iso3": "OMN",
+   "name": "Oman"
+  },
+  {
+   "iso2": "PE",
+   "iso3": "PER",
+   "name": "Peru"
+  },
+  {
+   "iso2": "PG",
+   "iso3": "PNG",
+   "name": "Papua New Guinea"
+  },
+  {
+   "iso2": "PH",
+   "iso3": "PHL",
+   "name": "Philippines"
+  },
+  {
+   "iso2": "PK",
+   "iso3": "PAK",
+   "name": "Pakistan"
+  },
+  {
+   "iso2": "PY",
+   "iso3": "PRY",
+   "name": "Paraguay"
+  },
+  {
+   "iso2": "QA",
+   "iso3": "QAT",
+   "name": "Qatar"
+  },
+  {
+   "iso2": "RO",
+   "iso3": "ROU",
+   "name": "Romania"
+  },
+  {
+   "iso2": "RW",
+   "iso3": "RWA",
+   "name": "Rwanda"
+  },
+  {
+   "iso2": "SA",
+   "iso3": "SAU",
+   "name": "Saudi Arabia"
+  },
+  {
+   "iso2": "SD",
+   "iso3": "SDN",
+   "name": "Sudan"
+  },
+  {
+   "iso2": "SL",
+   "iso3": "SLE",
+   "name": "Sierra Leone"
+  },
+  {
+   "iso2": "SN",
+   "iso3": "SEN",
+   "name": "Senegal"
+  },
+  {
+   "iso2": "SO",
+   "iso3": "SOM",
+   "name": "Somalia, Fed. Rep."
+  },
+  {
+   "iso2": "SS",
+   "iso3": "SSD",
+   "name": "South Sudan"
+  },
+  {
+   "iso2": "SV",
+   "iso3": "SLV",
+   "name": "El Salvador"
+  },
+  {
+   "iso2": "SY",
+   "iso3": "SYR",
+   "name": "Syrian Arab Republic"
+  },
+  {
+   "iso2": "SZ",
+   "iso3": "SWZ",
+   "name": "Eswatini"
+  },
+  {
+   "iso2": "TD",
+   "iso3": "TCD",
+   "name": "Chad"
+  },
+  {
+   "iso2": "TG",
+   "iso3": "TGO",
+   "name": "Togo"
+  },
+  {
+   "iso2": "TH",
+   "iso3": "THA",
+   "name": "Thailand"
+  },
+  {
+   "iso2": "TJ",
+   "iso3": "TJK",
+   "name": "Tajikistan"
+  },
+  {
+   "iso2": "TL",
+   "iso3": "TLS",
+   "name": "Timor-Leste"
+  },
+  {
+   "iso2": "TN",
+   "iso3": "TUN",
+   "name": "Tunisia"
+  },
+  {
+   "iso2": "TR",
+   "iso3": "TUR",
+   "name": "Turkiye"
+  },
+  {
+   "iso2": "TT",
+   "iso3": "TTO",
+   "name": "Trinidad and Tobago"
+  },
+  {
+   "iso2": "TZ",
+   "iso3": "TZA",
+   "name": "Tanzania"
+  },
+  {
+   "iso2": "UA",
+   "iso3": "UKR",
+   "name": "Ukraine"
+  },
+  {
+   "iso2": "UG",
+   "iso3": "UGA",
+   "name": "Uganda"
+  },
+  {
+   "iso2": "UZ",
+   "iso3": "UZB",
+   "name": "Uzbekistan"
+  },
+  {
+   "iso2": "VE",
+   "iso3": "VEN",
+   "name": "Venezuela, RB"
+  },
+  {
+   "iso2": "VN",
+   "iso3": "VNM",
+   "name": "Viet Nam"
+  },
+  {
+   "iso2": "YE",
+   "iso3": "YEM",
+   "name": "Yemen, Rep."
+  },
+  {
+   "iso2": "ZA",
+   "iso3": "ZAF",
+   "name": "South Africa"
+  },
+  {
+   "iso2": "ZM",
+   "iso3": "ZMB",
+   "name": "Zambia"
+  },
+  {
+   "iso2": "ZW",
+   "iso3": "ZWE",
+   "name": "Zimbabwe"
+  }
+ ]
+}

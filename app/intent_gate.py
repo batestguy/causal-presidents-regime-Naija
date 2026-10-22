@@ -36,6 +36,7 @@ SPEC_PATH = Path("analysis/specs/intent_gate.yml")
 INDEX_PATH = Path("registry/dags/index.json")
 CORPUS_PATH = "registry/rag/{vintage}/corpus.json"
 QUALITY_PATH = "registry/quality/{vintage}/report.json"
+COUNTRIES_PATH = "registry/reference/countries.json"
 
 # The normalisation the spec declares: lowercase, drop apostrophes, everything else that is not
 # alphanumeric becomes a space, then collapse the spaces. No stemming and no synonyms — a rule has to
@@ -50,6 +51,19 @@ def normalise(text: str) -> str:
     lowered = str(text).lower()
     for mark in APOSTROPHES:
         lowered = lowered.replace(mark, "")
+    return " ".join(NON_WORD.sub(" ", lowered).split())
+
+
+def country_text(text: str) -> str:
+    """The same text with possessives split, for the country condition only.
+
+    `normalise` drops the apostrophe, so "Brazil's" becomes "brazils" and a country matcher would see
+    no word boundary. The country condition reads a variant in which the apostrophe is a space, which
+    keeps every other rule's declared normalisation untouched.
+    """
+    lowered = str(text).lower()
+    for mark in APOSTROPHES:
+        lowered = lowered.replace(mark, " ")
     return " ".join(NON_WORD.sub(" ", lowered).split())
 
 
@@ -85,19 +99,32 @@ class Decision:
 class Gate:
     """The declared rules, applied to a question, over one corpus."""
 
-    def __init__(self, spec: dict, corpus: dict, window_start: str | None, vintage: str):
+    def __init__(self, spec: dict, corpus: dict, window_start: str | None, vintage: str,
+                 countries: list[dict] | None = None):
         self.spec = spec
         self.rules = sorted(spec.get("rules") or [], key=lambda rule: rule["priority"])
         self.chunks = {chunk["chunk_id"]: chunk for chunk in corpus.get("chunks") or []}
         self.window_start_year = int(str(window_start)[:4]) if window_start else None
         self.vintage_year = int(str(vintage)[:4])
         self._section_cache: dict[tuple[str, str], str | None] = {}
+        # Country names, normalised the same way a question is, longest first so "South Korea" wins over
+        # any shorter overlap. Nigeria is excluded by the artifact: it is the subject of every question.
+        names: list[tuple[str, str]] = []
+        for country in countries or []:
+            if str(country.get("iso3")) == "NGA":
+                continue
+            for alias in country.get("aliases") or [country.get("name")]:
+                if alias:
+                    names.append((normalise(alias), str(country.get("iso3"))))
+        names.sort(key=lambda item: -len(item[0]))
+        self.country_names = names
 
     # -- the decision ---------------------------------------------------------------------------
     def decide(self, question: str) -> Decision:
         text = normalise(question)
+        countries = country_text(question)
         for rule in self.rules:
-            if not self._conditions_hold(rule, text):
+            if not self._conditions_hold(rule, text, countries):
                 continue
             route, route_status = self._resolve_route(rule)
             if rule["intent"] != "answerable" and route_status != "pinned":
@@ -129,7 +156,7 @@ class Gate:
         )
 
     # -- conditions -----------------------------------------------------------------------------
-    def _conditions_hold(self, rule: dict, text: str) -> bool:
+    def _conditions_hold(self, rule: dict, text: str, countries: str | None = None) -> bool:
         conditions = rule.get("conditions") or {}
         for group in conditions.get("all_of") or []:
             if not any(re.search(pattern, text) for pattern in group):
@@ -146,7 +173,18 @@ class Gate:
         window = conditions.get("year_window") or rule.get("year_window")
         if window and not self._year_window_holds(window, text):
             return False
+        country = conditions.get("mentions_country")
+        if country and not self._mentions_country(countries or text):
+            return False
         return True
+
+    def _mentions_country(self, text: str) -> bool:
+        """A country other than the excluded one, named anywhere in the question."""
+        padded = f" {text} "
+        for name, _iso3 in self.country_names:
+            if name and f" {name} " in padded:
+                return True
+        return False
 
     def _year_window_holds(self, mode: str, text: str) -> bool:
         years = [int(year) for year in YEAR.findall(text)]
@@ -233,4 +271,6 @@ def load_gate(root: Path | str | None = None) -> Gate:
     if quality_path.exists():
         quality = json.loads(quality_path.read_text(encoding="utf-8"))
         window_start = (quality.get("study_window") or {}).get("start")
-    return Gate(spec=spec, corpus=corpus, window_start=window_start, vintage=vintage)
+    countries_path = root / str(spec.get("country_vocabulary") or COUNTRIES_PATH)
+    countries = json.loads(countries_path.read_text(encoding="utf-8")).get("countries") if countries_path.exists() else []
+    return Gate(spec=spec, corpus=corpus, window_start=window_start, vintage=vintage, countries=countries)

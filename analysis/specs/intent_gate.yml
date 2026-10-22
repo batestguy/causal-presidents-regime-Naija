@@ -31,17 +31,45 @@
 # The gate does not generate answers. It decides an intent and, for a refusal, pins the chunk the
 # answer must cite. The answer layer (not built) assembles from the pinned chunk.
 
-version: 2
+version: 3
 labelled: "2026-10-22"
 spec_path: "analysis/specs/intent_gate.yml"
 engine: "app/intent_gate.py"
 harness: "scripts/eval_intent.py"
 verifier: "tests/verify_intent.py"
-eval_spec: "analysis/specs/intent_gate_eval_v2.yml"
+eval_spec: "analysis/specs/intent_gate_eval_v3.yml"
 built_on: "analysis/specs/rag.yml"
 
+# Artifacts the rules read at run time, both committed so the rule behaves the same on a fresh clone as
+# on the machine that wrote it. `donor_panel` is the justification for G09 (the 99 countries the corpus
+# screened and holds no series for); `country_vocabulary` is what the rule decides on, because a country
+# question is about a country, not about panel membership. `tests/verify_intent.py` holds the two
+# together: every panel member must appear in the vocabulary.
+country_vocabulary: "registry/reference/countries.json"
+donor_panel: "registry/donors/2026-10-18/panel.json"
+
+revision:
+  version: 3
+  date: "2026-10-22"
+  previous: "version 2, frozen at 8b9ba3b, measured on 49 questions"
+  changed: "G09 refuses a question naming a country outside the donor panel, closing KG01"
+  why: >-
+    KG01 declared a class the scope names — "questions about countries outside the donor panel" — and did
+    not detect it, because the panel's membership lived in a gitignored acquisition manifest. The 99 members
+    are now a registry artifact      (`registry/donors/<vintage>/panel.json`) and the country names are a second one
+      (`registry/reference/countries.json`, ISO 3166-1), so a rule can decide the class from committed
+      files. The rule refuses when the question names any country other than Nigeria — the panel is the
+      justification, not the boundary: the corpus holds no series for a panel member either, so a question
+      about one is equally unanswerable. Nigeria is excluded by construction, because every question in
+      scope is about Nigeria.
+  cost: >-
+    The v2 held-out set is spent: the rule change was made with its questions in view, and P02 measured this
+    exact class. v3 writes a new authored set and keeps v2's questions as a regression block, reported
+    beside the held-out metrics. The rule is lexical like the rest: a country named only by an abbreviation
+    the vocabulary lacks, or by a city, is not detected. That is KG01's remainder and it is declared.
+
 # ---------------------------------------------------------------------------------------------
-# Version 2 — the one rule change since the first freeze, and the set it cost
+# Version 2 — the rule change before this one, kept for the audit trail
 # ---------------------------------------------------------------------------------------------
 #
 # v1 was frozen at commit `30afc23` and measured on 49 held-out questions. It missed one target:
@@ -116,6 +144,18 @@ conditions:
     `past` is before the study window's start (`registry/quality/<vintage>/report.json#study_window.start`),
     `future` is after the vintage year (`registry/dags/index.json#vintage_date`). A question that names no
     year never satisfies it.
+  mentions_country: >-
+    A condition satisfied when the question names a country in the committed vocabulary
+    (`country_vocabulary`) other than the project's own subject. The vocabulary is ISO 3166-1 plus a short
+    alias list; Nigeria is excluded when the matcher is built, so `not_nigeria` means "any country named
+    here that is not Nigeria". Matching is on the normalised text with word boundaries, so "Chad" matches a
+    word and not "Chadwick". A country named as a comparison ("how did Brazil compare with Nigeria") is
+    refused too — the corpus cannot answer the Brazilian half. The panel artifact (`donor_panel`) is the
+    scope clause's own object and is checked to be covered by the vocabulary; the condition itself reads
+    the vocabulary, because the corpus holds no series for a panel member either.
+    The condition reads a *variant* of the declared normalisation in which the apostrophe becomes a space
+    rather than vanishing: the declared form turns "Brazil's" into "brazils", and a matcher looking for
+    the word "brazil" would then miss a country in the possessive. No other rule sees that variant.
   year_window_caveat: >-
     The bound is the *vintage* year, not the end of the outcome series. The study window is open
     (`study_window.end` is null) and the registry's own state in 2025-2026 is answerable, so a year
@@ -233,6 +273,26 @@ rules:
         - ['\b(?:19|20)\d{2}\b']
       none_of: []
     year_window: "outside"
+    route: "scope:answer"
+
+  - id: "G09"
+    priority: 55
+    intent: "out_of_scope"
+    implements: "the scope clause 'questions about countries outside the donor panel'"
+    why: >-
+      The corpus carries Nigeria: 37 states, the federal series, the administration and shock tables. The
+      donor panel is a *screening* artifact of 99 candidate countries, and the corpus says so as a count —
+      it holds no series for any of them. A question about another country therefore has no chunk that
+      could answer it, and is refused with the scope statement. The condition reads the committed country
+      vocabulary and excludes Nigeria, so a question about Nigeria's own record is untouched. The rule is
+      deliberately wider than the scope clause's wording: it refuses a question about *any* country other
+      than Nigeria, panel member or not, because a panel member's series is just as absent. This rule
+      closes KG01, which was declared from the first freeze and undetected until the panel and the
+      vocabulary became registry artifacts.
+    conditions:
+      all_of: []
+      none_of: []
+      mentions_country: "not_nigeria"
     route: "scope:answer"
 
   - id: "G06"
@@ -364,14 +424,15 @@ published_set:
 known_gaps:
   - id: "KG01"
     scope_clause: "'questions about countries outside the donor panel'"
-    status: "not_active"
+    status: "closed"
+    closed_by: "G09, version 3"
     why: >-
-      The donor panel is 99 candidate countries and the corpus names none of them — it says "99 candidate
-      countries x 5 screening predictors". The country list lives in the acquisition manifest under
-      `data/`, which is gitignored, so a rule built on it would behave differently on a fresh clone
-      than on this machine and the published metric would not be reproducible. Until the panel's
-      membership is committed as an artifact, the class is declared and undetected.
-    what_would_close_it: "commit the donor pool's country list as a registry artifact, then activate a rule that refuses a question naming a country outside the panel"
+      The donor panel's 99 members are now a committed registry artifact
+      (`registry/donors/<vintage>/panel.json`) and the country names are a second one
+      (`registry/reference/countries.json`), so the class is decided from files every clone has. G09 refuses
+      a question naming any country other than Nigeria, which covers the clause's class and the panel
+      members it does not literally name.
+    what_would_close_it: "done — the remainder is lexical: a country named by a city, an abbreviation the alias list lacks, or a misspelling is not detected (see KG03)"
   - id: "KG02"
     scope_clause: "the whole of the answer contract's post-check"
     status: "not_built"
