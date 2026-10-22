@@ -537,7 +537,8 @@ panel, the robustness grid).
 
 ## Stage 9 — The read-only app
 
-**STATUS: READ-ONLY APP BUILT (2026-10-21), REFUSAL GATE BUILT AND MEASURED (2026-10-22).**
+**STATUS: READ-ONLY APP BUILT (2026-10-21), REFUSAL GATE BUILT AND MEASURED (2026-10-22), GATE AT v3
+AND ANSWER LAYER BUILT (2026-10-22).**
 `app/streamlit_app.py` + `app/registry_data.py`,
 `tests/verify_app.py`, `docs/app.md`. Outcome → design → assumption → adjustment set → cannot-rule-out →
 the published number or the reason there is none, plus one tab for the two design-level results. It reads
@@ -567,6 +568,23 @@ excludes the denominator frame and was frozen at `8b9ba3b` **before** a new held
 miss is the probe KG01 measures. On the 22 published questions the failed gates move 0.25 → **1.000** and
 0.5 → **1.000** with answerable recall unchanged at 1.000. Four gaps are declared rather than hidden
 (KG01–KG04). Narrative: `docs/intent.md`; artifact: `registry/rag/2026-10-18/intent_eval.json`.
+
+**v3 closes KG01, and the answer layer reads in plain language (2026-10-22).** The donor panel's 99 member
+countries and the ISO 3166-1 names are committed registry artifacts (`registry/donors/2026-10-18/panel.json`,
+`registry/reference/countries.json`, both schema-validated), so the country rule is reproducible on a fresh
+clone. G09 refuses a question naming any country other than Nigeria, frozen at `3dcb555` **before**
+`intent_gate_eval_v3.yml` existed: intent accuracy **0.980**, out-of-scope refusal **0.947**, answerable kept
+1.000, route resolved 1.000, reason cited 1.000, and the 23 seen cases at 1.000 — the one held-out miss is
+P03, a country reached only through its capital city, which is the lexical remainder the gate declares
+(KG03).
+
+`app/answer_layer.py` now returns a `plain` reading beside the contract answer: the sign of the coefficient,
+whether the interval includes zero, the sample, the assumption in one sentence, the caveats as bullets, and
+the meanings of the technical words actually used — every definition quoted from `docs/glossary.md`, every
+figure copied out of the estimate it cites. Nothing is generated, so the path needs **no LLM key**, which
+`tests/verify_answer.py` proves by running the layer with every key-shaped environment variable removed.
+Measured: **6 of 38** answerable questions answered (0.158), every one with a plain reading and none quoting
+a number its citation lacks.
 
 **What the verifier establishes.** It renders all 36 cards through Streamlit's own test harness and compares
 the output with the card JSON, formatting the card's values itself rather than importing the app's formatter:

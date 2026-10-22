@@ -2,7 +2,7 @@
   "stage": 6,
   "layer": "estimation",
   "vintage": "2026-10-18",
-  "generated_at": "2026-10-22T03:58:28+0100",
+  "generated_at": "2026-10-22T04:55:17+0100",
   "generator": "analysis/R/03_estimate.R",
   "spec": "analysis/specs/estimation.yml",
   "verifier": "tests/verify_stage6.py",

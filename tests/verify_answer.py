@@ -26,7 +26,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -125,6 +127,11 @@ def main() -> int:
     # ---------------------------------------------------------------------------------------------
     # 2. Every row: gate honoured, parts present, sentences extractive, numbers cited
     # ---------------------------------------------------------------------------------------------
+    glossary_path = REPO_ROOT / "docs" / "glossary.md"
+    glossary = flat(glossary_path.read_text(encoding="utf-8")) if glossary_path.exists() else ""
+    if not glossary:
+        failures.append("docs/glossary.md: missing — the plain-language readings have no source")
+
     for row in rows:
         question_id = row.get("id")
         status = row.get("status")
@@ -212,6 +219,72 @@ def main() -> int:
                             f"{row.get('numbers_absent_from_citation')!r} as absent and this verifier "
                             f"finds {absent!r}")
 
+        # The plain-language reading: same parts, same numbers, definitions from the glossary.
+        plain = row.get("plain") or {}
+        plain_text = str(plain.get("text") or "")
+        if not plain_text:
+            failures.append(f"{question_id}: answered with no plain-language reading")
+            continue
+        for label in ("**Short answer:**", "**The number:**", "**What it assumes:**",
+                      "**What it cannot tell you:**", "**Where this comes from:**"):
+            if label not in plain_text:
+                failures.append(f"{question_id}: the plain reading is missing the section {label!r}")
+        plain_absent = sorted(number for number in numbers_of(plain_text)
+                              if number not in corpus_numbers)
+        if plain_absent:
+            failures.append(f"{question_id}: the plain reading quotes numbers absent from the cited "
+                            f"chunks: {plain_absent[:6]}")
+        if sorted(row.get("plain_numbers_absent_from_citation") or []) != plain_absent:
+            failures.append(f"{question_id}: the artifact records "
+                            f"{row.get('plain_numbers_absent_from_citation')!r} as absent from the plain "
+                            f"reading and this verifier finds {plain_absent!r}")
+        reading = plain.get("reading")
+        if reading:
+            interval = INTERVAL.search(text)
+            coefficient = re.search(r"=\s*([−+\-]?\d[\d,]*\.?\d*)", text)
+            if not interval or not coefficient:
+                failures.append(f"{question_id}: the plain reading claims a coefficient the answer does "
+                                "not carry")
+            else:
+                low_text, high_text = [part.strip() for part in
+                                       interval.group(0).strip("[]").split(",")]
+
+                def number(value: str) -> float:
+                    return float(value.replace("−", "-").replace(",", ""))
+
+                low, high = number(low_text), number(high_text)
+                value = number(coefficient.group(1))
+                expected = {
+                    "coefficient": coefficient.group(1),
+                    "interval_low": low_text,
+                    "interval_high": high_text,
+                    "includes_zero": low <= 0 <= high,
+                    "direction": "negative" if value < 0 else ("positive" if value > 0 else "zero"),
+                }
+                for key, want in expected.items():
+                    if reading.get(key) != want:
+                        failures.append(f"{question_id}: the plain reading says {key} = "
+                                        f"{reading.get(key)!r} and the answer's own numbers give {want!r}")
+                if plain.get("headline") != reading.get("sentence"):
+                    failures.append(f"{question_id}: the plain headline is not the reading's sentence")
+                for key in ("n_state_months", "n_states"):
+                    if key in reading and str(reading[key]) not in text:
+                        failures.append(f"{question_id}: the plain reading quotes {key} = {reading[key]!r}, "
+                                        "which the answer does not carry")
+        for item in plain.get("terms") or []:
+            term = str(item.get("term") or "")
+            meaning = str(item.get("meaning") or "")
+            if not term or not meaning:
+                failures.append(f"{question_id}: a glossary entry is empty")
+                continue
+            if term.lower() not in text.lower():
+                failures.append(f"{question_id}: the plain reading defines {term!r}, which the answer does "
+                                "not use")
+            if flat(meaning) not in glossary:
+                failures.append(f"{question_id}: the plain meaning given for {term!r} is not in "
+                                "docs/glossary.md — a definition the page does not carry is a definition "
+                                "that can drift")
+
     # ---------------------------------------------------------------------------------------------
     # 3. The counts, recomputed
     # ---------------------------------------------------------------------------------------------
@@ -233,6 +306,10 @@ def main() -> int:
             "declined_with_citation": sum(1 for row in declined if row.get("citation")),
             "answers_quoting_numbers_absent_from_the_citation": sum(
                 1 for row in answered if row.get("numbers_absent_from_citation")),
+            "answered_with_plain_language": sum(
+                1 for row in answered if (row.get("plain") or {}).get("text")),
+            "answers_whose_plain_reading_quotes_uncited_numbers": sum(
+                1 for row in answered if row.get("plain_numbers_absent_from_citation")),
         }
 
     sets = artifact.get("sets") or {}
@@ -254,6 +331,37 @@ def main() -> int:
     if "app.intent_gate" not in source:
         failures.append("app/answer_layer.py does not import the intent gate — the decision would not be "
                         "the declared one")
+
+    # ---------------------------------------------------------------------------------------------
+    # 4b. It runs with no LLM key, proven rather than asserted
+    # ---------------------------------------------------------------------------------------------
+    # The layer reads committed files and scores with BM25; nothing in the path wants a credential. This
+    # runs it in a child process whose environment has every key-shaped variable removed, because a
+    # README that says "no key required" is not a check.
+    stripped = {name: value for name, value in os.environ.items()
+                if not any(marker in name.upper() for marker in
+                           ("API_KEY", "OPENAI", "ANTHROPIC", "GEMINI", "GOOGLE", "AZURE", "GROQ",
+                            "TOGETHER", "HF_TOKEN", "HUGGINGFACE"))}
+    keyless_script = (
+        "import sys; sys.path.insert(0, '.')\n"
+        "from app.answer_layer import load_layer\n"
+        "layer = load_layer('.')\n"
+        "answer = layer.answer('What did the published estimate find for fatalities under Design A?')\n"
+        "assert answer.status in ('answered', 'declined'), answer.status\n"
+        "assert (answer.plain or {}).get('text'), 'no plain-language reading'\n"
+        "print(answer.status)\n"
+    )
+    try:
+        run = subprocess.run([sys.executable, "-c", keyless_script], cwd=REPO_ROOT, env=stripped,
+                             capture_output=True, text=True, timeout=180)
+    except (OSError, subprocess.SubprocessError) as error:
+        failures.append(f"the keyless run could not start: {error}")
+    else:
+        if run.returncode != 0:
+            failures.append("the layer does not run without an LLM key: "
+                            f"{(run.stderr or run.stdout).strip().splitlines()[-1] if (run.stderr or run.stdout).strip() else 'no output'}")
+        elif run.stdout.strip() not in ("answered", "declined"):
+            failures.append(f"the keyless run returned {run.stdout.strip()!r}")
 
     # ---------------------------------------------------------------------------------------------
     # 5. The narrative quotes the artifact — prose that is not derived is prose that drifts

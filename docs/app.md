@@ -70,9 +70,18 @@ gate refuses 0.947 of out-of-scope questions, cites the reason 1.000 of the time
 question alone (`docs/intent.md`); it is the first refusal decision in the project that is a policy rather
 than a score. The answer layer then enforces the R-04 post-check on its own output (`docs/answer.md`) and the
 measurement is the reason the tab is still unbuilt: it answers **3 of the 16 published answerable questions
-(0.188)** and 2 of the 22 held-out ones, because R-04 is an estimate contract and 34 of the 36 cards carry no
-number to put an interval on. What is left for a chat surface is a product decision with those numbers in
-hand — not a missing component.
+(0.188)** and 3 of the 22 held-out ones — 0.158 over all 38 — because R-04 is an estimate contract and 34 of
+the 36 cards carry no number to put an interval on. What is left for a chat surface is a product decision
+with those numbers in hand — not a missing component.
+
+Two things the tab would need are now done rather than planned. Every answer carries a **plain-language
+reading** built from its own quoted numbers, with the technical words defined from `docs/glossary.md`
+(`docs/answer.md` §3) — so a reader who does not work with statistics gets the direction, the range, whether
+it excludes zero, and what the answer cannot tell them, without a coefficient being re-typed or re-rounded.
+And the whole path runs with **no LLM key**: rules, BM25, paragraph selection, the R-04 check and the
+glossary are all local, and `tests/verify_answer.py` runs the layer in a child process with every key-shaped
+variable stripped. Only a RAGAS measurement would need a key, and there is no generation step for it to
+judge.
 
 ## 4. The rules the verifier enforces
 

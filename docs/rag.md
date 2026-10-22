@@ -110,8 +110,14 @@ calibrated on the eval set, so the refusal number is optimistic; that caveat tra
   model. There is no LLM key in this repository, so the artifact says `not_run` with that reason. The eval set
   carries a `reference_answer` per question, i.e. the ground-truth column a RAGAS run needs, so wiring it is
   a key and one script away — not a rebuild.
-- **The answer-shape post-check** (interval + assumption + citation, R-04) runs on assembled answers and
-  there is no generation step yet. The eval set's `must_contain` needles are the check's inputs.
+  This is a limit on the *measurement*, not on the system: retrieval, the intent gate and the answer layer
+  all run with **no key at all** (`docs/answer.md` §3), and `tests/verify_answer.py` proves it by running the
+  layer in a child process with every key-shaped variable stripped. Nothing here generates text, which is
+  why nothing here needs a credential and why faithfulness has nothing to judge yet.
+- **The answer-shape post-check** (interval + assumption + citation, R-04) is now enforced by
+  `app/answer_layer.py` and measured in `docs/answer.md`: every assembled answer is checked, and a missing
+  part is replaced by the refusal template. The eval set's `must_contain` needles remain the retrieval
+  layer's inputs.
 
 Neither is reported as satisfied. A skipped check printed as a pass is the defect this project keeps
 finding.
@@ -161,6 +167,6 @@ by a reader noticing that the chat layer contradicts the page.
 - Not that the corpus is complete: the donor panel, the raw quality report and the robustness grid are
   summarised, not chunked. A question that needs a specific donor's value or a specific robustness cell will
   refuse, and that is the correct behaviour until those artifacts are added as families.
-- Not that RAGAS has been run. It has not.
+- Not that RAGAS has been run. It has not, and it is the only stage that would need a key.
 - Not that the answer layer exists. This stage produces the corpus, the eval set and the measurement; the app
   is Stage 9.

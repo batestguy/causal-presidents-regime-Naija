@@ -10,12 +10,12 @@ This stage replaces the score with a **declared rule set applied before retrieva
 question, decides one of three intents, and — for a refusal — pins the chunk the refusal must quote. It
 computes no statistic, fits nothing and calls no model.
 
-It is on **version 2**: a rule was changed once, after the first measurement missed a target, and the change
-cost a new held-out set and a new freeze (§5). The v1 numbers are kept in this page because they are the
-reason the rule moved, not because they still describe the gate.
+It is on **version 3**: a rule was changed twice, each time after a measurement missed a target, and each
+change cost a new held-out set and a new freeze (§4, §5). The earlier numbers are kept in this page because
+they are the reason the rules moved, not because they still describe the gate.
 
-- **Spec:** `analysis/specs/intent_gate.yml` — the decision procedure, eight rules, the gates, the known gaps
-- **Held-out set:** `analysis/specs/intent_gate_eval_v2.yml` — 49 questions, written **after** the v2 rules froze
+- **Spec:** `analysis/specs/intent_gate.yml` — the decision procedure, nine rules, the gates, the known gaps
+- **Held-out set:** `analysis/specs/intent_gate_eval_v3.yml` — 49 questions, written **after** the v3 rules froze
 - **Engine:** `app/intent_gate.py` (the decision), `scripts/eval_intent.py` (the measurement)
 - **Artifact:** `registry/rag/2026-10-18/intent_eval.json`
 - **Verifier:** `tests/verify_intent.py` — re-derives the questions, re-applies the rules with a second
@@ -39,16 +39,27 @@ reason the rule moved, not because they still describe the gate.
 about a 2025–2026 *value* is left answerable; the bound is the vintage year, and the cost is stated in the
 spec rather than hidden.
 
-## 2. The eight rules
+`mentions_country` reads a committed vocabulary rather than a list written into the rules
+(`registry/reference/countries.json`, ISO 3166-1 plus a short alias list), with Nigeria excluded when the
+matcher is built. It matches on a variant of the declared normalisation in which the apostrophe becomes a
+space: the declared form turns "Brazil's" into "brazils", and a country matcher looking for the word
+"brazil" would miss a country in the possessive. No other rule sees that variant. The donor panel is the
+second artifact — `registry/donors/2026-10-18/panel.json`, the 99 countries Stage 5 screened — and it is the
+scope clause's justification rather than the rule's boundary: the corpus holds no series for a panel member
+either, so a question about one is equally unanswerable. The verifier holds the two together by requiring
+every panel member to appear in the vocabulary.
+
+## 2. The nine rules
 
 | Rule | Priority | Intent | What it catches | Route |
 |---|---|---|---|---|
 | G01 | 10 | `answerable` | "why can't you answer …" — questions *about* the corpus's limits | — |
 | G02 | 20 | `out_of_scope` | forecast vocabulary ("forecast", "predict", "projection", "extrapolate"), excluding the corpus-scope and model-card frames | `scope:answer` |
-| G03 | 30 | `out_of_scope` | the size of a population — the corpus carries no population series (X-09) — **excluding the denominator / per-capita frame (v2)** | `scope:answer` |
+| G03 | 30 | `out_of_scope` | the size of a population — the corpus carries no population series (X-09) — excluding the denominator / per-capita frame (v2) | `scope:answer` |
 | G04 | 40 | `out_of_scope` | "should the government …" — a normative ask with a policy actor | `scope:answer` |
 | G08 | 45 | `out_of_scope` | "recommend …", "advise …", "the best way to …" — an advice ask with no actor | `scope:answer` |
 | G05 | 50 | `out_of_scope` | a year outside `[study_window.start, vintage]` | `scope:answer` |
+| G09 | 55 | `out_of_scope` | a country other than Nigeria, named from the committed vocabulary (v3, closes KG01) | `scope:answer` |
 | G06 | 60 | `refusal_with_reason` | a tenure comparison — "which administration did better" | `limitations.md` §1, by heading |
 | G07 | 70 | `refusal_with_reason` | Design C asked for a causal answer it never produced | `result:C` |
 
@@ -60,6 +71,12 @@ G08 is evaluated before G05 (priority 45 against 50) because "what is the best w
 in 2030" is advice first and out-of-window second; both rules cite the same scope chunk, so the ordering
 decides which rule is recorded on the artifact rather than which chunk is cited.
 
+G09 sits after G05 because both cite the same scope chunk and the year rule is the more specific of the two.
+The rule is deliberately **wider than the clause's wording**: it refuses a question about any country other
+than Nigeria, panel member or not, because a panel member's series is just as absent. Nigeria is excluded
+before matching, so a question about Nigeria's own record is never touched by it — which is what the authored
+case C07 ("What was Nigeria's inflation rate in 2016?") exists to check.
+
 ## 3. Why a rule set, and not a classifier
 
 A classifier trained on the eval set would score better on the eval set and mean less. Every rule names the
@@ -68,16 +85,17 @@ rather than with a probability. The limitation is published rather than discover
 so a paraphrase that avoids the declared words is not detected (KG03). The alternative — a model — would
 have to be measured on data that did not train it, and there is no such data here.
 
-## 4. What was measured — version 2
+## 4. What was measured — version 3
 
 ### The held-out set — the generalisation estimate
 
 **49 questions** built from sources that do not depend on the rules: **32 mechanical** questions whose
 templates are filled from the artifacts (a card exists, so a card question is answerable; the corpus carries
 no population series, so a population question is not), **16 authored** questions written to be hard —
-answerable questions carrying a trigger word in a frame the rule must not fire on, and out-of-scope questions
-worded unlike the published set's — and **1 probe**. Composition: 22 answerable, 19 out of scope, 8
-refusal-with-reason. 32 carry a gold chunk that is scored; 8 carry a needle the cited chunk must contain.
+answerable questions carrying a trigger word in a frame the rule must not fire on (including Nigeria's own
+record and a possession of it), and out-of-scope questions worded unlike the published set's and v2's — and
+**1 probe**. Composition: 22 answerable, 19 out of scope, 8 refusal-with-reason. 32 carry a gold chunk that
+is scored; 8 carry a needle the cited chunk must contain.
 
 | Metric | Measured | Target | Verdict |
 |---|---|---|---|
@@ -88,15 +106,16 @@ refusal-with-reason. 32 carry a gold chunk that is scored; 8 carry a needle the 
 | refusal reason cited | **1.000** | 1.0 | met |
 
 Per family: card, forecast, population, past year, tenure, Design C and the authored family are all exact at
-1.000. The probe is 0.000, and it is the one miss: **P02** — *"How did Brazil's under-5 mortality compare
-with Nigeria's?"* — is expected out of scope and is left answerable, because the country is outside the donor
-panel and no committed artifact names the panel's members (KG01). It is scored and labelled rather than
-excluded, so the declared gap has a measured cost.
+1.000. The probe family is 0.000, and it is the one miss: **P03** — *"How did Accra's economy grow between
+2010 and 2015?"* — is expected out of scope and is left answerable, because the question reaches a country
+only through its capital city and the vocabulary is country names. It is scored and labelled rather than
+excluded, so the lexical remainder has a measured cost.
 
-### The regression block — the case the rule change was made for
+### The regression block — the cases the two rule changes were made for
 
-Six previously published questions are re-checked after the change and reported **beside** the held-out
-numbers, never inside them: a question the rules were changed with in view cannot also measure the change.
+Twenty-three previously published questions are re-checked after the changes and reported **beside** the
+held-out numbers, never inside them: a question the rules were changed with in view cannot also measure the
+change. The block is the sixteen v2 authored questions, the v2 probe P02, and the six v2 checks:
 
 | Case | Question | Expected | Result |
 |---|---|---|---|
@@ -106,27 +125,37 @@ numbers, never inside them: a question the rules were changed with in view canno
 | R04 | How many people live in Kano today? | out of scope | out of scope |
 | R05 | Which president had the better record? | refusal with reason | refusal with reason |
 | R06 | Does the corpus publish a forecast for inflation? | answerable | answerable |
+| P02 | How did Brazil's under-5 mortality compare with Nigeria's? | out of scope | out of scope |
 
-**Regression accuracy 1.000** — the denominator frame is now answered, and the population questions the
-exclusion could have broken are still refused.
+**Regression accuracy 1.000** — P02 is now refused, which is the gap v3 closes, and the denominator and
+population questions the v2 exclusion sits beside are unchanged.
+
+### Why version 3 exists, and what it cost
+
+v2 was frozen at `8b9ba3b` and measured on 49 questions. It hit every declared target on the held-out set,
+but it missed its one probe: **P02**, a question about a country, left answerable because no rule owned the
+class and no committed artifact named a country. KG01 declared that gap from the first freeze; v3 closes it.
+
+The change was made the right way round: the donor panel and the country vocabulary were committed and the
+rule was **frozen at `3dcb555`** first, and this held-out set was written afterwards, from a new path. The
+cost is stated on the spec: the v2 authored questions are spent, the mechanical families survive because
+they are filled from artifacts, and the v2 questions become the regression block above rather than held-out
+questions a second time. The v2 set is retained at `analysis/specs/intent_gate_eval_v2.yml`, and its
+measurement stays on the record: intent accuracy 0.980, out-of-scope refusal 0.947, answerable kept 1.000,
+reason cited 1.000.
+
+`tests/verify_intent.py` enforces the order: it reads the rule spec **as of `3dcb555`**, fails if the file
+on disk differs, and fails if the v3 eval set existed at that commit. A rule changed now would require a v4
+set and a fourth freeze.
 
 ### Why version 2 exists, and what it cost
 
 v1 was frozen at commit `30afc23` and measured on 49 questions. It missed one target: `answerable kept`
 **0.957**, because G03 refused A16 (*"is the population denominator for the per-capita axis built?"*) on the
 word "population". The rules were **not** edited then — the measurement had been made, and editing the rule
-would have tuned it to the set that measured it (S9-05).
-
-The change was made the right way round: the rule was edited and **frozen at `8b9ba3b`** first, and this
-held-out set was written afterwards, from a new path. The cost is stated on the spec: the v1 authored
-questions are spent, the mechanical families survive because they are filled from artifacts, and the seen
-denominator/population questions become the regression block above rather than held-out questions a second
-time. The v1 set is retained at `analysis/specs/intent_gate_eval.yml`, and its measurement stays on the
-record: intent accuracy 0.959, out-of-scope refusal 0.944, answerable kept 0.957, reason cited 1.000.
-
-`tests/verify_intent.py` enforces the order: it reads the rule spec **as of `8b9ba3b`**, fails if the file
-on disk differs, and fails if the v2 eval set existed at that commit. A rule changed now would require a v3
-set and a third freeze.
+would have tuned it to the set that measured it (S9-05). The v1 set is retained at
+`analysis/specs/intent_gate_eval.yml`, and its measurement stays on the record: intent accuracy 0.959,
+out-of-scope refusal 0.944, answerable kept 0.957, reason cited 1.000.
 
 ### The published set — the set the rules were written against
 
@@ -164,17 +193,19 @@ gates above exist to prevent.
 
 Four gaps are declared on the spec and carried onto the artifact rather than left to a reader's surprise:
 
-- **KG01 — countries outside the donor panel.** P02 is expected out of scope and is **not refused**; that is
-  the measured cost of the gap. The country list lives in a gitignored acquisition artifact, so a rule built
-  on it would behave differently on a fresh clone and the published number would not be reproducible.
-  Closing it means committing the donor pool's membership as a registry artifact.
+- **KG01 — countries outside the donor panel. Closed by G09 in version 3.** The panel's 99 members and the
+  ISO 3166-1 names are committed registry artifacts, so the rule decides the class from files every clone
+  has; P02 is refused on the regression block. The remainder is lexical: a country named only by a city
+  (P03), an abbreviation the alias list lacks, or a misspelling is not detected — that is KG03, and it is
+  measured rather than assumed.
 - **KG02 — the answer-shape post-check.** The gate decides an intent and a citation; it does not assemble an
   answer, so it cannot check one for an interval, an identifying assumption and a citation (R-04). That
   belongs to the answer layer, which is now built (`docs/answer.md`): it enforces the post-check on its own
   output and declines 13 of the 16 published answerable questions, because R-04 is an estimate contract and
   34 of the 36 cards carry no number.
-- **KG03 — the rules are lexical.** A paraphrase that avoids the declared words is missed. Accepted, with the
-  reason above; closing it means a paraphrased held-out set published beside the lexical one.
+- **KG03 — the rules are lexical.** A paraphrase that avoids the declared words is missed, and so is a
+  country reached through a city or a demonym. Accepted, with the reason above; closing it means a
+  paraphrased held-out set published beside the lexical one.
 - **KG04 — a value inside the window but past the outcome series.** 2025–2026 values are left answerable
   because the study window is open and the registry's own state in those years is answerable. Closing it means
   reading each outcome's own end month off the cards and accepting the risk of refusing a question about the
@@ -183,13 +214,13 @@ Four gaps are declared on the spec and carried onto the artifact rather than lef
 ## 6. What this does not do
 
 - **It does not answer anything.** It returns `{intent, rule_id, route, route_status, reason}`; quoting the
-  pinned chunk is the answer layer's job, and that layer's measured answer rate is **0.132** over the 38
+  pinned chunk is the answer layer's job, and that layer's measured answer rate is **0.158** over the 38
   answerable questions it was run on (`docs/answer.md` §2).
 - **It does not gate the app yet.** `app/streamlit_app.py` has no chat tab, so nothing calls the gate at
   request time today. The module is framework-free and importable from the app when that tab exists.
 - **It does not replace the answer contract.** A question the gate leaves answerable can still be refused by
   the R-04 post-check if the retrieved passages do not carry an interval, an assumption and a citation —
-  which is what happens to 33 of the 38 questions the layer was measured on.
+  which is what happens to 32 of the 38 questions the layer was measured on.
 
 ## 7. Reproduction
 

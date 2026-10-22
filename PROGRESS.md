@@ -1,9 +1,9 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-10-22 (tenth session) · **Stage:** 9, the **intent gate and the answer layer built and
-measured** — the refusal decision is eight declared rules with a held-out measurement behind them, and the
-answer layer enforces R-04 on its own output · **verified at vintage 2026-10-18**: 14 verifiers, 0 failures,
-46 registry documents schema-validated
+**Last updated:** 2026-10-22 (eleventh session) · **Stage:** 9, the **gate at v3 (KG01 closed) and the answer
+layer reading in plain language, with no LLM key** — the refusal decision is nine declared rules with a
+held-out measurement behind them, and the answer layer enforces R-04 on its own output · **verified at
+vintage 2026-10-18**: 14 verifiers, 0 failures, 48 registry documents schema-validated
 
 **This session, in one line:** the **intent gate** (`app/intent_gate.py`, a held-out set frozen after the
 rules, `scripts/eval_intent.py`, `tests/verify_intent.py`, `docs/intent.md`) — which turns the corpus's two
@@ -46,24 +46,42 @@ before retrieval, from the question's own words, by rules the project declares a
   **frozen at `8b9ba3b` before any new question existed**, and a new held-out set was written from a new
   path. The seen denominator/population questions became a declared **regression block — 6 of 6 correct**,
   reported beside the held-out numbers and never inside them (S9-08, `docs/intent.md` §4).
-- **A second miss is a declared gap, not a surprise.** P02 ("How did Brazil's under-5 mortality compare with
-  Nigeria's?") is expected out of scope and is not refused — KG01, because the donor panel's country list
-  lives in a gitignored artifact and a rule built on it would not reproduce on a fresh clone.
+- **KG01 was closed by committing its inputs, not by narrowing the claim.** P02 ("How did Brazil's
+  under-5 mortality compare with Nigeria's?") was the v2 miss: a country question, and no artifact the rule
+  could read. The donor panel's 99 members and the ISO 3166-1 names are now committed registry artifacts and
+  G09 refuses a question naming any country other than Nigeria, frozen at `3dcb555` **before** the v3 set
+  existed. On the 49 v3 held-out questions: intent accuracy **0.980**, out-of-scope refusal **0.947**,
+  answerable kept **1.000**, route resolved **1.000**, reason cited **1.000**, and the 23 seen cases at
+  **1.000**. The one miss is P03, a country reached only through a capital city — the lexical remainder the
+  gate declares (KG03), measured rather than assumed.
 - **One metric is published with its reading rather than deleted.** `route_matches_gold` is 0.625 — 20 of 32 —
   and all 12 misses are the card questions, where an answerable decision returns no route by design. Read
   against the 20 questions that carry a route, the gate cites the expected chunk 20 of 20.
 - **The answer layer enforces R-04 on its own output and the result is the finding.** `app/answer_layer.py`
   gates, retrieves lexically (BM25 — no model at request time), assembles extractively and then requires an
   interval, an identifying assumption and what it cannot rule out before it will answer. It answered **3 of
-  the 16 published answerable questions (0.188)** and **2 of the 22 held-out ones (0.091)**: 5 of 38, with
-  33 declined by the contract and none answered around a refusal. The rate is low because R-04 is an
+  the 16 published answerable questions (0.188)** and **3 of the 22 held-out ones (0.136)**: 6 of 38 (0.158),
+  with 32 declined by the contract and none answered around a refusal. The rate is low because R-04 is an
   **estimate** contract and 34 of the 36 cards carry no number — published in `docs/answer.md` §2 rather than
   fixed by weakening the check.
-- **Two lending guards keep a coefficient off questions it does not answer.** A question naming an outcome
-  may only be answered from a passage about that outcome, and "effect" counts as an estimate word only when
-  the outcome is named. Without them a design-level result answered a fourth outcome with three others'
-  numbers — the same failure the app's results tab prevents, one layer down.
-- **The chain now measures both on every run.** `scripts/verify.sh` re-runs `scripts/eval_intent.py` and
+- **Every answer now has a plain-language reading, built from its own numbers.** `plain` on the artifact (and
+  on the `Answer`) gives the direction of the coefficient, whether the interval includes zero, the sample,
+  the assumption in one sentence, the caveats as bullets, and the meanings of the technical words the answer
+  actually uses — each definition quoted from `docs/glossary.md`, each figure copied out of the cited
+  passage. The verifier recomputes the sign, bounds, zero-crossing and sample from the answer's own text and
+  fails if the reading disagrees, so the plain view cannot drift from the contract answer it summarises.
+- **No LLM key is needed, and the verifier proves it.** Rules, BM25, paragraph selection, the R-04 check and
+  the glossary are all local. `tests/verify_answer.py` runs the layer in a child process with every
+  key-shaped environment variable removed and requires an answer with a plain reading. RAGAS stays `not_run`
+  because it needs a judge model — that is the *measurement* that needs a key, not the system that answers.
+- **Four lending guards keep a coefficient off questions it does not answer.** A question naming an outcome
+  may only be answered from a passage about that outcome; the estimate paragraph itself must name that
+  outcome (a design-level result lists several intervals in one passage); a question naming a design must be
+  answered from that design; and the scope chunk is never borrowed from, because it contains the words
+  "identifying assumption" only because the contract is described there. Without these, a design-level
+  result answered a fourth outcome with three others' numbers, and a fatalities question got an incidents
+  coefficient — the same failure the app's results tab prevents, one layer down.
+- **The chain measures both on every run.** `scripts/verify.sh` re-runs `scripts/eval_intent.py` and
   `scripts/eval_answer.py` (no model, no key, no network) and then `tests/verify_intent.py` and
   `tests/verify_answer.py`, which re-derive the questions, re-apply the rules with a second implementation,
   check the freeze against git, recompute every metric, require every quoted sentence and number to appear
@@ -715,17 +733,50 @@ effect that the design cannot support.
 | `.github/workflows/verify.yml` | CI: installs the pinned requirements and runs `scripts/verify.sh` on a clean runner (the R engines are skipped there; every verifier still runs) | Wired, runs on push |
 | `requirements.txt` · `requirements-dev.txt` | The pinned Python dependencies (runtime · verification), beside the `ds-general` conda environment rather than replacing it | Pinned |
 | `docs/data-dictionary.md` | Every column of the base, documented — Stage 4's exit criterion and the Stage 0 data dictionary that was never written | Complete |
-| `analysis/specs/intent_gate.yml` · `app/intent_gate.py` | **Stage 9 — the pre-retrieval intent gate**: eight declared rules, unique priorities, first match decides, default `answerable`, and a refusal only when its route resolves to exactly one chunk | 8 rules, frozen at `30afc23` |
-| `analysis/specs/intent_gate_eval.yml` · `scripts/eval_intent.py` · `registry/rag/2026-10-18/intent_eval.json` | The held-out set (49 questions written after the rules froze) and the harness that scores both sets and writes one artifact | 0.959 intent accuracy, 0.944 out-of-scope refusal, 1.000 reason cited, 0.957 answerable kept |
+| `analysis/specs/intent_gate.yml` · `app/intent_gate.py` | **Stage 9 — the pre-retrieval intent gate**: nine declared rules, unique priorities, first match decides, default `answerable`, and a refusal only when its route resolves to exactly one chunk | 9 rules, frozen at `3dcb555` |
+| `analysis/specs/intent_gate_eval_v3.yml` · `scripts/eval_intent.py` · `registry/rag/2026-10-18/intent_eval.json` | The current held-out set (49 questions written after the v3 rules froze) and the harness that scores both sets and writes one artifact; v1 and v2 are retained with their numbers | 0.980 intent accuracy, 0.947 out-of-scope refusal, 1.000 reason cited, 1.000 answerable kept, 1.000 regression |
+| `registry/reference/countries.json` · `registry/donors/2026-10-18/panel.json` · `scripts/build_country_vocabulary.py` | The committed inputs to the country rule: ISO 3166-1 names (Nigeria excluded from refusal) and the 99-country donor pool, both schema-validated | 249 countries, 99 panel members; rear-view reproducible from a fresh clone |
 | `registry/schema/intent_eval.schema.json` · `tests/verify_intent.py` | The artifact's contract, and a verifier that re-derives the questions, re-applies the rules with a second implementation and checks the freeze against git | Exit 0; six break-tests caught |
 | `docs/intent.md` | The Stage 9 output: what may be refused and why, the measured numbers on both sets, the missed target published, and the four declared gaps | Complete |
-| `app/answer_layer.py` · `scripts/eval_answer.py` · `registry/rag/2026-10-18/answer_eval.json` | **Stage 9 — the answer layer**: gate → BM25 retrieval (no model) → extractive assembly → R-04 post-check, measured over the 38 answerable questions | 5 answered, 33 declined, 0 answered around a refusal; every number in its citation |
-| `registry/schema/answer_eval.schema.json` · `tests/verify_answer.py` | The answer artifact's contract and a verifier that re-checks every part, every quoted sentence and every number against the cited chunks | Exit 0 |
+| `app/answer_layer.py` · `scripts/eval_answer.py` · `registry/rag/2026-10-18/answer_eval.json` | **Stage 9 — the answer layer**: gate → BM25 retrieval (no model) → extractive assembly → R-04 post-check → plain-language reading, measured over the 38 answerable questions | 6 answered, 32 declined, 0 answered around a refusal; every number in its citation |
+| `docs/glossary.md` · `registry/schema/answer_eval.schema.json` · `tests/verify_answer.py` | The plain-language definitions the layer quotes, the artifact's contract, and a verifier that re-checks every part, every sentence, every number, every definition and a keyless run | Exit 0; two new break-tests caught |
 
 ## 4. Verification evidence
 
 Commands and their observed results — these are measurements, not assertions. Every exit status
 below was captured directly, not inferred from filtered output.
+
+**Vintage 2026-10-18 (eleventh session) — the gate at v3, and the plain-language answer:**
+
+```
+eval_intent.py             -> exit 0  49 held-out questions from intent_gate_eval_v3.yml; intent accuracy
+                                      0.980, out-of-scope refused 0.947, answerable kept 1.000, route
+                                      resolved 1.000, reason cited 1.000; regression 23/23; one miss (P03)
+verify_intent.py           -> exit 0  49 questions re-derived, 9 rules re-applied by a second implementation
+                                      (including the country condition and its possessive variant), the
+                                      freeze at 3dcb555 holds against git, every panel member present in
+                                      the country vocabulary, every metric and `met` flag recomputed
+eval_answer.py             -> exit 0  38 answerable questions: 6 answered (published 3/16 = 0.188,
+                                      held-out 3/22 = 0.136), 32 declined by R-04, 0 refused by the
+                                      gate; 6 of 6 carry every part and a plain reading; 0 quote a number
+                                      absent from their citation, in either rendering
+verify_answer.py           -> exit 0  the plain reading's sign, bounds, zero-crossing and sample recompute
+                                      from the answer's own text; every definition is a line of
+                                      docs/glossary.md; the layer runs and answers in a child process with
+                                      every key-shaped variable stripped
+validate_artifacts.py      -> exit 0  48 registry documents schema-validated (was 46); countries.json and
+                                      panel.json now have schemas of their own
+```
+
+**Break-tests — two new failures, each caught, each file restored byte-for-byte:**
+
+```
+answer artifact: a plain reading's interval_low -> +99.9   -> exit 1  the reading disagrees with the
+                                                                       answer's own numbers
+answer artifact: the reading's headline replaced         -> exit 1  the headline is not the reading's sentence
+docs/glossary.md: a meaning edited in place               -> exit 1  the definition is not in the page
+                                      each case restored -> exit 0  verifier green again
+```
 
 **Vintage 2026-10-18 (tenth session) — the intent gate, its v2 freeze and the answer layer:**
 
@@ -1672,12 +1723,14 @@ that turn estimates into a product.
    summarises (the donor panel, the robustness grid).
 10. **Stage 9 — the read-only app and the chat layer.** The app is built (2026-10-21,
    `app/streamlit_app.py`, `docs/app.md`), the **pre-retrieval intent gate** is built and measured
-   (2026-10-22, `analysis/specs/intent_gate.yml`, v2 frozen at `8b9ba3b`, `docs/intent.md`), and the
-   **answer layer** is built and measured (2026-10-22, `app/answer_layer.py`, `docs/answer.md`): 5 of 38
-   answerable questions answered, every quoted sentence and number attributable to its citation.
+   (2026-10-22, `analysis/specs/intent_gate.yml`, v3 frozen at `3dcb555`, `docs/intent.md`), and the
+   **answer layer** is built and measured (2026-10-22, `app/answer_layer.py`, `docs/answer.md`): 6 of 38
+   answerable questions answered, every quoted sentence and number attributable to its citation, and every
+   answer carrying a plain-language reading defined from `docs/glossary.md`.
    **What remains:** the chat tab, which is now a product decision rather than a component — the layer
    would refuse four questions in five because R-04 is an estimate contract and 34 of 36 cards carry no
-   number; and the KG01 country-panel rule once the donor list is committed as a registry artifact.
+   number. KG01 is closed (G09 + the committed country vocabulary); the remainder it leaves is lexical and
+   declared as KG03. No part of the answering path needs a key; only a RAGAS measurement would.
 
 ### The smallest credible end-to-end slice — revisited by Stage 4
 

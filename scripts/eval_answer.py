@@ -77,13 +77,20 @@ def main() -> int:
         parent = (answer.chunks_used or [None])[0]
         cited_text = ""
         if answer.status == "answered" and parent:
+            # Every chunk the answer cites, not only the parent's parts: the answer may borrow its
+            # assumption or its caveats from another chunk, and it cites that chunk too.
+            cited_ids: list[str] = []
+            for chunk_id in answer.chunks_used:
+                cited_ids.extend(layer.gate.parts_of(chunk_id.split("#p", 1)[0]))
             cited_text = " ".join(str(chunks.get(cid, {}).get("text") or "")
-                                  for cid in layer.gate.parts_of(parent))
+                                  for cid in dict.fromkeys(cited_ids))
         elif answer.route and answer.route in chunks:
             cited_text = " ".join(str(cid_text) for cid_text in
                                   [chunks[answer.route].get("text") or ""])
         quoted = numbers_of(answer.text)
         cited_numbers = numbers_of(cited_text)
+        plain_text = (answer.plain or {}).get("text") or ""
+        plain_quoted = numbers_of(plain_text) if plain_text else set()
         rows.append({
             "id": question_id,
             "set": source,
@@ -100,7 +107,11 @@ def main() -> int:
             "numbers_absent_from_citation": sorted(
                 number for number in quoted if number not in cited_numbers
             ) if cited_text else [],
+            "plain_numbers_absent_from_citation": sorted(
+                number for number in plain_quoted if number not in cited_numbers
+            ) if answer.status == "answered" and cited_text else [],
             "text": answer.text,
+            "plain": answer.plain,
         })
 
     for question in eval_set["questions"]:
@@ -129,6 +140,10 @@ def main() -> int:
             "declined_with_citation": sum(1 for row in declined if row["citation"]),
             "answers_quoting_numbers_absent_from_the_citation": sum(
                 1 for row in answered if row["numbers_absent_from_citation"]),
+            "answered_with_plain_language": sum(
+                1 for row in answered if (row.get("plain") or {}).get("text")),
+            "answers_whose_plain_reading_quotes_uncited_numbers": sum(
+                1 for row in answered if row["plain_numbers_absent_from_citation"]),
         }
 
     sets = {
@@ -180,6 +195,10 @@ def main() -> int:
         print(f"  {name:<10}: {block['n']:>2} question(s) — {block['answered']} answered, "
               f"{block['declined']} declined by the post-check, {block['refused']} refused by the gate; "
               f"answer rate {block['answer_rate']:.3f}")
+        if block["answered"]:
+            print(f"  {'':<10}  {block['answered_with_plain_language']} of the {block['answered']} carry a "
+                  f"plain-language reading, {block['answers_whose_plain_reading_quotes_uncited_numbers']} "
+                  f"of them quote a number their citation does not")
     return 0
 
 

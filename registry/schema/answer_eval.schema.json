@@ -88,7 +88,9 @@
         "parts_present",
         "refusals_with_citation",
         "declined_with_citation",
-        "answers_quoting_numbers_absent_from_the_citation"
+        "answers_quoting_numbers_absent_from_the_citation",
+        "answered_with_plain_language",
+        "answers_whose_plain_reading_quotes_uncited_numbers"
       ],
       "properties": {
         "n": { "type": "integer", "minimum": 0 },
@@ -109,7 +111,9 @@
         },
         "refusals_with_citation": { "type": "integer", "minimum": 0 },
         "declined_with_citation": { "type": "integer", "minimum": 0 },
-        "answers_quoting_numbers_absent_from_the_citation": { "type": "integer", "minimum": 0 }
+        "answers_quoting_numbers_absent_from_the_citation": { "type": "integer", "minimum": 0 },
+        "answered_with_plain_language": { "type": "integer", "minimum": 0 },
+        "answers_whose_plain_reading_quotes_uncited_numbers": { "type": "integer", "minimum": 0 }
       }
     },
     "question": {
@@ -126,7 +130,9 @@
         "chunks_used",
         "numbers_quoted",
         "numbers_absent_from_citation",
-        "text"
+        "plain_numbers_absent_from_citation",
+        "text",
+        "plain"
       ],
       "properties": {
         "id": { "type": "string" },
@@ -153,7 +159,28 @@
         "chunks_used": { "type": "array", "items": { "type": "string" } },
         "numbers_quoted": { "type": "array", "items": { "type": "string" } },
         "numbers_absent_from_citation": { "type": "array", "items": { "type": "string" } },
-        "text": { "type": "string" }
+        "plain_numbers_absent_from_citation": { "type": "array", "items": { "type": "string" } },
+        "text": { "type": "string" },
+        "plain": {
+          "type": "object",
+          "required": ["headline", "terms", "text"],
+          "properties": {
+            "headline": { "type": "string" },
+            "reading": {"type": ["object", "null"]},
+            "terms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["term", "meaning"],
+                "properties": {
+                  "term": { "type": "string" },
+                  "meaning": { "type": "string" }
+                }
+              }
+            },
+            "text": { "type": "string" }
+          }
+        }
       }
     }
   }

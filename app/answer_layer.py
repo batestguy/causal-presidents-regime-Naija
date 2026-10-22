@@ -39,6 +39,11 @@ from app.intent_gate import load_gate
 
 RAG_SPEC_PATH = Path("analysis/specs/rag.yml")
 CORPUS_PATH = "registry/rag/{vintage}/corpus.json"
+GLOSSARY_PATH = Path("docs/glossary.md")
+GLOSSARY_ROW = re.compile(r"^\|\s*\*\*(?P<term>[^*]+)\*\*\s*\|\s*(?P<meaning>[^|]+?)\s*\|\s*$")
+COEFFICIENT = re.compile(r"=\s*([−+\-]?\d[\d,]*\.?\d*)")
+SAMPLE = re.compile(r"n\s*=\s*([\d,]+)\s+state-months over ([\d,]+) states")
+SPAN = re.compile(r"(\d{4}-\d{2}) to (\d{4}-\d{2})")
 
 # The tokenizer and stopword list are the retrieval evaluation's, copied rather than imported: `app/` must
 # stand on its own, and `tests/verify_answer.py` proves the parity by reproducing the published BM25 ranking
@@ -132,6 +137,7 @@ class Answer:
     citation: str | None
     chunks_used: list[str] = field(default_factory=list)
     check: dict = field(default_factory=dict)
+    plain: dict = field(default_factory=dict)
 
     @property
     def answered(self) -> bool:
@@ -148,17 +154,20 @@ class Answer:
             "citation": self.citation,
             "chunks_used": self.chunks_used,
             "check": self.check,
+            "plain": self.plain,
         }
 
 
 class AnswerLayer:
     """The gate, the corpus and the contract, applied to a question."""
 
-    def __init__(self, gate, corpus: dict, contract: dict, k: int = 5):
+    def __init__(self, gate, corpus: dict, contract: dict, k: int = 5,
+                 glossary: dict[str, str] | None = None):
         self.gate = gate
         self.corpus = corpus
         self.contract = contract
         self.k = k
+        self.glossary = dict(glossary or {})
         self.template = str(contract.get("refusal_template") or
                             "I don't have a model for that. {reason} — see {citation}.")
         self.chunks = {chunk["chunk_id"]: chunk for chunk in corpus.get("chunks") or []}
@@ -188,6 +197,9 @@ class AnswerLayer:
                 citation=citation,
                 chunks_used=[decision.route] if decision.route else [],
                 check={"cited": bool(citation), "quote": quote},
+                plain={"headline": self._refusal(self._template_reason(decision.reason), citation),
+                       "reading": None, "terms": [],
+                       "text": self._refusal(self._template_reason(decision.reason), citation)},
             )
 
         named_outcomes = self._named_outcomes(question)
@@ -198,15 +210,17 @@ class AnswerLayer:
             # nothing to carry and is refused rather than dressed in an unrelated coefficient.
             top = self.bm25.rank(question, 1)
             citation, quote = self._pin(top[0][0] if top else None)
+            text = self._refusal(
+                "the answer contract is an estimate contract: an answer must carry an interval, an "
+                "identifying assumption and what it cannot rule out, and this question asks for none "
+                "of the three",
+                citation,
+            )
             return Answer(
                 status="declined",
                 question=question,
-                text=self._refusal(
-                    "the answer contract is an estimate contract: an answer must carry an interval, an "
-                    "identifying assumption and what it cannot rule out, and this question asks for none "
-                    "of the three",
-                    citation,
-                ),
+                text=text,
+                plain={"headline": text, "reading": None, "terms": [], "text": text},
                 intent=decision.intent,
                 rule_id=decision.rule_id,
                 route=None,
@@ -227,6 +241,14 @@ class AnswerLayer:
             if named_outcomes and not self._covers(parent, named_outcomes):
                 continue
             assembled = self._assemble(question, parent, parts)
+            if not self._estimate_is_about(assembled.get("estimate"), named_outcomes):
+                continue
+            named_designs = self._named_designs(question)
+            design_id = (self.chunks.get(parent, {}).get("metadata") or {}).get("design_id")
+            if named_designs and design_id and str(design_id) not in named_designs:
+                # A question about Design B's grid answered from a Design A card would lend one
+                # design's result to another — the failure the design ids exist to make visible.
+                continue
             borrowed: list[str] = []
             for slot, pattern in (("assumption", ASSUMPTION), ("cannot", CANNOT_RULE_OUT)):
                 if assembled[slot]:
@@ -255,19 +277,22 @@ class AnswerLayer:
                     citation="; ".join(dict.fromkeys(citations)),
                     chunks_used=parts + borrowed,
                     check=check,
+                    plain=self._plain(assembled, parent, citations),
                 )
 
         # R-04: an answer that cannot carry all three parts is replaced by the refusal template.
         top = retrieved[0][0] if retrieved else None
         citation, quote = self._pin(top)
+        text = self._refusal(
+            "the retrieved passages carry no interval, no identifying assumption and no "
+            "cannot-rule-out together, so no answer meets the contract",
+            citation,
+        )
         return Answer(
             status="declined",
             question=question,
-            text=self._refusal(
-                "the retrieved passages carry no interval, no identifying assumption and no "
-                "cannot-rule-out together, so no answer meets the contract",
-                citation,
-            ),
+            text=text,
+            plain={"headline": text, "reading": None, "terms": [], "text": text},
             intent=decision.intent,
             rule_id=decision.rule_id,
             route=top,
@@ -295,9 +320,31 @@ class AnswerLayer:
             if not label_terms:
                 continue
             overlap = terms & label_terms
-            if len(overlap) >= 2 and len(overlap) / len(label_terms) >= 0.5:
+            # The label's longest word is its distinctive one — "fatalities" inside "Reported security
+            # fatalities", "inflation" inside "Headline inflation (y/y)". Matching that word is enough;
+            # a single generic word ("rate", "reported") is not, because most labels carry one.
+            longest = max(label_terms, key=len)
+            if longest in overlap or (len(overlap) >= 2 and len(overlap) / len(label_terms) >= 0.5):
                 matched.add(outcome_id)
         return matched
+
+    def _named_designs(self, question: str) -> set[str]:
+        """The design ids a question names outright — "Design B", "design a"."""
+        return {match.upper() for match in re.findall(r"\bdesign\s*([abc])\b", question.lower())}
+
+    def _estimate_is_about(self, block: str | None, named: set[str]) -> bool:
+        """Whether an estimate paragraph names one of the outcomes the question names.
+
+        A design-level result lists several outcomes' coefficients; taking the first interval in it
+        answers a fatalities question with an incidents number. The parent-level guard cannot see
+        inside the paragraph, so the paragraph is checked too.
+        """
+        if not block or not named:
+            return True
+        text = block.lower()
+        keys = {max(tokenize(self.outcomes[outcome_id]), key=len, default="")
+                for outcome_id in named}
+        return any(key and key in text for key in keys)
 
     def _covers(self, parent: str, named: set[str]) -> bool:
         """Whether a parent is about one of the outcomes the question names."""
@@ -371,7 +418,13 @@ class AnswerLayer:
         """
         terms = set(tokenize(question))
         for chunk_id, _score in retrieved:
-            if chunk_id.split("#p", 1)[0] == parent:
+            parent_id = chunk_id.split("#p", 1)[0]
+            if parent_id == parent:
+                continue
+            if parent_id.startswith("scope:"):
+                # The scope statement is the corpus's own limits, not evidence about a design; it
+                # contains the words "identifying assumption" only because the contract's post-check
+                # is described there. Borrowing from it dressed a refusal in an answer's clothes.
                 continue
             body = PART_HEADER.sub("", str(self.chunks.get(chunk_id, {}).get("text") or ""))
             for block in re.split(r"\n\s*\n", body.strip()):
@@ -379,6 +432,99 @@ class AnswerLayer:
                 if block and pattern.search(block) and terms & set(tokenize(block)):
                     return {"chunk_id": chunk_id, "block": block}
         return None
+
+    # -- the plain-language view ----------------------------------------------------------------
+    def _plain(self, assembled: dict, parent: str, citations: list[str]) -> dict:
+        """The same answer for a reader who does not work with statistics.
+
+        It restates nothing that the quoted passages do not say: the signs, the interval's bounds, the
+        sample size and the months are copied out of the estimate paragraph, and the definitions are
+        the glossary's own lines. The contract answer remains `text`; this is a second reading of it.
+        """
+        estimate_full = " ".join(str(assembled.get("estimate") or "").split())
+        estimate = self._sentence_with(estimate_full, "interval") or estimate_full
+        reading = self._reading(estimate)
+        headline = (reading or {}).get("sentence") or (
+            "The corpus answers this from the passage below; it carries no single coefficient to read."
+        )
+        assumption_full = " ".join(str(assembled.get("assumption") or "").split())
+        assumption = (self._sentence_with(assumption_full, "identifying assumption")
+                      or assumption_full)
+        cannot_full = str(assembled.get("cannot") or "")
+        bullets = [line.strip() for line in cannot_full.splitlines()
+                   if line.strip().startswith(("-", "*"))]
+        cannot = "\n".join(bullets) if bullets else " ".join(cannot_full.split())
+        quoted = " ".join(str(assembled.get(slot) or "") for slot in
+                          ("estimate", "assumption", "cannot", "focus"))
+        terms = [{"term": term, "meaning": meaning}
+                 for term, meaning in self.glossary.items()
+                 if re.search(rf"\b{re.escape(term.lower())}\b", quoted.lower())]
+        lines = [
+            f"**Short answer:** {headline}",
+            "",
+            f"**The number:** {estimate}",
+            "",
+            f"**What it assumes:** {assumption}",
+            "",
+            f"**What it cannot tell you:** {cannot}",
+            "",
+            f"**Where this comes from:** {'; '.join(dict.fromkeys(citations))} — {parent}",
+        ]
+        if terms:
+            lines += ["", "**What the words mean:**", ""]
+            lines += [f"- **{item['term']}** — {item['meaning']}" for item in terms]
+        return {"headline": headline, "reading": reading, "terms": terms,
+                "text": "\n".join(lines)}
+
+    @staticmethod
+    def _sentence_with(text: str, needle: str) -> str | None:
+        """The one sentence of a quoted block that says the thing a plain reader needs."""
+        for sentence in re.split(r"(?<=[.!?])\s+", text):
+            if needle in sentence.lower():
+                return sentence.strip()
+        return None
+
+    @staticmethod
+    def _reading(estimate: str) -> dict | None:
+        """The estimate's own numbers, read out loud. Nothing here is new arithmetic."""
+        interval = INTERVAL.search(estimate)
+        coefficient = COEFFICIENT.search(estimate)
+        if not interval or not coefficient:
+            return None
+        low_text, high_text = [part.strip() for part in interval.group(0).strip("[]").split(",")]
+
+        def number(text: str) -> float:
+            return float(text.replace("−", "-").replace(",", ""))
+
+        try:
+            low, high, value = number(low_text), number(high_text), number(coefficient.group(1))
+        except ValueError:
+            return None
+        includes_zero = low <= 0 <= high
+        direction = "negative" if value < 0 else ("positive" if value > 0 else "zero")
+        sentence = f"The published estimate is {direction} ({coefficient.group(1)}). "
+        sentence += f"The range the data cannot rule out runs from {low_text} to {high_text}"
+        if includes_zero:
+            sentence += ", and it includes zero, so this answer does not establish a direction."
+        else:
+            sentence += (", and it does not include zero, so the data are consistent with a "
+                        "relationship — the assumption below is what makes it credible.")
+        reading: dict = {"coefficient": coefficient.group(1), "interval_low": low_text,
+                         "interval_high": high_text, "includes_zero": includes_zero,
+                         "direction": direction}
+        sample = SAMPLE.search(estimate)
+        if sample:
+            reading["n_state_months"] = sample.group(1)
+            reading["n_states"] = sample.group(2)
+            sentence += f" It rests on {sample.group(1)} state-months across {sample.group(2)} states"
+            span = SPAN.search(estimate)
+            if span:
+                reading["first_month"] = span.group(1)
+                reading["last_month"] = span.group(2)
+                sentence += f", {span.group(1)} to {span.group(2)}"
+            sentence += "."
+        reading["sentence"] = sentence
+        return reading
 
     # -- citations and refusals -----------------------------------------------------------------
     def _pin(self, chunk_id: str | None) -> tuple[str | None, str]:
@@ -390,8 +536,13 @@ class AnswerLayer:
 
     @staticmethod
     def _template_reason(reason: str) -> str:
+        """The rule's first sentence, ready to follow the template's full stop.
+
+        It is capitalised rather than lowercased: the template ends a sentence before the reason, and a
+        refusal that starts mid-sentence reads as a copied fragment rather than an argument.
+        """
         flat = " ".join(str(reason).split())
-        return flat[:1].lower() + flat[1:] if flat else "no rule matched"
+        return flat[:1].upper() + flat[1:] if flat else "No rule matched"
 
     def _refusal(self, reason: str, citation: str | None) -> str:
         return self.template.format(reason=reason, citation=citation or "no citable chunk")
@@ -406,4 +557,19 @@ def load_layer(root: Path | str | None = None) -> AnswerLayer:
     rag_spec = yaml.safe_load((base / RAG_SPEC_PATH).read_text(encoding="utf-8"))
     contract = rag_spec.get("answer_contract") or {}
     k = int((rag_spec.get("retrieval") or {}).get("k") or 5)
-    return AnswerLayer(gate=gate, corpus=corpus, contract=contract, k=k)
+    return AnswerLayer(gate=gate, corpus=corpus, contract=contract, k=k,
+                       glossary=load_glossary(base))
+
+
+def load_glossary(root: Path | str | None = None) -> dict[str, str]:
+    """The plain-language meanings, straight from `docs/glossary.md` — never paraphrased in code."""
+    base = Path(root) if root is not None else Path(__file__).resolve().parents[1]
+    path = base / GLOSSARY_PATH
+    if not path.exists():
+        return {}
+    entries: dict[str, str] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        match = GLOSSARY_ROW.match(line.strip())
+        if match:
+            entries[match.group("term").strip()] = match.group("meaning").strip()
+    return entries

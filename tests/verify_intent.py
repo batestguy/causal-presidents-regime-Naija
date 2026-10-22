@@ -70,6 +70,14 @@ def normalise(text: str) -> str:
     return " ".join(NON_WORD.sub(" ", lowered).split())
 
 
+def country_text(text: str) -> str:
+    """The possessive-splitting variant the country condition reads, from the spec's own words."""
+    lowered = str(text).lower()
+    for mark in ("'", "’"):
+        lowered = lowered.replace(mark, " ")
+    return " ".join(NON_WORD.sub(" ", lowered).split())
+
+
 # ---------------------------------------------------------------------------------------------
 # The rules, applied by this file's own matcher
 # ---------------------------------------------------------------------------------------------
@@ -90,16 +98,28 @@ class SecondImplementation:
         resolve to exactly one existing chunk — a refusal without a citation is not a refusal.
     """
 
-    def __init__(self, spec: dict, corpus: dict, window_start: str | None, vintage: str):
+    def __init__(self, spec: dict, corpus: dict, window_start: str | None, vintage: str,
+                 countries: list[dict] | None = None):
         self.rules = sorted(spec.get("rules") or [], key=lambda rule: rule["priority"])
         self.chunks = {chunk["chunk_id"]: chunk for chunk in corpus.get("chunks") or []}
         self.window_start_year = int(str(window_start)[:4]) if window_start else None
         self.vintage_year = int(str(vintage)[:4])
+        excluded = {str(country.get("iso3")) for country in countries or []
+                    if str(country.get("iso3")) == "NGA"}
+        names = {
+            country_text(alias)
+            for country in countries or []
+            if str(country.get("iso3")) not in excluded
+            for alias in (country.get("aliases") or [country.get("name")])
+            if alias
+        }
+        self.country_names = sorted(names, key=len, reverse=True)
 
     def decide(self, question: str) -> tuple[str, str | None, str]:
         text = normalise(question)
+        countries = country_text(question)
         for rule in self.rules:
-            if not self._holds(rule, text):
+            if not self._holds(rule, text, countries):
                 continue
             route, status = self._route(rule)
             if rule["intent"] != "answerable" and status != "pinned":
@@ -107,7 +127,7 @@ class SecondImplementation:
             return rule["intent"], route, status
         return "answerable", None, "not_applicable"
 
-    def _holds(self, rule: dict, text: str) -> bool:
+    def _holds(self, rule: dict, text: str, countries: str = "") -> bool:
         conditions = rule.get("conditions") or {}
         for group in conditions.get("all_of") or []:
             if not any(re.search(pattern, text) for pattern in group):
@@ -122,6 +142,10 @@ class SecondImplementation:
         window = conditions.get("year_window") or rule.get("year_window")
         if window and not self._window(window, text):
             return False
+        if conditions.get("mentions_country"):
+            padded = f" {countries or text} "
+            if not any(f" {name} " in padded for name in self.country_names):
+                return False
         return True
 
     def _window(self, mode: str, text: str) -> bool:
@@ -409,7 +433,24 @@ def main() -> int:
     # ---------------------------------------------------------------------------------------------
     # 3. The rules, re-applied
     # ---------------------------------------------------------------------------------------------
-    engine = SecondImplementation(gate_spec, corpus, window_start, vintage)
+    vocabulary_path = REPO_ROOT / str(gate_spec.get("country_vocabulary") or "registry/reference/countries.json")
+    if not vocabulary_path.exists():
+        failures.append(f"{vocabulary_path.relative_to(REPO_ROOT)}: missing — the country rule has no input")
+        vocabulary = {"countries": []}
+    else:
+        vocabulary = json.loads(vocabulary_path.read_text(encoding="utf-8"))
+    panel_path = REPO_ROOT / str(gate_spec.get("donor_panel") or "")
+    if gate_spec.get("donor_panel") and panel_path.exists():
+        panel = json.loads(panel_path.read_text(encoding="utf-8"))
+        known = {country.get("iso3") for country in vocabulary.get("countries") or []}
+        uncovered = sorted({member.get("iso3") for member in panel.get("members") or []} - known)
+        if uncovered:
+            failures.append(f"{str(panel_path.relative_to(REPO_ROOT))}: panel member(s) {uncovered} are not "
+                            "in the country vocabulary — the rule cannot see a country the scope names")
+        if int((panel.get("counts") or {}).get("members") or -1) != len(panel.get("members") or []):
+            failures.append("the donor panel's published member count does not match its own rows")
+    engine = SecondImplementation(gate_spec, corpus, window_start, vintage,
+                                  countries=vocabulary.get("countries"))
     held_out = artifact.get("held_out") or {}
     recomputed_rows: list[dict] = []
     for row in questions:

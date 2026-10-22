@@ -9,7 +9,7 @@
     "worldbank": "2026-10-11",
     "worldbank_donors": "2026-10-18"
   },
-  "generated_at": "2026-10-22T02:55:42+00:00",
+  "generated_at": "2026-10-22T03:52:41+00:00",
   "generator": "ingestion/flows/check_quality.py",
   "spec": "analysis/specs/quality.yml",
   "document_sources": [
