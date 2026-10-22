@@ -32,11 +32,10 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 GATE_SPEC_PATH = REPO_ROOT / "analysis/specs/intent_gate.yml"
-EVAL_SPEC_PATH = REPO_ROOT / "analysis/specs/intent_gate_eval.yml"
 INDEX_PATH = REPO_ROOT / "registry/dags/index.json"
 STATE_SEED = REPO_ROOT / "dbt/seeds/raw_state.csv"
 ADMIN_SEED = REPO_ROOT / "dbt/seeds/raw_administration.csv"
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 
 def sha256_of(path: Path) -> str:
@@ -121,6 +120,24 @@ def build_mechanical(family: dict, index: dict, states: list[dict], admins: list
             "expected_gap": None,
         }
         for number, row in enumerate(rows[: int(family["count"])], start=1)
+    ]
+
+
+def build_regression(eval_spec: dict) -> list[dict]:
+    """The previously seen cases: checked, and never counted in the held-out metrics."""
+    return [
+        {
+            "id": item["id"],
+            "family": "regression",
+            "source": "regression",
+            "question": item["question"],
+            "expected_intent": item["intent"],
+            "gold": None,
+            "gold_scored": False,
+            "needle": None,
+            "expected_gap": None,
+        }
+        for item in eval_spec.get("regression") or []
     ]
 
 
@@ -231,6 +248,30 @@ def score_held_out(gate, questions: list[dict]) -> tuple[dict, list[dict]]:
     return {"metrics": metrics, "families": families}, detail
 
 
+def score_regression(gate, questions: list[dict]) -> dict:
+    """The seen cases, scored on intent and reported on their own."""
+    rows = []
+    for row in questions:
+        decision = gate.decide(row["question"])
+        rows.append({
+            "id": row["id"],
+            "question": row["question"],
+            "expected_intent": row["expected_intent"],
+            "intent": decision.intent,
+            "rule_id": decision.rule_id,
+            "correct": decision.intent == row["expected_intent"],
+        })
+    n = len(rows)
+    return {
+        "what_this_is": "previously seen questions, checked after the change that they motivated; "
+                        "not a held-out measurement",
+        "counts": {"n": n},
+        "accuracy": round(sum(1 for row in rows if row["correct"]) / max(n, 1), 6),
+        "misses": [row["id"] for row in rows if not row["correct"]],
+        "questions": rows,
+    }
+
+
 def measure_published(gate, eval_set: dict, corpus: dict, out_dir: Path, rag_spec: dict) -> tuple[dict, list[dict]]:
     """The published set, under the gate — the two failed gates, measured the same way."""
     rows = eval_set["questions"]
@@ -339,7 +380,10 @@ def main(argv: list[str] | None = None) -> int:
     from app.intent_gate import load_gate  # noqa: E402  (the path has to be set first)
 
     gate_spec = yaml.safe_load(GATE_SPEC_PATH.read_text(encoding="utf-8"))
-    eval_spec = yaml.safe_load(EVAL_SPEC_PATH.read_text(encoding="utf-8"))
+    # The gate spec names the held-out set, so a new version of the questions is one field's change and
+    # the harness cannot measure a set the rules were not frozen against.
+    eval_spec_path = REPO_ROOT / gate_spec["eval_spec"]
+    eval_spec = yaml.safe_load(eval_spec_path.read_text(encoding="utf-8"))
     rag_spec = yaml.safe_load((REPO_ROOT / "analysis/specs/rag.yml").read_text(encoding="utf-8"))
     index = json.loads(INDEX_PATH.read_text(encoding="utf-8"))
     vintage = index["vintage_date"]
@@ -353,8 +397,10 @@ def main(argv: list[str] | None = None) -> int:
     for family in eval_spec.get("mechanical") or []:
         questions.extend(build_mechanical(family, index, read_states(), read_administrations()))
     questions.extend(build_authored(eval_spec))
+    regression_questions = build_regression(eval_spec)
 
     held_out, held_out_detail = score_held_out(gate, questions)
+    regression = score_regression(gate, regression_questions)
     published, published_detail = measure_published(gate, eval_set, corpus, out_dir, rag_spec)
 
     declared_gates = gate_spec.get("gates") or {}
@@ -389,7 +435,7 @@ def main(argv: list[str] | None = None) -> int:
             },
             "eval": {
                 "path": eval_spec["spec_path"],
-                "sha256": sha256_of(EVAL_SPEC_PATH),
+                "sha256": sha256_of(eval_spec_path),
                 "frozen_at": eval_spec.get("questions_frozen_at"),
             },
         },
@@ -412,6 +458,7 @@ def main(argv: list[str] | None = None) -> int:
             "per_family": held_out["families"],
             "questions": held_out_detail,
         },
+        "regression": regression,
         "published_set": {
             "what_this_is": "the 22 published questions, measured under the gate; the set the rules "
                             "were written against, so not a generalisation estimate",
@@ -445,6 +492,9 @@ def main(argv: list[str] | None = None) -> int:
           f"answerable recall@{k} {published_metrics['answerable_recall_at_5']:.3f}, "
           f"refusal route matches the declared citation "
           f"{published_metrics['refusal_route_matches_citation']:.3f}")
+    print(f"  regression : {regression['counts']['n']} seen cases, intent accuracy "
+          f"{regression['accuracy']:.3f}" + (f" — misses {', '.join(regression['misses'])}"
+                                               if regression["misses"] else ""))
     for family in document["held_out"]["per_family"]:
         if family["misses"]:
             print(f"  miss       : {family['family']} — {', '.join(family['misses'])}")

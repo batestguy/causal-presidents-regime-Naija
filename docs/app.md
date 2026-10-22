@@ -65,13 +65,14 @@ refusal 0.25 — because a question like *"what will inflation be in 2030?"* emb
 several genuine questions do. Similarity alone cannot refuse it.
 
 Shipping the chat before that gate passes would produce exactly the failure the corpus exists to prevent: a
-confident answer to a question this data cannot answer. **The gate is now built and measured** (`docs/intent.md`):
-on a held-out set the rules never saw it refuses 0.944 of out-of-scope questions and cites the reason 1.000 of
-the time, and it is the first refusal decision in the project that is a policy rather than a score. The tab is
-still not built, because the gate decides an intent and a citation but nothing assembles an answer from the
-pinned chunk — that layer is the missing piece, not the refusal. The one target the gate misses (answerable
-questions kept, 0.957, where a question about the population denominator is refused) is published in
-`docs/intent.md` §4 and would be closed by a rule change that requires a new held-out set and a new freeze.
+confident answer to a question this data cannot answer. **The gate and the answer layer are now built and measured.** On a held-out set the rules never saw, the
+gate refuses 0.947 of out-of-scope questions, cites the reason 1.000 of the time and leaves every answerable
+question alone (`docs/intent.md`); it is the first refusal decision in the project that is a policy rather
+than a score. The answer layer then enforces the R-04 post-check on its own output (`docs/answer.md`) and the
+measurement is the reason the tab is still unbuilt: it answers **3 of the 16 published answerable questions
+(0.188)** and 2 of the 22 held-out ones, because R-04 is an estimate contract and 34 of the 36 cards carry no
+number to put an interval on. What is left for a chat surface is a product decision with those numbers in
+hand — not a missing component.
 
 ## 4. The rules the verifier enforces
 

@@ -556,16 +556,17 @@ intent (`answerable`, `out_of_scope`, `refusal_with_reason`) and, for a refusal,
 must quote. No rule matched means `answerable` — the gate may add a refusal, never remove one — and a refusal
 whose route does not resolve to exactly one existing chunk falls back to `answerable`, so the gate cannot
 refuse without a citation. The study window and the vintage are read from the artifacts; no number is typed.
-The rules were **frozen at commit `30afc23` before the held-out questions existed**, and `tests/verify_intent.py`
-reads the rule spec at that commit and fails if the file moved, so the measurement cannot be re-tuned after
-the fact. Measured on the **49 held-out questions**: intent accuracy **0.959**, out-of-scope refusal **0.944**,
-refusal route resolved **1.000**, reason cited **1.000**, answerable kept **0.957** — the last is a **missed
-target published as a finding** (A16, a question about the population denominator refused by G03), not fixed,
-because fixing it now would tune the rules to the set that measures them. On the 22 published questions the
-failed gates move 0.25 → **1.000** and 0.5 → **1.000** with answerable recall unchanged at 1.000. Four gaps
-are declared rather than hidden (KG01–KG04), including the one the probe measures: a question about a country
-outside the donor panel is not refused. Narrative: `docs/intent.md`; artifact:
-`registry/rag/2026-10-18/intent_eval.json`.
+The rules were **frozen before the held-out questions existed** and `tests/verify_intent.py` reads the rule
+spec at that commit and fails if the file moved, so the measurement cannot be re-tuned after the fact. v1
+missed one target — `answerable kept` 0.957, because G03 refused a question about the population denominator
+— and the miss was published rather than tuned (S9-05). **v2 is the change made the right way round**: G03
+excludes the denominator frame and was frozen at `8b9ba3b` **before** a new held-out set existed
+(`intent_gate_eval_v2.yml`), with the seen questions moved to a declared regression block. Measured on the
+**49 v2 held-out questions**: intent accuracy **0.980**, out-of-scope refusal **0.947**, answerable kept
+**1.000**, refusal route resolved **1.000**, reason cited **1.000**, regression accuracy **1.000**; the one
+miss is the probe KG01 measures. On the 22 published questions the failed gates move 0.25 → **1.000** and
+0.5 → **1.000** with answerable recall unchanged at 1.000. Four gaps are declared rather than hidden
+(KG01–KG04). Narrative: `docs/intent.md`; artifact: `registry/rag/2026-10-18/intent_eval.json`.
 
 **What the verifier establishes.** It renders all 36 cards through Streamlit's own test harness and compares
 the output with the card JSON, formatting the card's values itself rather than importing the app's formatter:
@@ -584,10 +585,11 @@ state for the rerun model to desynchronise. Its costs are written down rather th
 framework is the interactive graph becoming the product, not styling; Dash is the smallest honest jump from
 there, and `app/registry_data.py` is framework-free so it would survive the move.
 
-**Not built, and declared as such in `docs/app.md`:** the chat tab (the refusal gate is built and measured,
-but no layer assembles an answer from the chunk it pins), node-level graph interaction, links from the card to
-the narrative that explains each design, per-card URLs, and any deployment — serving a stale vintage is a
-governance decision, not a packaging one.
+**Not built, and declared as such in `docs/app.md`:** the chat tab (the gate and the answer layer are built
+and measured, and the layer answers 0.132 of the answerable questions it was run on — a surface decision now,
+not a missing component), node-level graph interaction, links from the card to the narrative that explains
+each design, per-card URLs, and any deployment — serving a stale vintage is a governance decision, not a
+packaging one.
 
 **Work**
 
@@ -598,11 +600,17 @@ governance decision, not a packaging one.
   C's reason and next step.
 - ✅ `docs/app.md` — the ratio, the rules, and the limits the page does not fix.
 - ✅ **The pre-retrieval intent gate** — `analysis/specs/intent_gate.yml`, `app/intent_gate.py`,
-  `analysis/specs/intent_gate_eval.yml` (49 held-out questions), `scripts/eval_intent.py`,
-  `tests/verify_intent.py`, `docs/intent.md`. Out-of-scope refusal 0.944 and reason-citation 1.000 on the
-  held-out set; `answerable kept` 0.957 against 1.0, published as the finding it is.
-- ⏳ Chat tab — the refusal decision is no longer what blocks it. The answer layer (assemble from the pinned
-  chunk, then run the R-04 post-check) is, plus the missed `answerable kept` target.
+  `analysis/specs/intent_gate_eval_v2.yml` (49 held-out questions after the A16 closure),
+  `scripts/eval_intent.py`, `tests/verify_intent.py`, `docs/intent.md`. On the v2 held-out set: intent
+  accuracy 0.980, out-of-scope refusal 0.947, answerable kept 1.000, reason cited 1.000; the one miss is the
+  declared KG01 probe.
+- ✅ **The answer layer** — `app/answer_layer.py`, `scripts/eval_answer.py`,
+  `registry/rag/2026-10-18/answer_eval.json`, `tests/verify_answer.py`, `docs/answer.md`. It enforces R-04 on
+  its own output: **5 of 38 answerable questions answered (0.132)**, 33 declined by the contract, 0 answered
+  around a refusal. Every quoted sentence and number is in its citation.
+- ⏳ Chat tab — the layer exists and the numbers say what it would do: a reader would be refused four times
+  out of five, because the contract is an estimate contract and most cards carry no estimate. Building the
+  surface is now a product decision, not an unbuilt component.
 
 **Exit criteria.** A reader can reach any card, and no number appears anywhere that is not a field of that
 card. Nothing is fitted at render time.

@@ -10,8 +10,12 @@ This stage replaces the score with a **declared rule set applied before retrieva
 question, decides one of three intents, and — for a refusal — pins the chunk the refusal must quote. It
 computes no statistic, fits nothing and calls no model.
 
+It is on **version 2**: a rule was changed once, after the first measurement missed a target, and the change
+cost a new held-out set and a new freeze (§5). The v1 numbers are kept in this page because they are the
+reason the rule moved, not because they still describe the gate.
+
 - **Spec:** `analysis/specs/intent_gate.yml` — the decision procedure, eight rules, the gates, the known gaps
-- **Held-out set:** `analysis/specs/intent_gate_eval.yml` — 49 questions, written **after** the rules froze
+- **Held-out set:** `analysis/specs/intent_gate_eval_v2.yml` — 49 questions, written **after** the v2 rules froze
 - **Engine:** `app/intent_gate.py` (the decision), `scripts/eval_intent.py` (the measurement)
 - **Artifact:** `registry/rag/2026-10-18/intent_eval.json`
 - **Verifier:** `tests/verify_intent.py` — re-derives the questions, re-applies the rules with a second
@@ -41,7 +45,7 @@ spec rather than hidden.
 |---|---|---|---|---|
 | G01 | 10 | `answerable` | "why can't you answer …" — questions *about* the corpus's limits | — |
 | G02 | 20 | `out_of_scope` | forecast vocabulary ("forecast", "predict", "projection", "extrapolate"), excluding the corpus-scope and model-card frames | `scope:answer` |
-| G03 | 30 | `out_of_scope` | the size of a population — the corpus carries no population series (X-09) | `scope:answer` |
+| G03 | 30 | `out_of_scope` | the size of a population — the corpus carries no population series (X-09) — **excluding the denominator / per-capita frame (v2)** | `scope:answer` |
 | G04 | 40 | `out_of_scope` | "should the government …" — a normative ask with a policy actor | `scope:answer` |
 | G08 | 45 | `out_of_scope` | "recommend …", "advise …", "the best way to …" — an advice ask with no actor | `scope:answer` |
 | G05 | 50 | `out_of_scope` | a year outside `[study_window.start, vintage]` | `scope:answer` |
@@ -64,41 +68,65 @@ rather than with a probability. The limitation is published rather than discover
 so a paraphrase that avoids the declared words is not detected (KG03). The alternative — a model — would
 have to be measured on data that did not train it, and there is no such data here.
 
-## 4. What was measured
+## 4. What was measured — version 2
 
 ### The held-out set — the generalisation estimate
 
-**49 questions** built from two sources that do not depend on the rules: **32 mechanical** questions whose
+**49 questions** built from sources that do not depend on the rules: **32 mechanical** questions whose
 templates are filled from the artifacts (a card exists, so a card question is answerable; the corpus carries
-no population series, so a population question is not), and **17 authored/probe** questions written to be
-hard — answerable questions carrying a trigger word in a frame the rule must not fire on, and out-of-scope
-questions worded unlike the published set's. Composition: 23 answerable, 18 out of scope, 8
+no population series, so a population question is not), **16 authored** questions written to be hard —
+answerable questions carrying a trigger word in a frame the rule must not fire on, and out-of-scope questions
+worded unlike the published set's — and **1 probe**. Composition: 22 answerable, 19 out of scope, 8
 refusal-with-reason. 32 carry a gold chunk that is scored; 8 carry a needle the cited chunk must contain.
 
 | Metric | Measured | Target | Verdict |
 |---|---|---|---|
-| intent accuracy | **0.959** | 0.90 | met |
-| out-of-scope refused | **0.944** | 0.90 | met |
-| answerable kept | **0.957** | 1.0 | **not met** |
+| intent accuracy | **0.980** | 0.90 | met |
+| out-of-scope refused | **0.947** | 0.90 | met |
+| answerable kept | **1.000** | 1.0 | met |
 | refusal route resolved | **1.000** | 1.0 | met |
 | refusal reason cited | **1.000** | 1.0 | met |
 
-Per family, every mechanical family is exact: card 1.000, forecast 1.000, population 1.000, past year 1.000,
-tenure 1.000, Design C 1.000. The authored family is 0.938 and the probe 0.000.
+Per family: card, forecast, population, past year, tenure, Design C and the authored family are all exact at
+1.000. The probe is 0.000, and it is the one miss: **P02** — *"How did Brazil's under-5 mortality compare
+with Nigeria's?"* — is expected out of scope and is left answerable, because the country is outside the donor
+panel and no committed artifact names the panel's members (KG01). It is scored and labelled rather than
+excluded, so the declared gap has a measured cost.
 
-**The `answerable kept` target is missed, and the miss is the finding.** A16 — *"Is the population
-denominator for the per-capita axis built?"* — is answerable: the data dictionary says the denominator is
-typed and empty and that X-09 is an unmade decision. G03 refuses it, because it matches the same word
-("population") as the question about how many people live in Lagos. The gate cannot currently tell a question
-**about the denominator** from a question about **the size of a population**. That is the worst direction for
-this gate to fail in, which is why the question is in the set and why its number is published rather than
-tuned away.
+### The regression block — the case the rule change was made for
 
-The rules are **not** edited to catch A16. They were frozen at commit `30afc23` before the held-out questions
-existed, and `tests/verify_intent.py` reads the rule spec as of that commit and fails if the file on disk
-differs. Changing the rules now would mean the held-out numbers no longer measure what they say they measure;
-the fix is a rule excluding the denominator frame (`\bpopulation denominator\b`, `\bper capita\b`) **together
-with a new held-out set and a new freeze** — which is the next change, not this one.
+Six previously published questions are re-checked after the change and reported **beside** the held-out
+numbers, never inside them: a question the rules were changed with in view cannot also measure the change.
+
+| Case | Question | Expected | Result |
+|---|---|---|---|
+| R01 | Is the population denominator for the per-capita axis built? | answerable | answerable |
+| R02 | How many inhabitants does Lagos have? | out of scope | out of scope |
+| R03 | What was the population in 1960? | out of scope | out of scope |
+| R04 | How many people live in Kano today? | out of scope | out of scope |
+| R05 | Which president had the better record? | refusal with reason | refusal with reason |
+| R06 | Does the corpus publish a forecast for inflation? | answerable | answerable |
+
+**Regression accuracy 1.000** — the denominator frame is now answered, and the population questions the
+exclusion could have broken are still refused.
+
+### Why version 2 exists, and what it cost
+
+v1 was frozen at commit `30afc23` and measured on 49 questions. It missed one target: `answerable kept`
+**0.957**, because G03 refused A16 (*"is the population denominator for the per-capita axis built?"*) on the
+word "population". The rules were **not** edited then — the measurement had been made, and editing the rule
+would have tuned it to the set that measured it (S9-05).
+
+The change was made the right way round: the rule was edited and **frozen at `8b9ba3b`** first, and this
+held-out set was written afterwards, from a new path. The cost is stated on the spec: the v1 authored
+questions are spent, the mechanical families survive because they are filled from artifacts, and the seen
+denominator/population questions become the regression block above rather than held-out questions a second
+time. The v1 set is retained at `analysis/specs/intent_gate_eval.yml`, and its measurement stays on the
+record: intent accuracy 0.959, out-of-scope refusal 0.944, answerable kept 0.957, reason cited 1.000.
+
+`tests/verify_intent.py` enforces the order: it reads the rule spec **as of `8b9ba3b`**, fails if the file
+on disk differs, and fails if the v2 eval set existed at that commit. A rule changed now would require a v3
+set and a third freeze.
 
 ### The published set — the set the rules were written against
 
@@ -115,9 +143,7 @@ comparability with the numbers that failed:
 
 The last row is the important one: the gate is a **refusal** gate, so it must not change what is retrieved.
 Every answerable published question is still answerable and still finds its gold chunk in the top 5, and the
-verifier recomputes the cosine from the committed vectors to check it rather than trusting the artifact. The
-recall figures are not like-for-like — 0.944 is over all gold-bearing questions, 1.000 is over the answerable
-subset, and only the subset is the gate's business.
+verifier recomputes the cosine from the committed vectors to check it rather than trusting the artifact.
 
 These numbers are **not** a generalisation estimate. The published set is the set the rules were written
 against, including the pair (q09, r01) that forced the G01/G06 ordering. They are reported as "what the gate
@@ -138,14 +164,15 @@ gates above exist to prevent.
 
 Four gaps are declared on the spec and carried onto the artifact rather than left to a reader's surprise:
 
-- **KG01 — countries outside the donor panel.** P01 (*"What is the under-5 mortality rate in Chad?"*) is
-  expected out of scope and is **not refused**; that is the measured cost of the gap. The country list lives
-  in a gitignored acquisition artifact, so a rule built on it would behave differently on a fresh clone and
-  the published number would not be reproducible. Closing it means committing the donor pool's membership as
-  a registry artifact.
+- **KG01 — countries outside the donor panel.** P02 is expected out of scope and is **not refused**; that is
+  the measured cost of the gap. The country list lives in a gitignored acquisition artifact, so a rule built
+  on it would behave differently on a fresh clone and the published number would not be reproducible.
+  Closing it means committing the donor pool's membership as a registry artifact.
 - **KG02 — the answer-shape post-check.** The gate decides an intent and a citation; it does not assemble an
   answer, so it cannot check one for an interval, an identifying assumption and a citation (R-04). That
-  belongs to the answer layer, which is not built.
+  belongs to the answer layer, which is now built (`docs/answer.md`): it enforces the post-check on its own
+  output and declines 13 of the 16 published answerable questions, because R-04 is an estimate contract and
+  34 of the 36 cards carry no number.
 - **KG03 — the rules are lexical.** A paraphrase that avoids the declared words is missed. Accepted, with the
   reason above; closing it means a paraphrased held-out set published beside the lexical one.
 - **KG04 — a value inside the window but past the outcome series.** 2025–2026 values are left answerable
@@ -155,13 +182,14 @@ Four gaps are declared on the spec and carried onto the artifact rather than lef
 
 ## 6. What this does not do
 
-- **It does not answer anything.** It returns `{intent, rule_id, route, route_status, reason}`; the answer
-  layer that would quote the pinned chunk is not built.
+- **It does not answer anything.** It returns `{intent, rule_id, route, route_status, reason}`; quoting the
+  pinned chunk is the answer layer's job, and that layer's measured answer rate is **0.132** over the 38
+  answerable questions it was run on (`docs/answer.md` §2).
 - **It does not gate the app yet.** `app/streamlit_app.py` has no chat tab, so nothing calls the gate at
   request time today. The module is framework-free and importable from the app when that tab exists.
-- **It does not earn the tab by itself.** The gate passes the out-of-scope and reason-citation targets on the
-  held-out set; it misses `answerable kept` at 0.957, and the chat tab remains unbuilt. What the numbers change
-  is that the refusal decision is now a policy with a measurement behind it rather than a similarity score.
+- **It does not replace the answer contract.** A question the gate leaves answerable can still be refused by
+  the R-04 post-check if the retrieved passages do not carry an interval, an assumption and a citation —
+  which is what happens to 33 of the 38 questions the layer was measured on.
 
 ## 7. Reproduction
 

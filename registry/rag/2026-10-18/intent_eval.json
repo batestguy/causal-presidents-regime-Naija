@@ -1,29 +1,29 @@
 {
- "schema_version": 1,
+ "schema_version": 2,
  "layer": "Stage 9 — the pre-retrieval intent gate",
  "vintage": "2026-10-18",
- "generated_at": "2026-10-22T02:15:41+00:00",
+ "generated_at": "2026-10-22T03:01:24+00:00",
  "generator": {
   "script": "scripts/eval_intent.py",
   "spec": "analysis/specs/intent_gate.yml",
-  "eval_spec": "analysis/specs/intent_gate_eval.yml",
-  "git_sha": "90dec2f7403c607872fca36f078c4eb441b27208"
+  "eval_spec": "analysis/specs/intent_gate_eval_v2.yml",
+  "git_sha": "8b9ba3bbc6c41eb77e5c9de1c153ff5c6cd20afa"
  },
  "specs": {
   "gate": {
    "path": "analysis/specs/intent_gate.yml",
-   "sha256": "af37680b12e45bd81c54cc4a55ca1c3dfa11ea725504f8426b9925da8e99a1dc",
-   "frozen_at": "30afc23"
+   "sha256": "876511ce310d08db2d8541a525f6cb9422836b2d51b58eb04d9aaa583820612e",
+   "frozen_at": "8b9ba3b"
   },
   "eval": {
-   "path": "analysis/specs/intent_gate_eval.yml",
-   "sha256": "ccb82d7e53d15bb946f49507c49aaf175ba529050e46773385d53aeba1f9beb6",
+   "path": "analysis/specs/intent_gate_eval_v2.yml",
+   "sha256": "19db8768eb0d35f3c1977f1f599e3f8c0bc340ac3bddf224b38568e625f94b78",
    "frozen_at": null
   }
  },
  "corpus": {
   "path": "registry/rag/2026-10-18/corpus.json",
-  "sha256": "6a174dd9f8d0bb0d8c6e035f69c2752b89df5990f5d69e702f39ca07dcdd38dc",
+  "sha256": "e113a48c7b95b203c2f684c001416132b28856ea683936d060c955bb5598cd42",
   "chunks": 441,
   "vintage": "2026-10-18"
  },
@@ -80,17 +80,17 @@
  "held_out": {
   "what_this_is": "the questions the rules were frozen before; the rules are not tuned on it",
   "counts": {
-   "answerable": 23,
-   "out_of_scope": 18,
+   "answerable": 22,
+   "out_of_scope": 19,
    "refusal_with_reason": 8,
    "n_scored_golds": 32,
    "n_needle_checks": 8
   },
   "metrics": {
    "n_questions": 49,
-   "intent_accuracy": 0.959184,
-   "out_of_scope_refusal": 0.944444,
-   "answerable_not_refused": 0.956522,
+   "intent_accuracy": 0.979592,
+   "out_of_scope_refusal": 0.947368,
+   "answerable_not_refused": 1.0,
    "refusal_route_resolved": 1.0,
    "refusal_reason_cited": 1.0,
    "route_matches_gold": 0.625
@@ -98,18 +98,18 @@
   "gates": {
    "intent_accuracy": {
     "target": 0.9,
-    "measured": 0.959184,
+    "measured": 0.979592,
     "met": true
    },
    "out_of_scope_refusal": {
     "target": 0.9,
-    "measured": 0.944444,
+    "measured": 0.947368,
     "met": true
    },
    "answerable_not_refused": {
     "target": 1.0,
-    "measured": 0.956522,
-    "met": false
+    "measured": 1.0,
+    "met": true
    },
    "refusal_route_resolved": {
     "target": 1.0,
@@ -126,10 +126,8 @@
    {
     "family": "authored",
     "n": 16,
-    "intent_accuracy": 0.9375,
-    "misses": [
-     "A16"
-    ]
+    "intent_accuracy": 1.0,
+    "misses": []
    },
    {
     "family": "card",
@@ -166,7 +164,7 @@
     "n": 1,
     "intent_accuracy": 0.0,
     "misses": [
-     "P01"
+     "P02"
     ]
    },
    {
@@ -706,9 +704,9 @@
     "needle_found": true
    },
    {
-    "id": "A01",
+    "id": "B01",
     "family": "authored",
-    "question": "Which check should I read to decide whether the fatalities estimate is identified?",
+    "question": "Which failed check makes the fatalities number not identified?",
     "expected_intent": "answerable",
     "intent": "answerable",
     "rule_id": null,
@@ -721,9 +719,9 @@
     "correct": true
    },
    {
-    "id": "A02",
+    "id": "B02",
     "family": "authored",
-    "question": "What does the Design A specification predict for reported fatalities?",
+    "question": "What does the model card assume about state and month effects?",
     "expected_intent": "answerable",
     "intent": "answerable",
     "rule_id": null,
@@ -736,9 +734,24 @@
     "correct": true
    },
    {
-    "id": "A03",
+    "id": "B03",
     "family": "authored",
-    "question": "Which party was in power in 2012?",
+    "question": "Can the corpus tell me the standard error on the incidents estimate?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:incidents__A",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "B04",
+    "family": "authored",
+    "question": "Which party governed Nigeria between 2010 and 2015?",
     "expected_intent": "answerable",
     "intent": "answerable",
     "rule_id": null,
@@ -751,9 +764,39 @@
     "correct": true
    },
    {
-    "id": "A04",
+    "id": "B05",
     "family": "authored",
-    "question": "Which direction is better for under-5 mortality, up or down?",
+    "question": "How many months does the FAAC series cover?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "doc:data-dictionary#faac-state-allocation-the-fiscal-dose",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "B06",
+    "family": "authored",
+    "question": "Is the per-capita dose axis built yet?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "doc:data-dictionary#fact-donor-panel-and-state-panel",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "B07",
+    "family": "authored",
+    "question": "What is the direction of the under-5 mortality outcome?",
     "expected_intent": "answerable",
     "intent": "answerable",
     "rule_id": null,
@@ -766,24 +809,9 @@
     "correct": true
    },
    {
-    "id": "A05",
+    "id": "B08",
     "family": "authored",
-    "question": "Why is the tenure comparison not answerable with this data?",
-    "expected_intent": "answerable",
-    "intent": "answerable",
-    "rule_id": "G01",
-    "route": null,
-    "route_status": "not_applicable",
-    "reason": "A question that asks *why* the corpus cannot answer something is a question the corpus answers (docs/limitations.md §1, §13).",
-    "expected_gap": null,
-    "gold": "doc:limitations#s01",
-    "gold_scored": false,
-    "correct": true
-   },
-   {
-    "id": "A06",
-    "family": "authored",
-    "question": "Will the registry carry a published number for the u5mr card under Design C?",
+    "question": "Which Stage 7 specifications sit inside the near-zero band?",
     "expected_intent": "answerable",
     "intent": "answerable",
     "rule_id": null,
@@ -791,14 +819,14 @@
     "route_status": "not_applicable",
     "reason": "no rule matched, and the default is answerable",
     "expected_gap": null,
-    "gold": "card:u5mr__C",
+    "gold": "doc:robustness#s03",
     "gold_scored": false,
     "correct": true
    },
    {
-    "id": "A07",
+    "id": "B09",
     "family": "authored",
-    "question": "What must the Design A specification assume for the estimate to be identified?",
+    "question": "Why was Design C reported infeasible at Stage 5?",
     "expected_intent": "answerable",
     "intent": "answerable",
     "rule_id": null,
@@ -806,14 +834,14 @@
     "route_status": "not_applicable",
     "reason": "no rule matched, and the default is answerable",
     "expected_gap": null,
-    "gold": "card:fatalities__A",
+    "gold": "result:C",
     "gold_scored": false,
     "correct": true
    },
    {
-    "id": "A08",
+    "id": "B10",
     "family": "authored",
-    "question": "Does the corpus publish a forecast for inflation?",
+    "question": "What share of the monthly spine is observed?",
     "expected_intent": "answerable",
     "intent": "answerable",
     "rule_id": null,
@@ -821,89 +849,14 @@
     "route_status": "not_applicable",
     "reason": "no rule matched, and the default is answerable",
     "expected_gap": null,
-    "gold": "scope:answer",
+    "gold": "doc:limitations#s02",
     "gold_scored": false,
     "correct": true
    },
    {
-    "id": "A09",
+    "id": "B11",
     "family": "authored",
-    "question": "What are the two components of the FAAC allocation to a state?",
-    "expected_intent": "answerable",
-    "intent": "answerable",
-    "rule_id": null,
-    "route": null,
-    "route_status": "not_applicable",
-    "reason": "no rule matched, and the default is answerable",
-    "expected_gap": null,
-    "gold": null,
-    "gold_scored": false,
-    "correct": true
-   },
-   {
-    "id": "A10",
-    "family": "authored",
-    "question": "Which check decided that the Design A fatalities estimate is not identified?",
-    "expected_intent": "answerable",
-    "intent": "answerable",
-    "rule_id": null,
-    "route": null,
-    "route_status": "not_applicable",
-    "reason": "no rule matched, and the default is answerable",
-    "expected_gap": null,
-    "gold": "card:fatalities__A",
-    "gold_scored": false,
-    "correct": true
-   },
-   {
-    "id": "A11",
-    "family": "authored",
-    "question": "Predict the headline inflation rate for next year.",
-    "expected_intent": "out_of_scope",
-    "intent": "out_of_scope",
-    "rule_id": "G02",
-    "route": "scope:answer",
-    "route_status": "pinned",
-    "reason": "The project holds historical series and published estimates; it makes no forecasts, and no chunk supports one (analysis/specs/rag.yml#answer_contract.scope).",
-    "expected_gap": null,
-    "gold": "scope:answer",
-    "gold_scored": false,
-    "correct": true
-   },
-   {
-    "id": "A12",
-    "family": "authored",
-    "question": "Recommend a policy for allocating FAAC revenue to the states.",
-    "expected_intent": "out_of_scope",
-    "intent": "out_of_scope",
-    "rule_id": "G08",
-    "route": "scope:answer",
-    "route_status": "pinned",
-    "reason": "Some normative asks name the actor (\"should the federal government …\") and some do not (\"recommend a policy for …\", \"what is the best way to …\").",
-    "expected_gap": null,
-    "gold": "scope:answer",
-    "gold_scored": false,
-    "correct": true
-   },
-   {
-    "id": "A13",
-    "family": "authored",
-    "question": "How many inhabitants does Lagos have?",
-    "expected_intent": "out_of_scope",
-    "intent": "out_of_scope",
-    "rule_id": "G03",
-    "route": "scope:answer",
-    "route_status": "pinned",
-    "reason": "The corpus carries a closed inventory: the 12 catalogue outcomes, the three designs, the published results, the coverage and quality artifacts, the administration and shock tables, and the limitations.",
-    "expected_gap": null,
-    "gold": "scope:answer",
-    "gold_scored": false,
-    "correct": true
-   },
-   {
-    "id": "A14",
-    "family": "authored",
-    "question": "What was the under-5 mortality rate in 1975?",
+    "question": "What will the naira exchange rate be in 2031?",
     "expected_intent": "out_of_scope",
     "intent": "out_of_scope",
     "rule_id": "G05",
@@ -916,9 +869,39 @@
     "correct": true
    },
    {
-    "id": "A15",
+    "id": "B12",
     "family": "authored",
-    "question": "Should the federal government raise the FAAC allocation to the states?",
+    "question": "Forecast the 2027 under-5 mortality rate.",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G02",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "The project holds historical series and published estimates; it makes no forecasts, and no chunk supports one (analysis/specs/rag.yml#answer_contract.scope).",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "B13",
+    "family": "authored",
+    "question": "How many residents does Ibadan have?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G03",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "The corpus carries a closed inventory: the 12 catalogue outcomes, the three designs, the published results, the coverage and quality artifacts, the administration and shock tables, and the limitations.",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "B14",
+    "family": "authored",
+    "question": "Should the federal government change the FAAC allocation formula?",
     "expected_intent": "out_of_scope",
     "intent": "out_of_scope",
     "rule_id": "G04",
@@ -931,24 +914,39 @@
     "correct": true
    },
    {
-    "id": "A16",
+    "id": "B15",
     "family": "authored",
-    "question": "Is the population denominator for the per-capita axis built?",
-    "expected_intent": "answerable",
+    "question": "What policy should Nigeria adopt for oil revenue?",
+    "expected_intent": "out_of_scope",
     "intent": "out_of_scope",
-    "rule_id": "G03",
+    "rule_id": "G04",
     "route": "scope:answer",
     "route_status": "pinned",
-    "reason": "The corpus carries a closed inventory: the 12 catalogue outcomes, the three designs, the published results, the coverage and quality artifacts, the administration and shock tables, and the limitations.",
+    "reason": "The project publishes estimates with intervals and assumptions; it publishes no recommendation (docs/limitations.md §12 states what is still claimed, narrowly).",
     "expected_gap": null,
-    "gold": "doc:data-dictionary#fact-donor-panel-and-state-panel",
+    "gold": "scope:answer",
     "gold_scored": false,
-    "correct": false
+    "correct": true
    },
    {
-    "id": "P01",
+    "id": "B16",
+    "family": "authored",
+    "question": "Give me a recommendation on how to allocate the derivation share.",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G08",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "Some normative asks name the actor (\"should the federal government …\") and some do not (\"recommend a policy for …\", \"what is the best way to …\").",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "P02",
     "family": "probe",
-    "question": "What is the under-5 mortality rate in Chad?",
+    "question": "How did Brazil's under-5 mortality compare with Nigeria's?",
     "expected_intent": "out_of_scope",
     "intent": "answerable",
     "rule_id": null,
@@ -959,6 +957,64 @@
     "gold": "scope:answer",
     "gold_scored": false,
     "correct": false
+   }
+  ]
+ },
+ "regression": {
+  "what_this_is": "previously seen questions, checked after the change that they motivated; not a held-out measurement",
+  "counts": {
+   "n": 6
+  },
+  "accuracy": 1.0,
+  "misses": [],
+  "questions": [
+   {
+    "id": "R01",
+    "question": "Is the population denominator for the per-capita axis built?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "correct": true
+   },
+   {
+    "id": "R02",
+    "question": "How many inhabitants does Lagos have?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G03",
+    "correct": true
+   },
+   {
+    "id": "R03",
+    "question": "What was the population in 1960?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G03",
+    "correct": true
+   },
+   {
+    "id": "R04",
+    "question": "How many people live in Kano today?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G03",
+    "correct": true
+   },
+   {
+    "id": "R05",
+    "question": "Which president had the better record?",
+    "expected_intent": "refusal_with_reason",
+    "intent": "refusal_with_reason",
+    "rule_id": "G06",
+    "correct": true
+   },
+   {
+    "id": "R06",
+    "question": "Does the corpus publish a forecast for inflation?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "correct": true
    }
   ]
  },

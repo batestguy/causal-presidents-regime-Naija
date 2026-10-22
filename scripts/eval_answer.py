@@ -1,0 +1,187 @@
+"""Measure the answer layer: what it answers, what R-04 makes it refuse, and on what citation.
+
+The intent gate decides whether the corpus may answer a question and pins the chunk a refusal must quote.
+This harness runs the layer over the two question sets that exist — the 22 published questions and the 22
+answerable held-out questions — and writes one artifact recording, per question, the gate's intent, the
+layer's status, the post-check's parts, the citation and the passages used.
+
+It decides nothing itself. The gate decides the intent, the contract decides the post-check, and the layer
+assembles. This script measures.
+
+Usage:
+    python scripts/eval_answer.py
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import re
+import subprocess
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+import yaml
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+RAG_SPEC_PATH = REPO_ROOT / "analysis/specs/rag.yml"
+GATE_SPEC_PATH = REPO_ROOT / "analysis/specs/intent_gate.yml"
+INDEX_PATH = REPO_ROOT / "registry/dags/index.json"
+SCHEMA_VERSION = 1
+NUMBER = re.compile(r"[−+\-]?\d[\d,]*(?:\.\d+)?")
+
+
+def sha256_of(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def git_sha() -> str | None:
+    try:
+        out = subprocess.run(["git", "rev-parse", "HEAD"], cwd=REPO_ROOT,
+                             capture_output=True, text=True, timeout=20)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return out.stdout.strip() or None
+
+
+def numbers_of(text: str) -> set[str]:
+    return {match.replace(",", "") for match in NUMBER.findall(text)}
+
+
+def main() -> int:
+    sys.path.insert(0, str(REPO_ROOT))
+    from app.answer_layer import load_layer  # noqa: E402
+
+    rag_spec = yaml.safe_load(RAG_SPEC_PATH.read_text(encoding="utf-8"))
+    gate_spec = yaml.safe_load(GATE_SPEC_PATH.read_text(encoding="utf-8"))
+    index = json.loads(INDEX_PATH.read_text(encoding="utf-8"))
+    vintage = index["vintage_date"]
+    rag_dir = REPO_ROOT / "registry/rag" / vintage
+    corpus = json.loads((rag_dir / "corpus.json").read_text(encoding="utf-8"))
+    eval_set = json.loads((rag_dir / "eval_set.json").read_text(encoding="utf-8"))
+    intent_eval = json.loads((rag_dir / "intent_eval.json").read_text(encoding="utf-8"))
+    chunks = {chunk["chunk_id"]: chunk for chunk in corpus["chunks"]}
+
+    layer = load_layer(REPO_ROOT)
+    k = int((rag_spec.get("retrieval") or {}).get("k") or 5)
+
+    rows: list[dict] = []
+    seen: set[str] = set()
+
+    def add(question_id: str, question: str, source: str, expected_intent: str | None) -> None:
+        if question_id in seen:
+            return
+        seen.add(question_id)
+        answer = layer.answer(question)
+        parent = (answer.chunks_used or [None])[0]
+        cited_text = ""
+        if answer.status == "answered" and parent:
+            cited_text = " ".join(str(chunks.get(cid, {}).get("text") or "")
+                                  for cid in layer.gate.parts_of(parent))
+        elif answer.route and answer.route in chunks:
+            cited_text = " ".join(str(cid_text) for cid_text in
+                                  [chunks[answer.route].get("text") or ""])
+        quoted = numbers_of(answer.text)
+        cited_numbers = numbers_of(cited_text)
+        rows.append({
+            "id": question_id,
+            "set": source,
+            "question": question,
+            "expected_intent": expected_intent,
+            "intent": answer.intent,
+            "rule_id": answer.rule_id,
+            "route": answer.route,
+            "status": answer.status,
+            "check": answer.check,
+            "citation": answer.citation,
+            "chunks_used": answer.chunks_used,
+            "numbers_quoted": sorted(quoted),
+            "numbers_absent_from_citation": sorted(
+                number for number in quoted if number not in cited_numbers
+            ) if cited_text else [],
+            "text": answer.text,
+        })
+
+    for question in eval_set["questions"]:
+        if question["type"] == "answerable":
+            add(question["id"], question["question"], "published", "answerable")
+    for question in intent_eval["held_out"]["questions"]:
+        if question["expected_intent"] == "answerable":
+            add(f"heldout_{question['id']}", question["question"], "held_out", "answerable")
+
+    def summarise(rows_: list[dict]) -> dict:
+        n = len(rows_)
+        answered = [row for row in rows_ if row["status"] == "answered"]
+        refused = [row for row in rows_ if row["status"] == "refused"]
+        declined = [row for row in rows_ if row["status"] == "declined"]
+        parts = {key: sum(1 for row in answered if row["check"].get(key)) for key in
+                 ("interval", "assumption", "cannot_rule_out", "citation")}
+        return {
+            "n": n,
+            "answered": len(answered),
+            "refused": len(refused),
+            "declined": len(declined),
+            "answer_rate": round(len(answered) / max(n, 1), 6),
+            "answered_with_all_parts": sum(1 for row in answered if all(row["check"].values())),
+            "parts_present": parts,
+            "refusals_with_citation": sum(1 for row in refused if row["citation"]),
+            "declined_with_citation": sum(1 for row in declined if row["citation"]),
+            "answers_quoting_numbers_absent_from_the_citation": sum(
+                1 for row in answered if row["numbers_absent_from_citation"]),
+        }
+
+    sets = {
+        "published": summarise([row for row in rows if row["set"] == "published"]),
+        "held_out": summarise([row for row in rows if row["set"] == "held_out"]),
+    }
+    sets["all"] = summarise(rows)
+
+    document = {
+        "schema_version": SCHEMA_VERSION,
+        "layer": "Stage 9 — the answer layer: gate -> retrieve -> assemble -> R-04 post-check",
+        "vintage": vintage,
+        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "generator": {
+            "script": "scripts/eval_answer.py",
+            "spec": "analysis/specs/rag.yml#answer_contract",
+            "gate_spec": gate_spec["spec_path"],
+            "git_sha": git_sha(),
+        },
+        "corpus": {
+            "path": f"registry/rag/{vintage}/corpus.json",
+            "sha256": sha256_of(rag_dir / "corpus.json"),
+            "chunks": len(corpus["chunks"]),
+        },
+        "gate": {
+            "path": gate_spec["spec_path"],
+            "sha256": sha256_of(GATE_SPEC_PATH),
+            "artifact": f"registry/rag/{vintage}/intent_eval.json",
+            "artifact_sha256": sha256_of(rag_dir / "intent_eval.json"),
+        },
+        "contract": {
+            "path": "analysis/specs/rag.yml#answer_contract",
+            "sha256": sha256_of(RAG_SPEC_PATH),
+            "post_check": rag_spec["answer_contract"]["post_check"],
+            "refusal_template": rag_spec["answer_contract"]["refusal_template"],
+            "retrieval": f"BM25 over the corpus text, k = {k}; no model, no network, no database",
+        },
+        "sets": sets,
+        "questions": rows,
+    }
+
+    out_path = rag_dir / "answer_eval.json"
+    out_path.write_text(json.dumps(document, indent=1, ensure_ascii=False) + "\n",
+                        encoding="utf-8", newline="\n")
+
+    print(f"answer eval: {out_path.relative_to(REPO_ROOT).as_posix()}")
+    for name in ("published", "held_out", "all"):
+        block = sets[name]
+        print(f"  {name:<10}: {block['n']:>2} question(s) — {block['answered']} answered, "
+              f"{block['declined']} declined by the post-check, {block['refused']} refused by the gate; "
+              f"answer rate {block['answer_rate']:.3f}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

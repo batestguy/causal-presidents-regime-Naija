@@ -134,6 +134,12 @@ fi
 step "stage 9: intent gate evaluation"
 $PYTHON scripts/eval_intent.py
 
+# The answer layer runs after the gate because it refuses with the gate's pinned chunk; its artifact records
+# the intent artifact's hash, so measuring it against a different decision fails the contract test rather
+# than quietly describing a gate nobody ran.
+step "stage 9: answer layer evaluation"
+$PYTHON scripts/eval_answer.py
+
 # The app itself has no engine: it is hand-written and reads the registry. So its step is the verifier alone,
 # which renders all 36 cards through Streamlit's test harness and compares the page against the card JSON.
 step "verifiers (each re-derives its numbers independently)"
@@ -149,6 +155,7 @@ $PYTHON tests/verify_events.py
 $PYTHON tests/verify_provenance.py
 $PYTHON tests/verify_rag.py
 $PYTHON tests/verify_intent.py
+$PYTHON tests/verify_answer.py
 $PYTHON tests/verify_app.py
 
 printf '\nall checks passed\n'

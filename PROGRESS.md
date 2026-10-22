@@ -1,15 +1,16 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-10-22 (tenth session) · **Stage:** 9, the **pre-retrieval intent gate built and
-measured** — the refusal decision is eight declared rules with a held-out measurement behind them instead of
-a similarity score · **verified at vintage 2026-10-18**: 13 verifiers, 0 failures, 45 registry documents
-schema-validated
+**Last updated:** 2026-10-22 (tenth session) · **Stage:** 9, the **intent gate and the answer layer built and
+measured** — the refusal decision is eight declared rules with a held-out measurement behind them, and the
+answer layer enforces R-04 on its own output · **verified at vintage 2026-10-18**: 14 verifiers, 0 failures,
+46 registry documents schema-validated
 
-**This session, in one line:** the **intent gate** — `app/intent_gate.py`, `analysis/specs/intent_gate.yml`,
-a **held-out set frozen after the rules** (`analysis/specs/intent_gate_eval.yml`, 49 questions),
-`scripts/eval_intent.py`, `tests/verify_intent.py` and `docs/intent.md` — which turns the corpus's two failed
-refusal gates (0.25 out-of-scope, 0.5 reason-cited) into **0.944 and 1.000 on questions the rules never saw**,
-and publishes the one target it misses rather than tuning it.
+**This session, in one line:** the **intent gate** (`app/intent_gate.py`, a held-out set frozen after the
+rules, `scripts/eval_intent.py`, `tests/verify_intent.py`, `docs/intent.md`) — which turns the corpus's two
+failed refusal gates (0.25 out-of-scope, 0.5 reason-cited) into **0.944 and 1.000 on questions the rules never
+saw** — then the **A16 closure** that cost a new held-out set and a second freeze, and the **answer layer**
+(`app/answer_layer.py`, `docs/answer.md`) that enforces the R-04 post-check and measures **what the contract
+actually permits: 5 of 38 answerable questions**.
 
 **The gate exists because the retriever was answering the wrong question.** Stage 8c measured the failure:
 a 2030 forecast about a covered outcome embeds closer to the corpus than some genuine questions do, so any
@@ -23,40 +24,53 @@ before retrieval, from the question's own words, by rules the project declares a
   refusal without a citation is the failure this project is built to avoid (R-04 applied to the gate itself).
   The year bounds are read from the artifacts — the quality report's study window and the registry's vintage —
   so no number is typed into the rules.
-- **The rules were frozen before the questions existed, and the verifier checks that against git.** The
+- **The rules were frozen before the questions existed, and the verifier checks that against git.** The v1
   held-out set was written after commit `30afc23`; `tests/verify_intent.py` reads the rule spec **as of that
   commit** and fails if the file on disk differs, and fails if the eval spec existed at the freeze. Changing
-  a rule therefore requires a new held-out set and a new freeze — which is the point.
+  a rule therefore requires a new held-out set and a new freeze — which is the point, and which is exactly
+  what the A16 closure cost.
 - **The held-out set is mechanical where it can be.** 32 of the 49 questions are templates filled from the
   artifacts (one per card, six forecasts, three population questions, three past-year questions, four tenure
   comparisons, four Design C questions), so their expected intent is derived rather than opined. The other
   17 are authored hard cases — answerable questions carrying a trigger word in a frame the rule must not fire
   on ("which check should I read", "what does the specification predict") — plus one probe.
-- **The numbers, on questions the rules never saw:** intent accuracy **0.959**, out-of-scope refusal
-  **0.944**, refusal route resolved **1.000**, refusal reason cited **1.000**. Every mechanical family is
-  exact. On the 22 published questions — the set the rules were written against, so not a generalisation
-  estimate — out-of-scope refusal goes **0.25 → 1.000** and reason-citation **0.5 → 1.000**, while answerable
-  recall@5 stays **1.000**: the gate changes what is refused, not what is retrieved.
-- **One target is missed and published: `answerable kept` 0.957 against 1.0.** A16 — "Is the population
-  denominator for the per-capita axis built?" — is answerable (the data dictionary says the denominator is
-  typed and empty), and G03 refuses it because it matches the same word as "how many people live in Lagos".
-  The rules are **not** edited to catch it: they were frozen before the question existed, and a fix applied
-  now would tune the rules to the held-out set. The closure is a denominator-frame exclusion **with a new
-  set and a new freeze**, recorded in `docs/intent.md` §4 and `docs/decisions.md` S9-05.
-- **A second miss is a declared gap, not a surprise.** P01 ("What is the under-5 mortality rate in Chad?") is
-  expected out of scope and is not refused — KG01, because the donor panel's country list lives in a
-  gitignored artifact and a rule built on it would not reproduce on a fresh clone.
+- **The numbers, on v2 questions the rules never saw:** intent accuracy **0.980**, out-of-scope refusal
+  **0.947**, answerable kept **1.000**, refusal route resolved **1.000**, refusal reason cited **1.000**.
+  Every mechanical and authored family is exact; the one miss is the probe KG01 declares. On the 22 published
+  questions — the set the rules were written against, so not a generalisation estimate — out-of-scope refusal
+  goes **0.25 → 1.000** and reason-citation **0.5 → 1.000**, while answerable recall@5 stays **1.000**: the
+  gate changes what is refused, not what is retrieved.
+- **The one v1 miss was closed the expensive way, on purpose.** A16 — "Is the population denominator for the
+  per-capita axis built?" — is answerable, and v1's G03 refused it on the word "population". The rules were
+  **not** edited then (the measurement had been made); instead G03 got a denominator-frame exclusion, was
+  **frozen at `8b9ba3b` before any new question existed**, and a new held-out set was written from a new
+  path. The seen denominator/population questions became a declared **regression block — 6 of 6 correct**,
+  reported beside the held-out numbers and never inside them (S9-08, `docs/intent.md` §4).
+- **A second miss is a declared gap, not a surprise.** P02 ("How did Brazil's under-5 mortality compare with
+  Nigeria's?") is expected out of scope and is not refused — KG01, because the donor panel's country list
+  lives in a gitignored artifact and a rule built on it would not reproduce on a fresh clone.
 - **One metric is published with its reading rather than deleted.** `route_matches_gold` is 0.625 — 20 of 32 —
   and all 12 misses are the card questions, where an answerable decision returns no route by design. Read
   against the 20 questions that carry a route, the gate cites the expected chunk 20 of 20.
-- **The chain now measures it on every run.** `scripts/verify.sh` re-runs `scripts/eval_intent.py` (no model,
-  no key, no network) and then `tests/verify_intent.py`, which re-derives the 49 questions from the eval spec
-  and the artifacts, re-applies the rules with its own second implementation, checks the freeze against git,
-  recomputes every metric and `met` flag, and requires `docs/intent.md` to quote the artifact's own numbers,
-  every miss by id, and every declared gap.
-- **What this does not do:** it does not answer anything (no answer layer), and it does not build the chat tab
-  — `docs/app.md` §3 and `PHASES.md` Stage 9 still record the tab as unbuilt, now for the stated reason that
-  the answer layer is missing rather than that the refusal decision is a score.
+- **The answer layer enforces R-04 on its own output and the result is the finding.** `app/answer_layer.py`
+  gates, retrieves lexically (BM25 — no model at request time), assembles extractively and then requires an
+  interval, an identifying assumption and what it cannot rule out before it will answer. It answered **3 of
+  the 16 published answerable questions (0.188)** and **2 of the 22 held-out ones (0.091)**: 5 of 38, with
+  33 declined by the contract and none answered around a refusal. The rate is low because R-04 is an
+  **estimate** contract and 34 of the 36 cards carry no number — published in `docs/answer.md` §2 rather than
+  fixed by weakening the check.
+- **Two lending guards keep a coefficient off questions it does not answer.** A question naming an outcome
+  may only be answered from a passage about that outcome, and "effect" counts as an estimate word only when
+  the outcome is named. Without them a design-level result answered a fourth outcome with three others'
+  numbers — the same failure the app's results tab prevents, one layer down.
+- **The chain now measures both on every run.** `scripts/verify.sh` re-runs `scripts/eval_intent.py` and
+  `scripts/eval_answer.py` (no model, no key, no network) and then `tests/verify_intent.py` and
+  `tests/verify_answer.py`, which re-derive the questions, re-apply the rules with a second implementation,
+  check the freeze against git, recompute every metric, require every quoted sentence and number to appear
+  in its citation, and require `docs/intent.md`/`docs/answer.md` to quote the artifacts' own numbers.
+- **What this does not do:** it does not build the chat tab — `docs/app.md` §3 and `PHASES.md` Stage 9 record
+  it as unbuilt, and the reason is now measured rather than assumed: a surface built on this layer would
+  refuse four questions in five.
 
 **Previous session, in one line:** the **read-only app** — `app/streamlit_app.py`, a `docs/app.md` that states
 the ratio it leads with, and `tests/verify_app.py`, which renders **all 36 cards** through Streamlit's own test
@@ -619,7 +633,8 @@ effect that the design cannot support.
 | `docs/decisions.md` | Decision log — 40+ dated decisions: framing, method, data, access findings, coverage findings, infrastructure, RAG | Live, updated as evidence arrives |
 | `docs/licences.md` | Licence register — redistribution rights per source, plus 5 open licensing questions | Live |
 | `docs/data-dictionary.md` | Every column of the analytical base: grain, meaning, imputation rules, vintage conventions and the declared gaps | Complete |
-| `docs/intent.md` | What the chat layer may refuse and on what evidence — the rule set, the held-out measurement, the missed target and the declared gaps | Complete |
+| `docs/intent.md` | What the chat layer may refuse and on what evidence — the rule set, the held-out measurement, the A16 closure and the declared gaps | Complete |
+| `docs/answer.md` | What an answer may contain — the extractive assembly, the R-04 post-check and the measured answer rate | Complete |
 | `knowledge.md` | Agent-facing repo context | Live |
 | `PROGRESS.md` | This file | Live |
 
@@ -704,13 +719,15 @@ effect that the design cannot support.
 | `analysis/specs/intent_gate_eval.yml` · `scripts/eval_intent.py` · `registry/rag/2026-10-18/intent_eval.json` | The held-out set (49 questions written after the rules froze) and the harness that scores both sets and writes one artifact | 0.959 intent accuracy, 0.944 out-of-scope refusal, 1.000 reason cited, 0.957 answerable kept |
 | `registry/schema/intent_eval.schema.json` · `tests/verify_intent.py` | The artifact's contract, and a verifier that re-derives the questions, re-applies the rules with a second implementation and checks the freeze against git | Exit 0; six break-tests caught |
 | `docs/intent.md` | The Stage 9 output: what may be refused and why, the measured numbers on both sets, the missed target published, and the four declared gaps | Complete |
+| `app/answer_layer.py` · `scripts/eval_answer.py` · `registry/rag/2026-10-18/answer_eval.json` | **Stage 9 — the answer layer**: gate → BM25 retrieval (no model) → extractive assembly → R-04 post-check, measured over the 38 answerable questions | 5 answered, 33 declined, 0 answered around a refusal; every number in its citation |
+| `registry/schema/answer_eval.schema.json` · `tests/verify_answer.py` | The answer artifact's contract and a verifier that re-checks every part, every quoted sentence and every number against the cited chunks | Exit 0 |
 
 ## 4. Verification evidence
 
 Commands and their observed results — these are measurements, not assertions. Every exit status
 below was captured directly, not inferred from filtered output.
 
-**Vintage 2026-10-18 (tenth session) — the intent gate:**
+**Vintage 2026-10-18 (tenth session) — the intent gate, its v2 freeze and the answer layer:**
 
 ```
 eval_intent.py             -> exit 0  49 held-out questions rebuilt from the eval spec, the index, the
@@ -723,8 +740,37 @@ verify_intent.py           -> exit 0  49 questions re-derived, 8 rules re-applie
                                       implementation, the freeze at 30afc23 holds against git, every
                                       metric and every `met` flag recomputed from the artifact's own
                                       rows; 2 misses named (A16, P01); docs/intent.md quotes every rate
-validate_artifacts.py      -> exit 0  45 registry documents schema-validated (was 44); intent_eval.json
-                                      describes the corpus sha256 beside it
+eval_intent.py (v2)        -> exit 0  49 held-out questions from intent_gate_eval_v2.yml; intent accuracy
+                                      0.980, out-of-scope refused 0.947, answerable kept 1.000, route
+                                      resolved 1.000, reason cited 1.000; regression 6/6; one miss (P02)
+eval_answer.py             -> exit 0  38 answerable questions: 5 answered (published 3/16 = 0.188,
+                                      held-out 2/22 = 0.091), 33 declined by R-04, 0 refused by the
+                                      gate; 5 of 5 carry every part; 0 quote a number absent from
+                                      their citation
+verify_answer.py           -> exit 0  every row's intent is the intent artifact's, every refusal cites
+                                      the gate's pinned chunk, every quoted sentence appears verbatim
+                                      in a cited chunk, every number is in its citation
+validate_artifacts.py      -> exit 0  46 registry documents schema-validated (was 44); intent_eval.json
+                                      and answer_eval.json describe the corpus sha256 beside them, and
+                                      the answer artifact names the intent artifact it was measured on
+```
+
+**Break-tests — six mutations of the v2 gate and five of the answer layer, each caught, restored byte-for-byte**
+(`.probe/break_answer.py`, gitignored):
+
+```
+artifact: intent accuracy 0.980 -> 0.999              -> exit 1  recomputed from the rows
+artifact: a held-out question dropped                 -> exit 1  missing held-out question(s)
+gate spec: one comment line added                     -> exit 1  not the rule spec at freeze 8b9ba3b
+eval spec: an authored question reworded              -> exit 1  the spec moved after the measurement
+docs/intent.md: accuracy 0.980 -> 0.981               -> exit 1  the page has drifted
+regression: a case's expected intent flipped          -> exit 1  artifact disagrees with the spec
+answer: a quoted number changed                       -> exit 1  not in the cited chunk
+answer: a part cut out of an answered row             -> exit 1  the answer carries no interval
+answer: a declined row relabelled `answered`         -> exit 1  the answer carries no interval
+answer: a set count moved                             -> exit 1  recomputed from the rows
+answer: a sentence edited out of a citation           -> exit 1  quoted sentence not in any cited chunk
+                                      each case restored -> exit 0  both verifiers green again
 ```
 
 **Break-tests — six mutations, each caught, each file restored byte-for-byte** (`.probe/break_intent.py`,
@@ -1625,12 +1671,13 @@ that turn estimates into a product.
    `not_run` — it needs an LLM key and a judge model), and chunks for the families the corpus currently
    summarises (the donor panel, the robustness grid).
 10. **Stage 9 — the read-only app and the chat layer.** The app is built (2026-10-21,
-   `app/streamlit_app.py`, `docs/app.md`) and the **pre-retrieval intent gate** is built and measured
-   (2026-10-22, `analysis/specs/intent_gate.yml`, `app/intent_gate.py`, `docs/intent.md`). **What
-   remains:** the answer layer — assemble an answer from the pinned chunk and run the R-04 post-check —
-   and then the chat tab; a rule change that stops G03 refusing the population-denominator question,
-   which requires a new held-out set and a new freeze (S9-05); and the KG01 country-panel rule once the
-   donor list is committed as a registry artifact.
+   `app/streamlit_app.py`, `docs/app.md`), the **pre-retrieval intent gate** is built and measured
+   (2026-10-22, `analysis/specs/intent_gate.yml`, v2 frozen at `8b9ba3b`, `docs/intent.md`), and the
+   **answer layer** is built and measured (2026-10-22, `app/answer_layer.py`, `docs/answer.md`): 5 of 38
+   answerable questions answered, every quoted sentence and number attributable to its citation.
+   **What remains:** the chat tab, which is now a product decision rather than a component — the layer
+   would refuse four questions in five because R-04 is an estimate contract and 34 of 36 cards carry no
+   number; and the KG01 country-panel rule once the donor list is committed as a registry artifact.
 
 ### The smallest credible end-to-end slice — revisited by Stage 4
 

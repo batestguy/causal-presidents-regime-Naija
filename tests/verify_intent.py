@@ -46,7 +46,9 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 GATE_SPEC_PATH = REPO_ROOT / "analysis" / "specs" / "intent_gate.yml"
-EVAL_SPEC_PATH = REPO_ROOT / "analysis" / "specs" / "intent_gate_eval.yml"
+# The held-out set is named by the gate spec, so a new version of the questions is one field's change and
+# this verifier cannot read a set the rules were not frozen against.
+EVAL_SPEC_PATH: Path | None = None
 INDEX_PATH = REPO_ROOT / "registry" / "dags" / "index.json"
 STATE_SEED = REPO_ROOT / "dbt" / "seeds" / "raw_state.csv"
 ADMIN_SEED = REPO_ROOT / "dbt" / "seeds" / "raw_administration.csv"
@@ -262,6 +264,14 @@ def rederive_questions(eval_spec: dict, index: dict, states: list[dict], admins:
     return rows
 
 
+def rederive_regression(eval_spec: dict) -> list[dict]:
+    """The seen cases the change was made in response to, rebuilt from the spec."""
+    return [
+        {"id": item["id"], "question": item["question"], "expected_intent": item["intent"]}
+        for item in eval_spec.get("regression") or []
+    ]
+
+
 # ---------------------------------------------------------------------------------------------
 # The freeze, checked against git
 # ---------------------------------------------------------------------------------------------
@@ -284,12 +294,16 @@ def git_show(commit: str, path: str) -> bytes | None:
 def main() -> int:
     failures: list[str] = []
 
-    if not GATE_SPEC_PATH.exists() or not EVAL_SPEC_PATH.exists():
-        print("FAILED — the gate spec or the eval spec is missing")
+    if not GATE_SPEC_PATH.exists():
+        print("FAILED — the gate spec is missing")
         return 1
 
     gate_spec = yaml.safe_load(GATE_SPEC_PATH.read_text(encoding="utf-8"))
-    eval_spec = yaml.safe_load(EVAL_SPEC_PATH.read_text(encoding="utf-8"))
+    eval_spec_path = REPO_ROOT / str(gate_spec.get("eval_spec") or "")
+    if not eval_spec_path.exists():
+        print(f"FAILED — the gate spec names the held-out set {gate_spec.get('eval_spec')!r}, which is missing")
+        return 1
+    eval_spec = yaml.safe_load(eval_spec_path.read_text(encoding="utf-8"))
     index = json.loads(INDEX_PATH.read_text(encoding="utf-8"))
     vintage = index["vintage_date"]
     rag_dir = RAG_ROOT / vintage
@@ -313,7 +327,7 @@ def main() -> int:
     freeze = eval_spec.get("authored_after")
     if not freeze:
         failures.append(
-            "analysis/specs/intent_gate_eval.yml: no `authored_after` — the held-out set does not say which "
+            f"{gate_spec.get('eval_spec')}: no `authored_after` — the held-out set does not say which "
             "commit froze the rules, so the freeze cannot be checked"
         )
     else:
@@ -332,7 +346,7 @@ def main() -> int:
                     f"{freeze} ({frozen_hash[:12]}) — the rules were changed after the held-out questions "
                     "were written, so the held-out numbers no longer measure what they say they measure"
                 )
-        if git_show(freeze, "analysis/specs/intent_gate_eval.yml") is not None:
+        if git_show(freeze, str(gate_spec.get("eval_spec"))) is not None:
             failures.append(
                 f"the eval spec already existed at the freeze commit {freeze} — the questions must be "
                 "written after the rules are frozen, not at the same time"
@@ -345,7 +359,7 @@ def main() -> int:
             )
 
     # The artifact's own hashes must still describe the files on disk.
-    for key, path in (("gate", GATE_SPEC_PATH), ("eval", EVAL_SPEC_PATH)):
+    for key, path in (("gate", GATE_SPEC_PATH), ("eval", eval_spec_path)):
         recorded = (artifact.get("specs") or {}).get(key) or {}
         if recorded.get("sha256") != sha256_of(path):
             failures.append(
@@ -509,6 +523,52 @@ def main() -> int:
         if sorted(entry.get("misses") or []) != misses:
             failures.append(f"family {name}: the artifact's misses {entry.get('misses')} and the recomputed "
                             f"{misses}")
+
+    # ---------------------------------------------------------------------------------------------
+    # 4b. The regression block: the seen cases, reported separately and never in the metrics
+    # ---------------------------------------------------------------------------------------------
+    regression_questions = rederive_regression(eval_spec)
+    artifact_regression = artifact.get("regression") or {}
+    regression_rows = artifact_regression.get("questions") or []
+    if not regression_questions:
+        failures.append(f"{gate_spec.get('eval_spec')}: declares no regression block — a rule change "
+                        "without a re-check of the case that motivated it is a change nobody measured")
+    if {row["id"] for row in regression_questions} != {row.get("id") for row in regression_rows}:
+        failures.append("the artifact's regression ids do not match the eval spec's")
+    regression_by_id = {row.get("id"): row for row in regression_rows}
+    recomputed_regression = []
+    for row in regression_questions:
+        intent, _route, _status = engine.decide(row["question"])
+        entry = {
+            "id": row["id"],
+            "question": row["question"],
+            "expected_intent": row["expected_intent"],
+            "intent": intent,
+            "correct": intent == row["expected_intent"],
+        }
+        published = regression_by_id.get(row["id"]) or {}
+        if published.get("question") != row["question"]:
+            failures.append(f"regression {row['id']}: the artifact's question text differs from the spec's")
+        if published.get("expected_intent") != row["expected_intent"]:
+            failures.append(f"regression {row['id']}: the artifact's expected intent differs from the spec's")
+        for field in ("intent", "correct"):
+            if published.get(field) != entry[field]:
+                failures.append(
+                    f"regression {row['id']}: the artifact records {field}={published.get(field)!r} and this "
+                    f"verifier's own implementation gets {entry[field]!r}"
+                )
+        recomputed_regression.append(entry)
+    regression_accuracy = fraction(
+        sum(1 for row in recomputed_regression if row["correct"]), len(recomputed_regression))
+    regression_misses = sorted(row["id"] for row in recomputed_regression if not row["correct"])
+    if artifact_regression.get("accuracy") != regression_accuracy:
+        failures.append(f"the artifact's regression accuracy is {artifact_regression.get('accuracy')!r} and "
+                        f"the recomputed value is {regression_accuracy!r}")
+    if sorted(artifact_regression.get("misses") or []) != regression_misses:
+        failures.append(f"the artifact's regression misses {artifact_regression.get('misses')} and the "
+                        f"recomputed {regression_misses}")
+    if (artifact_regression.get("counts") or {}).get("n") != len(recomputed_regression):
+        failures.append("the artifact's regression count does not match its rows")
 
     # ---------------------------------------------------------------------------------------------
     # 5. The gate flags, against the targets declared in the spec
@@ -730,6 +790,7 @@ def main() -> int:
             (f"{recomputed_pub_metrics['out_of_scope_refusal']:.3f}", "the published out-of-scope refusal"),
             (f"{recomputed_pub_metrics['refusal_reason_cited']:.3f}", "the published reason-cited rate"),
             (f"{recomputed_pub_metrics['answerable_recall_at_5']:.3f}", "the published answerable recall@5"),
+            (f"{regression_accuracy:.3f}", "the regression accuracy"),
         ]
         for needle, label in needles:
             if needle not in prose:
@@ -741,6 +802,9 @@ def main() -> int:
             if not row.get("correct") and row["id"] not in prose:
                 failures.append(f"docs/intent.md: does not name the missed question {row['id']} — a miss "
                                 "that is not written down is a miss that was tuned away")
+        for row in recomputed_regression:
+            if not row["correct"] and row["id"] not in prose:
+                failures.append(f"docs/intent.md: does not name the failed regression case {row['id']}")
         # Every declared gap is carried into the narrative, because an undeclared gap reads as passing.
         for gap_id in declared_gaps:
             if gap_id not in prose:
@@ -757,6 +821,8 @@ def main() -> int:
     print(f"published     : out-of-scope refused {recomputed_pub_metrics['out_of_scope_refusal']:.3f}, "
           f"answerable kept {recomputed_pub_metrics['answerable_not_refused']:.3f}, answerable recall@{k} "
           f"{recomputed_pub_metrics['answerable_recall_at_5']:.3f}")
+    print(f"regression    : {len(recomputed_regression)} seen case(s), accuracy {regression_accuracy:.3f}" +
+          (f" — missed {', '.join(regression_misses)}" if regression_misses else ""))
     print(f"narrative     : docs/intent.md quotes the measured rates, every miss by id and every declared gap")
     for scope, block in (("held out", held_out.get("gates") or {}),
                          ("published", published_block.get("gates") or {})):

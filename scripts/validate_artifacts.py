@@ -589,6 +589,29 @@ def check_rag(failures: list[str], quality_vintage: str | None) -> None:
                 "scripts/eval_intent.py"
             )
 
+    # The answer layer's measurement is only about this corpus and this gate: a re-run of either leaves
+    # it describing a decision nobody made on the text it quotes.
+    answer_path = newest / "answer_eval.json"
+    if answer_path.exists():
+        answer = json.loads(answer_path.read_text(encoding="utf-8"))
+        if answer.get("vintage") != corpus.get("vintage"):
+            failures.append(
+                f"registry/rag/{newest.name}: answer_eval.json carries vintage {answer.get('vintage')!r} "
+                f"and the corpus carries {corpus.get('vintage')!r}"
+            )
+        if answer.get("corpus", {}).get("sha256") != hashlib.sha256(corpus_path.read_bytes()).hexdigest():
+            failures.append(
+                f"registry/rag/{newest.name}: answer_eval.json describes a different corpus — re-run "
+                "scripts/eval_answer.py"
+            )
+        if (newest / "intent_eval.json").exists():
+            if answer.get("gate", {}).get("artifact_sha256") != hashlib.sha256(
+                    (newest / "intent_eval.json").read_bytes()).hexdigest():
+                failures.append(
+                    f"registry/rag/{newest.name}: answer_eval.json was measured against a different "
+                    "intent_eval.json — re-run scripts/eval_answer.py"
+                )
+
     print(f"stage 8c artifact: {newest.name} ({corpus.get('counts', {}).get('chunks')} chunks, "
           f"{len(corpus.get('sources') or [])} attributed sources, embedding "
           f"{embedding.get('status')}, retrieval eval describes this corpus)")
@@ -632,7 +655,8 @@ def check_schemas(failures: list[str]) -> int:
     for name, pattern in (("rag_corpus.schema.json", "*/corpus.json"),
                           ("rag_eval.schema.json", "*/eval_set.json"),
                           ("rag_retrieval.schema.json", "*/retrieval_eval.json"),
-                          ("intent_eval.schema.json", "*/intent_eval.json")):
+                          ("intent_eval.schema.json", "*/intent_eval.json"),
+                          ("answer_eval.schema.json", "*/answer_eval.json")):
         schema = json.loads((SCHEMA_DIR / name).read_text(encoding="utf-8"))
         validator = jsonschema.Draft202012Validator(schema)
         for artifact in sorted(RAG_ROOT.glob(pattern)):
