@@ -492,10 +492,10 @@ uncheckable), and `docs/design-memo.md` still described the pre-FAAC base's 10.1
 
 **The retrieval layer is now built (Stage 8c, 2026-10-21).** `analysis/specs/rag.yml`,
 `analysis/specs/rag_eval.yml`, `scripts/build_rag_corpus.py`, `scripts/eval_rag.py`,
-`tests/verify_rag.py`, `registry/rag/2026-10-18/`, `docs/rag.md`. **441 chunks from 51 attributed sources** at
-the registry's vintage — one document per model card (179 parts), the three design results, the narrative
-(178), the data dictionary (47), the transition events (13), the administration and shock tables (8), the
-two coverage counts and the scope paragraph. No chunk is authored by hand: every one is a serialisation of an
+`tests/verify_rag.py`, `registry/rag/2026-10-18/`, `docs/rag.md`. **482 chunks from 53 attributed sources** at
+the registry's vintage — one document per model card (179 parts) plus the card in one piece (36), the three
+design results (12), the narrative (183), the data dictionary (47), the transition events (13), the
+administration and shock tables (8), the two coverage counts and the scope paragraph (4). No chunk is authored by hand: every one is a serialisation of an
 artifact whose sha256 is recorded, and a source edited without a rebuild fails the verifier. Two numbers
 changed the design before anything shipped: the base spec's `all-MiniLM-L6-v2` caps at **256 tokens**, which
 would have truncated every chunk past ~1,000 characters, so the corpus uses `multi-qa-MiniLM-L6-cos-v1`
@@ -538,18 +538,20 @@ panel, the robustness grid).
 ## Stage 9 — The read-only app
 
 **STATUS: READ-ONLY APP BUILT (2026-10-21), REFUSAL GATE BUILT AND MEASURED (2026-10-22), GATE AT v3
-AND ANSWER LAYER BUILT (2026-10-22).**
+AND ANSWER LAYER BUILT (2026-10-22), CHAT TAB BUILT (2026-10-22).**
 `app/streamlit_app.py` + `app/registry_data.py`,
 `tests/verify_app.py`, `docs/app.md`. Outcome → design → assumption → adjustment set → cannot-rule-out →
-the published number or the reason there is none, plus one tab for the two design-level results. It reads
-`registry/dags/` and nothing else: no database, no network, no model, and no coefficient typed into the UI.
+the published number or the reason there is none, plus one tab for the two design-level results and one for
+asking the registry a question. It reads `registry/dags/`, and for the chat tab `registry/rag/<vintage>/`,
+`analysis/specs/` and `docs/glossary.md`: no database, no network, no model, and no coefficient typed into
+the UI.
 
 **Why read-only first.** The page a reader can use today is the one Stage 8 was built to make possible, and
 it has no failing gate in front of it. The chat tab does: out-of-scope refusal measures **0.25**, so a
 question like "what will inflation be in 2030?" is not refused by similarity alone. Building the chat first
-would ship the exact failure the corpus exists to prevent, so the tab waited for an intent gate and a
-re-measurement against the declared eval set — both now exist (below), and the tab's remaining blocker is
-the unbuilt answer layer rather than the refusal.
+would ship the exact failure the corpus exists to prevent, so the tab waited for an intent gate, a
+re-measurement against the declared eval set, and an answer contract that could carry what the corpus
+actually holds — all three now exist (below), and the tab is built on them.
 
 **The refusal decision is a policy now (2026-10-22).** `analysis/specs/intent_gate.yml` declares eight rules
 with unique priorities; `app/intent_gate.py` applies them to the question before retrieval; a rule decides an
@@ -583,8 +585,8 @@ whether the interval includes zero, the sample, the assumption in one sentence, 
 the meanings of the technical words actually used — every definition quoted from `docs/glossary.md`, every
 figure copied out of the estimate it cites. Nothing is generated, so the path needs **no LLM key**, which
 `tests/verify_answer.py` proves by running the layer with every key-shaped environment variable removed.
-Measured: **6 of 38** answerable questions answered (0.158), every one with a plain reading and none quoting
-a number its citation lacks.
+Measured: **36 of 38** answerable questions answered (0.947) under the three-shape contract, every one with a
+plain reading and none quoting a number its citation lacks.
 
 **What the verifier establishes.** It renders all 36 cards through Streamlit's own test harness and compares
 the output with the card JSON, formatting the card's values itself rather than importing the app's formatter:
@@ -593,7 +595,9 @@ detail sentence*, every adjustment node resolved to `label (node_id)`, and every
 checks matter as much: the published coefficients are searched for as literals in the app's source (the card
 wins), and the source is scanned for database, network and fitting imports (base spec §18). A design-level
 result is also checked never to appear on a card: pointing the results tab at another design while each B
-card renders is what makes that check real rather than vacuous.
+card renders is what makes that check real rather than vacuous. The chat tab is checked the same way — the
+verifier asks it the questions it offers and compares the answers with the published artifacts, so the tab
+reproduces the measurement rather than re-deciding it.
 
 **Framework decided on the record (2026-10-21, `docs/decisions.md` UI-01…UI-06).** Streamlit, because
 `AppTest` renders the real app without a browser — which is why the 36-card contract check runs in
@@ -603,11 +607,9 @@ state for the rerun model to desynchronise. Its costs are written down rather th
 framework is the interactive graph becoming the product, not styling; Dash is the smallest honest jump from
 there, and `app/registry_data.py` is framework-free so it would survive the move.
 
-**Not built, and declared as such in `docs/app.md`:** the chat tab (the gate and the answer layer are built
-and measured, and the layer answers 0.132 of the answerable questions it was run on — a surface decision now,
-not a missing component), node-level graph interaction, links from the card to the narrative that explains
-each design, per-card URLs, and any deployment — serving a stale vintage is a governance decision, not a
-packaging one.
+**Not built, and declared as such in `docs/app.md`:** node-level graph interaction, links from the card to
+the narrative that explains each design, per-card URLs, and any deployment — serving a stale vintage is a
+governance decision, not a packaging one.
 
 **Work**
 
@@ -624,14 +626,15 @@ packaging one.
   declared KG01 probe.
 - ✅ **The answer layer** — `app/answer_layer.py`, `scripts/eval_answer.py`,
   `registry/rag/2026-10-18/answer_eval.json`, `tests/verify_answer.py`, `docs/answer.md`. It enforces R-04 on
-  its own output: **5 of 38 answerable questions answered (0.132)**, 33 declined by the contract, 0 answered
-  around a refusal. Every quoted sentence and number is in its citation.
-- ⏳ Chat tab — the layer exists and the numbers say what it would do: a reader would be refused four times
-  out of five, because the contract is an estimate contract and most cards carry no estimate. Building the
-  surface is now a product decision, not an unbuilt component.
+  its own output, under a contract with three shapes: **36 of 38 answerable questions answered (0.947)**, 2
+  declined by the contract, 0 answered around a refusal. Every quoted sentence and number is in its citation.
+- ✅ **Chat tab** — the app's fourth tab, on the gate and the answer layer: a cited answer or a cited
+  refusal, the plain reading first, no model and no key. The verifier asks it the four published questions
+  and compares the answers with the artifacts; a held-out question on the page fails the build.
 
 **Exit criteria.** A reader can reach any card, and no number appears anywhere that is not a field of that
-card. Nothing is fitted at render time.
+card. A reader can ask the registry a question and get an answer that cites the card it came from, or a
+refusal that cites the passage it refuses for. Nothing is fitted at render time.
 
 ---
 

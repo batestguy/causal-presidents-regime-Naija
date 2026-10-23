@@ -18,14 +18,15 @@ authoritative-looking and wrong. Everything below is shaped by that.
 
 ## 1. What is in it
 
-**441 chunks from 51 attributed sources**, at vintage 2026-10-18 — the registry's vintage, not the build date,
+**482 chunks from 53 attributed sources**, at vintage 2026-10-18 — the registry's vintage, not the build date,
 so an answer that quotes a card is a statement about that data vintage whenever it is read.
 
 | Family | Chunks | Parent documents |
 |---|---|---|
 | `model_card` | 179 | 36 — one per card, split into parts when the card exceeds the budget |
-| `methodology` | 178 | 8 narrative documents: design memo, estimates, robustness, events, registry, limitations, data dictionary, DAGs |
+| `methodology` | 183 | 9 documents: design memo (34), estimates (23), robustness (19), events (22), registry (14), limitations (37), DAGs (29), glossary (3), licence register (2) |
 | `data_dictionary` | 47 | 1 |
+| `card_estimate` | 36 | 36 — one per card, the card's fields in one piece |
 | `event_study` | 13 | 4 transitions + the artifact's `not_claimed` list |
 | `published_result` | 12 | 3 — Designs A, B and C |
 | `administration` | 5 | 5 seed rows |
@@ -45,6 +46,16 @@ parts, each opening with `[title — part k of n]` and carrying the card's id in
 2,600-token chunk (silently truncated by any 512-token model) or dropping the coverage note and the
 cannot-rule-out list. The estimate paragraph and its verdict sit in adjacent paragraphs and normally land in
 the same part; when they do not, the retriever returns both.
+
+**The `card_estimate` family is the same card in one piece**, because an answer has to quote the reason
+beside the assumption it qualifies. A question about one of the 34 cards that carries a reason needs the
+reason, the assumption and the caveat from a single passage; assembled from the split `model_card` parts it
+lacked half of what the contract requires, and the answer layer declined. The family is therefore allowed a
+declared **1,700-character** budget (`chunking.max_chars_by_family`) rather than the 950 every other family
+takes. The number is the tokenizer's, not a preference: the longest card is 1,598 characters and 379 tokens
+of the 512-token window, measured with the declared model's own tokenizer. `tests/verify_rag.py` reads the
+per-family budget from the spec — before it did, it applied 950 to this family and reported 36 false
+failures, which is how a verifier stops being read.
 
 ## 2. The budget is set by the model, and it caught two mistakes
 
@@ -70,8 +81,8 @@ Design C's status, coverage, quality, the event study, the tables), 2 refusals t
 | Metric | Embeddings | BM25 baseline | Gate |
 |---|---|---|---|
 | recall@5 | **0.944** | 0.833 | ≥ 0.90 — **met** for embeddings, not for the baseline |
-| gold coverage@5 | 0.432 | 0.364 | — |
-| MRR | 0.724 | 0.676 | — |
+| gold coverage@5 | 0.418 | 0.383 | — |
+| MRR | 0.715 | 0.657 | — |
 | refusal-with-reason recall | **0.5** | 0.0 | 1.0 — **not met** |
 | out-of-scope refused | **0.25** | n/a | 1.0 — **not met** |
 | answerable kept (not refused) | 1.0 | n/a | 1.0 — met |
@@ -96,9 +107,9 @@ and 0.42). That is the finding: **similarity alone cannot refuse a question that
 topic.** Any threshold that refused the forecast would refuse real questions with it. The replacement is the
 pre-retrieval intent gate built in Stage 9 (`docs/intent.md`): a declared rule set that decides the intent
 from the question's own words before retrieval and pins the chunk a refusal must quote. Measured on a
-held-out set the rules never saw, it refuses **0.944** of out-of-scope questions and cites the reason
-**1.000** of the time, while keeping **0.957** of answerable questions — the one miss, a question *about*
-the population denominator, is published rather than tuned away. On this eval set, out-of-scope refusal goes
+held-out set the rules never saw (v3), it refuses **0.947** of out-of-scope questions and cites the reason
+**1.000** of the time, while keeping **1.000** of answerable questions — the one miss, a country reached only
+through its capital city, is published rather than tuned away (`docs/intent.md`). On this eval set, out-of-scope refusal goes
 **0.25 → 1.000** and reason-citation **0.5 → 1.000**, with answerable recall unchanged.
 
 The refusal threshold is `0.291464`, derived as 0.5 × the median answerable top-1 similarity (0.5829). It is
@@ -154,7 +165,7 @@ machine (no network service, no GPU):
 
 `sentence-transformers==5.1.2`, `torch==2.14.1+cpu`, `numpy 2.4.6`; the model is `multi-qa-MiniLM-L6-cos-v1`
 (384 dims, 512 tokens). The first `--embed` downloads ~90 MB into the Hugging Face cache; after that the run
-is ~20 seconds for 441 chunks.
+is ~20 seconds for 482 chunks.
 
 **Then rebuild whenever a source changes.** The corpus records the sha256 of all 51 sources and
 `tests/verify_rag.py` fails when one no longer matches, with the rebuild command in the message. That is the
@@ -163,10 +174,24 @@ by a reader noticing that the chat layer contradicts the page.
 
 ## 6. What this does not claim
 
-- Not that retrieval is good enough to ship a chat box. Two of four gates fail, for the reasons in §3.
+- Not that retrieval alone is good enough to ship a chat box: two of four semantic gates fail, for the
+  reasons in §3, which is why the tab built in Stage 9 puts the declared intent gate in front of retrieval,
+  not a similarity threshold.
 - Not that the corpus is complete: the donor panel, the raw quality report and the robustness grid are
   summarised, not chunked. A question that needs a specific donor's value or a specific robustness cell will
   refuse, and that is the correct behaviour until those artifacts are added as families.
+- Not that adding a document is the same as making its questions answerable. The glossary and the licence
+  register were added in the 2026-10-23 rebuild (5 chunks in total, with every retrieval metric unchanged), and the effect is
+  partial and stated: "what does G02 mean?" now quotes the glossary's refusal table, while "can I republish
+  the ACLED rows?" still resolves to the coverage table in `docs/limitations.md`, because the fact path
+  chooses the passage with the most of the question's words and a licence table row is short. The corpus
+  gain is real; the selection gain is not, and it is measured here rather than assumed.
+- Not that `docs/decisions.md` is in the corpus. It was tried in the 2026-10-23 rebuild and rejected on
+  the numbers: at 210 chunks — more than the registry itself — recall@5 stayed at 0.944 but MRR fell from 0.715 to 0.687 and
+  gold coverage from 0.418 to 0.379. A session log that dilutes every ranking to answer a few "why was that
+  chosen" questions is a corpus that quotes the project's diary before its findings. It stays out until it
+  is summarised into a declared artefact.
 - Not that RAGAS has been run. It has not, and it is the only stage that would need a key.
-- Not that the answer layer exists. This stage produces the corpus, the eval set and the measurement; the app
-  is Stage 9.
+- Not that this corpus is what answers a reader's question on its own. The corpus is the quotable text; the
+  intent gate and the answer layer (`docs/intent.md`, `docs/answer.md`) decide what may be asked and how a
+  passage becomes an answer.

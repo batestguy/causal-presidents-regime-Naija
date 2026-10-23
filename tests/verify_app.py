@@ -67,6 +67,32 @@ def rendered_text(at) -> str:
     return squash("\n".join(parts))
 
 
+def message_text(message) -> str:
+    """Everything one chat message shows, including what is inside its expander."""
+    parts: list[str] = []
+    for attribute in ("markdown", "warning", "info", "error", "caption", "text"):
+        for element in getattr(message, attribute, []):
+            value = getattr(element, "value", None)
+            if isinstance(value, str):
+                parts.append(value)
+    for expander in getattr(message, "expander", []):
+        for element in getattr(expander, "markdown", []):
+            value = getattr(element, "value", None)
+            if isinstance(value, str):
+                parts.append(value)
+    return squash("\n".join(parts))
+
+
+def glossary_meanings(path: Path) -> dict[str, str]:
+    """The plain meanings the glossary carries, by code — read, never retyped."""
+    meanings: dict[str, str] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        match = re.match(r"^\|\s*\*\*([A-Z]\d{2})\*\*\s*\|\s*(.+?)\s*\|\s*$", line.strip())
+        if match:
+            meanings[match.group(1)] = match.group(2)
+    return meanings
+
+
 def main() -> int:
     failures: list[str] = []
 
@@ -251,9 +277,107 @@ def main() -> int:
             fail(failures, f"design {design_id}: the reason the design was not run is not rendered")
 
     # ---------------------------------------------------------------------------------------------
-    # 4. No number is typed, and nothing can be fitted at render time
+    # 4. The Ask tab: it answers from the registry, and a refusal cites what it refuses for
     # ---------------------------------------------------------------------------------------------
     source = "\n".join(path.read_text(encoding="utf-8") for path in sorted(APP_DIR.glob("*.py")))
+    rag_dir = REPO_ROOT / "registry" / "rag" / vintage
+    eval_set = json.loads((rag_dir / "eval_set.json").read_text(encoding="utf-8"))
+    published_questions = {row["id"]: row for row in eval_set.get("questions") or []}
+    intent_artifact = json.loads((rag_dir / "intent_eval.json").read_text(encoding="utf-8"))
+    intent_rows = {row["id"]: row
+                   for row in ((intent_artifact.get("published_set") or {}).get("questions") or [])}
+    answer_artifact = json.loads((rag_dir / "answer_eval.json").read_text(encoding="utf-8"))
+    answer_rows = {row["id"]: row for row in answer_artifact.get("questions") or []}
+    corpus = json.loads((rag_dir / "corpus.json").read_text(encoding="utf-8"))
+    chunk_citations = {chunk["chunk_id"]: str(chunk.get("citation") or "")
+                       for chunk in corpus.get("chunks") or []}
+    meanings = glossary_meanings(REPO_ROOT / "docs" / "glossary.md")
+
+    # The held-out set is the project's own measurement set, and the app must not show it: a question
+    # the reader can copy is a question the measurement can no longer score.
+    page = rendered_text(at)
+    for row in (intent_artifact.get("held_out") or {}).get("questions") or []:
+        question = squash(str(row.get("question") or ""))
+        if question and question in page:
+            fail(failures, f"the app shows the held-out question {question!r} — the held-out set is the "
+                           f"project's own measurement set and must not leak into the page")
+            break
+
+    if not at.chat_input:
+        fail(failures, "the app has no chat input, so the Ask tab cannot take a question at all")
+        example_ids: list[str] = []
+    else:
+        declared = re.search(r"CHAT_EXAMPLE_IDS\s*=\s*\(([^)]*)\)", source, re.S)
+        example_ids = re.findall(r"\"([^\"]+)\"", declared.group(1)) if declared else []
+        if not example_ids:
+            fail(failures, "the app declares no example questions, so a reader is not told what it can ask")
+
+        for question_id in example_ids:
+            row = published_questions.get(question_id)
+            if row is None:
+                fail(failures, f"the app offers the example {question_id!r}, which is not in the published "
+                               f"evaluation set — an example must be a question this project has measured")
+                continue
+            question = squash(str(row["question"]))
+            if question not in page:
+                fail(failures, f"the app's example {question_id!r} is not on the page, so the reader cannot "
+                               f"ask it")
+                continue
+
+            before = len(at.chat_message)
+            at.chat_input[0].set_value(str(row["question"]))
+            at.run()
+            if at.exception:
+                fail(failures, f"asking {question_id!r} raised — "
+                               f"{'; '.join(exc.message.splitlines()[0] for exc in at.exception)}")
+                continue
+            spoken = [message for message in at.chat_message[before:]
+                      if message.proto.name == "assistant"]
+            if not spoken:
+                fail(failures, f"asking {question_id!r} produced no answer")
+                continue
+            text = message_text(spoken[0])
+
+            intent_row = intent_rows.get(question_id) or {}
+            intent = intent_row.get("intent")
+            rule_id = intent_row.get("rule_id")
+
+            if intent == "answerable":
+                measured = answer_rows.get(question_id)
+                if measured is None:
+                    fail(failures, f"the app offers {question_id!r}, which the answer measurement does not "
+                                   f"cover — an offered example must be a measured one")
+                    continue
+                if measured.get("status") != "answered":
+                    fail(failures, f"the measurement says {question_id!r} is {measured.get('status')!r} and "
+                                   f"the chat must say the same")
+                if "**Short answer:**" not in text:
+                    fail(failures, f"the chat's answer to {question_id!r} has no plain-language reading — the "
+                                   f"reader gets the record's words or the reading, never only the record")
+                citation = squash(str(measured.get("citation") or ""))
+                if citation and citation not in text:
+                    fail(failures, f"the chat's answer to {question_id!r} does not carry the citation the "
+                                   f"measurement recorded")
+                for needle in (measured.get("needles") or {}).get("required") or []:
+                    if squash(str(needle)) not in text:
+                        fail(failures, f"the chat's answer to {question_id!r} does not carry {needle!r}, which "
+                                       f"the measurement requires of it")
+            else:
+                if rule_id and rule_id not in text:
+                    fail(failures, f"the refusal to {question_id!r} does not name the rule {rule_id!r} that "
+                                   f"refused it")
+                if rule_id and rule_id in meanings and squash(meanings[rule_id]) not in text:
+                    fail(failures, f"the refusal to {question_id!r} does not carry the glossary's plain meaning "
+                                   f"for {rule_id!r} — a refusal the reader cannot read is a shrug")
+                route = str(intent_row.get("route") or "")
+                citation = squash(chunk_citations.get(route, ""))
+                if citation and citation not in text:
+                    fail(failures, f"the refusal to {question_id!r} does not cite the passage it refuses for "
+                                   f"— a refusal must be an argument with a source")
+
+    # ---------------------------------------------------------------------------------------------
+    # 5. No number is typed, and nothing can be fitted at render time
+    # ---------------------------------------------------------------------------------------------
     estimates = json.loads((REPO_ROOT / "registry" / "estimates" / vintage / "estimates.json").read_text("utf-8"))
     published_specs = estimates.get("specifications") or []
     for spec in published_specs + [s for r in published.values() for s in (r.get("specifications") or [])]:
@@ -282,7 +406,7 @@ def main() -> int:
             fail(failures, f"app/ imports {module}, which {why} — the app reads the registry and nothing else")
 
     # ---------------------------------------------------------------------------------------------
-    # 5. The narrative describes this page, and does not claim a chat that is not built
+    # 6. The narrative describes this page, and does not claim a chat that is not built
     # ---------------------------------------------------------------------------------------------
     narrative = REPO_ROOT / "docs" / "app.md"
     if not narrative.exists():
@@ -321,6 +445,8 @@ def main() -> int:
     print(f"card wins     : no published coefficient appears as a literal in the app source; every displayed "
           f"value traces to a card field")
     print(f"no model      : the app imports no database client, network client or fitting library")
+    print(f"ask tab       : {len(example_ids)} published example question(s) asked and answered from the "
+          f"registry; every refusal named its rule, its plain meaning and the passage it cites")
     print()
     print("PASS — every card renders its own content, every absent number names its reason, and the "
           "design-level results stay where the index puts them")

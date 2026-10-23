@@ -2,12 +2,12 @@
  "schema_version": 2,
  "layer": "Stage 9 — the pre-retrieval intent gate",
  "vintage": "2026-10-18",
- "generated_at": "2026-10-22T03:58:08+00:00",
+ "generated_at": "2026-10-23T04:04:29+00:00",
  "generator": {
   "script": "scripts/eval_intent.py",
   "spec": "analysis/specs/intent_gate.yml",
   "eval_spec": "analysis/specs/intent_gate_eval_v3.yml",
-  "git_sha": "3dcb55526373536ac8e5fe77b9ee72fb69862d64"
+  "git_sha": "6e7486d1f005056bd43eb17ad4971b50922fe9af"
  },
  "specs": {
   "gate": {
@@ -23,8 +23,8 @@
  },
  "corpus": {
   "path": "registry/rag/2026-10-18/corpus.json",
-  "sha256": "224f3df62a2b26ec7eb3fbbccca0441916a7d7782723bc06b6330ceccf4ac1c7",
-  "chunks": 441,
+  "sha256": "c7bfaced694f2ed18f4476acaefd2427d56689071d2f037b5bac3e752a75ac4d",
+  "chunks": 482,
   "vintage": "2026-10-18"
  },
  "rules": [
@@ -1210,8 +1210,12 @@
     "expected_refusal_cite": null,
     "route_matches_cite": true,
     "carries_a_needle": false,
-    "first_gold_rank": 2,
+    "first_gold_rank": 3,
     "retrieved": [
+     {
+      "chunk_id": "estimate:fatalities__A",
+      "score": 0.629271
+     },
      {
       "chunk_id": "card:fatalities__B#p6",
       "score": 0.614327
@@ -1225,12 +1229,8 @@
       "score": 0.578616
      },
      {
-      "chunk_id": "card:fatalities__B#p5",
-      "score": 0.541005
-     },
-     {
-      "chunk_id": "result:A#p2",
-      "score": 0.524034
+      "chunk_id": "estimate:incidents__A",
+      "score": 0.567862
      }
     ]
    },
@@ -1264,8 +1264,8 @@
       "score": 0.529658
      },
      {
-      "chunk_id": "card:incidents__A#p5",
-      "score": 0.51566
+      "chunk_id": "estimate:fatalities__A",
+      "score": 0.528608
      }
     ]
    },
@@ -1299,8 +1299,8 @@
       "score": 0.447234
      },
      {
-      "chunk_id": "result:A",
-      "score": 0.435333
+      "chunk_id": "estimate:incidents__A",
+      "score": 0.443252
      }
     ]
    },
@@ -1431,16 +1431,16 @@
       "score": 0.502659
      },
      {
+      "chunk_id": "estimate:mmr__C",
+      "score": 0.498169
+     },
+     {
       "chunk_id": "card:mmr__C",
       "score": 0.494876
      },
      {
-      "chunk_id": "card:u5mr__C#p2",
-      "score": 0.488877
-     },
-     {
-      "chunk_id": "card:fatalities__C#p3",
-      "score": 0.487782
+      "chunk_id": "estimate:u5mr__C",
+      "score": 0.494698
      }
     ]
    },
@@ -1615,7 +1615,7 @@
      },
      {
       "chunk_id": "card:cpi_yoy__A#p4",
-      "score": 0.264768
+      "score": 0.264767
      }
     ]
    },
@@ -1894,8 +1894,8 @@
       "score": 0.317903
      },
      {
-      "chunk_id": "card:gdp_growth__B#p3",
-      "score": 0.310844
+      "chunk_id": "estimate:gdp_growth__C",
+      "score": 0.315358
      }
     ]
    },

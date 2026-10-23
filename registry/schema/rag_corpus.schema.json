@@ -104,6 +104,7 @@
           "chunk_id": { "type": "string", "minLength": 3 },
           "doc_type": {
             "enum": [
+              "card_estimate",
               "model_card",
               "published_result",
               "methodology",

@@ -185,9 +185,16 @@ def main() -> int:
         duplicates = [cid for cid, count in Counter(ids).items() if count > 1]
         failures.append(f"corpus: duplicate chunk ids {duplicates[:5]}")
     max_chars = int(spec["chunking"]["max_chars"])
+    # A family may be declared a longer budget than the default, and the reason is in the spec: the
+    # `card_estimate` family is one card's fields in one piece, and splitting it is what the answer
+    # contract forbids. The verifier reads the declared budget rather than applying 950 to every family,
+    # which is what it did while the family was new — a false failure that hid the real drift beside it.
+    family_budget = {str(name): int(limit)
+                     for name, limit in (spec["chunking"].get("max_chars_by_family") or {}).items()}
     # Family key -> doc_type. Two families (`coverage`, `registry_coverage`) share the `coverage` doc type,
     # so the mapping is declared rather than assumed to be the identity.
-    family_to_type = {"model_card": "model_card", "published_result": "published_result",
+    family_to_type = {"model_card": "model_card", "card_estimate": "card_estimate",
+                      "published_result": "published_result",
                       "methodology": "methodology", "data_dictionary": "data_dictionary",
                       "administration": "administration", "shock": "shock", "event_study": "event_study",
                       "coverage": "coverage", "registry_coverage": "coverage", "scope": "scope"}
@@ -201,9 +208,10 @@ def main() -> int:
             failures.append(f"{chunk['chunk_id']}: chunk vintage {chunk['vintage']!r} != {expected_vintage!r}")
         if chunk["source"]["path"] not in sources:
             failures.append(f"{chunk['chunk_id']}: source {chunk['source']['path']!r} is not in the manifest")
-        if len(chunk["text"]) > max_chars:
+        budget = family_budget.get(chunk["doc_type"], max_chars)
+        if len(chunk["text"]) > budget:
             failures.append(f"{chunk['chunk_id']}: {len(chunk['text'])} chars exceeds the declared budget "
-                            f"{max_chars}")
+                            f"{budget}")
         if chunk["chars"] != len(chunk["text"]):
             failures.append(f"{chunk['chunk_id']}: chars field disagrees with the text length")
         if chunk.get("text_sha256") != hashlib.sha256(chunk["text"].encode("utf-8")).hexdigest():
@@ -228,6 +236,7 @@ def main() -> int:
     cards = [p for p in (REPO_ROOT / spec["input"]["cards_dir"]).glob("*.json") if p.name != "index.json"]
     expected_parents = {
         "model_card": len(cards),
+        "card_estimate": len(cards),
         "published_result": len(index.get("published_results") or {}),
         "administration": len(spec["input"]["seeds"]) and _csv_rows(REPO_ROOT / spec["input"]["seeds"]["administration"]),
         "shock": _csv_rows(REPO_ROOT / spec["input"]["seeds"]["shock_bands"]),

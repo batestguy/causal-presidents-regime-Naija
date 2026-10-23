@@ -46,8 +46,31 @@ ASSUMPTION = re.compile(r"\bassum\w*", re.IGNORECASE)
 CANNOT_RULE_OUT = re.compile(r"cannot\s+rule\s+out", re.IGNORECASE)
 NUMBER = re.compile(r"[−+\-]?\d[\d,]*(?:\.\d+)?")
 PART_HEADER = re.compile(r"^\[.*?\bpart \d+ of \d+\]\s*$", re.MULTILINE)
-LABEL = re.compile(r"^\*\*(?:Question|Estimate|Identifying assumption|What it cannot rule out|"
-                   r"The passage that answers this|Citation):\*\* ", re.MULTILINE)
+GLOSSARY_ROW = re.compile(r"^\|\s*\*\*(?P<term>[^*]+)\*\*\s*\|\s*(?P<meaning>[^|]+?)\s*\|\s*$")
+LABEL = re.compile(r"^\*\*(?:Question|Estimate|Why there is no number|The check that decided it|"
+                   r"Identifying assumption|What it cannot rule out|The passage that answers this|"
+                   r"The record says|Citation):\*\* ", re.MULTILINE)
+REASON_CODE = re.compile(r"Reason code:|not_run|No estimate for this|not estimated here", re.IGNORECASE)
+# The contract declares an order per shape, in names rather than in labels. This is the map from one
+# to the other, and the verifier checks the answer's sections appear in that order.
+ORDER_LABELS = {
+    "question": "**Question:**",
+    "estimate_with_interval": "**Estimate:**",
+    "reason_code": "**Why there is no number:**",
+    "deciding_check": "**The check that decided it:**",
+    "identifying_assumption": "**Identifying assumption:**",
+    "what_it_cannot_rule_out": "**What it cannot rule out:**",
+    "passage": "**The record says:**",
+    "citation": "**Citation:**",
+}
+# The plain reading repeats the shape's sections for a reader who does not work with statistics.
+PLAIN_LABELS = {
+    "estimate": ("**Short answer:**", "**The number:**", "**What it assumes:**",
+                 "**What it cannot tell you:**", "**Where this comes from:**"),
+    "no_estimate": ("**Short answer:**", "**Why there is no number:**", "**What it assumes:**",
+                    "**What it cannot tell you:**", "**Where this comes from:**"),
+    "fact": ("**Short answer:**", "**The record says:**", "**Where this comes from:**"),
+}
 FORBIDDEN = re.compile(
     r"^\s*(?:import|from)\s+(?:duckdb|sqlite3|psycopg2|sqlalchemy|requests|httpx|urllib|aiohttp|"
     r"torch|transformers|sentence_transformers|statsmodels|sklearn|scipy|linearmodels|synthdid)\b",
@@ -65,6 +88,18 @@ def flat(text: str) -> str:
 
 def numbers_of(text: str) -> set[str]:
     return {match.replace(",", "") for match in NUMBER.findall(text)}
+
+
+def answer_body(text: str) -> str:
+    """The answer's own words: the question it repeats and the citation it carries are not quotes."""
+    return "\n".join(line for line in str(text).splitlines()
+                     if not line.startswith(("**Question:**", "**Citation:**")))
+
+
+def plain_body(text: str) -> str:
+    """The plain reading's own words, without the line that says where the answer comes from."""
+    return "\n".join(line for line in str(text).splitlines()
+                     if not line.startswith("**Where this comes from:**"))
 
 
 def main() -> int:
@@ -172,19 +207,66 @@ def main() -> int:
             failures.append(f"{question_id}: unknown status {status!r}")
             continue
 
-        # An answered row must carry every part, and its own check must say so.
+        # An answered row must carry the parts its shape requires, and its own check must say so.
+        shape = str(row.get("shape") or "")
+        spec = (contract.get("shapes") or {}).get(shape)
+        if not spec:
+            failures.append(f"{question_id}: the row carries shape {shape!r}, which the contract does "
+                            "not declare")
+            continue
         check = row.get("check") or {}
-        for part in ("interval", "assumption", "cannot_rule_out", "citation"):
+        for part in spec.get("requires") or []:
             if check.get(part) is not True:
-                failures.append(f"{question_id}: answered with check[{part!r}] = {check.get(part)!r}")
-        if not INTERVAL.search(text):
-            failures.append(f"{question_id}: the answer carries no interval")
-        if not ASSUMPTION.search(text):
-            failures.append(f"{question_id}: the answer carries no identifying assumption")
-        if not CANNOT_RULE_OUT.search(text):
-            failures.append(f"{question_id}: the answer does not say what it cannot rule out")
+                failures.append(f"{question_id}: the {shape} shape requires {part!r} and the row's "
+                                f"check says {check.get(part)!r}")
+        for part in spec.get("forbids") or []:
+            if check.get(part):
+                failures.append(f"{question_id}: the {shape} shape forbids {part!r} and the row's "
+                                f"check says {check.get(part)!r}")
+        if shape == "estimate":
+            if not INTERVAL.search(text):
+                failures.append(f"{question_id}: an estimate answer carries no interval")
+            if not ASSUMPTION.search(text):
+                failures.append(f"{question_id}: an estimate answer carries no identifying assumption")
+            if not CANNOT_RULE_OUT.search(text):
+                failures.append(f"{question_id}: an estimate answer does not say what it cannot rule out")
+        elif shape == "no_estimate":
+            if not REASON_CODE.search(text):
+                failures.append(f"{question_id}: a reason answer carries no reason code")
+            if INTERVAL.search(text):
+                failures.append(f"{question_id}: a reason answer carries an interval — it is an "
+                                "estimate answer wearing a reason's label")
+        elif shape == "fact":
+            if INTERVAL.search(text):
+                failures.append(f"{question_id}: a fact answer carries an interval")
+            if "**The record says:**" not in text:
+                failures.append(f"{question_id}: a fact answer quotes no passage")
         if "**Citation:**" not in text:
             failures.append(f"{question_id}: the answer carries no citation")
+
+        # The contract declares an order per shape, and the answer's sections must follow it.
+        positions = []
+        for part in spec.get("order") or []:
+            label = ORDER_LABELS.get(part)
+            if not label:
+                failures.append(f"{question_id}: the contract's order names {part!r}, which the "
+                                "verifier does not know how to look for")
+                continue
+            at = text.find(label)
+            if at < 0:
+                failures.append(f"{question_id}: the {shape} shape orders {part!r} and the answer has "
+                                f"no {label} section")
+            positions.append((part, at))
+        if all(at >= 0 for _part, at in positions):
+            # The element expression is read in the enclosing scope, so the tuple is unpacked under
+            # its own name: a comprehension variable called `part` would silently be the loop's last
+            # value rather than the section's.
+            ordered = [name for name, _at in sorted(positions, key=lambda item: item[1])]
+            declared = [part for part in spec.get("order") or []
+                        if any(part == other for other, _at in positions)]
+            if ordered != declared:
+                failures.append(f"{question_id}: the answer's sections are in the order {ordered} and "
+                                f"the contract declares {declared}")
 
         # Every quoted sentence must exist in a cited chunk.
         cited = row.get("chunks_used") or []
@@ -194,8 +276,13 @@ def main() -> int:
             continue
         bodies = []
         for cid in cited:
-            body = PART_HEADER.sub("", str(chunks[cid].get("text") or ""))
-            bodies.append(flat(body))
+            # A cited chunk is cited with its parts: the corpus splits a long document into
+            # `<id>#p2`, `<id>#p3`, and the answer quotes a paragraph that lives in one of them.
+            # The part ids are derived from the corpus itself, not from the layer.
+            family = [cid] + [other for other in chunks if other.startswith(f"{cid}#p")]
+            for member in family:
+                body = PART_HEADER.sub("", str(chunks[member].get("text") or ""))
+                bodies.append(flat(body))
         corpus_text = flat(" ".join(bodies))
         corpus_numbers = numbers_of(corpus_text)
         for line in text.splitlines():
@@ -210,7 +297,7 @@ def main() -> int:
                                 f"{content[:90]!r}")
 
         # Every quoted number must be in the citation, and the artifact's own count must agree.
-        quoted = numbers_of(text)
+        quoted = numbers_of(answer_body(text))
         absent = sorted(number for number in quoted if number not in corpus_numbers)
         if absent:
             failures.append(f"{question_id}: quotes numbers absent from the cited chunks: {absent[:6]}")
@@ -225,11 +312,10 @@ def main() -> int:
         if not plain_text:
             failures.append(f"{question_id}: answered with no plain-language reading")
             continue
-        for label in ("**Short answer:**", "**The number:**", "**What it assumes:**",
-                      "**What it cannot tell you:**", "**Where this comes from:**"):
+        for label in PLAIN_LABELS.get(shape, ()):
             if label not in plain_text:
                 failures.append(f"{question_id}: the plain reading is missing the section {label!r}")
-        plain_absent = sorted(number for number in numbers_of(plain_text)
+        plain_absent = sorted(number for number in numbers_of(plain_body(plain_text))
                               if number not in corpus_numbers)
         if plain_absent:
             failures.append(f"{question_id}: the plain reading quotes numbers absent from the cited "
@@ -285,6 +371,51 @@ def main() -> int:
                                 "docs/glossary.md — a definition the page does not carry is a definition "
                                 "that can drift")
 
+        # The needles: what the eval set says the answer must carry, and what it does carry.
+        needles = row.get("needles") or {}
+        required = list(needles.get("required") or [])
+        if required:
+            satisfied = [needle for needle in required if needle in text]
+            missing = [needle for needle in required if needle not in text]
+            if sorted(needles.get("satisfied") or []) != sorted(satisfied):
+                failures.append(f"{question_id}: the artifact records {needles.get('satisfied')!r} as "
+                                f"satisfied and this verifier finds {satisfied!r}")
+            if sorted(needles.get("missing") or []) != sorted(missing):
+                failures.append(f"{question_id}: the artifact records {needles.get('missing')!r} as "
+                                f"missing and this verifier finds {missing!r}")
+            if bool(needles.get("all_satisfied")) != (not missing):
+                failures.append(f"{question_id}: the artifact records all_satisfied="
+                                f"{needles.get('all_satisfied')!r} and the answer carries "
+                                f"{len(satisfied)} of {len(required)} needles")
+
+    # ---------------------------------------------------------------------------------------------
+    # 2b. Every refusal code has a plain-English meaning, and every refusal carries one
+    # ---------------------------------------------------------------------------------------------
+    refusal_codes = contract.get("refusal_codes") or {}
+    glossary_entries: dict[str, str] = {}
+    for line in glossary_path.read_text(encoding="utf-8").splitlines():
+        match = GLOSSARY_ROW.match(line.strip())
+        if match:
+            glossary_entries[match.group("term").strip()] = match.group("meaning").strip()
+    for code, reason in refusal_codes.items():
+        if code not in glossary_entries:
+            failures.append(f"docs/glossary.md: the refusal code {code} has no plain-English meaning — "
+                            f"the refusal would be unexplained ({reason})")
+    for term in glossary_entries:
+        if re.fullmatch(r"[A-Z]\d{2}", term) and term not in refusal_codes:
+            failures.append(f"docs/glossary.md: {term} is explained as a refusal code, but the contract "
+                            "does not declare it")
+    for row in rows:
+        if row.get("status") in ("refused", "declined"):
+            code = row.get("refusal_code")
+            if not code:
+                failures.append(f"{row.get('id')}: a {row.get('status')} answer carries no code")
+            elif code not in refusal_codes:
+                failures.append(f"{row.get('id')}: the code {code!r} is not one the contract declares")
+            elif code not in glossary_entries:
+                failures.append(f"{row.get('id')}: the code {code!r} has no plain-English meaning in "
+                                "docs/glossary.md")
+
     # ---------------------------------------------------------------------------------------------
     # 3. The counts, recomputed
     # ---------------------------------------------------------------------------------------------
@@ -293,23 +424,49 @@ def main() -> int:
         answered = [row for row in rows_ if row.get("status") == "answered"]
         refused = [row for row in rows_ if row.get("status") == "refused"]
         declined = [row for row in rows_ if row.get("status") == "declined"]
+        shapes = contract.get("shapes") or {}
+
+        def parts_of(row: dict) -> tuple[list[str], list[str]]:
+            spec = shapes.get(row.get("shape") or "") or {}
+            return list(spec.get("requires") or []), list(spec.get("forbids") or [])
+
+        parts = {part: sum(1 for row in answered if (row.get("check") or {}).get(part))
+                 for part in ("interval", "reason_code", "identifying_assumption",
+                              "cannot_rule_out", "citation")}
+        with_needles = [row for row in rows_ if (row.get("needles") or {}).get("required")]
+        needles_total = sum(len(row["needles"]["required"]) for row in with_needles)
+        needles_found = sum(len(row["needles"]["satisfied"]) for row in with_needles)
+        satisfied_questions = sum(1 for row in with_needles if row["needles"]["all_satisfied"])
         return {
             "n": n,
             "answered": len(answered),
             "refused": len(refused),
             "declined": len(declined),
             "answer_rate": round(len(answered) / max(n, 1), 6),
-            "answered_with_all_parts": sum(1 for row in answered if all((row.get("check") or {}).values())),
-            "parts_present": {part: sum(1 for row in answered if (row.get("check") or {}).get(part))
-                              for part in ("interval", "assumption", "cannot_rule_out", "citation")},
+            "answered_with_all_parts": sum(
+                1 for row in answered
+                if all((row.get("check") or {}).get(part) for part in parts_of(row)[0])
+                and not any((row.get("check") or {}).get(part) for part in parts_of(row)[1])),
+            "parts_present": parts,
+            "shapes": {shape: sum(1 for row in answered if row.get("shape") == shape)
+                       for shape in sorted(shapes)},
             "refusals_with_citation": sum(1 for row in refused if row.get("citation")),
             "declined_with_citation": sum(1 for row in declined if row.get("citation")),
+            "refusals_with_a_code": sum(1 for row in refused if row.get("refusal_code")),
             "answers_quoting_numbers_absent_from_the_citation": sum(
                 1 for row in answered if row.get("numbers_absent_from_citation")),
             "answered_with_plain_language": sum(
                 1 for row in answered if (row.get("plain") or {}).get("text")),
             "answers_whose_plain_reading_quotes_uncited_numbers": sum(
                 1 for row in answered if row.get("plain_numbers_absent_from_citation")),
+            "questions_with_needles": len(with_needles),
+            "questions_whose_needles_are_all_satisfied": satisfied_questions,
+            "needle_satisfaction": (round(satisfied_questions / len(with_needles), 6)
+                                    if with_needles else None),
+            "needles_total": needles_total,
+            "needles_satisfied": needles_found,
+            "needle_recall": (round(needles_found / max(needles_total, 1), 6)
+                              if needles_total else None),
         }
 
     sets = artifact.get("sets") or {}
@@ -379,6 +536,15 @@ def main() -> int:
                 (str(block.get("answered")), f"the {name} answered count"),
                 (str(block.get("declined")), f"the {name} declined count"),
             ])
+            if block.get("questions_with_needles"):
+                needles.extend([
+                    (f"{float(block.get('needle_satisfaction') or 0):.3f}",
+                     f"the {name} needle satisfaction"),
+                    (f"{float(block.get('needle_recall') or 0):.3f}", f"the {name} needle recall"),
+                    (str(block.get("questions_whose_needles_are_all_satisfied")),
+                     f"the {name} count of questions carrying every needle"),
+                    (str(block.get("needles_satisfied")), f"the {name} count of needles present"),
+                ])
         needles.append((str((sets.get("all") or {}).get("n")), "the measured question count"))
         for needle, label in needles:
             if needle not in prose:

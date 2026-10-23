@@ -49,6 +49,23 @@ def numbers_of(text: str) -> set[str]:
     return {match.replace(",", "") for match in NUMBER.findall(text)}
 
 
+def answer_body(text: str) -> str:
+    """The answer's own words, without the question it repeats and the citation it carries.
+
+    The question is the reader's, not the corpus's: "Under-5 mortality" carries a 5, and "in 2012"
+    carries a year. The citation line is metadata, and its vintage date carries a year too. Neither is
+    a number the answer quotes from a chunk, so both are stripped before the numbers are counted.
+    """
+    return "\n".join(line for line in str(text).splitlines()
+                     if not line.startswith(("**Question:**", "**Citation:**")))
+
+
+def plain_body(text: str) -> str:
+    """The plain reading's own words, without the line that says where the answer comes from."""
+    return "\n".join(line for line in str(text).splitlines()
+                     if not line.startswith("**Where this comes from:**"))
+
+
 def main() -> int:
     sys.path.insert(0, str(REPO_ROOT))
     from app.answer_layer import load_layer  # noqa: E402
@@ -65,11 +82,14 @@ def main() -> int:
 
     layer = load_layer(REPO_ROOT)
     k = int((rag_spec.get("retrieval") or {}).get("k") or 5)
+    contract = rag_spec["answer_contract"]
+    shapes = contract.get("shapes") or {}
 
     rows: list[dict] = []
     seen: set[str] = set()
 
-    def add(question_id: str, question: str, source: str, expected_intent: str | None) -> None:
+    def add(question_id: str, question: str, source: str, expected_intent: str | None,
+            needles: list[str] | None = None) -> None:
         if question_id in seen:
             return
         seen.add(question_id)
@@ -87,10 +107,12 @@ def main() -> int:
         elif answer.route and answer.route in chunks:
             cited_text = " ".join(str(cid_text) for cid_text in
                                   [chunks[answer.route].get("text") or ""])
-        quoted = numbers_of(answer.text)
+        quoted = numbers_of(answer_body(answer.text))
         cited_numbers = numbers_of(cited_text)
         plain_text = (answer.plain or {}).get("text") or ""
-        plain_quoted = numbers_of(plain_text) if plain_text else set()
+        plain_quoted = numbers_of(plain_body(plain_text)) if plain_text else set()
+        wanted = list(needles or [])
+        found = [needle for needle in wanted if needle in answer.text]
         rows.append({
             "id": question_id,
             "set": source,
@@ -100,9 +122,17 @@ def main() -> int:
             "rule_id": answer.rule_id,
             "route": answer.route,
             "status": answer.status,
+            "shape": answer.shape,
+            "refusal_code": answer.refusal_code,
             "check": answer.check,
             "citation": answer.citation,
             "chunks_used": answer.chunks_used,
+            "needles": {
+                "required": wanted,
+                "satisfied": found,
+                "missing": [needle for needle in wanted if needle not in found],
+                "all_satisfied": bool(wanted) and len(found) == len(wanted),
+            },
             "numbers_quoted": sorted(quoted),
             "numbers_absent_from_citation": sorted(
                 number for number in quoted if number not in cited_numbers
@@ -116,10 +146,16 @@ def main() -> int:
 
     for question in eval_set["questions"]:
         if question["type"] == "answerable":
-            add(question["id"], question["question"], "published", "answerable")
+            add(question["id"], question["question"], "published", "answerable",
+                question.get("must_contain"))
     for question in intent_eval["held_out"]["questions"]:
         if question["expected_intent"] == "answerable":
             add(f"heldout_{question['id']}", question["question"], "held_out", "answerable")
+
+    def parts_of(row: dict) -> tuple[list[str], list[str]]:
+        """The contract's required and forbidden parts for the row's shape."""
+        spec = shapes.get(row.get("shape") or "") or {}
+        return list(spec.get("requires") or []), list(spec.get("forbids") or [])
 
     def summarise(rows_: list[dict]) -> dict:
         n = len(rows_)
@@ -127,23 +163,42 @@ def main() -> int:
         refused = [row for row in rows_ if row["status"] == "refused"]
         declined = [row for row in rows_ if row["status"] == "declined"]
         parts = {key: sum(1 for row in answered if row["check"].get(key)) for key in
-                 ("interval", "assumption", "cannot_rule_out", "citation")}
+                 ("interval", "reason_code", "identifying_assumption", "cannot_rule_out", "citation")}
+        with_needles = [row for row in rows_ if (row.get("needles") or {}).get("required")]
+        needles_total = sum(len(row["needles"]["required"]) for row in with_needles)
+        needles_found = sum(len(row["needles"]["satisfied"]) for row in with_needles)
         return {
             "n": n,
             "answered": len(answered),
             "refused": len(refused),
             "declined": len(declined),
             "answer_rate": round(len(answered) / max(n, 1), 6),
-            "answered_with_all_parts": sum(1 for row in answered if all(row["check"].values())),
+            "answered_with_all_parts": sum(
+                1 for row in answered
+                if all(row["check"].get(part) for part in parts_of(row)[0])
+                and not any(row["check"].get(part) for part in parts_of(row)[1])),
             "parts_present": parts,
+            "shapes": {shape: sum(1 for row in answered if row.get("shape") == shape)
+                       for shape in sorted(shapes)},
             "refusals_with_citation": sum(1 for row in refused if row["citation"]),
             "declined_with_citation": sum(1 for row in declined if row["citation"]),
+            "refusals_with_a_code": sum(1 for row in refused if row.get("refusal_code")),
             "answers_quoting_numbers_absent_from_the_citation": sum(
                 1 for row in answered if row["numbers_absent_from_citation"]),
             "answered_with_plain_language": sum(
                 1 for row in answered if (row.get("plain") or {}).get("text")),
             "answers_whose_plain_reading_quotes_uncited_numbers": sum(
                 1 for row in answered if row["plain_numbers_absent_from_citation"]),
+            "questions_with_needles": len(with_needles),
+            "questions_whose_needles_are_all_satisfied": sum(
+                1 for row in with_needles if row["needles"]["all_satisfied"]),
+            "needle_satisfaction": (round(
+                sum(1 for row in with_needles if row["needles"]["all_satisfied"])
+                / len(with_needles), 6) if with_needles else None),
+            "needles_total": needles_total,
+            "needles_satisfied": needles_found,
+            "needle_recall": (round(needles_found / max(needles_total, 1), 6)
+                              if needles_total else None),
         }
 
     sets = {
@@ -177,8 +232,12 @@ def main() -> int:
         "contract": {
             "path": "analysis/specs/rag.yml#answer_contract",
             "sha256": sha256_of(RAG_SPEC_PATH),
+            "version": contract.get("version"),
             "post_check": rag_spec["answer_contract"]["post_check"],
             "refusal_template": rag_spec["answer_contract"]["refusal_template"],
+            "shapes": {name: {"requires": list(spec.get("requires") or []),
+                              "forbids": list(spec.get("forbids") or [])}
+                       for name, spec in shapes.items()},
             "retrieval": f"BM25 over the corpus text, k = {k}; no model, no network, no database",
         },
         "sets": sets,
@@ -196,9 +255,16 @@ def main() -> int:
               f"{block['declined']} declined by the post-check, {block['refused']} refused by the gate; "
               f"answer rate {block['answer_rate']:.3f}")
         if block["answered"]:
-            print(f"  {'':<10}  {block['answered_with_plain_language']} of the {block['answered']} carry a "
+            shapes_used = ", ".join(f"{shape} {count}" for shape, count in block["shapes"].items() if count)
+            print(f"  {'':<10}  shapes: {shapes_used}; "
+                  f"{block['answered_with_plain_language']} of the {block['answered']} carry a "
                   f"plain-language reading, {block['answers_whose_plain_reading_quotes_uncited_numbers']} "
                   f"of them quote a number their citation does not")
+        if block["questions_with_needles"]:
+            print(f"  {'':<10}  needles: {block['questions_whose_needles_are_all_satisfied']} of "
+                  f"{block['questions_with_needles']} questions carry every needle they require "
+                  f"({block['needle_satisfaction']:.3f}); {block['needles_satisfied']} of "
+                  f"{block['needles_total']} needles are present ({block['needle_recall']:.3f})")
     return 0
 
 

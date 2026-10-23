@@ -10,14 +10,19 @@ It is read-only on purpose. **Nothing is fitted at render time**, nothing is fet
 - **App:** `app/streamlit_app.py` (Streamlit 1.60)
 - **Registry reader:** `app/registry_data.py` — loads `registry/dags/index.json` and the 36 cards, refuses a
   card whose vintage is not the index's
-- **Reads:** `registry/dags/` only (cards, index, graphs). No database, no network, no model.
+- **Answer layer:** `app/answer_layer.py` + `app/intent_gate.py` — the gate, the corpus and the answer
+  contract, for the **Ask** tab
+- **Reads:** `registry/dags/` (cards, index, graphs) and, for the Ask tab, `registry/rag/<vintage>/` (the
+  corpus and the published questions), `analysis/specs/` (the gate's rules and the answer contract) and
+  `docs/glossary.md`. No database, no network, no model.
 - **Verifier:** `tests/verify_app.py` — renders all 36 cards in Streamlit's own test harness and compares the
-  output against the card JSON
+  output against the card JSON, then asks the Ask tab the questions it offers and compares what comes back
+  against the published measurement
 - **Run:** `/c/Users/TOSHIBA/ds-general/python.exe -m streamlit run app/streamlit_app.py`
 
 ## 1. What is on the page
 
-Three tabs, in the order the questions come in.
+Four tabs, in the order the questions come in.
 
 **Model card.** The sidebar picks `(outcome, design)`. The page then shows, left column first:
 
@@ -41,6 +46,8 @@ mistaken for a card's estimate — and the verifier checks that no B card ever d
 
 **What this reads.** The file list, the vintage, the no-model-at-render-time rule, and the ratio below.
 
+**Ask the registry.** The intent gate and the answer layer, in the reader's own words. Section 3.
+
 ## 2. The ratio, stated before any single number
 
 **2 of 36 model cards carry a published number.** The other 34 each carry a reason from a closed set:
@@ -57,36 +64,42 @@ the project estimated two things or failed to estimate thirty-four. A card whose
 its own words, and `tests/verify_app.py` fails if a single one of the 34 renders a code without its detail
 sentence.
 
-## 3. Why there is no chat tab yet
+## 3. The Ask tab — the same rule, one level down
 
-The retrieval half of the chat layer is built and measured (`docs/rag.md`): 441 attributed chunks, recall@5 of
-0.944 for the embedding retriever. But two of its four gates fail — refusal-with-reason recall 0.5, out-of-scope
-refusal 0.25 — because a question like *"what will inflation be in 2030?"* embeds closer to the corpus than
-several genuine questions do. Similarity alone cannot refuse it.
+The **Ask** tab is the intent gate and the answer layer, in the reader's own words. A question goes to the
+gate first. If the gate refuses it, the reader gets a refusal that carries four things: the rule that
+refused (`G02`…`G09`), that rule's plain-English meaning out of `docs/glossary.md`, the passage that says why
+it cannot be answered, and that passage's citation. If the gate allows it, the answer layer retrieves the
+passages that answer it and assembles an extractive answer in the contract's order — an estimate with its
+interval, a reason with the check that decided it, or the passage that says the thing asked about — and
+every part of it cites the chunk it came from.
 
-Shipping the chat before that gate passes would produce exactly the failure the corpus exists to prevent: a
-confident answer to a question this data cannot answer. **The gate and the answer layer are now built and measured.** On a held-out set the rules never saw, the
-gate refuses 0.947 of out-of-scope questions, cites the reason 1.000 of the time and leaves every answerable
-question alone (`docs/intent.md`); it is the first refusal decision in the project that is a policy rather
-than a score. The answer layer then enforces the R-04 post-check on its own output (`docs/answer.md`) and the
-measurement is the reason the tab is still unbuilt: it answers **3 of the 16 published answerable questions
-(0.188)** and 3 of the 22 held-out ones — 0.158 over all 38 — because R-04 is an estimate contract and 34 of
-the 36 cards carry no number to put an interval on. What is left for a chat surface is a product decision
-with those numbers in hand — not a missing component.
+**Both halves are deterministic, and that is the point.** The retrieval is the same BM25 the retrieval
+evaluation measures as its baseline; the assembly selects committed paragraphs rather than writing prose;
+the plain-language reading is computed from the answer's own numbers. No model is called, no key is needed,
+and the answer the tab gives is the answer the project measured: **36 of the 38 measured questions answered
+(0.947)**, with 24 of the 25 published needles present in the answers that were supposed to carry them
+(0.960 recall, 0.938 satisfaction — `docs/answer.md` §2). A generated answer could not be checked against
+anything; this one is checked against the artifact on every build.
 
-Two things the tab would need are now done rather than planned. Every answer carries a **plain-language
-reading** built from its own quoted numbers, with the technical words defined from `docs/glossary.md`
-(`docs/answer.md` §3) — so a reader who does not work with statistics gets the direction, the range, whether
-it excludes zero, and what the answer cannot tell them, without a coefficient being re-typed or re-rounded.
-And the whole path runs with **no LLM key**: rules, BM25, paragraph selection, the R-04 check and the
-glossary are all local, and `tests/verify_answer.py` runs the layer in a child process with every key-shaped
-variable stripped. Only a RAGAS measurement would need a key, and there is no generation step for it to
-judge.
+**The tab does not re-decide anything.** It offers four questions the project has already published and
+measured — one that asks for a number, one that asks why a design was never run, one that asks a fact the
+data-coverage record carries, and one the gate refuses — and the verifier asks each of them through the real
+chat input and compares the answer with `intent_eval.json` and `answer_eval.json`. The tab reproduces the
+measurement; it is not a second opinion on it.
+
+**What it still cannot do.** BM25 is lexical, so a question phrased in words the corpus does not use is
+declined rather than answered — 2 of the 38 measured questions were, and the refusal says so instead of
+guessing. The embedding retriever's own refusal gates still fail (refusal-with-reason recall 0.5,
+out-of-scope refusal 0.25 — `docs/rag.md`), which is why the tab uses the rule-based gate: similarity alone
+cannot refuse *"what will inflation be in 2030?"*. The held-out question set is the project's own measurement
+set, and the verifier fails if any held-out question reaches the page.
 
 ## 4. The rules the verifier enforces
 
 `tests/verify_app.py` does not import `app/registry_data.py`; it formats the card JSON itself and requires the
-page to match.
+page to match. It does not import `app/answer_layer.py` either: the answers the tab gives are compared with
+the published artifacts, not with the code that produced them.
 
 - **Every one of the 36 pairs renders** — a card the reader cannot reach is a card that does not exist.
 - **The number on the page is the card's number** — coefficient, interval, p-value, sample, the coefficient's
@@ -99,9 +112,15 @@ page to match.
   full and 4-decimal form. The card wins; a literal in the UI is the defect.
 - **Nothing can be fitted at render time** — the source is scanned for database clients, network clients and
   fitting libraries.
+- **The Ask tab's answers are the measured answers** — each question the tab offers is asked through the real
+  chat input, and the answer must carry the citation, the needles and the plain reading the measurement
+  recorded.
+- **A refusal must cite** — the rule, the glossary's meaning for it, and the passage it refuses for.
+- **The held-out set does not leak** — a held-out question on the page fails the build.
 
 A deliberate consequence: the app holds no statistic of its own. If the page and the card ever disagree, the
-card is right and the app is wrong.
+card is right and the app is wrong. The same holds for the tab: if an answer and `answer_eval.json` ever
+disagree, the artifact is right and the app is wrong.
 
 ## 5. Limits
 

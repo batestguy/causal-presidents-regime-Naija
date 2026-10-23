@@ -55,8 +55,19 @@
       "properties": {
         "path": { "type": "string" },
         "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "version": { "type": ["integer", "null"] },
         "post_check": { "type": "string" },
         "refusal_template": { "type": "string" },
+        "shapes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "requires": { "type": "array", "items": { "type": "string" } },
+              "forbids": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
         "retrieval": { "type": "string" }
       }
     },
@@ -86,11 +97,19 @@
         "answer_rate",
         "answered_with_all_parts",
         "parts_present",
+        "shapes",
         "refusals_with_citation",
         "declined_with_citation",
+        "refusals_with_a_code",
         "answers_quoting_numbers_absent_from_the_citation",
         "answered_with_plain_language",
-        "answers_whose_plain_reading_quotes_uncited_numbers"
+        "answers_whose_plain_reading_quotes_uncited_numbers",
+        "questions_with_needles",
+        "questions_whose_needles_are_all_satisfied",
+        "needle_satisfaction",
+        "needles_total",
+        "needles_satisfied",
+        "needle_recall"
       ],
       "properties": {
         "n": { "type": "integer", "minimum": 0 },
@@ -101,19 +120,31 @@
         "answered_with_all_parts": { "type": "integer", "minimum": 0 },
         "parts_present": {
           "type": "object",
-          "required": ["interval", "assumption", "cannot_rule_out", "citation"],
+          "required": ["interval", "reason_code", "identifying_assumption", "cannot_rule_out", "citation"],
           "properties": {
             "interval": { "type": "integer", "minimum": 0 },
-            "assumption": { "type": "integer", "minimum": 0 },
+            "reason_code": { "type": "integer", "minimum": 0 },
+            "identifying_assumption": { "type": "integer", "minimum": 0 },
             "cannot_rule_out": { "type": "integer", "minimum": 0 },
             "citation": { "type": "integer", "minimum": 0 }
           }
         },
+        "shapes": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        },
         "refusals_with_citation": { "type": "integer", "minimum": 0 },
         "declined_with_citation": { "type": "integer", "minimum": 0 },
+        "refusals_with_a_code": { "type": "integer", "minimum": 0 },
         "answers_quoting_numbers_absent_from_the_citation": { "type": "integer", "minimum": 0 },
         "answered_with_plain_language": { "type": "integer", "minimum": 0 },
-        "answers_whose_plain_reading_quotes_uncited_numbers": { "type": "integer", "minimum": 0 }
+        "answers_whose_plain_reading_quotes_uncited_numbers": { "type": "integer", "minimum": 0 },
+        "questions_with_needles": { "type": "integer", "minimum": 0 },
+        "questions_whose_needles_are_all_satisfied": { "type": "integer", "minimum": 0 },
+        "needle_satisfaction": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "needles_total": { "type": "integer", "minimum": 0 },
+        "needles_satisfied": { "type": "integer", "minimum": 0 },
+        "needle_recall": { "type": ["number", "null"], "minimum": 0, "maximum": 1 }
       }
     },
     "question": {
@@ -125,9 +156,12 @@
         "expected_intent",
         "intent",
         "status",
+        "shape",
+        "refusal_code",
         "check",
         "citation",
         "chunks_used",
+        "needles",
         "numbers_quoted",
         "numbers_absent_from_citation",
         "plain_numbers_absent_from_citation",
@@ -143,11 +177,14 @@
         "rule_id": { "type": ["string", "null"] },
         "route": { "type": ["string", "null"] },
         "status": { "enum": ["answered", "refused", "declined"] },
+        "shape": { "type": ["string", "null"] },
+        "refusal_code": { "type": ["string", "null"] },
         "check": {
           "type": "object",
           "properties": {
             "interval": { "type": "boolean" },
-            "assumption": { "type": "boolean" },
+            "reason_code": { "type": "boolean" },
+            "identifying_assumption": { "type": "boolean" },
             "cannot_rule_out": { "type": "boolean" },
             "citation": { "type": "boolean" },
             "cited": { "type": "boolean" },
@@ -157,6 +194,16 @@
         },
         "citation": { "type": ["string", "null"] },
         "chunks_used": { "type": "array", "items": { "type": "string" } },
+        "needles": {
+          "type": "object",
+          "required": ["required", "satisfied", "missing", "all_satisfied"],
+          "properties": {
+            "required": { "type": "array", "items": { "type": "string" } },
+            "satisfied": { "type": "array", "items": { "type": "string" } },
+            "missing": { "type": "array", "items": { "type": "string" } },
+            "all_satisfied": { "type": "boolean" }
+          }
+        },
         "numbers_quoted": { "type": "array", "items": { "type": "string" } },
         "numbers_absent_from_citation": { "type": "array", "items": { "type": "string" } },
         "plain_numbers_absent_from_citation": { "type": "array", "items": { "type": "string" } },

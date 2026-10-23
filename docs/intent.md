@@ -201,8 +201,8 @@ Four gaps are declared on the spec and carried onto the artifact rather than lef
 - **KG02 — the answer-shape post-check.** The gate decides an intent and a citation; it does not assemble an
   answer, so it cannot check one for an interval, an identifying assumption and a citation (R-04). That
   belongs to the answer layer, which is now built (`docs/answer.md`): it enforces the post-check on its own
-  output and declines 13 of the 16 published answerable questions, because R-04 is an estimate contract and
-  34 of the 36 cards carry no number.
+  output and declines 2 of the 38 measured questions, because the contract now has three shapes and the
+  corpus cannot answer those two in any shape.
 - **KG03 — the rules are lexical.** A paraphrase that avoids the declared words is missed, and so is a
   country reached through a city or a demonym. Accepted, with the reason above; closing it means a
   paraphrased held-out set published beside the lexical one.
@@ -214,13 +214,14 @@ Four gaps are declared on the spec and carried onto the artifact rather than lef
 ## 6. What this does not do
 
 - **It does not answer anything.** It returns `{intent, rule_id, route, route_status, reason}`; quoting the
-  pinned chunk is the answer layer's job, and that layer's measured answer rate is **0.158** over the 38
+  pinned chunk is the answer layer's job, and that layer's measured answer rate is **0.947** over the 38
   answerable questions it was run on (`docs/answer.md` §2).
-- **It does not gate the app yet.** `app/streamlit_app.py` has no chat tab, so nothing calls the gate at
-  request time today. The module is framework-free and importable from the app when that tab exists.
+- **It does not answer a question on its own.** The app's **Ask** tab calls the gate first and the answer
+  layer second, so a refusal here is what the reader sees for an out-of-scope question; but the gate's output
+  is a decision and a citation, not prose.
 - **It does not replace the answer contract.** A question the gate leaves answerable can still be refused by
-  the R-04 post-check if the retrieved passages do not carry an interval, an assumption and a citation —
-  which is what happens to 32 of the 38 questions the layer was measured on.
+  the R-04 post-check if the retrieved passages do not carry the parts its shape requires — which is what
+  happens to 2 of the 38 questions the layer was measured on.
 
 ## 7. Reproduction
 

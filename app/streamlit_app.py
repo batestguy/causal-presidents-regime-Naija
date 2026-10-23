@@ -5,9 +5,13 @@ reason there is not one. Every value is read from `registry/dags/`; nothing is f
 spec §18), nothing is computed, and no number is typed into this file — `tests/verify_app.py` greps for the
 published coefficients to keep it that way.
 
+The **Ask** tab is the same rule one level down: a question goes to the intent gate and then to the
+answer layer, and the answer is assembled from the registry's own passages and cites them. A question the
+registry cannot answer is refused with the passage that says why. The layer is BM25 over committed text
+(`app/answer_layer.py`), so no model is called, no key is needed, and no number is generated.
+
 What it deliberately is not: a dashboard of the raw series (the monthly spine is 16.2 % observed, which is a
-plot about coverage rather than about presidents) and not yet the chat layer. The retrieval half of the chat
-is measured in `registry/rag/`, but out-of-scope refusal does not pass its gate — see `docs/rag.md`.
+plot about coverage rather than about presidents).
 
 Run:
     /c/Users/TOSHIBA/ds-general/python.exe -m streamlit run app/streamlit_app.py
@@ -15,12 +19,18 @@ Run:
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
 import streamlit as st
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+APP_DIR = Path(__file__).resolve().parent
+REPO_ROOT = APP_DIR.parent
+# The app directory first, so `registry_data` is this file's sibling; the repository root second, so the
+# answer layer imports as `app.answer_layer` and the gate it needs comes with it.
+sys.path.insert(0, str(APP_DIR))
+sys.path.insert(0, str(REPO_ROOT))
 
 from registry_data import (  # noqa: E402  (the path is set above so the app runs from any cwd)
     RegistryError,
@@ -37,14 +47,72 @@ from registry_data import (  # noqa: E402  (the path is set above so the app run
     verdict_text,
 )
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-
 st.set_page_config(page_title="Causal Presidents", layout="wide")
 
 
 @st.cache_data(show_spinner=False)
 def _registry(root: str):
     return load_registry(root)
+
+
+# The questions the chat offers are the project's own published ones: the app reads their text from the
+# published evaluation set rather than carrying a copy, so an example cannot drift from the question the
+# measurement was run on. The ids are the only thing typed here, and they name one of each kind of
+# exchange — an estimate, a design that was not run, a fact, and a refusal.
+CHAT_EXAMPLE_IDS = (
+    "q01_fatalities_elasticity",
+    "q06_design_c_status",
+    "q08_observed_share",
+    "o04_normative_allocation",
+)
+
+
+@st.cache_data(show_spinner=False)
+def _chat_examples(root: str, vintage: str) -> list[tuple[str, str]]:
+    """The published questions the chat offers, read from the published evaluation set."""
+    path = Path(root) / "registry" / "rag" / vintage / "eval_set.json"
+    if not path.exists():
+        return []
+    data = json.loads(path.read_text(encoding="utf-8"))
+    rows = {str(row.get("id")): row for row in data.get("questions") or []}
+    found: list[tuple[str, str]] = []
+    for question_id in CHAT_EXAMPLE_IDS:
+        row = rows.get(question_id)
+        if row and row.get("question"):
+            found.append((question_id, str(row["question"])))
+    return found
+
+
+@st.cache_resource(show_spinner=False)
+def _chat_layer(root: str):
+    """The answer layer over the published vintage: the gate, the corpus and the answer contract.
+
+    It is loaded when a reader asks a question, not when the page opens: the corpus is the largest
+    thing this app reads, and a reader who never asks anything should never wait for it.
+    """
+    from app.answer_layer import load_layer
+
+    return load_layer(root)
+
+
+def _render_turn(question: str, answer) -> None:
+    """One exchange: the question, and the answer with its plain reading first.
+
+    The plain reading is what a reader gets; the contract's own answer is one click away, because the
+    plain reading is a second reading of it and never replaces it.
+    """
+    with st.chat_message("user"):
+        st.markdown(question)
+    with st.chat_message("assistant"):
+        plain = str((answer.plain or {}).get("text") or answer.text)
+        if answer.answered:
+            st.markdown(plain)
+            with st.expander("The answer as the registry states it"):
+                st.markdown(answer.text)
+        else:
+            st.warning(plain)
+            with st.expander("The refusal as the registry states it"):
+                st.markdown(answer.text)
 
 
 try:
@@ -98,7 +166,9 @@ st.markdown(
     f"not.** This page is showing *{outcome['label']}* under **Design {design_id} — {design['name']}**."
 )
 
-card_tab, result_tab, about_tab = st.tabs(["Model card", "Design-level results", "What this reads"])
+card_tab, result_tab, about_tab, chat_tab = st.tabs(
+    ["Model card", "Design-level results", "What this reads", "Ask the registry"]
+)
 
 # ---------------------------------------------------------------------------------------------
 # Model card
@@ -279,6 +349,12 @@ with about_tab:
         f"- `registry/dags/<outcome>__<design>.svg` — the assumed causal graph beside each card"
     )
     st.markdown(
+        f"- `registry/rag/{registry.vintage}/corpus.json` — the published corpus the **Ask** tab reads\n"
+        f"- `registry/rag/{registry.vintage}/eval_set.json` — the published questions the tab offers\n"
+        "- `analysis/specs/intent_gate.yml`, `analysis/specs/rag.yml` — the gate's rules and the answer contract\n"
+        "- `docs/glossary.md` — the plain meanings the answers use"
+    )
+    st.markdown(
         "**Nothing is fitted at render time.** The app holds no model, opens no database and makes no network "
         "call. A number on this page is a field of a card written by an R stage; if the page and the card ever "
         "disagree, the card wins and this code is wrong."
@@ -294,7 +370,52 @@ with about_tab:
         "**What this page does not answer.** It renders published estimates and the assumptions they rest on. "
         "It does not compare tenures, forecast, or recommend policy. The tenure comparison is not identifiable "
         "with this data — four to five administrations against 22–23 annual observations per outcome — and "
-        "`docs/limitations.md` is where that arithmetic is written down. The chat layer over the published "
-        "corpus is a later stage: its retrieval numbers are in `docs/rag.md`, including the two refusal gates "
-        "that do not pass yet."
+        "`docs/limitations.md` is where that arithmetic is written down. The **Ask** tab answers from the "
+        "published corpus and refuses what the corpus cannot answer, but it answers the registry's questions, "
+        "not the reader's wishes: a forecast, a policy recommendation or a comparison of tenures is refused "
+        "with the passage that says why, and the refusal carries a code and a citation."
     )
+
+# ---------------------------------------------------------------------------------------------
+# Ask the registry — the gate and the answer layer, in the reader's own words
+# ---------------------------------------------------------------------------------------------
+with chat_tab:
+    st.subheader("Ask the registry")
+    st.markdown(
+        "Ask about the published cards, the numbers they carry, or the reasons they do not. The answer is "
+        "assembled from the registry's own passages and cites them; a question the registry cannot answer is "
+        "refused with the passage that says why. Nothing is generated — the retrieval is the same BM25 the "
+        "retrieval evaluation measures — so no model is called and no key is needed."
+    )
+    examples = _chat_examples(str(REPO_ROOT), registry.vintage)
+    if examples:
+        st.markdown("**Questions this project has published and measured:**")
+        for _question_id, example in examples:
+            st.markdown(f"- {example}")
+        st.caption("Type one of them, or ask your own.")
+    else:
+        st.caption("The published evaluation set is not on disk, so there are no example questions to show.")
+
+    # The conversation is rendered into a container placed above the input, so the newest exchange
+    # appears above the question box rather than under it.
+    conversation = st.container()
+    question = st.chat_input("Ask the registry a question…")
+
+    if "chat_turns" not in st.session_state:
+        st.session_state["chat_turns"] = []
+    turns = st.session_state["chat_turns"]
+
+    with conversation:
+        for asked, answer in turns:
+            _render_turn(asked, answer)
+        if question:
+            try:
+                answer = _chat_layer(str(REPO_ROOT)).answer(question)
+            except (OSError, ValueError, KeyError) as exc:
+                st.error(
+                    f"The registry cannot answer that question right now: {exc}. The registry is being "
+                    f"rebuilt, and the app shows that rather than answering around it."
+                )
+            else:
+                turns.append((question, answer))
+                _render_turn(question, answer)

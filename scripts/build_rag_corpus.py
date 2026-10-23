@@ -176,6 +176,7 @@ class Corpus:
         anchor: str | None,
         metadata: dict,
         header: str | None = None,
+        max_chars: int | None = None,
     ) -> None:
         """Add one chunk, splitting on paragraphs when the text exceeds the budget.
 
@@ -190,32 +191,33 @@ class Corpus:
         """
         text = text.strip()
         header = (header or "").strip()
+        limit = int(max_chars or self.max_chars)
         short_title = title[:48]
         overhead = (len(header) + 2 if header else 0) + len(short_title) + 40
         # Split until every assembled body fits. The marker is bounded (a truncated title plus the part
         # number), so this converges in one pass in practice; the retry is here because "it fits in practice"
         # is the assumption that produced a 1,839-character chunk on the first attempt.
         for attempt in range(4):
-            budget = max(self.max_chars - overhead - attempt * 80, self.min_chars)
+            budget = max(limit - overhead - attempt * 80, self.min_chars)
             parts = split_to_budget(text, budget, min_tail=self.min_part_chars)
             n_parts = len(parts)
             bodies = []
             for number, part in enumerate(parts, start=1):
                 marker = (f"[{short_title} — part {number} of {n_parts}]" if n_parts > 1 else "")
                 bodies.append("\n\n".join(piece for piece in (header, marker, part) if piece).strip())
-            if all(len(body) <= self.max_chars for body in bodies):
+            if all(len(body) <= limit for body in bodies):
                 break
         else:
             raise BuildError(
-                f"{chunk_id}: could not fit the text into {self.max_chars}-character parts after four passes"
+                f"{chunk_id}: could not fit the text into {limit}-character parts after four passes"
             )
         for number, (part, body) in enumerate(zip(parts, bodies), start=1):
             part_id = chunk_id if number == 1 else f"{chunk_id}#p{number}"
             if part_id in self._ids:
                 raise BuildError(f"{part_id}: duplicate chunk id")
-            if len(body) > self.max_chars:
+            if len(body) > limit:
                 raise BuildError(
-                    f"{part_id}: {len(body)} chars exceeds chunking.max_chars={self.max_chars} — the split "
+                    f"{part_id}: {len(body)} chars exceeds its budget of {limit} characters — the split "
                     "rule is required to keep every chunk inside the embedding budget"
                 )
             floor = self.min_part_chars if n_parts > 1 else self.min_chars
@@ -347,6 +349,106 @@ def card_text(card: dict) -> str:
             lines.append(f"The design-level result is published at {estimate['published_result']}.")
 
     return "\n".join(line for line in lines if line is not None)
+
+
+def card_estimate_text(card: dict) -> str:
+    """One card, focused: what it is about, what it assumes, what it cannot rule out, and what it says.
+
+    The `model_card` family serialises the whole card — the coverage note, the adjustment set, the node
+    vocabulary, every pre-check. That is the right document for a reader who opens the card and the wrong
+    retrieval unit for a reader who asks one question about one (outcome, design) pair: the fields that
+    answer the question are scattered across the parts, and the fields that do not answer it are long.
+
+    This serialisation carries the four things an answer may quote — the outcome and its unit, the
+    identifying assumption, what the design cannot rule out, and the published specification or the
+    reason there is none — and nothing else. It is derived from the card, so it cannot disagree with it.
+    """
+    outcome = card["outcome"]
+    design = card["design"]
+    estimate = card.get("estimate") or {}
+    status = estimate.get("status", "not_estimated")
+    blocks = [
+        f"Card estimate — {outcome['label']} under Design {design['id']} ({design['short']}).",
+        f"Outcome: {outcome['label']} ({outcome['id']}). Unit: {outcome.get('unit', 'not stated')}. "
+        f"Direction: {direction_words(outcome.get('direction'))}. "
+        f"Frequency: {outcome.get('frequency', 'not stated')}. "
+        f"Coverage: {outcome.get('coverage_status', 'not stated')}.",
+        f"Design {design['id']} — {flat(design.get('name', 'not stated'))}.",
+        f"Identifying assumption: {flat(card.get('identifying_assumption', 'not stated'))}",
+        "What this design cannot rule out:\n"
+        + "\n".join(f"- {flat(item)}" for item in (card.get("cannot_rule_out") or [])),
+    ]
+
+    diag = card.get("diagnostics") or {}
+    failed = [check for check in (diag.get("checks") or [])
+              if check.get("verdict") not in ("pass", "computed")]
+    if status == "estimated":
+        spec = estimate["specification"]
+        verdict = estimate.get("verdict") or {}
+        blocks.append(
+            f"The published specification is Design {spec['design']} on {spec['outcome']}: "
+            f"{spec['coefficient_name']} = {signed(spec['coefficient'])} "
+            f"(standard error {spec['standard_error']:.4f}), "
+            f"95% interval {interval(spec['ci_low'], spec['ci_high'])}, "
+            f"p = {spec['p_value']:.4f}, n = {spec['n_obs']:,} state-months over {spec['n_units']} states, "
+            f"{spec['first_month']} to {spec['last_month']}."
+        )
+        blocks.append(
+            f"Verdict: {verdict.get('status')}. {flat(verdict.get('failed_checks') or 'No check failed.')}"
+        )
+    else:
+        reason = estimate.get("not_estimated_reason") or {}
+        blocks.append(
+            f"No estimate for this (outcome, design) pair. Reason code: {reason.get('code')}. "
+            f"{flat(reason.get('detail'))}"
+        )
+        if failed:
+            check = failed[0]
+            blocks.append(
+                f"The check that decided: {check.get('id')}: {check.get('verdict')} — "
+                f"{flat(check.get('detail'))}"
+            )
+        if estimate.get("published_result"):
+            blocks.append(f"The design-level result is published at {estimate['published_result']}.")
+
+    return "\n\n".join(block for block in blocks if block)
+
+
+def build_card_estimates(corpus: Corpus) -> None:
+    cards_dir = REPO_ROOT / corpus.spec["input"]["cards_dir"]
+    paths = sorted(p for p in cards_dir.glob("*.json") if p.name != "index.json")
+    if not paths:
+        raise BuildError(f"{rel(cards_dir)}: no cards on disk")
+    # One family is allowed a longer chunk than the rest, and the reason is measured rather than assumed:
+    # the card estimate is prose with a number in it, not a table, so it tokenises at about 0.24 tokens per
+    # character. The longest card on disk is 1,598 characters and 379 tokens of the declared 512 — the
+    # tokenizer's own count, taken from the model this corpus is embedded with. The 950-character budget
+    # stays in force for every other family, because its densest text is a table at 0.53 tokens per
+    # character.
+    budget = int((corpus.spec["chunking"].get("max_chars_by_family") or {}).get("card_estimate")
+                 or corpus.max_chars)
+    for path in paths:
+        card = read_json(path)
+        corpus.add(
+            chunk_id=f"estimate:{card['dag_id']}",
+            doc_type="card_estimate",
+            title=f"Card estimate — {card['outcome']['label']} under Design {card['design']['id']}",
+            text=card_estimate_text(card),
+            source_path=path,
+            anchor=None,
+            metadata={
+                "dag_id": card["dag_id"],
+                "outcome_id": card["outcome"]["id"],
+                "outcome_label": card["outcome"]["label"],
+                "design_id": card["design"]["id"],
+                "design_name": card["design"].get("name"),
+                "estimate_status": (card.get("estimate") or {}).get("status"),
+                "reason_code": ((card.get("estimate") or {}).get("not_estimated_reason") or {}).get("code"),
+                "precheck_status": (card.get("diagnostics") or {}).get("status"),
+                "coverage_status": card["outcome"].get("coverage_status"),
+            },
+            max_chars=budget,
+        )
 
 
 def build_cards(corpus: Corpus) -> None:
@@ -1116,6 +1218,7 @@ def main(argv: list[str] | None = None) -> int:
     corpus.register_source(index_path, "registry_index")
 
     build_cards(corpus)
+    build_card_estimates(corpus)
     build_results(corpus)
     build_docs(corpus)
     build_administration(corpus)

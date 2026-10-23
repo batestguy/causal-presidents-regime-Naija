@@ -1,11 +1,87 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-10-22 (eleventh session) · **Stage:** 9, the **gate at v3 (KG01 closed) and the answer
-layer reading in plain language, with no LLM key** — the refusal decision is nine declared rules with a
-held-out measurement behind them, and the answer layer enforces R-04 on its own output · **verified at
-vintage 2026-10-18**: 14 verifiers, 0 failures, 48 registry documents schema-validated
+**Last updated:** 2026-10-23 (thirteenth session) · **Stage:** 9, the **Ask tab** — the verification chain
+repaired after the chat-tab session, and the corpus extended with the two documents readers ask for ·
+**verified at vintage 2026-10-18**: the full `scripts/verify.sh` chain, 0 failures, 48 registry documents
+schema-validated
 
-**This session, in one line:** the **intent gate** (`app/intent_gate.py`, a held-out set frozen after the
+**This session, in one line:** the **verification chain was red and is now green** — `tests/verify_rag.py`
+failed with 41 problems at the end of the chat-tab session, and the header above had said zero failures —
+and the corpus was extended with the glossary and the licence register, **measured before it was kept**.
+
+- **The chain was red, and two of the three causes were the verifier's own.** The spec's hash had moved
+  since the corpus was built (the `card_estimate` family was added after it), `family_to_type` had no entry
+  for that family, and the budget check applied the 950-character default to every family while the spec
+  declares `max_chars_by_family: {card_estimate: 1700}` — **36 of the 41 failures were that third defect**, a
+  verifier reporting the family's declared design as a violation. It now reads the declared budget, maps the
+  family, and asserts one `card_estimate` parent per card. A verifier that fails for its own reason is how
+  the real drift beside it stays unread.
+- **The corpus was rebuilt with `--embed`**, so the spec hash, the chunks and the vectors describe the same
+  build; `docs/rag.md` still carried 441 chunks and the pre-`card_estimate` coverage and MRR, and was moved
+  onto the artifact.
+- **Then the corpus grew, and the growth was measured before it was kept.** `docs/glossary.md` and
+  `docs/licences.md` were added — 5 chunks — because "what does this word mean" and "what may be
+  republished" had no chunk to quote. Every retrieval metric is unchanged: recall@5 **0.944**, gold coverage
+  **0.418**, MRR **0.715**. `docs/decisions.md` was tried and **rejected on the numbers**: at ~210 chunks it
+  held recall at 0.944 but moved MRR to 0.687 and coverage to 0.379 — the passages stayed in the top five and
+  sank within it. The rejection is recorded in the spec, where the next rebuild reads it.
+- **The gain is partial, and the page says so.** "What does G02 mean?" now quotes the glossary's refusal
+  table; "can I republish the ACLED rows?" still resolves to the coverage table in `docs/limitations.md`,
+  because the fact path selects the passage carrying the most of the question's words and a licence row is
+  short. Content was added; selection was not fixed, and `docs/rag.md` §6 states both.
+- **Every dependent artifact was re-measured on the new corpus** rather than left describing the old one:
+  `eval_rag`, `eval_intent` (it records the corpus hash) and `eval_answer` — the answer rate is unchanged at
+  **36 of 38 (0.947)**, 16 of 16 published and 20 of 22 held out. `scripts/validate_artifacts.py` caught the
+  two stale dependents in order: an `intent_eval.json` describing a different corpus, then an
+  `answer_eval.json` measured against a different intent artifact.
+- **Current numbers:** 482 chunks from 53 attributed sources at vintage 2026-10-18, three of the four
+  retrieval gates still as they were — recall@5 0.944 met; refusal-with-reason 0.5 and out-of-scope 0.25
+  still failing and still published, with the intent gate in front of them.
+
+**This session, in one line:** the **chat tab** (`app/streamlit_app.py`'s fourth tab, on `app/answer_layer.py`
+and `app/intent_gate.py`) — the first surface a reader can ask a question of — and the **three-shape answer
+contract** that made it worth building: the layer now answers **36 of the 38 measured questions (0.947)**
+because 34 of the 36 cards carry a *reason* rather than a number, and a contract that could carry nothing but
+an interval was refusing for the wrong reason.
+
+- **The contract got a shape, and the refusals stopped being wrong.** The one-shape contract required an
+  interval, an identifying assumption and what the design cannot rule out on *every* answer, so a question
+  about one of the 34 cards that carries a reason — "what did the published estimate find for under-5
+  mortality under Design A?" — was answered *"I don't have a model for that"*, which is false: the card says
+  exactly why there is no number. The contract now has three shapes (**estimate**, **no_estimate**,
+  **fact**), each with its own required parts and its own forbidden ones, and the post-check is unchanged:
+  a missing part still replaces the whole response with the refusal template. The rate moved from **0.158**
+  to **0.947** because the contract stopped refusing for the wrong reason — not because the check was
+  loosened, and the verifier recomputes every part from the answers themselves.
+- **The tab is the same layer, and the verifier asks it questions.** `tests/verify_app.py` now drives the
+  real `st.chat_input` with the four questions the tab offers and compares what comes back with
+  `intent_eval.json` and `answer_eval.json`: the citation, the needles and the plain reading must all be
+  there. The tab reproduces the measurement; it is not a second opinion on it. A break-test — dropping the
+  plain reading from the rendered answer — turns the verifier red with five problems, so the check is not
+  vacuous.
+- **A refusal is an argument with a source.** A refused question shows the rule that refused it (`G02`…`G09`),
+  that rule's plain-English meaning out of `docs/glossary.md`, the passage that says why it cannot be
+  answered, and that passage's citation. `docs/glossary.md` now carries a line for every refusal code the
+  contract declares, and the verifier fails if a code has no meaning — or if the glossary explains a code the
+  contract does not declare.
+- **The deterministic path is the one that can be checked.** The answer is a *selection of committed
+  paragraphs* plus a citation, so every sentence can be re-derived from the artifact and every number
+  checked against its citation. A generated answer could only be checked by a judge model, which is the
+  RAGAS measurement this project already publishes as `not_run` for want of a key. The tab calls no model and
+  needs no key.
+- **The example questions are the project's own.** The app reads their text from the published evaluation
+  set and types only their ids, so an example cannot drift from the question the measurement was run on. The
+  verifier fails if an offered example is not a published, measured question.
+- **The held-out set does not leak.** The held-out questions are the project's own measurement set, so a
+  held-out question reaching the page would mean the measurement could no longer be scored. The verifier
+  fails if one appears anywhere on the page.
+- **What this does not do:** it does not paraphrase. BM25 is lexical, so a question phrased in words the
+  corpus does not use is declined with `L02` rather than approximated — 2 of the 38 measured questions were,
+  and both are published as declines rather than smoothed over. The embedding retriever's own refusal gates
+  still fail (0.5 and 0.25 — `docs/rag.md`), which is why the tab uses the rule-based gate: similarity alone
+  cannot refuse "what will inflation be in 2030?".
+
+**Previous session, in one line:** the **intent gate** (`app/intent_gate.py`, a held-out set frozen after the
 rules, `scripts/eval_intent.py`, `tests/verify_intent.py`, `docs/intent.md`) — which turns the corpus's two
 failed refusal gates (0.25 out-of-scope, 0.5 reason-cited) into **0.944 and 1.000 on questions the rules never
 saw** — then the **A16 closure** that cost a new held-out set and a second freeze, and the **answer layer**
@@ -57,13 +133,14 @@ before retrieval, from the question's own words, by rules the project declares a
 - **One metric is published with its reading rather than deleted.** `route_matches_gold` is 0.625 — 20 of 32 —
   and all 12 misses are the card questions, where an answerable decision returns no route by design. Read
   against the 20 questions that carry a route, the gate cites the expected chunk 20 of 20.
-- **The answer layer enforces R-04 on its own output and the result is the finding.** `app/answer_layer.py`
-  gates, retrieves lexically (BM25 — no model at request time), assembles extractively and then requires an
-  interval, an identifying assumption and what it cannot rule out before it will answer. It answered **3 of
-  the 16 published answerable questions (0.188)** and **3 of the 22 held-out ones (0.136)**: 6 of 38 (0.158),
-  with 32 declined by the contract and none answered around a refusal. The rate is low because R-04 is an
-  **estimate** contract and 34 of the 36 cards carry no number — published in `docs/answer.md` §2 rather than
-  fixed by weakening the check.
+- **The answer layer enforces R-04 on its own output, and the contract now has three shapes.** `app/answer_layer.py`
+  gates, retrieves lexically (BM25 — no model at request time), assembles extractively and then checks the
+  answer against the requirements of its shape. The one-shape contract required an interval on every answer,
+  so a question about one of the 34 cards that carries a *reason* was refused for the wrong reason; the
+  contract now has **estimate**, **no_estimate** and **fact** shapes, and the rate moved from **0.158** to
+  **0.947** — 16 of the 16 published answerable questions (1.000) and 20 of the 22 held-out ones (0.909),
+  2 declined, none answered around a refusal. The post-check is unchanged: a missing part still replaces the
+  whole response with the refusal template, and the verifier recomputes every part from the answers.
 - **Every answer now has a plain-language reading, built from its own numbers.** `plain` on the artifact (and
   on the `Answer`) gives the direction of the coefficient, whether the interval includes zero, the sample,
   the assumption in one sentence, the caveats as bullets, and the meanings of the technical words the answer
@@ -738,7 +815,8 @@ effect that the design cannot support.
 | `registry/reference/countries.json` · `registry/donors/2026-10-18/panel.json` · `scripts/build_country_vocabulary.py` | The committed inputs to the country rule: ISO 3166-1 names (Nigeria excluded from refusal) and the 99-country donor pool, both schema-validated | 249 countries, 99 panel members; rear-view reproducible from a fresh clone |
 | `registry/schema/intent_eval.schema.json` · `tests/verify_intent.py` | The artifact's contract, and a verifier that re-derives the questions, re-applies the rules with a second implementation and checks the freeze against git | Exit 0; six break-tests caught |
 | `docs/intent.md` | The Stage 9 output: what may be refused and why, the measured numbers on both sets, the missed target published, and the four declared gaps | Complete |
-| `app/answer_layer.py` · `scripts/eval_answer.py` · `registry/rag/2026-10-18/answer_eval.json` | **Stage 9 — the answer layer**: gate → BM25 retrieval (no model) → extractive assembly → R-04 post-check → plain-language reading, measured over the 38 answerable questions | 6 answered, 32 declined, 0 answered around a refusal; every number in its citation |
+| `app/answer_layer.py` · `scripts/eval_answer.py` · `registry/rag/2026-10-18/answer_eval.json` | **Stage 9 — the answer layer**: gate → BM25 retrieval (no model) → extractive assembly → R-04 post-check under a three-shape contract → plain-language reading, measured over the 38 answerable questions | 36 answered, 2 declined, 0 answered around a refusal; every number in its citation |
+| `app/streamlit_app.py` (the **Ask** tab) · `docs/app.md` §3 | The app's fourth tab: the gate and the answer layer in the reader's own words, offering the project's own measured questions and rendering the citation, the plain reading and a cited refusal | The tab reproduces the measurement; `tests/verify_app.py` asks it the four published questions and compares the answers with the artifacts |
 | `docs/glossary.md` · `registry/schema/answer_eval.schema.json` · `tests/verify_answer.py` | The plain-language definitions the layer quotes, the artifact's contract, and a verifier that re-checks every part, every sentence, every number, every definition and a keyless run | Exit 0; two new break-tests caught |
 
 ## 4. Verification evidence
@@ -1716,21 +1794,26 @@ that turn estimates into a product.
    from this stage:** the per-capita dose axis (X-09), the IGR instrument (D2), and a donor pool that would
    let Design C run at all.
 9. ~~**Stage 8 — the registry, narrative and RAG corpus.**~~ **Built.** The registry and all three
-   figures (2026-10-20), `docs/limitations.md` (2026-10-20), and the retrieval corpus — 441 chunks from
-   51 attributed sources at the registry's vintage (2026-10-21, `registry/rag/2026-10-18/`,
-   `docs/rag.md`). **What is still open from it:** the generation half of the RAG evaluation (RAGAS is
-   `not_run` — it needs an LLM key and a judge model), and chunks for the families the corpus currently
-   summarises (the donor panel, the robustness grid).
-10. **Stage 9 — the read-only app and the chat layer.** The app is built (2026-10-21,
-   `app/streamlit_app.py`, `docs/app.md`), the **pre-retrieval intent gate** is built and measured
-   (2026-10-22, `analysis/specs/intent_gate.yml`, v3 frozen at `3dcb555`, `docs/intent.md`), and the
-   **answer layer** is built and measured (2026-10-22, `app/answer_layer.py`, `docs/answer.md`): 6 of 38
-   answerable questions answered, every quoted sentence and number attributable to its citation, and every
-   answer carrying a plain-language reading defined from `docs/glossary.md`.
-   **What remains:** the chat tab, which is now a product decision rather than a component — the layer
-   would refuse four questions in five because R-04 is an estimate contract and 34 of 36 cards carry no
-   number. KG01 is closed (G09 + the committed country vocabulary); the remainder it leaves is lexical and
-   declared as KG03. No part of the answering path needs a key; only a RAGAS measurement would.
+   figures (2026-10-20), `docs/limitations.md` (2026-10-20), and the retrieval corpus — **482 chunks from
+   53 attributed sources** at the registry's vintage (`registry/rag/2026-10-18/`, `docs/rag.md`), extended
+   2026-10-23 with the glossary and the licence register after measuring that they cost no retrieval
+   metric. **What is still open from it:** the generation half of the RAG evaluation (RAGAS is `not_run` —
+   it needs an LLM key and a judge model); chunks for the families the corpus currently summarises (the
+   donor panel, the robustness grid); and the decision log, which is **not** in the corpus because adding
+   it measurably sank MRR and gold coverage (measured 2026-10-23, recorded in `analysis/specs/rag.yml`).
+10. ~~**Stage 9 — the read-only app and the chat layer.**~~ **Built 2026-10-22.** The app
+   (`app/streamlit_app.py`, `docs/app.md`), the **pre-retrieval intent gate** (`analysis/specs/intent_gate.yml`,
+   v3 frozen at `3dcb555`, `docs/intent.md`) and the **answer layer** (`app/answer_layer.py`,
+   `docs/answer.md`) are measured end to end, and the **chat tab** — the app's fourth tab — is built on
+   them. **36 of 38 answerable questions answered (0.947)** under the three-shape contract, every quoted
+   sentence and number attributable to its citation, every answer carrying a plain-language reading
+   defined from `docs/glossary.md`, and no model or key anywhere in the answering path. The verifier asks
+   the tab the four published example questions and compares the answers with the artifacts.
+   **What remains in this stage:** RAGAS's generation half (a key and a judge model, `not_run`); the
+   corpus families the corpus summarises rather than chunks (the donor panel, the robustness grid); the
+   items `docs/app.md` declares unbuilt — per-card URLs, node-level graph interaction, deployment; and the
+   two lexical declines the layer publishes rather than smooths (L02: a 2016 inflation value and a
+   "fatal crashes" outcome that is not in the catalogue).
 
 ### The smallest credible end-to-end slice — revisited by Stage 4
 

@@ -2,7 +2,7 @@
   "stage": 7,
   "layer": "robustness",
   "vintage": "2026-10-18",
-  "generated_at": "2026-10-22T04:55:48+0100",
+  "generated_at": "2026-10-23T04:44:25+0100",
   "generator": "analysis/R/04_robustness.R",
   "spec": "analysis/specs/robustness.yml",
   "verifier": "tests/verify_stage7.py",

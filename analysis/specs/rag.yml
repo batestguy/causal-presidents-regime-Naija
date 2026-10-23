@@ -27,7 +27,7 @@
 #      tests exactly that with `refusal_with_reason` questions.
 #
 # ---------------------------------------------------------------------------------------------
-version: 1
+version: 2
 labelled: "2026-10-18"
 spec_path: "analysis/specs/rag.yml"
 engine: "scripts/build_rag_corpus.py"
@@ -61,6 +61,16 @@ input:
     - "docs/limitations.md"
     - "docs/data-dictionary.md"
     - "docs/dags.md"
+    # Two documents added in the 2026-10-23 rebuild, both carrying questions a reader actually asks that
+    # no other chunk carries: what a word means (the glossary the answer layer already quotes from) and
+    # what may be republished (the licence register). The decision log is **not** here, and the reason is
+    # measured rather than assumed: `docs/decisions.md` is 210 chunks — a session log much larger than the
+    # registry — and adding it held recall@5 at 0.944 but moved MRR from 0.715 to 0.687 and gold coverage
+    # from 0.418 to 0.379, i.e. the passages stayed in the top five and sank within it. A log that dilutes
+    # every ranking to answer a handful of "why was that chosen" questions is a corpus that quotes the
+    # project's diary before its findings. It stays out until it is summarised into a declared artefact.
+    - "docs/glossary.md"
+    - "docs/licences.md"
 
 output:
   root: "registry/rag"
@@ -101,6 +111,20 @@ chunk_families:
       The unit of the whole project. A question about an outcome under a design resolves to one chunk that
       carries the assumption, the adjustment set, the number, the interval and the verdict together, so the
       number cannot be retrieved without the reason it is or is not a finding.
+  card_estimate:
+    id: "estimate:<dag_id>"
+    count_rule: "one chunk per card on disk, in one piece, carrying the card's own fields: the outcome and unit, the identifying assumption, what the design cannot rule out, the published specification where the card has one, and the reason code where it does not"
+    derives_from: "registry/dags/<dag_id>.json"
+    why: >-
+      A question about a pair — "what did the published estimate find for under-5 mortality under the
+      state dose-response design?" — has to resolve to one card, not to a set of passages about a card.
+      The `model_card` family is split by the chunk budget into a scope part, a reason part and an
+      estimate part, so a retrieval that lands on the scope part alone has no number and no reason, and a
+      retrieval that lands on the reason part alone has no assumption. This family is the same card
+      serialised as one piece, so the answer layer can assemble a complete answer from a single chunk and
+      so a *reason* can be answered as completely as an estimate — the reason, the assumption and the
+      caveat travel together, which is the whole point of the project. It is derived from the card, never
+      written about it, so it cannot disagree with the card it quotes.
   published_result:
     id: "result:<design_id>"
     count_rule: "one per design that reached a verdict (A, B, C — three today)"
@@ -180,6 +204,17 @@ chunking:
   # own tokenizer and fails the build if this arithmetic ever stops holding — which it did at 1,800
   # characters, where a table chunk needed 935 tokens.
   max_chars: 950
+  # One family is allowed a longer chunk, and the reason is the tokenizer's own count rather than a
+  # character heuristic. The `card_estimate` family is the card's fields in one piece -- outcome, design,
+  # assumption, caveats, and the specification or the reason -- and the answer contract requires all of
+  # them to travel together: split across parts, a retrieval lands on the assumption with no number, or
+  # on the number with no assumption, which is the failure the family exists to prevent. That text is
+  # prose with a number in it, not a table, so it tokenises at about 0.24 tokens per character: the
+  # longest card on disk is 1,598 characters and 379 tokens of the declared 512, measured with the
+  # declared model's own tokenizer. The 950-character budget stays in force for every other family,
+  # because its densest text is a table at 0.53 tokens per character.
+  max_chars_by_family:
+    card_estimate: 1700
   min_chars: 180
   # A part of a split document is allowed to be shorter than a standalone chunk: the header that made a
   # 100-character fragment look like a chunk is carried separately, so what is left is real content. The
@@ -272,11 +307,67 @@ retrieval:
 # The answer contract (R-03, R-04) — enforced in Stage 9, declared here
 # ---------------------------------------------------------------------------------------------
 answer_contract:
+  version: 2
   order: [question, estimate_with_interval, identifying_assumption, what_it_cannot_rule_out, citation]
+  # ---------------------------------------------------------------------------------------------
+  # Three shapes, because one shape cannot carry the corpus
+  # ---------------------------------------------------------------------------------------------
+  # v1 had exactly one shape: an answer was an estimate, an interval, an assumption, a caveat and a
+  # citation. The Stage 9 evaluation showed what that rule costs. 34 of the 36 cards carry no number --
+  # they carry a reason from a closed set -- and a question about one of them ("what did the published
+  # estimate find for under-5 mortality under Design A?") was answered "I don't have a model for that",
+  # which is false: the project does have a model card for that pair, and the card says exactly why there
+  # is no number. The refusal was refusing for the wrong reason, and 32 of the 38 answerable questions
+  # were refused for it.
+  #
+  # The contradiction was in this spec's own scope paragraph, which promised to answer "the published
+  # results and their checks" and "why a question cannot be answered", while the contract could only carry
+  # estimates. The contract is what changes, and it changes here, before the numbers are re-measured.
+  shapes:
+    estimate:
+      selects_when: "the question asks for a published number, and the card that answers it carries one"
+      order: [question, estimate_with_interval, identifying_assumption, what_it_cannot_rule_out, citation]
+      requires: [interval, identifying_assumption, cannot_rule_out, citation]
+      forbids: []
+    no_estimate:
+      selects_when: "the question asks for a published number, and the card that answers it carries none"
+      order: [question, reason_code, deciding_check, identifying_assumption, what_it_cannot_rule_out, citation]
+      requires: [reason_code, identifying_assumption, cannot_rule_out, citation]
+      forbids: [interval]
+    fact:
+      selects_when: "the question asks for neither a published number nor the reason for its absence"
+      order: [question, passage, citation]
+      requires: [citation]
+      forbids: [interval]
   post_check: >-
-    Every assembled answer is checked for an interval, an identifying assumption and at least one chunk
-    citation. A response missing any of the three is replaced by the refusal template, whatever the model
-    produced (R-04).
+    Every assembled answer is checked against the requirements of its shape: an estimate needs an
+    interval, an identifying assumption, what the design cannot rule out and a citation; a reason needs a
+    reason code, the assumption, what the design cannot rule out and a citation, and must not contain an
+    interval; a fact needs the passage it quotes and a citation, and must not contain an interval. A
+    response missing any of these is replaced by the refusal template, whatever the model produced (R-04).
+  # The layer's own declines carry a code too, so a refusal is never an unexplained one. Every code
+  # below has a plain-English meaning in `docs/glossary.md#refusals`, and `tests/verify_answer.py` fails
+  # if one is missing.
+  refusal_codes:
+    L01: "the retrieved passages do not carry a complete answer in any shape"
+    L02: "no retrieved passage matches the question closely enough to quote"
+    G02: "the question asks for a forecast"
+    G03: "the question asks for a measure the corpus does not carry"
+    G04: "the question asks the project for a policy decision"
+    G05: "the question asks for a year the corpus does not cover"
+    G06: "the question asks to compare tenures, which this data cannot identify"
+    G07: "the question asks Design C for a causal answer, and Design C was never run"
+    G08: "the question asks for advice"
+    G09: "the question asks about a country other than Nigeria"
+  # A fact answer quotes a passage, so the passage has to be about the question. The threshold is the
+  # fraction of the question's content words the quoted passage must contain; it is declared here so it
+  # can be changed only by a decision, not by a code edit.
+  fact_overlap_min: 0.5
+  # How many paragraphs one fact answer may quote. The unit quoted is the paragraph, not the chunk:
+  # a section's answer is often split across two paragraphs -- the first sets out the situation, the
+  # second concludes it -- and quoting only the paragraph with the highest word overlap drops the
+  # conclusion. The cap keeps the answer a passage rather than a section.
+  fact_max_passages: 3
   refusal_template: >-
     "I don't have a model for that. {reason} — see {citation}."
   scope: >-

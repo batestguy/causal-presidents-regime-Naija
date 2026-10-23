@@ -2,11 +2,11 @@
  "schema_version": "0.1.0",
  "layer": "retrieval corpus (one card per model card, plus the results, the tables and the narrative)",
  "vintage": "2026-10-18",
- "generated_at": "2026-10-22T03:56:07+00:00",
+ "generated_at": "2026-10-23T04:02:25+00:00",
  "generator": {
   "script": "scripts/build_rag_corpus.py",
   "spec": "analysis/specs/rag.yml",
-  "git_sha": "3dcb555"
+  "git_sha": "6e7486d"
  },
  "registry": {
   "index": "registry/dags/index.json",
@@ -24,6 +24,9 @@
  },
  "chunking": {
   "max_chars": 950,
+  "max_chars_by_family": {
+   "card_estimate": 1700
+  },
   "min_chars": 180,
   "min_part_chars": 60,
   "split_rule": "Markdown documents split on H2 headings, except when a document has no H2 (then the whole body is one chunk). The document's H1 and the section heading are prepended to every chunk so a retrieved fragment carries its own title. Any text over the budget — a section *or* a model card — splits on blank-line paragraph boundaries, keeping tables whole where they fit; a single block longer than the budget is split on sentence ends. Parts after the first are ided `<chunk_id>#p2`, `<chunk_id>#p3`, and every part opens with a one-line prefix naming the parent document and its part number, so a part retrieved on its own is still identifiable.",
@@ -49,9 +52,9 @@
   "dim": 384,
   "normalised": true,
   "metric": "cosine",
-  "sha256": "17b53c5fc65988438856a4c800081161ded48d396e81841866f991afdb6f2109",
-  "bytes": 662886,
-  "n_chunk_vectors": 441,
+  "sha256": "e8cecb35d187630941c5c59648452641b46b1f6a7fd90422c9e166b0ca68ab37",
+  "bytes": 721482,
+  "n_chunk_vectors": 482,
   "n_query_vectors": 22,
   "library": {
    "sentence-transformers": "5.1.2",
@@ -65,8 +68,8 @@
   {
    "path": "analysis/specs/rag.yml",
    "role": "scope",
-   "sha256": "50f966fa33b8c3c58b6ab1c6626e852e3bdf5bd1cc8cb10814dae2edc0be5d95",
-   "bytes": 20134,
+   "sha256": "e4ab0435bf4481d868afbda2ab616d8fdf8493b49e6bf7bf4a485b7f0e80c491",
+   "bytes": 27230,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -116,6 +119,20 @@
    "role": "methodology",
    "sha256": "7263d98b84907f622793f21bfdbcd169552a3c1224556c2071f2f32908a06918",
    "bytes": 12015,
+   "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
+  },
+  {
+   "path": "docs/glossary.md",
+   "role": "methodology",
+   "sha256": "cb234ce846c7a04d59cfc8acad6b67db63cd9ccb56452f1f1727cee155e37d9b",
+   "bytes": 6230,
+   "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
+  },
+  {
+   "path": "docs/licences.md",
+   "role": "methodology",
+   "sha256": "d0b864630e02712c129909ea33e7554468b8d24f89070190a6b564298df5815d",
+   "bytes": 4793,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -247,7 +264,7 @@
   {
    "path": "registry/dags/index.json",
    "role": "registry_index",
-   "sha256": "99e662ae8330a77844c1504b4171d5496fdda1cb0d4bac1becca9a2fa288d092",
+   "sha256": "14aed0b782075b494fc8b4d161e41c41a301d3da5e58f3b661c9cd4eceba7256",
    "bytes": 58393,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
@@ -401,41 +418,42 @@
   {
    "path": "registry/estimates/2026-10-18/estimates.json",
    "role": "estimates",
-   "sha256": "6f95e0b56ad7680f4e7b4ee2c97b894ab45cdfbd4dc5fcf932e399465140b317",
+   "sha256": "a5f20d881bf2226e2c06728b7b49b475c1cd67d2fc4033b634aea8bcccb6b498",
    "bytes": 32385,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/events/2026-10-18/events.json",
    "role": "event_study",
-   "sha256": "7d586437286e4b3d2828e6a90e9268a3fd2bf5673fd226aa274b411e488b285d",
+   "sha256": "1c142da122c66fd38f4f831b010ab2e177b25ea3d4e26c0431957cae0d56132e",
    "bytes": 43558,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/quality/2026-10-18/report.json",
    "role": "coverage",
-   "sha256": "f86011ecca97e81803105810e3efb3bf7e0d614e7c4bc28e720913ee3a0fd56d",
+   "sha256": "01ebbf240d41335ce50c6704847d5d0e24ccbdd02c4d95f09d8716e2e7be63a7",
    "bytes": 3397175,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   }
  ],
  "counts": {
-  "chunks": 441,
+  "chunks": 482,
   "by_doc_type": {
    "administration": 5,
+   "card_estimate": 36,
    "coverage": 2,
    "data_dictionary": 47,
    "event_study": 13,
-   "methodology": 178,
+   "methodology": 183,
    "model_card": 179,
    "published_result": 12,
    "scope": 2,
    "shock": 3
   },
   "chars": {
-   "total": 271717,
-   "max": 938,
+   "total": 328397,
+   "max": 1598,
    "min": 150
   }
  },
@@ -566,6 +584,1014 @@
    "text_sha256": "7abf303a2c485f66a3a18feb482325debdbdb15d0f2a2c8e9f3448fcc1242b79"
   },
   {
+   "chunk_id": "estimate:cpi_yoy__A",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Headline inflation (y/y) under Design A",
+   "text": "Card estimate — Headline inflation (y/y) under Design A (DiD).\n\nOutcome: Headline inflation (y/y) (cpi_yoy). Unit: %. Direction: down (lower is better). Frequency: monthly. Coverage: ok.\n\nDesign A — State dose-response DiD.\n\nIdentifying assumption: Parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths. Formally, no unmeasured state-by-time confounder affects both the dose and the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Anticipation: states may adjust behaviour before the formal policy date.\n- SUTVA violations through cross-state spillovers (trade, migration, security).\n- Compositional or definitional change in state accounts over the window.\n- The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures.\n\nNo estimate for this (outcome, design) pair. Reason code: no_specification_declared. Stage 5 ran a pre-check for this pair, but Stage 6 declared no specification for it: the stage fitted the outcomes whose series it could carry, and this was not one of them. Nothing about the estimate stage says this question was asked and answered.\n\nThe check that decided: dose_variation: flag — the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/cpi_yoy__A.json",
+    "anchor": null,
+    "sha256": "849a9cd3592993e609920d9cd20664713d2b478fa8634a26729975561997d7bf"
+   },
+   "citation": "Card estimate — Headline inflation (y/y) under Design A — registry/dags/cpi_yoy__A.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "cpi_yoy__A",
+    "outcome_id": "cpi_yoy",
+    "outcome_label": "Headline inflation (y/y)",
+    "design_id": "A",
+    "design_name": "State dose-response DiD",
+    "estimate_status": "not_estimated",
+    "reason_code": "no_specification_declared",
+    "precheck_status": "fail",
+    "coverage_status": "ok",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1426,
+   "text_sha256": "ba16c7a95f64175bd885c9ac94d0d82c8e06d9b82652bb125d3c6457e85bab42"
+  },
+  {
+   "chunk_id": "estimate:cpi_yoy__B",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Headline inflation (y/y) under Design B",
+   "text": "Card estimate — Headline inflation (y/y) under Design B (Time series).\n\nOutcome: Headline inflation (y/y) (cpi_yoy). Unit: %. Direction: down (lower is better). Frequency: monthly. Coverage: ok.\n\nDesign B — National VECM / ARDL time series.\n\nIdentifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\nNo estimate for this (outcome, design) pair. Reason code: design_result_is_channel_level. The design has a published result, but it is a statement about the channel the design rests on (the national FAAC series) rather than about this card's outcome. The number is on the index, once, where it cannot be mistaken for an estimate for this outcome.\n\nThe check that decided: integration_order: inconclusive — I(1) across ADF/KPSS/PP on 27 native annual observations — tests disagree\n\nThe design-level result is published at index.json#published_results.design.B.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/cpi_yoy__B.json",
+    "anchor": null,
+    "sha256": "6eaa9f149eaa7ce4f73f82c2d478917e8cd296776644f6bcc6301e40151aaee8"
+   },
+   "citation": "Card estimate — Headline inflation (y/y) under Design B — registry/dags/cpi_yoy__B.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "cpi_yoy__B",
+    "outcome_id": "cpi_yoy",
+    "outcome_label": "Headline inflation (y/y)",
+    "design_id": "B",
+    "design_name": "National VECM / ARDL time series",
+    "estimate_status": "not_estimated",
+    "reason_code": "design_result_is_channel_level",
+    "precheck_status": "degraded",
+    "coverage_status": "ok",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1581,
+   "text_sha256": "80b07617da91ce2235299c156504852ff4ecdc84926a9384ed5becc2dc197f87"
+  },
+  {
+   "chunk_id": "estimate:cpi_yoy__C",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Headline inflation (y/y) under Design C",
+   "text": "Card estimate — Headline inflation (y/y) under Design C (Synthetic control).\n\nOutcome: Headline inflation (y/y) (cpi_yoy). Unit: %. Direction: down (lower is better). Frequency: monthly. Coverage: ok.\n\nDesign C — Synthetic control (cross-country).\n\nIdentifying assumption: The synthetic control reproduces Nigeria's outcome path absent treatment: donor-weighted common factors (above all the global oil and commodity cycle) stand in for Nigeria's counterfactual, and no Nigeria-specific shock coincides with the treatment (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).\n- Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.\n- Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.\n- Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared.\n\nNo estimate for this (outcome, design) pair. Reason code: design_not_run. The design was not run. The reason is on the index and in the estimates artifact.\n\nThe check that decided: pretreatment_fit:obasanjo: not_run — needs >= 8 pre and >= 2 post years\n\nThe design-level result is published at index.json#published_results.design.C.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/cpi_yoy__C.json",
+    "anchor": null,
+    "sha256": "1970819b39a64564f69308ece847ccf7f803297870189950b574b44980de8c32"
+   },
+   "citation": "Card estimate — Headline inflation (y/y) under Design C — registry/dags/cpi_yoy__C.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "cpi_yoy__C",
+    "outcome_id": "cpi_yoy",
+    "outcome_label": "Headline inflation (y/y)",
+    "design_id": "C",
+    "design_name": "Synthetic control (cross-country)",
+    "estimate_status": "not_estimated",
+    "reason_code": "design_not_run",
+    "precheck_status": "fail",
+    "coverage_status": "ok",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1342,
+   "text_sha256": "c9d3901049be8e1bf7a26110f1cd05a9681487bb7f0bb5b4fdc0b91409828318"
+  },
+  {
+   "chunk_id": "estimate:fatalities__A",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Reported security fatalities under Design A",
+   "text": "Card estimate — Reported security fatalities under Design A (DiD).\n\nOutcome: Reported security fatalities (fatalities). Unit: count. Direction: down (lower is better). Frequency: monthly. Coverage: ok.\n\nDesign A — State dose-response DiD.\n\nIdentifying assumption: Parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths. Formally, no unmeasured state-by-time confounder affects both the dose and the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Anticipation: states may adjust behaviour before the formal policy date.\n- SUTVA violations through cross-state spillovers (trade, migration, security).\n- Compositional or definitional change in state accounts over the window.\n- The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures.\n\nThe published specification is Design A on fatalities: elasticity_of_fatalities_to_allocation = +0.4793 (standard error 0.3023), 95% interval [-0.1132, +1.0718], p = 0.1129, n = 3,456 state-months over 36 states, 2016-12-01 to 2024-12-01.\n\nVerdict: estimated_not_identified. the lead-shift p-value is 0.133: 8 of 60 mis-timed doses return an estimate at least as large as the estimate itself",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/fatalities__A.json",
+    "anchor": null,
+    "sha256": "9feb64b62aaadf7e08ee9f1bfad0f037e867a27cfd3496c55008ccec3aafac05"
+   },
+   "citation": "Card estimate — Reported security fatalities under Design A — registry/dags/fatalities__A.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "fatalities__A",
+    "outcome_id": "fatalities",
+    "outcome_label": "Reported security fatalities",
+    "design_id": "A",
+    "design_name": "State dose-response DiD",
+    "estimate_status": "estimated",
+    "reason_code": null,
+    "precheck_status": "fail",
+    "coverage_status": "ok",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1256,
+   "text_sha256": "3c3484076a1ebfd2df9fc67beb8dcf38508dce789a2894806ccfabde77b221af"
+  },
+  {
+   "chunk_id": "estimate:fatalities__B",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Reported security fatalities under Design B",
+   "text": "Card estimate — Reported security fatalities under Design B (Time series).\n\nOutcome: Reported security fatalities (fatalities). Unit: count. Direction: down (lower is better). Frequency: monthly. Coverage: ok.\n\nDesign B — National VECM / ARDL time series.\n\nIdentifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\nNo estimate for this (outcome, design) pair. Reason code: design_result_is_channel_level. The design has a published result, but it is a statement about the channel the design rests on (the national FAAC series) rather than about this card's outcome. The number is on the index, once, where it cannot be mistaken for an estimate for this outcome.\n\nThe check that decided: integration_order: not_run — no native series\n\nThe design-level result is published at index.json#published_results.design.B.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/fatalities__B.json",
+    "anchor": null,
+    "sha256": "46948b595897acc12d2bd86fbfadb175328362dafc704e33b8f84a6dcefcccd5"
+   },
+   "citation": "Card estimate — Reported security fatalities under Design B — registry/dags/fatalities__B.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "fatalities__B",
+    "outcome_id": "fatalities",
+    "outcome_label": "Reported security fatalities",
+    "design_id": "B",
+    "design_name": "National VECM / ARDL time series",
+    "estimate_status": "not_estimated",
+    "reason_code": "design_result_is_channel_level",
+    "precheck_status": "degraded",
+    "coverage_status": "ok",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1534,
+   "text_sha256": "f5ab21dcd15050d36ad6dd5c60f10fe8b7c6e3b601ae8e16878ab3e4f5f0a32b"
+  },
+  {
+   "chunk_id": "estimate:fatalities__C",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Reported security fatalities under Design C",
+   "text": "Card estimate — Reported security fatalities under Design C (Synthetic control).\n\nOutcome: Reported security fatalities (fatalities). Unit: count. Direction: down (lower is better). Frequency: monthly. Coverage: ok.\n\nDesign C — Synthetic control (cross-country).\n\nIdentifying assumption: The synthetic control reproduces Nigeria's outcome path absent treatment: donor-weighted common factors (above all the global oil and commodity cycle) stand in for Nigeria's counterfactual, and no Nigeria-specific shock coincides with the treatment (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).\n- Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.\n- Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.\n- Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared.\n\nNo estimate for this (outcome, design) pair. Reason code: outcome_series_absent. The outcome has no usable series, so no Stage 5 pre-check could run for this (outcome, design) pair. The card is a declared gap, not a null result.\n\nThe check that decided: pretreatment_fit: not_run — outcome fatalities is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)\n\nThe design-level result is published at index.json#published_results.design.C.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/fatalities__C.json",
+    "anchor": null,
+    "sha256": "c1a422df68cb866119a77e46d0b8280914fea1ec8d9b7f6d896eebef165858ba"
+   },
+   "citation": "Card estimate — Reported security fatalities under Design C — registry/dags/fatalities__C.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "fatalities__C",
+    "outcome_id": "fatalities",
+    "outcome_label": "Reported security fatalities",
+    "design_id": "C",
+    "design_name": "Synthetic control (cross-country)",
+    "estimate_status": "not_estimated",
+    "reason_code": "outcome_series_absent",
+    "precheck_status": "not_attempted",
+    "coverage_status": "ok",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1494,
+   "text_sha256": "849f6f234715bb0258809ccb44a490402dd6317a53cf648b698ae08abec3caec"
+  },
+  {
+   "chunk_id": "estimate:gdp_growth__A",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Real GDP growth (y/y) under Design A",
+   "text": "Card estimate — Real GDP growth (y/y) under Design A (DiD).\n\nOutcome: Real GDP growth (y/y) (gdp_growth). Unit: %. Direction: up (higher is better). Frequency: quarterly. Coverage: ok.\n\nDesign A — State dose-response DiD.\n\nIdentifying assumption: Parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths. Formally, no unmeasured state-by-time confounder affects both the dose and the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Anticipation: states may adjust behaviour before the formal policy date.\n- SUTVA violations through cross-state spillovers (trade, migration, security).\n- Compositional or definitional change in state accounts over the window.\n- The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures.\n\nNo estimate for this (outcome, design) pair. Reason code: no_specification_declared. Stage 5 ran a pre-check for this pair, but Stage 6 declared no specification for it: the stage fitted the outcomes whose series it could carry, and this was not one of them. Nothing about the estimate stage says this question was asked and answered.\n\nThe check that decided: dose_variation: flag — the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/gdp_growth__A.json",
+    "anchor": null,
+    "sha256": "8f4b2ddd3544235569d05e7da2616d154a4354a702e2cfc57637a7b58248768a"
+   },
+   "citation": "Card estimate — Real GDP growth (y/y) under Design A — registry/dags/gdp_growth__A.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "gdp_growth__A",
+    "outcome_id": "gdp_growth",
+    "outcome_label": "Real GDP growth (y/y)",
+    "design_id": "A",
+    "design_name": "State dose-response DiD",
+    "estimate_status": "not_estimated",
+    "reason_code": "no_specification_declared",
+    "precheck_status": "fail",
+    "coverage_status": "ok",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1424,
+   "text_sha256": "ee20e9bd8bb538a7257abf3e3d2073e45bb74890aa0b0525437cb5036cd2f4af"
+  },
+  {
+   "chunk_id": "estimate:gdp_growth__B",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Real GDP growth (y/y) under Design B",
+   "text": "Card estimate — Real GDP growth (y/y) under Design B (Time series).\n\nOutcome: Real GDP growth (y/y) (gdp_growth). Unit: %. Direction: up (higher is better). Frequency: quarterly. Coverage: ok.\n\nDesign B — National VECM / ARDL time series.\n\nIdentifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\nNo estimate for this (outcome, design) pair. Reason code: design_result_is_channel_level. The design has a published result, but it is a statement about the channel the design rests on (the national FAAC series) rather than about this card's outcome. The number is on the index, once, where it cannot be mistaken for an estimate for this outcome.\n\nThe check that decided: collinearity: flag — max VIF 16.6 on trend (27 rows)\n\nThe design-level result is published at index.json#published_results.design.B.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/gdp_growth__B.json",
+    "anchor": null,
+    "sha256": "ad515c566df8cf7eea560482509b4af26d1531af573fd6c350456504c6533930"
+   },
+   "citation": "Card estimate — Real GDP growth (y/y) under Design B — registry/dags/gdp_growth__B.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "gdp_growth__B",
+    "outcome_id": "gdp_growth",
+    "outcome_label": "Real GDP growth (y/y)",
+    "design_id": "B",
+    "design_name": "National VECM / ARDL time series",
+    "estimate_status": "not_estimated",
+    "reason_code": "design_result_is_channel_level",
+    "precheck_status": "degraded",
+    "coverage_status": "ok",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1524,
+   "text_sha256": "e7f9b1a814770b9729df78764b1c3d681e3fa07eddd2b388184820b04003fdf9"
+  },
+  {
+   "chunk_id": "estimate:gdp_growth__C",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Real GDP growth (y/y) under Design C",
+   "text": "Card estimate — Real GDP growth (y/y) under Design C (Synthetic control).\n\nOutcome: Real GDP growth (y/y) (gdp_growth). Unit: %. Direction: up (higher is better). Frequency: quarterly. Coverage: ok.\n\nDesign C — Synthetic control (cross-country).\n\nIdentifying assumption: The synthetic control reproduces Nigeria's outcome path absent treatment: donor-weighted common factors (above all the global oil and commodity cycle) stand in for Nigeria's counterfactual, and no Nigeria-specific shock coincides with the treatment (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).\n- Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.\n- Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.\n- Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared.\n\nNo estimate for this (outcome, design) pair. Reason code: design_not_run. The design was not run. The reason is on the index and in the estimates artifact.\n\nThe check that decided: pretreatment_fit:obasanjo: not_run — needs >= 8 pre and >= 2 post years\n\nThe design-level result is published at index.json#published_results.design.C.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/gdp_growth__C.json",
+    "anchor": null,
+    "sha256": "4c735a836171dcf0a3b4ecd5ba4645005d758076336e0b78304a7a9720b2618f"
+   },
+   "citation": "Card estimate — Real GDP growth (y/y) under Design C — registry/dags/gdp_growth__C.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "gdp_growth__C",
+    "outcome_id": "gdp_growth",
+    "outcome_label": "Real GDP growth (y/y)",
+    "design_id": "C",
+    "design_name": "Synthetic control (cross-country)",
+    "estimate_status": "not_estimated",
+    "reason_code": "design_not_run",
+    "precheck_status": "fail",
+    "coverage_status": "ok",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1340,
+   "text_sha256": "14bb631dfecdf1698fcaeff6d1f1bc43e7bc5a2f7a282c84320f86f2381d704a"
+  },
+  {
+   "chunk_id": "estimate:immun_penta3__A",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Penta3 immunisation coverage under Design A",
+   "text": "Card estimate — Penta3 immunisation coverage under Design A (DiD).\n\nOutcome: Penta3 immunisation coverage (immun_penta3). Unit: % surviving infants. Direction: up (higher is better). Frequency: annual. Coverage: partial.\n\nDesign A — State dose-response DiD.\n\nIdentifying assumption: Parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths. Formally, no unmeasured state-by-time confounder affects both the dose and the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Anticipation: states may adjust behaviour before the formal policy date.\n- SUTVA violations through cross-state spillovers (trade, migration, security).\n- Compositional or definitional change in state accounts over the window.\n- The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures.\n\nNo estimate for this (outcome, design) pair. Reason code: no_specification_declared. Stage 5 ran a pre-check for this pair, but Stage 6 declared no specification for it: the stage fitted the outcomes whose series it could carry, and this was not one of them. Nothing about the estimate stage says this question was asked and answered.\n\nThe check that decided: dose_variation: flag — the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/immun_penta3__A.json",
+    "anchor": null,
+    "sha256": "643a307518cf25e6aa15c8c3281e2d546d7558507aa871802012bfbb9e0d3e3d"
+   },
+   "citation": "Card estimate — Penta3 immunisation coverage under Design A — registry/dags/immun_penta3__A.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "immun_penta3__A",
+    "outcome_id": "immun_penta3",
+    "outcome_label": "Penta3 immunisation coverage",
+    "design_id": "A",
+    "design_name": "State dose-response DiD",
+    "estimate_status": "not_estimated",
+    "reason_code": "no_specification_declared",
+    "precheck_status": "fail",
+    "coverage_status": "partial",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1460,
+   "text_sha256": "c01e8f14e4175e6784e854c831b9a5050e6e4fee3b54dd3f53e30261f8cfd8e2"
+  },
+  {
+   "chunk_id": "estimate:immun_penta3__B",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Penta3 immunisation coverage under Design B",
+   "text": "Card estimate — Penta3 immunisation coverage under Design B (Time series).\n\nOutcome: Penta3 immunisation coverage (immun_penta3). Unit: % surviving infants. Direction: up (higher is better). Frequency: annual. Coverage: partial.\n\nDesign B — National VECM / ARDL time series.\n\nIdentifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\nNo estimate for this (outcome, design) pair. Reason code: design_result_is_channel_level. The design has a published result, but it is a statement about the channel the design rests on (the national FAAC series) rather than about this card's outcome. The number is on the index, once, where it cannot be mistaken for an estimate for this outcome.\n\nThe check that decided: collinearity: flag — max VIF 19.9 on trend (26 rows)\n\nThe design-level result is published at index.json#published_results.design.B.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/immun_penta3__B.json",
+    "anchor": null,
+    "sha256": "1a4aea334612170bb1bce63ac886b4c4d4b439588db4b1ad2e5be96e641f66e4"
+   },
+   "citation": "Card estimate — Penta3 immunisation coverage under Design B — registry/dags/immun_penta3__B.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "immun_penta3__B",
+    "outcome_id": "immun_penta3",
+    "outcome_label": "Penta3 immunisation coverage",
+    "design_id": "B",
+    "design_name": "National VECM / ARDL time series",
+    "estimate_status": "not_estimated",
+    "reason_code": "design_result_is_channel_level",
+    "precheck_status": "degraded",
+    "coverage_status": "partial",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1560,
+   "text_sha256": "b089d69b2040a50aa10d509697f8652002a2feaf874469a7869498c200488680"
+  },
+  {
+   "chunk_id": "estimate:immun_penta3__C",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Penta3 immunisation coverage under Design C",
+   "text": "Card estimate — Penta3 immunisation coverage under Design C (Synthetic control).\n\nOutcome: Penta3 immunisation coverage (immun_penta3). Unit: % surviving infants. Direction: up (higher is better). Frequency: annual. Coverage: partial.\n\nDesign C — Synthetic control (cross-country).\n\nIdentifying assumption: The synthetic control reproduces Nigeria's outcome path absent treatment: donor-weighted common factors (above all the global oil and commodity cycle) stand in for Nigeria's counterfactual, and no Nigeria-specific shock coincides with the treatment (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).\n- Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.\n- Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.\n- Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared.\n\nNo estimate for this (outcome, design) pair. Reason code: outcome_series_absent. The outcome has no usable series, so no Stage 5 pre-check could run for this (outcome, design) pair. The card is a declared gap, not a null result.\n\nThe check that decided: pretreatment_fit: not_run — outcome immun_penta3 is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)\n\nThe design-level result is published at index.json#published_results.design.C.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/immun_penta3__C.json",
+    "anchor": null,
+    "sha256": "6fc7c3db026f92c80db38e5cea368647f8c30511d1509a6af6c45f05096c99b5"
+   },
+   "citation": "Card estimate — Penta3 immunisation coverage under Design C — registry/dags/immun_penta3__C.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "immun_penta3__C",
+    "outcome_id": "immun_penta3",
+    "outcome_label": "Penta3 immunisation coverage",
+    "design_id": "C",
+    "design_name": "Synthetic control (cross-country)",
+    "estimate_status": "not_estimated",
+    "reason_code": "outcome_series_absent",
+    "precheck_status": "not_attempted",
+    "coverage_status": "partial",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1515,
+   "text_sha256": "33b21fed0aa7bdbfbaafc175b96d447917056d36a9a66d5e3cbeeda9458618a0"
+  },
+  {
+   "chunk_id": "estimate:incidents__A",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Reported security incidents under Design A",
+   "text": "Card estimate — Reported security incidents under Design A (DiD).\n\nOutcome: Reported security incidents (incidents). Unit: count. Direction: down (lower is better). Frequency: monthly. Coverage: ok.\n\nDesign A — State dose-response DiD.\n\nIdentifying assumption: Parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths. Formally, no unmeasured state-by-time confounder affects both the dose and the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Anticipation: states may adjust behaviour before the formal policy date.\n- SUTVA violations through cross-state spillovers (trade, migration, security).\n- Compositional or definitional change in state accounts over the window.\n- The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures.\n\nThe published specification is Design A on incidents: elasticity_of_fatalities_to_allocation = +0.5460 (standard error 0.2168), 95% interval [+0.1211, +0.9709], p = 0.0118, n = 3,456 state-months over 36 states, 2016-12-01 to 2024-12-01.\n\nVerdict: estimated_not_identified. the lead-shift p-value is 0.133: 8 of 60 mis-timed doses return an estimate at least as large as the estimate itself",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/incidents__A.json",
+    "anchor": null,
+    "sha256": "40bfd137c8147e568dc7bb9501e26f22a1b74dbd2ea8250e6507832e0a9d27c4"
+   },
+   "citation": "Card estimate — Reported security incidents under Design A — registry/dags/incidents__A.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "incidents__A",
+    "outcome_id": "incidents",
+    "outcome_label": "Reported security incidents",
+    "design_id": "A",
+    "design_name": "State dose-response DiD",
+    "estimate_status": "estimated",
+    "reason_code": null,
+    "precheck_status": "fail",
+    "coverage_status": "ok",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1252,
+   "text_sha256": "83513298a74b6ea7a04ea893733fad761cec76a18c258f413d9c240553ab24b9"
+  },
+  {
+   "chunk_id": "estimate:incidents__B",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Reported security incidents under Design B",
+   "text": "Card estimate — Reported security incidents under Design B (Time series).\n\nOutcome: Reported security incidents (incidents). Unit: count. Direction: down (lower is better). Frequency: monthly. Coverage: ok.\n\nDesign B — National VECM / ARDL time series.\n\nIdentifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\nNo estimate for this (outcome, design) pair. Reason code: design_result_is_channel_level. The design has a published result, but it is a statement about the channel the design rests on (the national FAAC series) rather than about this card's outcome. The number is on the index, once, where it cannot be mistaken for an estimate for this outcome.\n\nThe check that decided: integration_order: not_run — no native series\n\nThe design-level result is published at index.json#published_results.design.B.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/incidents__B.json",
+    "anchor": null,
+    "sha256": "9086600ff6f14ef5e40252930870cd4187d3f1deb842fb702c9156a97794db67"
+   },
+   "citation": "Card estimate — Reported security incidents under Design B — registry/dags/incidents__B.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "incidents__B",
+    "outcome_id": "incidents",
+    "outcome_label": "Reported security incidents",
+    "design_id": "B",
+    "design_name": "National VECM / ARDL time series",
+    "estimate_status": "not_estimated",
+    "reason_code": "design_result_is_channel_level",
+    "precheck_status": "degraded",
+    "coverage_status": "ok",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1531,
+   "text_sha256": "e20e4d98753f76ef4b963b567d502557d567d25a5854797e6e5e16e033bfa12d"
+  },
+  {
+   "chunk_id": "estimate:incidents__C",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Reported security incidents under Design C",
+   "text": "Card estimate — Reported security incidents under Design C (Synthetic control).\n\nOutcome: Reported security incidents (incidents). Unit: count. Direction: down (lower is better). Frequency: monthly. Coverage: ok.\n\nDesign C — Synthetic control (cross-country).\n\nIdentifying assumption: The synthetic control reproduces Nigeria's outcome path absent treatment: donor-weighted common factors (above all the global oil and commodity cycle) stand in for Nigeria's counterfactual, and no Nigeria-specific shock coincides with the treatment (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).\n- Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.\n- Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.\n- Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared.\n\nNo estimate for this (outcome, design) pair. Reason code: outcome_series_absent. The outcome has no usable series, so no Stage 5 pre-check could run for this (outcome, design) pair. The card is a declared gap, not a null result.\n\nThe check that decided: pretreatment_fit: not_run — outcome incidents is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)\n\nThe design-level result is published at index.json#published_results.design.C.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/incidents__C.json",
+    "anchor": null,
+    "sha256": "24c3d7ee09e04807e28661641fad8f15916aef198886c0bde7776fc88a5d21bf"
+   },
+   "citation": "Card estimate — Reported security incidents under Design C — registry/dags/incidents__C.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "incidents__C",
+    "outcome_id": "incidents",
+    "outcome_label": "Reported security incidents",
+    "design_id": "C",
+    "design_name": "Synthetic control (cross-country)",
+    "estimate_status": "not_estimated",
+    "reason_code": "outcome_series_absent",
+    "precheck_status": "not_attempted",
+    "coverage_status": "ok",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1490,
+   "text_sha256": "02b0611dd0df104424db45c1b34cf719081c7592c9e7d9288d8429c32ee75a3f"
+  },
+  {
+   "chunk_id": "estimate:literacy_youth__A",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Youth literacy (15-24) under Design A",
+   "text": "Card estimate — Youth literacy (15-24) under Design A (DiD).\n\nOutcome: Youth literacy (15-24) (literacy_youth). Unit: %. Direction: up (higher is better). Frequency: annual. Coverage: declared_gap.\n\nDesign A — State dose-response DiD.\n\nIdentifying assumption: Parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths. Formally, no unmeasured state-by-time confounder affects both the dose and the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Anticipation: states may adjust behaviour before the formal policy date.\n- SUTVA violations through cross-state spillovers (trade, migration, security).\n- Compositional or definitional change in state accounts over the window.\n- The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures.\n\nNo estimate for this (outcome, design) pair. Reason code: no_specification_declared. Stage 5 ran a pre-check for this pair, but Stage 6 declared no specification for it: the stage fitted the outcomes whose series it could carry, and this was not one of them. Nothing about the estimate stage says this question was asked and answered.\n\nThe check that decided: dose_variation: flag — the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/literacy_youth__A.json",
+    "anchor": null,
+    "sha256": "91bff80ed2978d70c4f548cb82a5a1bd49cf5a4dc47cc25abab858df5a2f714d"
+   },
+   "citation": "Card estimate — Youth literacy (15-24) under Design A — registry/dags/literacy_youth__A.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "literacy_youth__A",
+    "outcome_id": "literacy_youth",
+    "outcome_label": "Youth literacy (15-24)",
+    "design_id": "A",
+    "design_name": "State dose-response DiD",
+    "estimate_status": "not_estimated",
+    "reason_code": "no_specification_declared",
+    "precheck_status": "fail",
+    "coverage_status": "declared_gap",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1437,
+   "text_sha256": "36021c479f65e083b1797fd88a90a3e4fe8e30452bb11a34a1599d47d0c3c2ce"
+  },
+  {
+   "chunk_id": "estimate:literacy_youth__B",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Youth literacy (15-24) under Design B",
+   "text": "Card estimate — Youth literacy (15-24) under Design B (Time series).\n\nOutcome: Youth literacy (15-24) (literacy_youth). Unit: %. Direction: up (higher is better). Frequency: annual. Coverage: declared_gap.\n\nDesign B — National VECM / ARDL time series.\n\nIdentifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\nNo estimate for this (outcome, design) pair. Reason code: outcome_series_absent. The outcome has no usable series, so no Stage 5 pre-check could run for this (outcome, design) pair. The card is a declared gap, not a null result.\n\nThe check that decided: integration_order: not_run — only 7 native observations in the window (minimum 12) — not tested",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/literacy_youth__B.json",
+    "anchor": null,
+    "sha256": "3b2819870979ef8190acd1865205fea16741fa1b82200ee92b5db55121302ae2"
+   },
+   "citation": "Card estimate — Youth literacy (15-24) under Design B — registry/dags/literacy_youth__B.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "literacy_youth__B",
+    "outcome_id": "literacy_youth",
+    "outcome_label": "Youth literacy (15-24)",
+    "design_id": "B",
+    "design_name": "National VECM / ARDL time series",
+    "estimate_status": "not_estimated",
+    "reason_code": "outcome_series_absent",
+    "precheck_status": "not_attempted",
+    "coverage_status": "declared_gap",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1382,
+   "text_sha256": "bc5002bafddeb796fa1a2f6529ae85beed814bd3e8fe2e7f58f10fae72fe59ac"
+  },
+  {
+   "chunk_id": "estimate:literacy_youth__C",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Youth literacy (15-24) under Design C",
+   "text": "Card estimate — Youth literacy (15-24) under Design C (Synthetic control).\n\nOutcome: Youth literacy (15-24) (literacy_youth). Unit: %. Direction: up (higher is better). Frequency: annual. Coverage: declared_gap.\n\nDesign C — Synthetic control (cross-country).\n\nIdentifying assumption: The synthetic control reproduces Nigeria's outcome path absent treatment: donor-weighted common factors (above all the global oil and commodity cycle) stand in for Nigeria's counterfactual, and no Nigeria-specific shock coincides with the treatment (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).\n- Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.\n- Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.\n- Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared.\n\nNo estimate for this (outcome, design) pair. Reason code: outcome_series_absent. The outcome has no usable series, so no Stage 5 pre-check could run for this (outcome, design) pair. The card is a declared gap, not a null result.\n\nThe check that decided: pretreatment_fit: not_run — outcome literacy_youth is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)\n\nThe design-level result is published at index.json#published_results.design.C.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/literacy_youth__C.json",
+    "anchor": null,
+    "sha256": "2aee7f1ce4546c801e806ddd83d602d3088a8699c6dda7d6be8535e1927245f5"
+   },
+   "citation": "Card estimate — Youth literacy (15-24) under Design C — registry/dags/literacy_youth__C.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "literacy_youth__C",
+    "outcome_id": "literacy_youth",
+    "outcome_label": "Youth literacy (15-24)",
+    "design_id": "C",
+    "design_name": "Synthetic control (cross-country)",
+    "estimate_status": "not_estimated",
+    "reason_code": "outcome_series_absent",
+    "precheck_status": "not_attempted",
+    "coverage_status": "declared_gap",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1494,
+   "text_sha256": "b01f1001477b3cf782574ae85b675f6717a3fbea536e885d0962a08103c0bd8c"
+  },
+  {
+   "chunk_id": "estimate:mmr__A",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Maternal mortality ratio under Design A",
+   "text": "Card estimate — Maternal mortality ratio under Design A (DiD).\n\nOutcome: Maternal mortality ratio (mmr). Unit: per 100,000 births. Direction: down (lower is better). Frequency: annual. Coverage: ok.\n\nDesign A — State dose-response DiD.\n\nIdentifying assumption: Parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths. Formally, no unmeasured state-by-time confounder affects both the dose and the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Anticipation: states may adjust behaviour before the formal policy date.\n- SUTVA violations through cross-state spillovers (trade, migration, security).\n- Compositional or definitional change in state accounts over the window.\n- The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures.\n\nNo estimate for this (outcome, design) pair. Reason code: no_specification_declared. Stage 5 ran a pre-check for this pair, but Stage 6 declared no specification for it: the stage fitted the outcomes whose series it could carry, and this was not one of them. Nothing about the estimate stage says this question was asked and answered.\n\nThe check that decided: dose_variation: flag — the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/mmr__A.json",
+    "anchor": null,
+    "sha256": "8aa2faa6140010564f9e6c50b2d8838448f42bbfc80d1305fb1ca3df0fad2824"
+   },
+   "citation": "Card estimate — Maternal mortality ratio under Design A — registry/dags/mmr__A.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "mmr__A",
+    "outcome_id": "mmr",
+    "outcome_label": "Maternal mortality ratio",
+    "design_id": "A",
+    "design_name": "State dose-response DiD",
+    "estimate_status": "not_estimated",
+    "reason_code": "no_specification_declared",
+    "precheck_status": "fail",
+    "coverage_status": "ok",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1438,
+   "text_sha256": "cefb4316fa0533222569492b4ea1d3860bcf4a75b9cb0f3e89bbcc6ba66f0a96"
+  },
+  {
+   "chunk_id": "estimate:mmr__B",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Maternal mortality ratio under Design B",
+   "text": "Card estimate — Maternal mortality ratio under Design B (Time series).\n\nOutcome: Maternal mortality ratio (mmr). Unit: per 100,000 births. Direction: down (lower is better). Frequency: annual. Coverage: ok.\n\nDesign B — National VECM / ARDL time series.\n\nIdentifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\nNo estimate for this (outcome, design) pair. Reason code: design_result_is_channel_level. The design has a published result, but it is a statement about the channel the design rests on (the national FAAC series) rather than about this card's outcome. The number is on the index, once, where it cannot be mistaken for an estimate for this outcome.\n\nThe check that decided: integration_order: inconclusive — I(1) across ADF/KPSS/PP on 25 native annual observations — tests disagree\n\nThe design-level result is published at index.json#published_results.design.B.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/mmr__B.json",
+    "anchor": null,
+    "sha256": "3ebdd74857d420f84f088ff411ed5aa84240043c8f9b6951e9e5df8c64ed9dcf"
+   },
+   "citation": "Card estimate — Maternal mortality ratio under Design B — registry/dags/mmr__B.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "mmr__B",
+    "outcome_id": "mmr",
+    "outcome_label": "Maternal mortality ratio",
+    "design_id": "B",
+    "design_name": "National VECM / ARDL time series",
+    "estimate_status": "not_estimated",
+    "reason_code": "design_result_is_channel_level",
+    "precheck_status": "degraded",
+    "coverage_status": "ok",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1593,
+   "text_sha256": "71cbc2716e77e4f89bbb9e2c57ed9a96b7f273a4d55fafe224cff59a538b767e"
+  },
+  {
+   "chunk_id": "estimate:mmr__C",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Maternal mortality ratio under Design C",
+   "text": "Card estimate — Maternal mortality ratio under Design C (Synthetic control).\n\nOutcome: Maternal mortality ratio (mmr). Unit: per 100,000 births. Direction: down (lower is better). Frequency: annual. Coverage: ok.\n\nDesign C — Synthetic control (cross-country).\n\nIdentifying assumption: The synthetic control reproduces Nigeria's outcome path absent treatment: donor-weighted common factors (above all the global oil and commodity cycle) stand in for Nigeria's counterfactual, and no Nigeria-specific shock coincides with the treatment (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).\n- Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.\n- Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.\n- Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared.\n\nNo estimate for this (outcome, design) pair. Reason code: outcome_series_absent. The outcome has no usable series, so no Stage 5 pre-check could run for this (outcome, design) pair. The card is a declared gap, not a null result.\n\nThe check that decided: pretreatment_fit: not_run — outcome mmr is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)\n\nThe design-level result is published at index.json#published_results.design.C.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/mmr__C.json",
+    "anchor": null,
+    "sha256": "dc0f679f5d9d4beb142968789623cfc58918a44e3034f4e8e8b0fd189365a1b1"
+   },
+   "citation": "Card estimate — Maternal mortality ratio under Design C — registry/dags/mmr__C.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "mmr__C",
+    "outcome_id": "mmr",
+    "outcome_label": "Maternal mortality ratio",
+    "design_id": "C",
+    "design_name": "Synthetic control (cross-country)",
+    "estimate_status": "not_estimated",
+    "reason_code": "outcome_series_absent",
+    "precheck_status": "not_attempted",
+    "coverage_status": "ok",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1484,
+   "text_sha256": "8c0f73c512626e1ffc14ab0a1d64839e94a361c3c9a8e6b879917ab4927d7823"
+  },
+  {
+   "chunk_id": "estimate:ner_primary__A",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Net enrolment rate, primary under Design A",
+   "text": "Card estimate — Net enrolment rate, primary under Design A (DiD).\n\nOutcome: Net enrolment rate, primary (ner_primary). Unit: %. Direction: up (higher is better). Frequency: annual. Coverage: declared_gap.\n\nDesign A — State dose-response DiD.\n\nIdentifying assumption: Parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths. Formally, no unmeasured state-by-time confounder affects both the dose and the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Anticipation: states may adjust behaviour before the formal policy date.\n- SUTVA violations through cross-state spillovers (trade, migration, security).\n- Compositional or definitional change in state accounts over the window.\n- The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures.\n\nNo estimate for this (outcome, design) pair. Reason code: no_specification_declared. Stage 5 ran a pre-check for this pair, but Stage 6 declared no specification for it: the stage fitted the outcomes whose series it could carry, and this was not one of them. Nothing about the estimate stage says this question was asked and answered.\n\nThe check that decided: dose_variation: flag — the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/ner_primary__A.json",
+    "anchor": null,
+    "sha256": "bf86bd8d09119e8420589f4f1a3932bbb432535498b4f39226d6881fccbe58db"
+   },
+   "citation": "Card estimate — Net enrolment rate, primary under Design A — registry/dags/ner_primary__A.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "ner_primary__A",
+    "outcome_id": "ner_primary",
+    "outcome_label": "Net enrolment rate, primary",
+    "design_id": "A",
+    "design_name": "State dose-response DiD",
+    "estimate_status": "not_estimated",
+    "reason_code": "no_specification_declared",
+    "precheck_status": "fail",
+    "coverage_status": "declared_gap",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1444,
+   "text_sha256": "324bff48e488b0ff641dea55a773a9764ad37baa3a1d296862da93901d78736d"
+  },
+  {
+   "chunk_id": "estimate:ner_primary__B",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Net enrolment rate, primary under Design B",
+   "text": "Card estimate — Net enrolment rate, primary under Design B (Time series).\n\nOutcome: Net enrolment rate, primary (ner_primary). Unit: %. Direction: up (higher is better). Frequency: annual. Coverage: declared_gap.\n\nDesign B — National VECM / ARDL time series.\n\nIdentifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\nNo estimate for this (outcome, design) pair. Reason code: outcome_series_absent. The outcome has no usable series, so no Stage 5 pre-check could run for this (outcome, design) pair. The card is a declared gap, not a null result.\n\nThe check that decided: integration_order: not_run — only 9 native observations in the window (minimum 12) — not tested",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/ner_primary__B.json",
+    "anchor": null,
+    "sha256": "5561c3c4afb44602ac415f78b304b856c822847770bf327d063a995e44d371ea"
+   },
+   "citation": "Card estimate — Net enrolment rate, primary under Design B — registry/dags/ner_primary__B.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "ner_primary__B",
+    "outcome_id": "ner_primary",
+    "outcome_label": "Net enrolment rate, primary",
+    "design_id": "B",
+    "design_name": "National VECM / ARDL time series",
+    "estimate_status": "not_estimated",
+    "reason_code": "outcome_series_absent",
+    "precheck_status": "not_attempted",
+    "coverage_status": "declared_gap",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1389,
+   "text_sha256": "4eb9d2867aa43dc8c063f360cf8685234accf022e4548e3b6e7e46046ccedd9b"
+  },
+  {
+   "chunk_id": "estimate:ner_primary__C",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Net enrolment rate, primary under Design C",
+   "text": "Card estimate — Net enrolment rate, primary under Design C (Synthetic control).\n\nOutcome: Net enrolment rate, primary (ner_primary). Unit: %. Direction: up (higher is better). Frequency: annual. Coverage: declared_gap.\n\nDesign C — Synthetic control (cross-country).\n\nIdentifying assumption: The synthetic control reproduces Nigeria's outcome path absent treatment: donor-weighted common factors (above all the global oil and commodity cycle) stand in for Nigeria's counterfactual, and no Nigeria-specific shock coincides with the treatment (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).\n- Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.\n- Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.\n- Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared.\n\nNo estimate for this (outcome, design) pair. Reason code: outcome_series_absent. The outcome has no usable series, so no Stage 5 pre-check could run for this (outcome, design) pair. The card is a declared gap, not a null result.\n\nThe check that decided: pretreatment_fit: not_run — outcome ner_primary is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)\n\nThe design-level result is published at index.json#published_results.design.C.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/ner_primary__C.json",
+    "anchor": null,
+    "sha256": "0305f57594258321549bc4f0c7ff9b2dd465f16f9a4a630d6f4e3e62befdbfb1"
+   },
+   "citation": "Card estimate — Net enrolment rate, primary under Design C — registry/dags/ner_primary__C.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "ner_primary__C",
+    "outcome_id": "ner_primary",
+    "outcome_label": "Net enrolment rate, primary",
+    "design_id": "C",
+    "design_name": "Synthetic control (cross-country)",
+    "estimate_status": "not_estimated",
+    "reason_code": "outcome_series_absent",
+    "precheck_status": "not_attempted",
+    "coverage_status": "declared_gap",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1498,
+   "text_sha256": "7b7ead2258e81ff0e3500ebd8bf17a221ac53758b5be0ca982543d814eb09f34"
+  },
+  {
+   "chunk_id": "estimate:primary_completion__A",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Primary completion rate under Design A",
+   "text": "Card estimate — Primary completion rate under Design A (DiD).\n\nOutcome: Primary completion rate (primary_completion). Unit: %. Direction: up (higher is better). Frequency: annual. Coverage: declared_gap.\n\nDesign A — State dose-response DiD.\n\nIdentifying assumption: Parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths. Formally, no unmeasured state-by-time confounder affects both the dose and the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Anticipation: states may adjust behaviour before the formal policy date.\n- SUTVA violations through cross-state spillovers (trade, migration, security).\n- Compositional or definitional change in state accounts over the window.\n- The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures.\n\nNo estimate for this (outcome, design) pair. Reason code: no_specification_declared. Stage 5 ran a pre-check for this pair, but Stage 6 declared no specification for it: the stage fitted the outcomes whose series it could carry, and this was not one of them. Nothing about the estimate stage says this question was asked and answered.\n\nThe check that decided: dose_variation: flag — the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/primary_completion__A.json",
+    "anchor": null,
+    "sha256": "7189e2a1371dd9bbff02e9221f89760dd4c4a9b10a38050c64f5092b903449f8"
+   },
+   "citation": "Card estimate — Primary completion rate under Design A — registry/dags/primary_completion__A.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "primary_completion__A",
+    "outcome_id": "primary_completion",
+    "outcome_label": "Primary completion rate",
+    "design_id": "A",
+    "design_name": "State dose-response DiD",
+    "estimate_status": "not_estimated",
+    "reason_code": "no_specification_declared",
+    "precheck_status": "fail",
+    "coverage_status": "declared_gap",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1443,
+   "text_sha256": "ff890cd2cf50b137820b2642b236c929b463ebb4e05aef316f6fb4fdfe6b9bd9"
+  },
+  {
+   "chunk_id": "estimate:primary_completion__B",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Primary completion rate under Design B",
+   "text": "Card estimate — Primary completion rate under Design B (Time series).\n\nOutcome: Primary completion rate (primary_completion). Unit: %. Direction: up (higher is better). Frequency: annual. Coverage: declared_gap.\n\nDesign B — National VECM / ARDL time series.\n\nIdentifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\nNo estimate for this (outcome, design) pair. Reason code: outcome_series_absent. The outcome has no usable series, so no Stage 5 pre-check could run for this (outcome, design) pair. The card is a declared gap, not a null result.\n\nThe check that decided: integration_order: not_run — only 8 native observations in the window (minimum 12) — not tested",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/primary_completion__B.json",
+    "anchor": null,
+    "sha256": "a53efa86530f80bc984aad9c87bae910f52fd8d4d6cf0e50d35e2438790a94d3"
+   },
+   "citation": "Card estimate — Primary completion rate under Design B — registry/dags/primary_completion__B.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "primary_completion__B",
+    "outcome_id": "primary_completion",
+    "outcome_label": "Primary completion rate",
+    "design_id": "B",
+    "design_name": "National VECM / ARDL time series",
+    "estimate_status": "not_estimated",
+    "reason_code": "outcome_series_absent",
+    "precheck_status": "not_attempted",
+    "coverage_status": "declared_gap",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1388,
+   "text_sha256": "1fee8039740c49f9c9a3caa4f0b6ae6c7bea42c64ad7e713ebde0f77a42055b3"
+  },
+  {
+   "chunk_id": "estimate:primary_completion__C",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Primary completion rate under Design C",
+   "text": "Card estimate — Primary completion rate under Design C (Synthetic control).\n\nOutcome: Primary completion rate (primary_completion). Unit: %. Direction: up (higher is better). Frequency: annual. Coverage: declared_gap.\n\nDesign C — Synthetic control (cross-country).\n\nIdentifying assumption: The synthetic control reproduces Nigeria's outcome path absent treatment: donor-weighted common factors (above all the global oil and commodity cycle) stand in for Nigeria's counterfactual, and no Nigeria-specific shock coincides with the treatment (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).\n- Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.\n- Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.\n- Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared.\n\nNo estimate for this (outcome, design) pair. Reason code: outcome_series_absent. The outcome has no usable series, so no Stage 5 pre-check could run for this (outcome, design) pair. The card is a declared gap, not a null result.\n\nThe check that decided: pretreatment_fit: not_run — outcome primary_completion is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)\n\nThe design-level result is published at index.json#published_results.design.C.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/primary_completion__C.json",
+    "anchor": null,
+    "sha256": "c97448e2c08668df679f6f34652185f6877b84d2d1c722e73b867aad6b161bcf"
+   },
+   "citation": "Card estimate — Primary completion rate under Design C — registry/dags/primary_completion__C.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "primary_completion__C",
+    "outcome_id": "primary_completion",
+    "outcome_label": "Primary completion rate",
+    "design_id": "C",
+    "design_name": "Synthetic control (cross-country)",
+    "estimate_status": "not_estimated",
+    "reason_code": "outcome_series_absent",
+    "precheck_status": "not_attempted",
+    "coverage_status": "declared_gap",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1504,
+   "text_sha256": "5fbf01fd8e4a35adf1f7a7d7d343aef5d16f0c2f66c5d8512268fe5601f63472"
+  },
+  {
+   "chunk_id": "estimate:skilled_birth__A",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Skilled birth attendance under Design A",
+   "text": "Card estimate — Skilled birth attendance under Design A (DiD).\n\nOutcome: Skilled birth attendance (skilled_birth). Unit: % of births. Direction: up (higher is better). Frequency: annual. Coverage: partial.\n\nDesign A — State dose-response DiD.\n\nIdentifying assumption: Parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths. Formally, no unmeasured state-by-time confounder affects both the dose and the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Anticipation: states may adjust behaviour before the formal policy date.\n- SUTVA violations through cross-state spillovers (trade, migration, security).\n- Compositional or definitional change in state accounts over the window.\n- The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures.\n\nNo estimate for this (outcome, design) pair. Reason code: no_specification_declared. Stage 5 ran a pre-check for this pair, but Stage 6 declared no specification for it: the stage fitted the outcomes whose series it could carry, and this was not one of them. Nothing about the estimate stage says this question was asked and answered.\n\nThe check that decided: dose_variation: flag — the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/skilled_birth__A.json",
+    "anchor": null,
+    "sha256": "2c682a85852785ef5df4acb6e9c7b69593b879e92b46f00b84ef44550f6550ba"
+   },
+   "citation": "Card estimate — Skilled birth attendance under Design A — registry/dags/skilled_birth__A.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "skilled_birth__A",
+    "outcome_id": "skilled_birth",
+    "outcome_label": "Skilled birth attendance",
+    "design_id": "A",
+    "design_name": "State dose-response DiD",
+    "estimate_status": "not_estimated",
+    "reason_code": "no_specification_declared",
+    "precheck_status": "fail",
+    "coverage_status": "partial",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1445,
+   "text_sha256": "0289d052c11d06993bfbba2b70768691488250b8d455f2f633af4f72a53e72ec"
+  },
+  {
+   "chunk_id": "estimate:skilled_birth__B",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Skilled birth attendance under Design B",
+   "text": "Card estimate — Skilled birth attendance under Design B (Time series).\n\nOutcome: Skilled birth attendance (skilled_birth). Unit: % of births. Direction: up (higher is better). Frequency: annual. Coverage: partial.\n\nDesign B — National VECM / ARDL time series.\n\nIdentifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\nNo estimate for this (outcome, design) pair. Reason code: design_result_is_channel_level. The design has a published result, but it is a statement about the channel the design rests on (the national FAAC series) rather than about this card's outcome. The number is on the index, once, where it cannot be mistaken for an estimate for this outcome.\n\nThe check that decided: integration_order: not_run — only 8 native observations in the window (minimum 12) — not tested\n\nThe design-level result is published at index.json#published_results.design.B.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/skilled_birth__B.json",
+    "anchor": null,
+    "sha256": "b4e8de3b310b80c51a1b57dc9f1f8bdff6d7684baac51d8b376d187581e6ea92"
+   },
+   "citation": "Card estimate — Skilled birth attendance under Design B — registry/dags/skilled_birth__B.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "skilled_birth__B",
+    "outcome_id": "skilled_birth",
+    "outcome_label": "Skilled birth attendance",
+    "design_id": "B",
+    "design_name": "National VECM / ARDL time series",
+    "estimate_status": "not_estimated",
+    "reason_code": "design_result_is_channel_level",
+    "precheck_status": "degraded",
+    "coverage_status": "partial",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1588,
+   "text_sha256": "38dd580957d1614e68eee9071a9e1b4473037c13c9322ec4ef55849f6a8f27c3"
+  },
+  {
+   "chunk_id": "estimate:skilled_birth__C",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Skilled birth attendance under Design C",
+   "text": "Card estimate — Skilled birth attendance under Design C (Synthetic control).\n\nOutcome: Skilled birth attendance (skilled_birth). Unit: % of births. Direction: up (higher is better). Frequency: annual. Coverage: partial.\n\nDesign C — Synthetic control (cross-country).\n\nIdentifying assumption: The synthetic control reproduces Nigeria's outcome path absent treatment: donor-weighted common factors (above all the global oil and commodity cycle) stand in for Nigeria's counterfactual, and no Nigeria-specific shock coincides with the treatment (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).\n- Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.\n- Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.\n- Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared.\n\nNo estimate for this (outcome, design) pair. Reason code: outcome_series_absent. The outcome has no usable series, so no Stage 5 pre-check could run for this (outcome, design) pair. The card is a declared gap, not a null result.\n\nThe check that decided: pretreatment_fit: not_run — outcome skilled_birth is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)\n\nThe design-level result is published at index.json#published_results.design.C.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/skilled_birth__C.json",
+    "anchor": null,
+    "sha256": "046eef8a478e0e00d279120de7ca13265c913f52c70832e98c4cc78fe4455d02"
+   },
+   "citation": "Card estimate — Skilled birth attendance under Design C — registry/dags/skilled_birth__C.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "skilled_birth__C",
+    "outcome_id": "skilled_birth",
+    "outcome_label": "Skilled birth attendance",
+    "design_id": "C",
+    "design_name": "Synthetic control (cross-country)",
+    "estimate_status": "not_estimated",
+    "reason_code": "outcome_series_absent",
+    "precheck_status": "not_attempted",
+    "coverage_status": "partial",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1501,
+   "text_sha256": "ca155ffd28d9922b0b7b8cfaf776308ab2e640187b6833c7463e9d01fade4d88"
+  },
+  {
+   "chunk_id": "estimate:u5mr__A",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Under-5 mortality rate under Design A",
+   "text": "Card estimate — Under-5 mortality rate under Design A (DiD).\n\nOutcome: Under-5 mortality rate (u5mr). Unit: per 1,000 live births. Direction: down (lower is better). Frequency: annual. Coverage: partial.\n\nDesign A — State dose-response DiD.\n\nIdentifying assumption: Parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths. Formally, no unmeasured state-by-time confounder affects both the dose and the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Anticipation: states may adjust behaviour before the formal policy date.\n- SUTVA violations through cross-state spillovers (trade, migration, security).\n- Compositional or definitional change in state accounts over the window.\n- The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures.\n\nNo estimate for this (outcome, design) pair. Reason code: no_specification_declared. Stage 5 ran a pre-check for this pair, but Stage 6 declared no specification for it: the stage fitted the outcomes whose series it could carry, and this was not one of them. Nothing about the estimate stage says this question was asked and answered.\n\nThe check that decided: dose_variation: flag — the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/u5mr__A.json",
+    "anchor": null,
+    "sha256": "a3761a6a0098a583598fb659ecb1df3535239cb4cb9d187247f21f30d33e9750"
+   },
+   "citation": "Card estimate — Under-5 mortality rate under Design A — registry/dags/u5mr__A.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "u5mr__A",
+    "outcome_id": "u5mr",
+    "outcome_label": "Under-5 mortality rate",
+    "design_id": "A",
+    "design_name": "State dose-response DiD",
+    "estimate_status": "not_estimated",
+    "reason_code": "no_specification_declared",
+    "precheck_status": "fail",
+    "coverage_status": "partial",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1443,
+   "text_sha256": "993f4abf2a813014d6f59cfd0c53204af7514df0f295ba7be703b6a09ca2b87e"
+  },
+  {
+   "chunk_id": "estimate:u5mr__B",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Under-5 mortality rate under Design B",
+   "text": "Card estimate — Under-5 mortality rate under Design B (Time series).\n\nOutcome: Under-5 mortality rate (u5mr). Unit: per 1,000 live births. Direction: down (lower is better). Frequency: annual. Coverage: partial.\n\nDesign B — National VECM / ARDL time series.\n\nIdentifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\nNo estimate for this (outcome, design) pair. Reason code: design_result_is_channel_level. The design has a published result, but it is a statement about the channel the design rests on (the national FAAC series) rather than about this card's outcome. The number is on the index, once, where it cannot be mistaken for an estimate for this outcome.\n\nThe check that decided: integration_order: inconclusive — I(1) across ADF/KPSS/PP on 26 native annual observations — tests disagree\n\nThe design-level result is published at index.json#published_results.design.B.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/u5mr__B.json",
+    "anchor": null,
+    "sha256": "7dd55056f06860f0096699a23b72dc5f418721cf16f507ddecac7eb3987d6c34"
+   },
+   "citation": "Card estimate — Under-5 mortality rate under Design B — registry/dags/u5mr__B.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "u5mr__B",
+    "outcome_id": "u5mr",
+    "outcome_label": "Under-5 mortality rate",
+    "design_id": "B",
+    "design_name": "National VECM / ARDL time series",
+    "estimate_status": "not_estimated",
+    "reason_code": "design_result_is_channel_level",
+    "precheck_status": "degraded",
+    "coverage_status": "partial",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1598,
+   "text_sha256": "0828a6a8542b4d7f93f68112c77d182512d36b90e2ebabd8aae9a4d773e98bf9"
+  },
+  {
+   "chunk_id": "estimate:u5mr__C",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Under-5 mortality rate under Design C",
+   "text": "Card estimate — Under-5 mortality rate under Design C (Synthetic control).\n\nOutcome: Under-5 mortality rate (u5mr). Unit: per 1,000 live births. Direction: down (lower is better). Frequency: annual. Coverage: partial.\n\nDesign C — Synthetic control (cross-country).\n\nIdentifying assumption: The synthetic control reproduces Nigeria's outcome path absent treatment: donor-weighted common factors (above all the global oil and commodity cycle) stand in for Nigeria's counterfactual, and no Nigeria-specific shock coincides with the treatment (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).\n- Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.\n- Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.\n- Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared.\n\nNo estimate for this (outcome, design) pair. Reason code: design_not_run. The design was not run. The reason is on the index and in the estimates artifact.\n\nThe check that decided: pretreatment_fit:obasanjo: not_run — needs >= 8 pre and >= 2 post years\n\nThe design-level result is published at index.json#published_results.design.C.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/u5mr__C.json",
+    "anchor": null,
+    "sha256": "c7fd557f54d45513f7485588ddbdced546888e2abf4abe0f115039319f0d1487"
+   },
+   "citation": "Card estimate — Under-5 mortality rate under Design C — registry/dags/u5mr__C.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "u5mr__C",
+    "outcome_id": "u5mr",
+    "outcome_label": "Under-5 mortality rate",
+    "design_id": "C",
+    "design_name": "Synthetic control (cross-country)",
+    "estimate_status": "not_estimated",
+    "reason_code": "design_not_run",
+    "precheck_status": "pass",
+    "coverage_status": "partial",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1359,
+   "text_sha256": "8983d30a0f9c0684c851e222b0771d4bc7c6f553d9cb7fff3a855c02930c61ce"
+  },
+  {
+   "chunk_id": "estimate:unemp__A",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Unemployment rate under Design A",
+   "text": "Card estimate — Unemployment rate under Design A (DiD).\n\nOutcome: Unemployment rate (unemp). Unit: %. Direction: down (lower is better). Frequency: quarterly. Coverage: partial.\n\nDesign A — State dose-response DiD.\n\nIdentifying assumption: Parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths. Formally, no unmeasured state-by-time confounder affects both the dose and the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Anticipation: states may adjust behaviour before the formal policy date.\n- SUTVA violations through cross-state spillovers (trade, migration, security).\n- Compositional or definitional change in state accounts over the window.\n- The dose itself (D1, FAAC per capita) may be contaminated by the policy it measures.\n\nNo estimate for this (outcome, design) pair. Reason code: no_specification_declared. Stage 5 ran a pre-check for this pair, but Stage 6 declared no specification for it: the stage fitted the outcomes whose series it could carry, and this was not one of them. Nothing about the estimate stage says this question was asked and answered.\n\nThe check that decided: dose_variation: flag — the specified axis D1 is absent (the population denominator is an unmade decision, X-09) while the nominal axis is present and Stage 3 gated: D1=absent, D1_nominal=pass, D2=absent, D3=not_built",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/unemp__A.json",
+    "anchor": null,
+    "sha256": "88e2ec604ef5ad246c5ebb7c322a2face58845e0a81b2676db3872e95c0d1121"
+   },
+   "citation": "Card estimate — Unemployment rate under Design A — registry/dags/unemp__A.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "unemp__A",
+    "outcome_id": "unemp",
+    "outcome_label": "Unemployment rate",
+    "design_id": "A",
+    "design_name": "State dose-response DiD",
+    "estimate_status": "not_estimated",
+    "reason_code": "no_specification_declared",
+    "precheck_status": "fail",
+    "coverage_status": "partial",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1417,
+   "text_sha256": "377bf76513e320a129fedad5bde7f6b7394f73f52184f23f64325760c2b89d69"
+  },
+  {
+   "chunk_id": "estimate:unemp__B",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Unemployment rate under Design B",
+   "text": "Card estimate — Unemployment rate under Design B (Time series).\n\nOutcome: Unemployment rate (unemp). Unit: %. Direction: down (lower is better). Frequency: quarterly. Coverage: partial.\n\nDesign B — National VECM / ARDL time series.\n\nIdentifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\nNo estimate for this (outcome, design) pair. Reason code: design_result_is_channel_level. The design has a published result, but it is a statement about the channel the design rests on (the national FAAC series) rather than about this card's outcome. The number is on the index, once, where it cannot be mistaken for an estimate for this outcome.\n\nThe check that decided: integration_order: inconclusive — I(1) across ADF/KPSS/PP on 27 native annual observations — tests disagree\n\nThe design-level result is published at index.json#published_results.design.B.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/unemp__B.json",
+    "anchor": null,
+    "sha256": "b1345005c348633574bc2aa60ddc54d37c66386e8c1f5c685a743f870fcf805a"
+   },
+   "citation": "Card estimate — Unemployment rate under Design B — registry/dags/unemp__B.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "unemp__B",
+    "outcome_id": "unemp",
+    "outcome_label": "Unemployment rate",
+    "design_id": "B",
+    "design_name": "National VECM / ARDL time series",
+    "estimate_status": "not_estimated",
+    "reason_code": "design_result_is_channel_level",
+    "precheck_status": "degraded",
+    "coverage_status": "partial",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1572,
+   "text_sha256": "91408b76dc09c9aa5573806f16dd3d123e571cb281ff1698d40cc51687e376b4"
+  },
+  {
+   "chunk_id": "estimate:unemp__C",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Unemployment rate under Design C",
+   "text": "Card estimate — Unemployment rate under Design C (Synthetic control).\n\nOutcome: Unemployment rate (unemp). Unit: %. Direction: down (lower is better). Frequency: quarterly. Coverage: partial.\n\nDesign C — Synthetic control (cross-country).\n\nIdentifying assumption: The synthetic control reproduces Nigeria's outcome path absent treatment: donor-weighted common factors (above all the global oil and commodity cycle) stand in for Nigeria's counterfactual, and no Nigeria-specific shock coincides with the treatment (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).\n- Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.\n- Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.\n- Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared.\n\nNo estimate for this (outcome, design) pair. Reason code: outcome_series_absent. The outcome has no usable series, so no Stage 5 pre-check could run for this (outcome, design) pair. The card is a declared gap, not a null result.\n\nThe check that decided: pretreatment_fit: not_run — outcome unemp is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)\n\nThe design-level result is published at index.json#published_results.design.C.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/unemp__C.json",
+    "anchor": null,
+    "sha256": "b04a19f665dbadd6ffe5e4f7840f35519175eaae0ad41b038ac8775174243775"
+   },
+   "citation": "Card estimate — Unemployment rate under Design C — registry/dags/unemp__C.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "unemp__C",
+    "outcome_id": "unemp",
+    "outcome_label": "Unemployment rate",
+    "design_id": "C",
+    "design_name": "Synthetic control (cross-country)",
+    "estimate_status": "not_estimated",
+    "reason_code": "outcome_series_absent",
+    "precheck_status": "not_attempted",
+    "coverage_status": "partial",
+    "part": 1,
+    "n_parts": 1
+   },
+   "chars": 1465,
+   "text_sha256": "17296e86ed855bf15ba3d9279429311ae027b689040e95ea6429ceb1aa08b265"
+  },
+  {
    "chunk_id": "coverage:quality",
    "doc_type": "coverage",
    "title": "Data coverage — the Stage 3 quality gate result",
@@ -574,7 +1600,7 @@
    "source": {
     "path": "registry/quality/2026-10-18/report.json",
     "anchor": "counts",
-    "sha256": "f86011ecca97e81803105810e3efb3bf7e0d614e7c4bc28e720913ee3a0fd56d"
+    "sha256": "01ebbf240d41335ce50c6704847d5d0e24ccbdd02c4d95f09d8716e2e7be63a7"
    },
    "citation": "Data coverage — the Stage 3 quality gate result — registry/quality/2026-10-18/report.json (vintage 2026-10-18)",
    "metadata": {
@@ -600,7 +1626,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "registry.card_estimate_counts",
-    "sha256": "99e662ae8330a77844c1504b4171d5496fdda1cb0d4bac1becca9a2fa288d092"
+    "sha256": "14aed0b782075b494fc8b4d161e41c41a301d3da5e58f3b661c9cd4eceba7256"
    },
    "citation": "Registry coverage — how many cards carry a published number — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -1614,7 +2640,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.buhari_2015",
-    "sha256": "7d586437286e4b3d2828e6a90e9268a3fd2bf5673fd226aa274b411e488b285d"
+    "sha256": "1c142da122c66fd38f4f831b010ab2e177b25ea3d4e26c0431957cae0d56132e"
    },
    "citation": "Transition event buhari_2015 — Buhari sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -1640,7 +2666,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.buhari_2015",
-    "sha256": "7d586437286e4b3d2828e6a90e9268a3fd2bf5673fd226aa274b411e488b285d"
+    "sha256": "1c142da122c66fd38f4f831b010ab2e177b25ea3d4e26c0431957cae0d56132e"
    },
    "citation": "Transition event buhari_2015 — Buhari sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -1666,7 +2692,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.buhari_2015",
-    "sha256": "7d586437286e4b3d2828e6a90e9268a3fd2bf5673fd226aa274b411e488b285d"
+    "sha256": "1c142da122c66fd38f4f831b010ab2e177b25ea3d4e26c0431957cae0d56132e"
    },
    "citation": "Transition event buhari_2015 — Buhari sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -1692,7 +2718,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.jonathan_2010",
-    "sha256": "7d586437286e4b3d2828e6a90e9268a3fd2bf5673fd226aa274b411e488b285d"
+    "sha256": "1c142da122c66fd38f4f831b010ab2e177b25ea3d4e26c0431957cae0d56132e"
    },
    "citation": "Transition event jonathan_2010 — Jonathan sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -1718,7 +2744,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.jonathan_2010",
-    "sha256": "7d586437286e4b3d2828e6a90e9268a3fd2bf5673fd226aa274b411e488b285d"
+    "sha256": "1c142da122c66fd38f4f831b010ab2e177b25ea3d4e26c0431957cae0d56132e"
    },
    "citation": "Transition event jonathan_2010 — Jonathan sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -1744,7 +2770,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.jonathan_2010",
-    "sha256": "7d586437286e4b3d2828e6a90e9268a3fd2bf5673fd226aa274b411e488b285d"
+    "sha256": "1c142da122c66fd38f4f831b010ab2e177b25ea3d4e26c0431957cae0d56132e"
    },
    "citation": "Transition event jonathan_2010 — Jonathan sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -1770,7 +2796,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "not_claimed",
-    "sha256": "7d586437286e4b3d2828e6a90e9268a3fd2bf5673fd226aa274b411e488b285d"
+    "sha256": "1c142da122c66fd38f4f831b010ab2e177b25ea3d4e26c0431957cae0d56132e"
    },
    "citation": "Transition event study — what it does not claim — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -1791,7 +2817,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.tinubu_2023",
-    "sha256": "7d586437286e4b3d2828e6a90e9268a3fd2bf5673fd226aa274b411e488b285d"
+    "sha256": "1c142da122c66fd38f4f831b010ab2e177b25ea3d4e26c0431957cae0d56132e"
    },
    "citation": "Transition event tinubu_2023 — Tinubu sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -1817,7 +2843,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.tinubu_2023",
-    "sha256": "7d586437286e4b3d2828e6a90e9268a3fd2bf5673fd226aa274b411e488b285d"
+    "sha256": "1c142da122c66fd38f4f831b010ab2e177b25ea3d4e26c0431957cae0d56132e"
    },
    "citation": "Transition event tinubu_2023 — Tinubu sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -1843,7 +2869,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.tinubu_2023",
-    "sha256": "7d586437286e4b3d2828e6a90e9268a3fd2bf5673fd226aa274b411e488b285d"
+    "sha256": "1c142da122c66fd38f4f831b010ab2e177b25ea3d4e26c0431957cae0d56132e"
    },
    "citation": "Transition event tinubu_2023 — Tinubu sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -1869,7 +2895,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.yaradua_2007",
-    "sha256": "7d586437286e4b3d2828e6a90e9268a3fd2bf5673fd226aa274b411e488b285d"
+    "sha256": "1c142da122c66fd38f4f831b010ab2e177b25ea3d4e26c0431957cae0d56132e"
    },
    "citation": "Transition event yaradua_2007 — Yar'Adua sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -1895,7 +2921,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.yaradua_2007",
-    "sha256": "7d586437286e4b3d2828e6a90e9268a3fd2bf5673fd226aa274b411e488b285d"
+    "sha256": "1c142da122c66fd38f4f831b010ab2e177b25ea3d4e26c0431957cae0d56132e"
    },
    "citation": "Transition event yaradua_2007 — Yar'Adua sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -1921,7 +2947,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.yaradua_2007",
-    "sha256": "7d586437286e4b3d2828e6a90e9268a3fd2bf5673fd226aa274b411e488b285d"
+    "sha256": "1c142da122c66fd38f4f831b010ab2e177b25ea3d4e26c0431957cae0d56132e"
    },
    "citation": "Transition event yaradua_2007 — Yar'Adua sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -4205,6 +5231,111 @@
    },
    "chars": 584,
    "text_sha256": "902114e62a7a7e2fec2ba2f3024d07b0823e4881e17b349fddd28515a0946b2c"
+  },
+  {
+   "chunk_id": "doc:glossary#refusals",
+   "doc_type": "methodology",
+   "title": "glossary — Refusals",
+   "text": "Words this project uses, and what they mean\n\n## Refusals\n\n[glossary — Refusals — part 1 of 3]\n\nA refusal carries a code, and every code has a plain meaning here. The codes come in two families: `G..`\nis the intent gate's, and it names the reason the corpus may not answer the question at all; `L..` is the\nanswer layer's, and it names the reason no answer could be assembled from the passages the search found.\nThe refusal quotes the passage that says so and cites it, so a refusal is an argument with a source.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "docs/glossary.md",
+    "anchor": "refusals",
+    "sha256": "cb234ce846c7a04d59cfc8acad6b67db63cd9ccb56452f1f1727cee155e37d9b"
+   },
+   "citation": "glossary — Refusals — docs/glossary.md (vintage 2026-10-18)",
+   "metadata": {
+    "document": "docs/glossary.md",
+    "section": "Refusals",
+    "part": 1,
+    "n_parts": 3
+   },
+   "chars": 511,
+   "text_sha256": "dd5454239a07ce38f04acfe0e2bdb5b83710d39ac6a8b3543176cc596bc6f399"
+  },
+  {
+   "chunk_id": "doc:glossary#refusals#p2",
+   "doc_type": "methodology",
+   "title": "glossary — Refusals",
+   "text": "Words this project uses, and what they mean\n\n## Refusals\n\n[glossary — Refusals — part 2 of 3]\n\n| Code | Plain meaning |\n|---|---|\n| **L01** | The passages the search found do not carry a complete answer in any of the three shapes — a number with the assumption that makes it mean something, a reason with that assumption, or a passage that says the thing asked about. The layer declines rather than quote something that does not answer the question. |\n| **L02** | None of the passages the search found is close enough to the question to quote: the words the question uses are not in the passage. |\n| **G02** | The question asks what will happen. This project publishes what happened, and a forecast is not a fact the corpus can carry. |\n| **G03** | The question asks for a measure the corpus does not carry — a population count, a price level, anything outside the twelve catalogue outcomes.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "docs/glossary.md",
+    "anchor": "refusals",
+    "sha256": "cb234ce846c7a04d59cfc8acad6b67db63cd9ccb56452f1f1727cee155e37d9b"
+   },
+   "citation": "glossary — Refusals — docs/glossary.md (vintage 2026-10-18)",
+   "metadata": {
+    "document": "docs/glossary.md",
+    "section": "Refusals",
+    "part": 2,
+    "n_parts": 3
+   },
+   "chars": 891,
+   "text_sha256": "b384f83b5d8edf56bfe167fcc14ed5774704f7fe7edeca8a8523af37990f545a"
+  },
+  {
+   "chunk_id": "doc:glossary#refusals#p3",
+   "doc_type": "methodology",
+   "title": "glossary — Refusals",
+   "text": "Words this project uses, and what they mean\n\n## Refusals\n\n[glossary — Refusals — part 3 of 3]\n\n|\n| **G04** | The question asks the project to make a policy decision. The project measures what it can measure; it does not decide what should be done. |\n| **G05** | The question asks about a year the corpus does not cover, so there is nothing to quote for it. |\n| **G06** | The question asks which tenure did better, and this data cannot identify it: four to five administrations against twenty-two to twenty-three annual observations is arithmetic, not evidence. |\n| **G07** | The question asks the synthetic-control design for a causal answer, and that design was never run: its estimator and its placebos were not built. |\n| **G08** | The question asks for advice rather than for what the record says. |\n| **G09** | The question asks about a country other than Nigeria. The corpus carries Nigerian data and a donor pool it was unable to download. |",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "docs/glossary.md",
+    "anchor": "refusals",
+    "sha256": "cb234ce846c7a04d59cfc8acad6b67db63cd9ccb56452f1f1727cee155e37d9b"
+   },
+   "citation": "glossary — Refusals — docs/glossary.md (vintage 2026-10-18)",
+   "metadata": {
+    "document": "docs/glossary.md",
+    "section": "Refusals",
+    "part": 3,
+    "n_parts": 3
+   },
+   "chars": 948,
+   "text_sha256": "d12c66530a1f8f0b7692512db8e280dea0a2b56e08b9cbac24d4479dcfd292a3"
+  },
+  {
+   "chunk_id": "doc:licences#open-licensing-questions-to-resolve-before-publi",
+   "doc_type": "methodology",
+   "title": "licences — Open licensing questions to resolve before publishing anything",
+   "text": "Licence register — data sources\n\n## Open licensing questions to resolve before publishing anything\n\n[licences — Open licensing questions to resolve b — part 1 of 2]\n\n1. **FRED/Brent** — does the EIA upstream licence permit redistribution of the series we store?\n2. **IMF** — redistribution terms for DataMapper series.\n3. **UNIGME and MICS** — modelled estimates: redistribution and required labelling.\n4. **DHIS2** — whether any extracted aggregate may be published at state level.\n5. **ACLED** — the current licence text, plus whether derived counts are themselves restricted. **No\n   longer blocking**: the security domain is answered from UCDP GED, which is CC-BY and keyless to\n   acquire, so ACLED's terms can stay unresolved without a hole in the design (C-45).",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "docs/licences.md",
+    "anchor": "open-licensing-questions-to-resolve-before-publi",
+    "sha256": "d0b864630e02712c129909ea33e7554468b8d24f89070190a6b564298df5815d"
+   },
+   "citation": "licences — Open licensing questions to resolve before publishing anything — docs/licences.md (vintage 2026-10-18)",
+   "metadata": {
+    "document": "docs/licences.md",
+    "section": "Open licensing questions to resolve before publishing anything",
+    "part": 1,
+    "n_parts": 2
+   },
+   "chars": 768,
+   "text_sha256": "19d970168bbf638d420f1d414d9ce54b5c2cdb135877699933f6d233d626ea5a"
+  },
+  {
+   "chunk_id": "doc:licences#open-licensing-questions-to-resolve-before-publi#p2",
+   "doc_type": "methodology",
+   "title": "licences — Open licensing questions to resolve before publishing anything",
+   "text": "Licence register — data sources\n\n## Open licensing questions to resolve before publishing anything\n\n[licences — Open licensing questions to resolve b — part 2 of 2]\n\nUntil each is resolved, the default is the safe one: **derived aggregates only, raw never committed.**\nThe UCDP case is the interesting one, because it is a *resolved* question rather than an exception: the\nlicence permits redistribution with attribution, the attribution is recorded on the manifest and cited\non the derived aggregate, and the raw archive is still not committed — not because it is forbidden but\nbecause 29 MB of every-country events is not needed to reproduce a Nigeria state-month series.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "docs/licences.md",
+    "anchor": "open-licensing-questions-to-resolve-before-publi",
+    "sha256": "d0b864630e02712c129909ea33e7554468b8d24f89070190a6b564298df5815d"
+   },
+   "citation": "licences — Open licensing questions to resolve before publishing anything — docs/licences.md (vintage 2026-10-18)",
+   "metadata": {
+    "document": "docs/licences.md",
+    "section": "Open licensing questions to resolve before publishing anything",
+    "part": 2,
+    "n_parts": 2
+   },
+   "chars": 673,
+   "text_sha256": "45687ceb1a9134d8f1ed88f662e79dea522fe6d7877188f24f82b69367d1606c"
   },
   {
    "chunk_id": "doc:limitations#s01",
@@ -10697,7 +11828,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.A",
-    "sha256": "99e662ae8330a77844c1504b4171d5496fdda1cb0d4bac1becca9a2fa288d092"
+    "sha256": "14aed0b782075b494fc8b4d161e41c41a301d3da5e58f3b661c9cd4eceba7256"
    },
    "citation": "Published result — Design A — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -10720,7 +11851,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.A",
-    "sha256": "99e662ae8330a77844c1504b4171d5496fdda1cb0d4bac1becca9a2fa288d092"
+    "sha256": "14aed0b782075b494fc8b4d161e41c41a301d3da5e58f3b661c9cd4eceba7256"
    },
    "citation": "Published result — Design A — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -10743,7 +11874,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.A",
-    "sha256": "99e662ae8330a77844c1504b4171d5496fdda1cb0d4bac1becca9a2fa288d092"
+    "sha256": "14aed0b782075b494fc8b4d161e41c41a301d3da5e58f3b661c9cd4eceba7256"
    },
    "citation": "Published result — Design A — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -10766,7 +11897,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "99e662ae8330a77844c1504b4171d5496fdda1cb0d4bac1becca9a2fa288d092"
+    "sha256": "14aed0b782075b494fc8b4d161e41c41a301d3da5e58f3b661c9cd4eceba7256"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -10789,7 +11920,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "99e662ae8330a77844c1504b4171d5496fdda1cb0d4bac1becca9a2fa288d092"
+    "sha256": "14aed0b782075b494fc8b4d161e41c41a301d3da5e58f3b661c9cd4eceba7256"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -10812,7 +11943,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "99e662ae8330a77844c1504b4171d5496fdda1cb0d4bac1becca9a2fa288d092"
+    "sha256": "14aed0b782075b494fc8b4d161e41c41a301d3da5e58f3b661c9cd4eceba7256"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -10835,7 +11966,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "99e662ae8330a77844c1504b4171d5496fdda1cb0d4bac1becca9a2fa288d092"
+    "sha256": "14aed0b782075b494fc8b4d161e41c41a301d3da5e58f3b661c9cd4eceba7256"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -10858,7 +11989,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "99e662ae8330a77844c1504b4171d5496fdda1cb0d4bac1becca9a2fa288d092"
+    "sha256": "14aed0b782075b494fc8b4d161e41c41a301d3da5e58f3b661c9cd4eceba7256"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -10881,7 +12012,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "99e662ae8330a77844c1504b4171d5496fdda1cb0d4bac1becca9a2fa288d092"
+    "sha256": "14aed0b782075b494fc8b4d161e41c41a301d3da5e58f3b661c9cd4eceba7256"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -10904,7 +12035,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.C",
-    "sha256": "99e662ae8330a77844c1504b4171d5496fdda1cb0d4bac1becca9a2fa288d092"
+    "sha256": "14aed0b782075b494fc8b4d161e41c41a301d3da5e58f3b661c9cd4eceba7256"
    },
    "citation": "Published result — Design C — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -10927,7 +12058,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.C",
-    "sha256": "99e662ae8330a77844c1504b4171d5496fdda1cb0d4bac1becca9a2fa288d092"
+    "sha256": "14aed0b782075b494fc8b4d161e41c41a301d3da5e58f3b661c9cd4eceba7256"
    },
    "citation": "Published result — Design C — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -10950,7 +12081,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.C",
-    "sha256": "99e662ae8330a77844c1504b4171d5496fdda1cb0d4bac1becca9a2fa288d092"
+    "sha256": "14aed0b782075b494fc8b4d161e41c41a301d3da5e58f3b661c9cd4eceba7256"
    },
    "citation": "Published result — Design C — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -10968,12 +12099,12 @@
    "chunk_id": "scope:answer",
    "doc_type": "scope",
    "title": "What this corpus can and cannot answer",
-   "text": "[What this corpus can and cannot answer — part 1 of 2]\n\nWhat this corpus can answer: The corpus can answer questions about the 12 catalogue outcomes, the three identification designs, the published results and their checks, the data's coverage and quality, the administration and shock tables, and why a question cannot be answered. It cannot answer forecast questions, questions about countries outside the donor panel, or anything requiring an estimate that was never fitted; those must refuse. An answer is assembled in this order: question, estimate_with_interval, identifying_assumption, what_it_cannot_rule_out, citation. Post-check: Every assembled answer is checked for an interval, an identifying assumption and at least one chunk citation. A response missing any of the three is replaced by the refusal template, whatever the model produced (R-04). Refusal template: \"I don't have a model for that.",
+   "text": "[What this corpus can and cannot answer — part 1 of 2]\n\nWhat this corpus can answer: The corpus can answer questions about the 12 catalogue outcomes, the three identification designs, the published results and their checks, the data's coverage and quality, the administration and shock tables, and why a question cannot be answered. It cannot answer forecast questions, questions about countries outside the donor panel, or anything requiring an estimate that was never fitted; those must refuse. An answer is assembled in this order: question, estimate_with_interval, identifying_assumption, what_it_cannot_rule_out, citation.",
    "vintage": "2026-10-18",
    "source": {
     "path": "analysis/specs/rag.yml",
     "anchor": "answer_contract",
-    "sha256": "50f966fa33b8c3c58b6ab1c6626e852e3bdf5bd1cc8cb10814dae2edc0be5d95"
+    "sha256": "e4ab0435bf4481d868afbda2ab616d8fdf8493b49e6bf7bf4a485b7f0e80c491"
    },
    "citation": "What this corpus can and cannot answer — analysis/specs/rag.yml (vintage 2026-10-18)",
    "metadata": {
@@ -10987,19 +12118,19 @@
     "part": 1,
     "n_parts": 2
    },
-   "chars": 908,
-   "text_sha256": "492c07500abcfbe515619f4788619746f62b2a161bd7be21947a9414b39ce637"
+   "chars": 627,
+   "text_sha256": "23219d88c27bca2ae72a3bf902020ade2d60dc0b8e1f33d45f4966bed29cbb1c"
   },
   {
    "chunk_id": "scope:answer#p2",
    "doc_type": "scope",
    "title": "What this corpus can and cannot answer",
-   "text": "[What this corpus can and cannot answer — part 2 of 2]\n\n{reason} — see {citation}.\" This paragraph is the corpus's own scope statement, copied from analysis/specs/rag.yml so the scope a refusal cites is the scope the layer declared.",
+   "text": "[What this corpus can and cannot answer — part 2 of 2]\n\nPost-check: Every assembled answer is checked against the requirements of its shape: an estimate needs an interval, an identifying assumption, what the design cannot rule out and a citation; a reason needs a reason code, the assumption, what the design cannot rule out and a citation, and must not contain an interval; a fact needs the passage it quotes and a citation, and must not contain an interval. A response missing any of these is replaced by the refusal template, whatever the model produced (R-04). Refusal template: \"I don't have a model for that. {reason} — see {citation}.\" This paragraph is the corpus's own scope statement, copied from analysis/specs/rag.yml so the scope a refusal cites is the scope the layer declared.",
    "vintage": "2026-10-18",
    "source": {
     "path": "analysis/specs/rag.yml",
     "anchor": "answer_contract",
-    "sha256": "50f966fa33b8c3c58b6ab1c6626e852e3bdf5bd1cc8cb10814dae2edc0be5d95"
+    "sha256": "e4ab0435bf4481d868afbda2ab616d8fdf8493b49e6bf7bf4a485b7f0e80c491"
    },
    "citation": "What this corpus can and cannot answer — analysis/specs/rag.yml (vintage 2026-10-18)",
    "metadata": {
@@ -11013,8 +12144,8 @@
     "part": 2,
     "n_parts": 2
    },
-   "chars": 232,
-   "text_sha256": "1a014cf74fc98ee1bef569987145e854326019601723670fb06c5ad05234c045"
+   "chars": 791,
+   "text_sha256": "2456c86e56e7391f5bcd79bda91b7ab194fff832a65d01f80493ea9f4fb38106"
   },
   {
    "chunk_id": "shock:1",

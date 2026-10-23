@@ -27,3 +27,23 @@ verifier checks every meaning the layer printed against the line in this file.
 | **donor panel** | The set of candidate countries the screening step compared against Nigeria. The corpus carries no series for any of them; it carries the count and says so. |
 | **out of scope** | The corpus has no passage that could answer the question — a forecast, another country, a population count, or a policy recommendation. The refusal cites the statement that says so. |
 | **cannot rule out** | The list of alternative explanations the design cannot separate from the one it estimates. It is part of every answer because a number without its caveats is a claim the project has not earned. |
+
+## Refusals
+
+A refusal carries a code, and every code has a plain meaning here. The codes come in two families: `G..`
+is the intent gate's, and it names the reason the corpus may not answer the question at all; `L..` is the
+answer layer's, and it names the reason no answer could be assembled from the passages the search found.
+The refusal quotes the passage that says so and cites it, so a refusal is an argument with a source.
+
+| Code | Plain meaning |
+|---|---|
+| **L01** | The passages the search found do not carry a complete answer in any of the three shapes — a number with the assumption that makes it mean something, a reason with that assumption, or a passage that says the thing asked about. The layer declines rather than quote something that does not answer the question. |
+| **L02** | None of the passages the search found is close enough to the question to quote: the words the question uses are not in the passage. |
+| **G02** | The question asks what will happen. This project publishes what happened, and a forecast is not a fact the corpus can carry. |
+| **G03** | The question asks for a measure the corpus does not carry — a population count, a price level, anything outside the twelve catalogue outcomes. |
+| **G04** | The question asks the project to make a policy decision. The project measures what it can measure; it does not decide what should be done. |
+| **G05** | The question asks about a year the corpus does not cover, so there is nothing to quote for it. |
+| **G06** | The question asks which tenure did better, and this data cannot identify it: four to five administrations against twenty-two to twenty-three annual observations is arithmetic, not evidence. |
+| **G07** | The question asks the synthetic-control design for a causal answer, and that design was never run: its estimator and its placebos were not built. |
+| **G08** | The question asks for advice rather than for what the record says. |
+| **G09** | The question asks about a country other than Nigeria. The corpus carries Nigerian data and a donor pool it was unable to download. |
