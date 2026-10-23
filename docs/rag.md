@@ -115,23 +115,53 @@ through its capital city, is published rather than tuned away (`docs/intent.md`)
 The refusal threshold is `0.291464`, derived as 0.5 × the median answerable top-1 similarity (0.5829). It is
 calibrated on the eval set, so the refusal number is optimistic; that caveat travels in the artifact.
 
+### The answer-quality measurement — the definitions, not the library
+
+`registry/rag/2026-10-18/answer_quality_eval.json` scores the 16 answered questions on the four metrics RAGAS
+defines, judged by `gemini-3.5-flash-lite` at temperature 0:
+
+| Metric | Measured | What it means here |
+|---|---|---|
+| faithfulness | **1.000** | statements in an answer that its own cited contexts support |
+| answer relevancy | **0.800** | mean cosine between the question and three questions generated from the answer |
+| context precision | **0.990** | average precision over the cited chunks a judge calls useful for the reference answer |
+| context recall | **0.863** | reference-answer claims the cited contexts can support |
+
+**This is not a `ragas` library run, and the artifact says so in its own fields.** The package is not
+installed in this repository or on this machine, and installing it would add a dependency tree to a project
+whose answering path deliberately has none. `scripts/eval_answer_quality.py` implements the four definitions
+against the public API, and the artifact records `library: false`, the prompt's sha256, the judge model and
+this sentence: *scores are not comparable to a library run*. One structured judge call per question replaces
+RAGAS's per-item calls, because this key's free tier allows 20 requests per window.
+
+What the numbers say, read honestly:
+
+- **Faithfulness is 1.0 by construction, not by quality.** The answer is a selection of quoted corpus
+  paragraphs, so the check confirms the contract rather than judging retrieval. A perfect score here means
+  "it quotes what it cites", nothing more — and earlier runs of the same measurement gave 0.964 and 0.971,
+  so even that is measured with a judge that varies.
+- **Context recall 0.863 is the number that matters.** About a seventh of the reference answers' claims are
+  not supported by the chunks the answer actually cited: in this run `q04_oil_to_states` and
+  `q05_design_b_robust` score **0.500** each. The answer quotes the right document but not always the
+  paragraph that carries the reference's claim.
+- **The judge is noisy, and that is published too.** Five runs of the same measurement gave faithfulness
+  0.964–1.000, answer relevancy 0.800–0.834, context precision 0.885–1.000 and context recall 0.801–0.863. A
+  lite judge at temperature 0 is not deterministic, and context precision scored every chunk useful in two
+  runs and not in the others — a weak instrument, said so here rather than averaged into respectability. The
+  artifact records the values of *its* run; `tests/verify_answer_quality.py` checks that every score
+  recomputes from the evidence beside it, and cannot check whether the judge was right. A stronger judge, or
+  several runs published as a range, is the next step on this metric — not a bigger claim now.
+
 ### Not measured, and why
 
-- **RAGAS** (faithfulness, answer relevance, context precision/recall) needs a generation step and a judge
-  model. There is no LLM key in this repository, so the artifact says `not_run` with that reason. The eval set
-  carries a `reference_answer` per question, i.e. the ground-truth column a RAGAS run needs, so wiring it is
-  a key and one script away — not a rebuild.
-  This is a limit on the *measurement*, not on the system: retrieval, the intent gate and the answer layer
-  all run with **no key at all** (`docs/answer.md` §3), and `tests/verify_answer.py` proves it by running the
-  layer in a child process with every key-shaped variable stripped. Nothing here generates text, which is
-  why nothing here needs a credential and why faithfulness has nothing to judge yet.
 - **The answer-shape post-check** (interval + assumption + citation, R-04) is now enforced by
   `app/answer_layer.py` and measured in `docs/answer.md`: every assembled answer is checked, and a missing
   part is replaced by the refusal template. The eval set's `must_contain` needles remain the retrieval
   layer's inputs.
+- **The `ragas` package itself** is not run, for the reason above. Its declaration stays in the eval set as
+  `not_run`, pointing at the artifact that measures the same four definitions here.
 
-Neither is reported as satisfied. A skipped check printed as a pass is the defect this project keeps
-finding.
+No skipped check is printed as a pass: that is the defect this project keeps finding.
 
 ## 4. What the corpus refuses, and how
 
@@ -191,7 +221,8 @@ by a reader noticing that the chat layer contradicts the page.
   gold coverage from 0.418 to 0.379. A session log that dilutes every ranking to answer a few "why was that
   chosen" questions is a corpus that quotes the project's diary before its findings. It stays out until it
   is summarised into a declared artefact.
-- Not that RAGAS has been run. It has not, and it is the only stage that would need a key.
+- Not that the `ragas` library has been run. It has not; the four definitions are implemented here and the
+  artifact states that its scores are not comparable to a library run.
 - Not that this corpus is what answers a reader's question on its own. The corpus is the quotable text; the
   intent gate and the answer layer (`docs/intent.md`, `docs/answer.md`) decide what may be asked and how a
   passage becomes an answer.

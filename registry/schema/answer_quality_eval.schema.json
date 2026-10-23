@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causal-presidents.local/schema/answer_quality_eval.schema.json",
+  "title": "Answer-quality evaluation — the four RAGAS metric definitions, measured locally (Stage 9)",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "layer",
+    "vintage",
+    "generated_at",
+    "status",
+    "metric_source",
+    "judge",
+    "inputs",
+    "scored",
+    "expected",
+    "excluded",
+    "metrics",
+    "caveats",
+    "questions"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "integer", "minimum": 1 },
+    "layer": { "type": "string" },
+    "vintage": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "generated_at": { "type": "string" },
+    "status": { "type": "string", "enum": ["partial", "measured"] },
+    "metric_source": {
+      "type": "object",
+      "required": ["library", "why", "definitions", "comparability", "call_pattern", "prompt_sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "library": { "type": "boolean", "const": false },
+        "why": { "type": "string", "minLength": 20 },
+        "definitions": {
+          "type": "object",
+          "required": ["faithfulness", "answer_relevancy", "context_precision", "context_recall"],
+          "additionalProperties": false,
+          "properties": {
+            "faithfulness": { "type": "string", "minLength": 10 },
+            "answer_relevancy": { "type": "string", "minLength": 10 },
+            "context_precision": { "type": "string", "minLength": 10 },
+            "context_recall": { "type": "string", "minLength": 10 }
+          }
+        },
+        "comparability": { "type": "string", "minLength": 20 },
+        "call_pattern": { "type": "string", "minLength": 10 },
+        "prompt_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "judge": {
+      "type": "object",
+      "required": ["provider", "model", "temperature", "embedding_model", "embedding_dim",
+                   "n_generated_questions", "max_contexts", "calls"],
+      "additionalProperties": false,
+      "properties": {
+        "provider": { "type": "string" },
+        "model": { "type": "string", "minLength": 3 },
+        "temperature": { "type": "number" },
+        "embedding_model": { "type": "string" },
+        "embedding_dim": { "type": "integer", "minimum": 1 },
+        "n_generated_questions": { "type": "integer", "minimum": 1 },
+        "max_contexts": { "type": "integer", "minimum": 1 },
+        "calls": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "required": ["corpus", "corpus_content_sha256", "answer_eval", "answer_eval_content_sha256",
+                   "eval_set", "eval_set_content_sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "corpus": { "type": "string" },
+        "corpus_content_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "answer_eval": { "type": "string" },
+        "answer_eval_content_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "eval_set": { "type": "string" },
+        "eval_set_content_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "scored": { "type": "integer", "minimum": 0 },
+    "expected": { "type": "integer", "minimum": 0 },
+    "excluded": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "why"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "why": { "type": "string" }
+        }
+      }
+    },
+    "metrics": { "$ref": "#/$defs/scores" },
+    "caveats": { "type": "array", "items": { "type": "string", "minLength": 10 } },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "question", "contexts", "answer_chars", "scores", "detail"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "question": { "type": "string", "minLength": 5 },
+          "contexts": { "type": "array", "items": { "type": "string" } },
+          "answer_chars": { "type": "integer", "minimum": 0 },
+          "scores": { "$ref": "#/$defs/scores" },
+          "detail": {
+            "type": "object",
+            "required": ["statements", "statement_supported", "generated_questions", "similarities",
+                         "context_usable", "reference_claims", "claim_supported", "judge_replied"],
+            "additionalProperties": false,
+            "properties": {
+              "statements": { "type": "array", "items": { "type": "string" } },
+              "statement_supported": { "type": "array", "items": { "type": "boolean" } },
+              "generated_questions": { "type": "array", "items": { "type": "string" } },
+              "similarities": {
+                "type": "array",
+                "items": { "type": "number", "minimum": -1, "maximum": 1 }
+              },
+              "context_usable": { "type": "array", "items": { "type": "boolean" } },
+              "reference_claims": { "type": "array", "items": { "type": "string" } },
+              "claim_supported": { "type": "array", "items": { "type": "boolean" } },
+              "judge_replied": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "scores": {
+      "type": "object",
+      "required": ["faithfulness", "answer_relevancy", "context_precision", "context_recall"],
+      "additionalProperties": false,
+      "properties": {
+        "faithfulness": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "answer_relevancy": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "context_precision": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "context_recall": { "type": ["number", "null"], "minimum": 0, "maximum": 1 }
+      }
+    }
+  }
+}

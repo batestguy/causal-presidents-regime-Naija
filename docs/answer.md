@@ -143,9 +143,9 @@ disagrees with them — so the plain view cannot drift away from the quoted answ
 -> BM25 over committed text -> paragraph selection -> R-04 post-check -> plain reading -> glossary lookup.
 Nothing is generated, so nothing needs a credential. `tests/verify_answer.py` runs the layer in a child
 process with every key-shaped environment variable removed and requires an answer with a plain reading; a
-requirement for a key would fail that step rather than surface as a broken demo. RAGAS remains `not_run`
-(`docs/rag.md` §3) because faithfulness and answer relevance need a judge model — that is a *measurement*
-that needs a key, not the system that answers.
+requirement for a key would fail that step rather than surface as a broken demo. The answer-quality
+measurement is the one thing here that does need a judge: it runs separately
+(`scripts/eval_answer_quality.py`, `docs/rag.md` §3) and its key is never read by the app.
 
 ## 4. What the verifier establishes
 
@@ -188,9 +188,24 @@ refusal to carry its rule, its meaning and the passage it cites.
   outcome), not every case.
 - **It does not paraphrase.** A question phrased in words the corpus does not use is declined rather than
   answered approximately. That is the cost of the deterministic path, and it is published rather than tuned.
-- **It does not replace RAGAS.** There is no generation step and no judge model, so faithfulness and answer
-  relevance remain `not_run` (`docs/rag.md` §3). The keyless run above is not a RAGAS substitute: it proves
-  the system answers without a key, not that its answers are faithful.
+- **Selection was tested before it was changed, and the test said no.** Two reader-shaped probes fail and
+  both look like ranking defects: "can I republish the ACLED rows?" is answered from the coverage table in
+  `docs/limitations.md`, which matches the words *ACLED* and *rows* but says nothing about licences, and
+  "what did the event study find for 2010?" declines even though the 2010 event chunk is the retriever's
+  top-ranked one. The obvious fix was implemented as a probe rather than shipped: let the highest-ranked
+  document that covers the question be the answer document, and gate on the quoted paragraphs together
+  instead of on the first paragraph alone. On the published eval set it **lost more than it gained** —
+  correct answers moved off their administration record, their registry paragraph and their card and onto
+  narrative pages, because trusting the retriever's document order gives up the paragraph-level check that
+  keeps a passage about another subject from answering. It was not shipped. The probes have three different
+  causes, not one: a vocabulary gap (*republish* vs *redistribution*, *caveats* vs *cannot rule out*) in two,
+  and a generic frame (*event study*, *find*) wrapped around a specific year in the third. The honest fix is
+  a declared routing and vocabulary layer, measured on a held-out question set written after it — the same
+  order the intent gate used — not an ordering change made after reading three probes.
+- **It does not generate, so it needs no judge.** Faithfulness and answer relevancy are measured separately
+  by `scripts/eval_answer_quality.py` (faithfulness 1.000, answer relevancy 0.800 — `docs/rag.md` §3), and
+  that measurement is the four RAGAS definitions implemented here, not the `ragas` library. The keyless run
+  above still proves something the measurement does not: the system answers without a key at all.
 
 ## 6. Reproduction
 

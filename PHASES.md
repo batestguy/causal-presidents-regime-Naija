@@ -507,13 +507,14 @@ BM25 baseline's 0.833 (MRR 0.724 / 0.676), so the model earns its place. The two
 refusal-with-reason recall is **0.5** (one compound question retrieves the tenure-limitations passage instead
 of the Design C one) and out-of-scope refusal is **0.25**, because a forecast or a recommendation about a
 covered outcome embeds closer to the corpus than some genuine questions do — similarity alone cannot refuse
-an on-topic out-of-scope question, and the app will need an intent gate. RAGAS is **not run**: it needs a
-generation step and a judge model and this repository has no LLM key, so the artifact declares it `not_run`
-with that reason and the eval set carries the `ground_truth` column a RAGAS run would need.
+an on-topic out-of-scope question, and the app will need an intent gate. **Answer quality is measured
+(2026-10-23)** on the four RAGAS metric definitions — faithfulness **1.000**, answer relevancy **0.800**,
+context precision **0.990**, context recall **0.863** over the 16 answered questions — implemented locally in
+`scripts/eval_answer_quality.py` rather than by the `ragas` package, which is not installed; the artifact
+records `library: false` and says its scores are not comparable to a library run.
 
-**Still to do in this stage:** nothing blocking Stage 9. The remaining items are the generation half of the
-RAG evaluation (a key away) and adding families the corpus currently summarises rather than chunks (the donor
-panel, the robustness grid).
+**Still to do in this stage:** nothing blocking Stage 9. The remaining items are chunks for the families the
+corpus currently summarises rather than chunks (the donor panel, the robustness grid).
 
 **Work**
 
@@ -526,9 +527,10 @@ panel, the robustness grid).
   table and the limitations page, all sharing the registry's `vintage_date` so a stale answer cannot outlive
   the model it quotes. See `docs/rag.md`.
 - **RAGAS evaluation set** — ✅ authored and wired (22 questions: 16 answerable, 2 refusals with a cited
-  reason, 4 out of scope) and ✅ measured on the retrieval half in CI. ⏳ The generation half (faithfulness,
-  answer relevance) is declared `not_run` in the artifact until an LLM key exists; the reference answers are
-  already in the set.
+  reason, 4 out of scope), ✅ measured on the retrieval half in CI, and ✅ measured on the generation half on
+  2026-10-23 as `registry/rag/2026-10-18/answer_quality_eval.json` (verifier
+  `tests/verify_answer_quality.py`). The four definitions are implemented locally; the `ragas` library is
+  still not installed and the artifact says so.
 
 **Exit criteria.** Stage 9 can be built without opening R. If a card and the narrative disagree, the
 **card wins** and the narrative is regenerated.

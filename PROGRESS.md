@@ -1,9 +1,42 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-10-23 (thirteenth session) · **Stage:** 9, the **Ask tab** — the verification chain
-repaired after the chat-tab session, and the corpus extended with the two documents readers ask for ·
-**verified at vintage 2026-10-18**: the full `scripts/verify.sh` chain, 0 failures, 48 registry documents
-schema-validated
+**Last updated:** 2026-10-23 (thirteenth session) · **Stage:** 9 — the verification chain repaired, the corpus
+extended, and **answer quality finally measured** · **verified at vintage 2026-10-18**: the full
+`scripts/verify.sh` chain, 0 failures, 49 registry documents schema-validated
+
+**This session, late, in one line:** `ragas: not_run` is closed — the four RAGAS metric definitions are
+**implemented here** (the package is not installed), judged by `gemini-3.5-flash-lite`, and published as
+faithfulness **1.000**, answer relevancy **0.800**, context precision **0.990**, context recall **0.863** over
+the 16 answered questions.
+
+- **The library is not run, and the artifact says so in its own fields.** `ragas` is installed in none of the
+  machine's seven environments, and installing it would add a dependency tree to a project whose answering
+  path deliberately has none. `scripts/eval_answer_quality.py` implements the same four definitions, records
+  `library: false`, the judge model, the prompt's sha256, and the sentence that matters: **these scores are
+  not comparable to a `ragas` library run**.
+- **One judge call per question, because the free tier is the binding constraint.** `gemini-2.5-flash` allows
+  20 requests per window on this key, which a per-statement design exhausts on the second question; the
+  judgement is one structured call per question plus one batched embedding call (32–36 calls for 16 questions
+  instead of ~200). That is recorded as a working-paper difference, not hidden.
+- **The measurement is honest about itself.** Faithfulness is 1.000 *by construction* — the answer is a
+  selection of quoted paragraphs — so it confirms the contract, not retrieval. Context recall 0.863 is the
+  number with content: `q04_oil_to_states` and `q05_design_b_robust` score 0.500, i.e. the right document was
+  quoted without the paragraph that carries the reference's claim.
+- **The judge is noisy and that is published, not averaged away.** Five runs of the same measurement gave
+  faithfulness 0.964–1.000, answer relevancy 0.800–0.834, context precision 0.885–1.000 and context recall
+  0.801–0.863. A lite model at temperature 0 is not deterministic; the next step on this metric is a stronger
+  judge or several runs published as a range.
+- **Two verifier catches, both real.** `tests/verify_answer_quality.py` (new, in the chain) found an
+  unparseable judge reply that had been written through as null scores — the script now retries, and refuses
+  to record a judgement that did not happen, leaving the run `partial` instead — and the schema found a cosine
+  of 1.0000000000000002, which is correct arithmetic and an invalid metric value, now clamped and rounded.
+- **The artifact fingerprints content, not files.** The chain rewrites the corpus and eval artifacts on every
+  run, changing their bytes and not their content, so `inputs` carries content hashes (chunk text, answered
+  rows, questions + reference answers). Without that, the measurement would have gone stale every time the
+  chain verified it.
+- **What was not done:** no dependency was installed and no key is committed — the run reads
+  `GOOGLE_API_KEY` from the environment, and the verifier fails if a key-shaped string appears in the
+  artifact.
 
 **This session, in one line:** the **verification chain was red and is now green** — `tests/verify_rag.py`
 failed with 41 problems at the end of the chat-tab session, and the header above had said zero failures —

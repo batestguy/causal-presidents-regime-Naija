@@ -156,6 +156,7 @@ $PYTHON tests/verify_provenance.py
 $PYTHON tests/verify_rag.py
 $PYTHON tests/verify_intent.py
 $PYTHON tests/verify_answer.py
+$PYTHON tests/verify_answer_quality.py
 $PYTHON tests/verify_app.py
 
 printf '\nall checks passed\n'

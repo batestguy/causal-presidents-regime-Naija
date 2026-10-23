@@ -2,16 +2,17 @@
  "schema_version": "0.1.0",
  "layer": "RAG evaluation set (retrieval-gated; generation metrics declared, not measured)",
  "vintage": "2026-10-18",
- "generated_at": "2026-10-23T04:02:25+00:00",
+ "generated_at": "2026-10-23T05:34:16+00:00",
  "generator": {
   "script": "scripts/build_rag_corpus.py",
   "spec": "analysis/specs/rag_eval.yml",
-  "git_sha": "6e7486d"
+  "git_sha": "1e1ed17"
  },
  "corpus": "registry/rag/2026-10-18/corpus.json",
  "ragas": {
   "status": "not_run",
-  "why": "RAGAS metrics (faithfulness, answer relevance, context precision/recall) need a generation step and a judge model. No LLM key is configured in this repository, so the generation metrics are declared and skipped; the retrieval half is measured offline in retrieval_eval.json and is what verifies this stage. `reference_answer` is carried per question so a RAGAS run can be wired the day a key exists.",
+  "why": "This block describes the `ragas` *library*, which is not installed in this repository or on this machine: installing it would add a dependency tree to a project whose answering path deliberately has none. The four metric definitions it implements — faithfulness, answer relevancy, context precision and context recall — are implemented in `scripts/eval_answer_quality.py` and measured with a judge model in `answer_quality_eval.json`. Those scores are not comparable to a library run, because the prompt, the decomposition and the call pattern are this repository's.",
+  "measured_elsewhere": "registry/rag/2026-10-18/answer_quality_eval.json",
   "metadata": [
    "question",
    "contexts",

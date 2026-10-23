@@ -1106,11 +1106,15 @@ def build_eval_set(corpus: Corpus, spec: dict) -> dict:
         "corpus": rel(REPO_ROOT / spec["output"]["root"] / corpus.vintage / spec["output"]["corpus"]),
         "ragas": {
             "status": "not_run",
-            "why": "RAGAS metrics (faithfulness, answer relevance, context precision/recall) need a generation "
-                   "step and a judge model. No LLM key is configured in this repository, so the generation "
-                   "metrics are declared and skipped; the retrieval half is measured offline in "
-                   "retrieval_eval.json and is what verifies this stage. `reference_answer` is carried per "
-                   "question so a RAGAS run can be wired the day a key exists.",
+            "why": "This block describes the `ragas` *library*, which is not installed in this repository or "
+                   "on this machine: installing it would add a dependency tree to a project whose answering "
+                   "path deliberately has none. The four metric definitions it implements — faithfulness, "
+                   "answer relevancy, context precision and context recall — are implemented in "
+                   "`scripts/eval_answer_quality.py` and measured with a judge model in "
+                   "`answer_quality_eval.json`. Those scores are not comparable to a library run, because "
+                   "the prompt, the decomposition and the call pattern are this repository's.",
+            "measured_elsewhere": rel(REPO_ROOT / spec["output"]["root"] / corpus.vintage /
+                                      "answer_quality_eval.json"),
             "metadata": ["question", "contexts", "answer", "ground_truth"],
         },
         "counts": {

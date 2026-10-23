@@ -2,7 +2,7 @@
   "stage": 7,
   "layer": "robustness",
   "vintage": "2026-10-18",
-  "generated_at": "2026-10-23T04:44:25+0100",
+  "generated_at": "2026-10-23T06:34:06+0100",
   "generator": "analysis/R/04_robustness.R",
   "spec": "analysis/specs/robustness.yml",
   "verifier": "tests/verify_stage7.py",
@@ -25,7 +25,7 @@
       "design_b": {
         "stage6": 0.51811762897,
         "robustness": 0.51811762897,
-        "abs_diff": 4.2580383663e-12
+        "abs_diff": 4.2578163217e-12
       },
       "tolerance": 1e-08
     }

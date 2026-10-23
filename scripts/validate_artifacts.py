@@ -667,7 +667,8 @@ def check_schemas(failures: list[str]) -> int:
                           ("rag_eval.schema.json", "*/eval_set.json"),
                           ("rag_retrieval.schema.json", "*/retrieval_eval.json"),
                           ("intent_eval.schema.json", "*/intent_eval.json"),
-                          ("answer_eval.schema.json", "*/answer_eval.json")):
+                          ("answer_eval.schema.json", "*/answer_eval.json"),
+                          ("answer_quality_eval.schema.json", "*/answer_quality_eval.json")):
         schema = json.loads((SCHEMA_DIR / name).read_text(encoding="utf-8"))
         validator = jsonschema.Draft202012Validator(schema)
         for artifact in sorted(RAG_ROOT.glob(pattern)):
