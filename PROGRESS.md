@@ -1,10 +1,49 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-10-23 (thirteenth session) · **Stage:** 9 — the verification chain repaired, the corpus
-extended, and **answer quality finally measured** · **verified at vintage 2026-10-18**: the full
-`scripts/verify.sh` chain, 0 failures, 49 registry documents schema-validated
+**Last updated:** 2026-10-24 (fourteenth session) · **Stage:** 9 — every card now carries the outcome series
+it is about · **verified at vintage 2026-10-18**: `scripts/verify.sh` through stage 8d, then its tail
+(stage 8c → 9 and all sixteen verifiers) with `HF_HUB_OFFLINE=1` because the model-card lookup failed
+online; **0 failures, 50 registry documents schema-validated**
 
-**This session, late, in one line:** `ragas: not_run` is closed — the four RAGAS metric definitions are
+**This session, in one line:** the **outcome panels** — `analysis/specs/series_figures.yml`,
+`analysis/R/07_series_figures.R`, `registry/series/2026-10-18/` (12 SVGs + `index.json`) and
+`tests/verify_series_figures.py` — so that a card's reason is shown beside the series it is about, and the
+series is the reason: **764 of the 3,008 outcome-months are observations; 1,826 are interpolated; 1,418 have
+no observation at all.**
+
+- **The figure is a contract, not a decoration.** Observed months are dots, interpolated months are dotted
+  segments (the imputation rule made visible), and a run of three or more unobserved months — plus every
+  trailing run — is shaded and labelled "no observation". A reader can now see that `u5mr` is 26 annual points
+  across 275 interpolated months, that `skilled_birth` has 8 points in 27 years, and that `ner_primary` and
+  `primary_completion` stop in 2010 and cannot see any APC tenure.
+- **Nothing is typed.** Counts, window, first/last observation, unit, native frequency, the Stage 3 status and
+  the definition breaks are read from the base (`fact_metric`, `fact_observation_native`, `dim_metric`,
+  `dim_definition_break`); the outcome's identity comes from `analysis/specs/outcomes.yml`. The caption is
+  assembled from those fields, so it cannot disagree with the panel.
+- **The verifier re-derives all of it from DuckDB** — every count, the native observation count (excluding the
+  World Bank's valueless 2025 row, which would have overstated coverage by one month per year), the breaks,
+  the byte count, and the required strings inside the rendered SVG. Seven mutations were applied and caught:
+  a count moved by one, a caption's count, a byte count, a flipped Stage 3 status, a moved window, a dropped
+  definition break, and a label cut out of the SVG; each file restored byte-for-byte.
+- **The panel is on every card and the app verifier checks it.** `app/registry_data.py` loads the series index
+  under the same vintage contract as the cards and refuses a family that is missing or from another vintage;
+  the card tab renders the SVG and the artifact's caption. Removing the heading, or replacing the caption with
+  a literal, fails `tests/verify_app.py` on all 36 cards.
+- **One inconsistency surfaced and was left standing.** `outcomes.yml` still marks `literacy_youth`
+  `declared_gap` (probe date 2026-10-10) while the base now carries 7 observations to 2024. The panel draws
+  what the base holds and the caption says so; the registry's `coverage_status` is a separate claim and
+  changing it would regenerate all 36 cards, so it is recorded here as an open question rather than edited.
+- **The chain's corpus step needed the cached model, and that is recorded rather than glossed.**
+  `scripts/build_rag_corpus.py --embed` failed on a Hugging Face lookup for
+  `sentence-transformers/multi-qa-MiniLM-L6-cos-v1` although the snapshot is cached; `HF_HUB_OFFLINE=1` loads
+  it (384 dims) and every downstream step passes. The chain was not declared green as one uninterrupted run:
+  stages 0–8d ran through `verify.sh`, then 8c–9 and the sixteen verifiers were run separately against the
+  rebuilt corpus. Retrieval is unchanged (recall@5 0.944, coverage 0.418, MRR 0.715).
+- **Not done:** the figure and its caption are on the card only — the chat layer still cannot point at a
+  panel (no `figure` answer shape, no figure chunks in the corpus), and the three design-level figures
+  (forest plot, specification curve, event study) still have no tab.
+
+**Previous session, late, in one line:** `ragas: not_run` is closed — the four RAGAS metric definitions are
 **implemented here** (the package is not installed), judged by `gemini-3.5-flash-lite`, and published as
 faithfulness **1.000**, answer relevancy **0.800**, context precision **0.990**, context recall **0.863** over
 the 16 answered questions.

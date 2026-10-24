@@ -102,11 +102,18 @@ if command -v Rscript >/dev/null 2>&1; then
   # after it without ordering risk, and it needs no source that Stage 6 did not already need.
   step "stage 8b: transition event study"
   Rscript analysis/R/06_events.R
+  # The outcome panels read the base directly and write their own family under registry/series/, so they
+  # have no ordering dependency on the card registry or the estimates. They run last among the R stages
+  # because nothing else consumes them, and their verifier re-derives every count from the base that the
+  # dbt step just rebuilt.
+  step "stage 8d: outcome series figures"
+  Rscript analysis/R/07_series_figures.R
 else
   printf '\n=== stage 6: SKIPPED — no Rscript on PATH; verify_stage6.py will check the committed estimates\n'
   printf '\n=== stage 7: SKIPPED — no Rscript on PATH; verify_stage7.py will check the committed grid\n'
   printf '\n=== stage 8: SKIPPED — no Rscript on PATH; verify_registry.py will check the committed registry\n'
   printf '\n=== stage 8b: SKIPPED — no Rscript on PATH; verify_events.py will check the committed artifact\n'
+  printf '\n=== stage 8d: SKIPPED — no Rscript on PATH; verify_series_figures.py will check the committed panels\n'
 fi
 
 # Stage 8c — the retrieval corpus. The text half needs only Python and PyYAML; the vectors need
@@ -152,6 +159,7 @@ $PYTHON tests/verify_faac.py
 $PYTHON tests/verify_dags.py
 $PYTHON tests/verify_stage5.py
 $PYTHON tests/verify_events.py
+$PYTHON tests/verify_series_figures.py
 $PYTHON tests/verify_provenance.py
 $PYTHON tests/verify_rag.py
 $PYTHON tests/verify_intent.py

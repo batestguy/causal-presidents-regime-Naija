@@ -21,6 +21,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 CARDS_DIR = "registry/dags"
+SERIES_DIR = "registry/series"
 INDEX_FILE = "index.json"
 DESIGNS = {"A": "DiD", "B": "Time series", "C": "Synthetic control"}
 
@@ -59,6 +60,10 @@ class Registry:
     root: Path
     index: dict
     cards: dict[str, dict]
+    # The outcome panels are a second published family, keyed on the same outcome ids. They are loaded
+    # here so the card and the series it describes cannot come from two vintages.
+    series: dict[str, dict] | None = None
+    series_marks: dict | None = None
 
     # -- identity -------------------------------------------------------------------------------
     @property
@@ -96,6 +101,19 @@ class Registry:
     def svg_path(self, card: dict) -> Path:
         return self.root / str((card.get("assets") or {}).get("svg", ""))
 
+    # -- outcome series -------------------------------------------------------------------------
+    def series_row(self, outcome_id: str) -> dict:
+        rows = self.series or {}
+        if outcome_id not in rows:
+            raise RegistryError(
+                f"no outcome panel for {outcome_id!r} — every card names an outcome and every outcome has a "
+                f"published series (run analysis/R/07_series_figures.R)"
+            )
+        return rows[outcome_id]
+
+    def series_path(self, row: dict) -> Path:
+        return self.root / str((row.get("figure") or {}).get("path", ""))
+
     def node_label(self, card: dict, node_id: str) -> str:
         for node in card.get("nodes") or []:
             if node["id"] == node_id:
@@ -113,6 +131,11 @@ class Registry:
         return (self.index.get("published_results") or {}).get(design_id)
 
     # -- counts ---------------------------------------------------------------------------------
+    def outcome_series(self, outcome_id: str) -> tuple[dict, Path, str]:
+        """(panel row, figure path, how-to-read sentence) for an outcome."""
+        row = self.series_row(outcome_id)
+        return row, self.series_path(row), series_marks_text({"marks": self.series_marks})
+
     def card_counts(self) -> dict:
         return (self.index.get("registry") or {}).get("card_estimate_counts") or {}
 
@@ -180,6 +203,17 @@ def reason_text(block: dict) -> tuple[str, str]:
     return str(reason.get("code", "no_reason_given")), str(reason.get("detail", ""))
 
 
+def series_marks_text(row: dict) -> str:
+    """How to read the panel, assembled from the artifact's own mark definitions."""
+    marks = row.get("marks") or {}
+    parts = []
+    for key, label in (("observed", "observed"), ("interpolated", "interpolated"),
+                       ("unobserved", "no observation")):
+        if marks.get(key):
+            parts.append(f"**{label}** — {marks[key]}")
+    return "; ".join(parts)
+
+
 def precheck_lines(card: dict) -> list[str]:
     diag = card.get("diagnostics") or {}
     lines = [f"Stage 5 pre-check: **{diag.get('status', 'not run')}**"]
@@ -234,7 +268,31 @@ def load_registry(root: Path | str | None = None) -> Registry:
             )
         cards[dag_id] = card
 
-    registry = Registry(root=root, index=index, cards=cards)
+    # The outcome panels are loaded under the same contract as the cards: same vintage, one panel per
+    # outcome the index declares. A missing family is an error rather than a card without its series,
+    # because the page is not supposed to render a reason without the series the reason is about.
+    series_path = root / SERIES_DIR / str(vintage) / INDEX_FILE
+    if not series_path.exists():
+        raise RegistryError(
+            f"{series_path}: missing — run analysis/R/07_series_figures.R (the outcome panels are published "
+            "at the registry vintage)"
+        )
+    series_document = json.loads(series_path.read_text(encoding="utf-8"))
+    if series_document.get("vintage") != vintage:
+        raise RegistryError(
+            f"registry/series: the panels are vintage {series_document.get('vintage')!r} and the cards are "
+            f"{vintage!r} — a series from one vintage must not be shown under a card from another"
+        )
+    declared_outcomes = [row["id"] for row in index.get("outcomes") or []]
+    series_rows = {row["id"]: row for row in series_document.get("outcomes") or []}
+    if sorted(series_rows) != sorted(declared_outcomes):
+        raise RegistryError(
+            f"registry/series: {len(series_rows)} panel(s) for {len(declared_outcomes)} declared outcome(s) — "
+            f"missing {sorted(set(declared_outcomes) - set(series_rows))}"
+        )
+
+    registry = Registry(root=root, index=index, cards=cards, series=series_rows,
+                        series_marks=series_document.get("marks") or {})
     expected = registry.counts()
     outcomes, designs = expected.get("outcomes"), expected.get("designs")
     if outcomes and designs and len(cards) != int(outcomes) * int(designs):

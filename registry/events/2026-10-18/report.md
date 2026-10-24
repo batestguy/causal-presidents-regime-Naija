@@ -1,6 +1,6 @@
 # What changed inside a tenure — monthly conflict around 4 transitions, vintage 2026-10-18
 
-Generated 2026-10-23T06:34:15+0100 by `analysis/R/06_events.R` from `analysis/specs/events.yml`. Every number is recomputed independently by `tests/verify_events.py`.
+Generated 2026-10-24T10:42:26+0100 by `analysis/R/06_events.R` from `analysis/specs/events.yml`. Every number is recomputed independently by `tests/verify_events.py`.
 
 ## What this stage is, and what it is not
 

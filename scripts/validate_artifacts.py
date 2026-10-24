@@ -59,6 +59,7 @@ CARDS_DIR = REPO_ROOT / "registry" / "dags"
 SCHEMA_DIR = REPO_ROOT / "registry" / "schema"
 REFERENCE_DIR = REPO_ROOT / "registry" / "reference"
 DONORS_DIR = REPO_ROOT / "registry" / "donors"
+SERIES_ROOT = REPO_ROOT / "registry" / "series"
 
 DATE_LABEL = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
@@ -619,6 +620,94 @@ def check_rag(failures: list[str], quality_vintage: str | None) -> None:
           f"{embedding.get('status')}, retrieval eval describes this corpus)")
 
 
+def check_series(failures: list[str]) -> None:
+    """The outcome panels must describe the same registry the cards do.
+
+    A schema cannot see this: the index could be internally consistent and still carry eleven panels for
+    twelve outcome cards, or a figure from another vintage. The app shows one panel per card, so the two
+    artifacts have to agree on which outcomes exist before either is rendered.
+    """
+    newest = newest_dir(SERIES_ROOT)
+    if newest is None:
+        print("series figures  : none yet (registry/series/ is empty)")
+        return
+    if not DATE_LABEL.match(newest.name):
+        failures.append(
+            f"registry/series/{newest.name}: the vintage is not a date, so a consumer that selects the "
+            "newest directory would show an older series beside a newer card"
+        )
+    index_path = newest / "index.json"
+    if not index_path.exists():
+        failures.append(f"registry/series/{newest.name}: index.json is missing")
+        return
+    document = json.loads(index_path.read_text(encoding="utf-8"))
+    if document.get("vintage") != newest.name:
+        failures.append(
+            f"registry/series/{newest.name}: the artifact's own vintage is {document.get('vintage')!r}"
+        )
+
+    cards_index_path = CARDS_DIR / "index.json"
+    if not cards_index_path.exists():
+        failures.append("registry/series: the card index is missing, so the panels cannot be matched")
+        return
+    cards_index = json.loads(cards_index_path.read_text(encoding="utf-8"))
+    if document.get("vintage") != cards_index.get("vintage_date"):
+        failures.append(
+            f"registry/series/{newest.name}: computed against a different registry vintage "
+            f"({cards_index.get('vintage_date')!r}) than the cards — re-run analysis/R/07_series_figures.R"
+        )
+
+    expected_ids = [row.get("id") for row in cards_index.get("outcomes") or []]
+    published_ids = [row.get("id") for row in document.get("outcomes") or []]
+    if published_ids != expected_ids:
+        failures.append(
+            f"registry/series/{newest.name}: the panels are {published_ids} and the card index declares "
+            f"{expected_ids} — one panel per outcome card"
+        )
+    if (document.get("counts") or {}).get("outcomes") != len(published_ids):
+        failures.append(
+            f"registry/series/{newest.name}: counts.outcomes is "
+            f"{(document.get('counts') or {}).get('outcomes')} but {len(published_ids)} panel(s) are published"
+        )
+
+    recorded: set[str] = set()
+    for row in document.get("outcomes") or []:
+        figure = row.get("figure") or {}
+        relative = str(figure.get("path") or "")
+        recorded.add(relative)
+        if not relative.startswith(f"registry/series/{newest.name}/"):
+            failures.append(
+                f"registry/series/{newest.name}: {row.get('id')} names a figure outside this vintage "
+                f"({relative!r})"
+            )
+            continue
+        path = REPO_ROOT / relative
+        if not path.exists() or path.stat().st_size == 0:
+            failures.append(
+                f"registry/series/{newest.name}: {row.get('id')} names {relative!r}, which is missing or "
+                "empty — a card would show a caption for a figure that is not on disk"
+            )
+            continue
+        if "<svg" not in path.read_text(encoding="utf-8", errors="replace"):
+            failures.append(f"registry/series/{newest.name}: {relative} is not an SVG")
+        if figure.get("bytes") != path.stat().st_size:
+            failures.append(
+                f"registry/series/{newest.name}: {row.get('id')} records {figure.get('bytes')} bytes and the "
+                f"file is {path.stat().st_size} — the figure is one rebuild behind its index"
+            )
+
+    for path in sorted((newest / "figures").glob("*.svg")) if (newest / "figures").exists() else []:
+        relative = str(path.relative_to(REPO_ROOT)).replace("\\", "/")
+        if relative not in recorded:
+            failures.append(
+                f"registry/series/{newest.name}: {path.name} is on disk and in no panel — a figure the index "
+                "does not describe is one nothing can check"
+            )
+
+    print(f"series figures  : {newest.name} ({len(published_ids)} panel(s), one per card outcome, "
+          f"every figure on disk at its recorded size)")
+
+
 def check_schemas(failures: list[str]) -> int:
     """Every registry JSON against its declared schema."""
     try:
@@ -651,6 +740,14 @@ def check_schemas(failures: list[str]) -> int:
     for artifact in sorted(EVENTS_ROOT.glob("*/events.json")):
         document = json.loads(artifact.read_text(encoding="utf-8"))
         for error in events_validator.iter_errors(document):
+            failures.append(f"{artifact.relative_to(REPO_ROOT)}: {error.message[:200]}")
+        validated += 1
+
+    series_schema = json.loads((SCHEMA_DIR / "series_index.schema.json").read_text(encoding="utf-8"))
+    series_validator = jsonschema.Draft202012Validator(series_schema)
+    for artifact in sorted(SERIES_ROOT.glob("*/index.json")):
+        document = json.loads(artifact.read_text(encoding="utf-8"))
+        for error in series_validator.iter_errors(document):
             failures.append(f"{artifact.relative_to(REPO_ROOT)}: {error.message[:200]}")
         validated += 1
 
@@ -703,6 +800,7 @@ def main() -> int:
     check_stage7(failures, quality_vintage)
     check_events(failures, quality_vintage)
     check_stage8_registry(failures)
+    check_series(failures)
     check_rag(failures, quality_vintage)
 
     validated = check_schemas(failures)

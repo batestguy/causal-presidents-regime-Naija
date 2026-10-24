@@ -1,0 +1,120 @@
+# Outcome-series figures — one panel per outcome card, drawn from the analytical base.
+#
+# Why this exists: every card names an outcome and 34 of 36 carry a reason instead of a number, and until now
+# none of them showed the series the reason is about. A reader could not see that `u5mr` is 26 annual
+# observations stretched across 275 interpolated months, or that the two education outcomes stop in 2010 and
+# therefore cannot see any APC tenure. The cards say those things in prose; this artifact draws them.
+#
+# Three rules make the figure an artifact rather than a decoration:
+#
+#   1. **Nothing is typed.** Counts, span, the Stage 3 status and the definition breaks are read from the base
+#      (`fact_metric`, `dim_metric`, `dim_definition_break`) and the outcome's identity from
+#      `analysis/specs/outcomes.yml`. The engine computes no statistic; it prints what the base holds.
+#   2. **Missingness is drawn, not smoothed.** An observed month is a dot. An interpolated month is a dotted
+#      grey segment — the project's imputation rule made visible. A month with no observation is blank, and a
+#      run of them is shaded and labelled. A line through an annual series' interpolated months would be the
+#      one thing this project has said it will not do.
+#   3. **The figure cannot outlive its rows.** Its byte count is recorded in the artifact and compared to the
+#      file by `scripts/validate_artifacts.py`; the counts are re-derived from the base by
+#      `tests/verify_series_figures.py`. A re-run of dbt that moves a series makes the old figure fail rather
+#      than quietly describing a series that no longer exists.
+#
+# Absence is a declared case, not an empty axis. If an outcome had no row in the base at all, its panel says
+# so in words and carries the outcome registry's reason; at this vintage all twelve outcomes have at least a
+# handful of observations, and the artifact records that count so the claim is checkable rather than assumed.
+#
+# ---------------------------------------------------------------------------------------------
+version: 1
+labelled: "2026-10-18"
+spec_path: "analysis/specs/series_figures.yml"
+engine: "analysis/R/07_series_figures.R"
+verifier: "tests/verify_series_figures.py"
+
+input:
+  database: "data/analytics.duckdb"
+  fact_table: "main_analytics.fact_metric"
+  native_table: "main_analytics.fact_observation_native"
+  metric_dimension: "main_analytics.dim_metric"
+  definition_break_table: "main_analytics.dim_definition_break"
+  outcomes_spec: "analysis/specs/outcomes.yml"
+  # The outcome registry is the only place an outcome's identity lives. One panel per entry, keyed on the
+  # outcome id, which is also the metric id in the base — asserted, not assumed.
+  outcome_key_matches_metric_id: true
+
+output:
+  root: "registry/series"
+  index: "index.json"
+  figure_dir: "figures"
+  figure_name: "%s.svg"
+
+# ---------------------------------------------------------------------------------------------
+# What the panel draws
+# ---------------------------------------------------------------------------------------------
+# A month's `observation_type` decides its mark. The three values are the base's own vocabulary; the engine
+# fails on a fourth rather than defaulting, because a new category is a change to the imputation rule.
+marks:
+  observed: "solid point at the anchor month, joined only to an adjacent observed month"
+  interpolated: "dotted grey segment — a month the monthly spine filled between two observations"
+  unobserved: "nothing drawn; a run of this many months or more is shaded and labelled"
+  min_shaded_run_months: 3
+
+# The window is the spine's own span, read from the base, not a typed range: the figures describe the series
+# the models were fitted on.
+window:
+  source: "min/max of fact_metric.period_month across the twelve outcome metrics"
+  tail_shading: "the trailing run of unobserved months is always shaded, even below min_shaded_run_months"
+
+# Definition breaks are vertical dashed lines with their name as text. They come from `dim_definition_break`
+# and are drawn only if they fall inside the window; a break outside it would be a claim about a period the
+# panel does not show.
+definition_breaks:
+  source: "dim_definition_break, matched on metric_id"
+  in_window_only: true
+
+# ---------------------------------------------------------------------------------------------
+# The figure's own contract
+# ---------------------------------------------------------------------------------------------
+figure:
+  width_in: 11
+  height_in: 4.2
+  device: "svglite"
+  # svglite, not the base `svg()` device: cairo converts text to glyph outlines, so a label that was never
+  # drawn cannot be detected by reading the file. Every string the caption uses is also in the SVG as text.
+  required_text:
+    - "the outcome label"
+    - "the unit"
+    - "the Stage 3 quality status"
+    - "the observed / interpolated / no-observation counts"
+    - "each in-window definition break's name"
+    - "the direction of the outcome"
+  bytes_recorded: true
+
+# A caption is built from the artifact's own fields so it cannot disagree with the panel. The prose around
+# those fields is fixed here; the numbers are substituted.
+caption:
+  format: >-
+    {n_observed} observations in the window ({first_observed} to {last_observed}); {n_interpolated} months
+    interpolated by the monthly spine; {n_unobserved} months with no observation. Native frequency
+    {native_frequency}; Stage 3 status {quality_status}.{breaks_clause}
+  no_observation_clause: " The series stops at {last_observed}, so the remainder of the window carries no observation."
+  absence_clause: >-
+    No series: this outcome has no row in the analytical base at vintage {vintage}. That is the reason the
+    card carries, not a null result.
+
+# ---------------------------------------------------------------------------------------------
+# What the engine must refuse
+# ---------------------------------------------------------------------------------------------
+refusals:
+  outcome_without_base_row: "drawn as a declared absence, never as an empty axis"
+  observation_type_not_in_marks: "fail the run; the base's vocabulary is part of the contract"
+  missing_metric_dimension_row: "fail the run; a panel without a unit or a Stage 3 status is not publishable"
+  figure_without_required_text: "fail the run; a label that did not render is a figure that cannot be checked"
+  metric_id_mismatch: "fail the run; the outcome registry and the base must use the same key"
+
+# ---------------------------------------------------------------------------------------------
+# Output shape (checked by the schema and by the verifier)
+# ---------------------------------------------------------------------------------------------
+# index.json carries: schema_version, stage, layer, vintage, generated_at, generator, spec, verifier,
+# input (database, tables, spec hash), window, counts (outcomes, drawable, flagged, spine rows by
+# observation_type), and `outcomes` — one entry per panel with identity, window, counts, first/last
+# observation, definition breaks, `drawable`, `figure {path, bytes}`, and `caption`.

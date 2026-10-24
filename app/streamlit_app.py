@@ -10,8 +10,11 @@ answer layer, and the answer is assembled from the registry's own passages and c
 registry cannot answer is refused with the passage that says why. The layer is BM25 over committed text
 (`app/answer_layer.py`), so no model is called, no key is needed, and no number is generated.
 
-What it deliberately is not: a dashboard of the raw series (the monthly spine is 16.2 % observed, which is a
-plot about coverage rather than about presidents).
+What it deliberately is not: a dashboard of the raw series. Each card carries **one static panel** of the
+outcome it is about (`registry/series/`), drawn at build time from the base, because the single most useful
+thing a reader can see about these outcomes is how little of the window is actually observed: 764 of the
+3,008 outcome months are observations, and the education series stop in 2010. The panel says that by drawing
+it. It is not an interactive explorer, and it is not recomputed here.
 
 Run:
     /c/Users/TOSHIBA/ds-general/python.exe -m streamlit run app/streamlit_app.py
@@ -265,6 +268,20 @@ with card_tab:
         )
     else:
         st.caption(f"The card names a figure at `{svg_path}` that is not on disk.")
+
+    series_row, series_figure, marks_text = registry.outcome_series(outcome["id"])
+    st.markdown("#### The outcome series this card is about")
+    if series_figure.exists():
+        st.html(
+            "<div style='max-height:380px;overflow:auto'>"
+            + series_figure.read_text(encoding="utf-8")
+            + "</div>"
+        )
+        st.caption(series_row["caption"])
+        if marks_text:
+            st.caption(marks_text)
+    else:
+        st.caption(f"The series artifact names a figure at `{series_figure}` that is not on disk.")
 
     st.caption(
         f"Card: `registry/dags/{card['dag_id']}.json` · vintage {registry.vintage} · "

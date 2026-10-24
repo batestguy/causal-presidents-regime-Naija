@@ -167,6 +167,26 @@ def main() -> int:
     published = index.get("published_results") or {}
     b_numbers = {signed(spec["coefficient"]) for spec in (published.get("B") or {}).get("specifications") or []}
 
+    # The outcome panels are part of what a reader is shown, so they are checked with the cards: one panel
+    # per outcome, its caption on the page, and its figure actually on disk. The panel is a static SVG the
+    # renderer cannot read as text, so the caption is the checkable half — and it carries the counts.
+    series_path = REPO_ROOT / "registry" / "series" / vintage / "index.json"
+    if not series_path.exists():
+        fail(failures, f"registry/series/{vintage}/index.json is missing — every card is supposed to be "
+                       f"shown with the outcome series it is about")
+        series_rows: dict[str, dict] = {}
+        series_counts: dict = {}
+    else:
+        series_document = json.loads(series_path.read_text(encoding="utf-8"))
+        series_rows = {row["id"]: row for row in series_document.get("outcomes") or []}
+        series_counts = series_document.get("counts") or {}
+        if series_document.get("vintage") != vintage:
+            fail(failures, f"the outcome panels are vintage {series_document.get('vintage')!r} and the cards "
+                           f"are {vintage!r}")
+        if sorted(series_rows) != sorted(outcomes):
+            fail(failures, f"the outcome panels cover {sorted(series_rows)} and the index declares "
+                           f"{sorted(outcomes)} — a card would render without its series")
+
     rendered_pairs = 0
     for outcome_id, design_id in pairs:
         dag_id = f"{outcome_id}__{design_id}"
@@ -239,6 +259,22 @@ def main() -> int:
         for caveat in card.get("cannot_rule_out") or []:
             if squash(caveat)[:60] not in text:
                 fail(failures, f"{dag_id}: a cannot-rule-out caveat is not rendered")
+
+        panel = series_rows.get(outcome_id)
+        if panel is None:
+            fail(failures, f"{dag_id}: the card names the outcome {outcome_id!r} and no outcome panel was "
+                           f"published for it")
+        else:
+            if "The outcome series this card is about" not in text:
+                fail(failures, f"{dag_id}: the outcome panel is not on the card — a reason without the series "
+                               f"it is about is a claim the reader cannot see")
+            caption = squash(str(panel.get("caption") or ""))
+            if caption[:80] not in text:
+                fail(failures, f"{dag_id}: the outcome panel's caption is not rendered, so the reader cannot "
+                               f"tell observations from interpolated months")
+            figure_path = REPO_ROOT / str((panel.get("figure") or {}).get("path") or "")
+            if not figure_path.exists():
+                fail(failures, f"{dag_id}: the outcome panel's figure {figure_path} is not on disk")
 
         # A design-level result must not be lent to a card: the B number belongs on the index, once.
         if design_id == "B" and status == "not_estimated":
@@ -427,6 +463,15 @@ def main() -> int:
             if f"`{code}` | {count}" not in story:
                 fail(failures, f"docs/app.md's reason table does not say {code} = {count} — the codes and "
                                f"counts are derived from the index, and prose that drifts is stale")
+        # The panels are prose claims too: how many there are and how little of the window they observe are
+        # both fields of the series artifact, so they are required from it rather than retyped here.
+        if series_rows:
+            observed = (series_counts.get("spine_rows") or {}).get("observed")
+            for needle, what in ((f"{len(series_rows)} outcome panels", "the panel count"),
+                                 (f"{observed} observed", "the observed-month total across the panels")):
+                if needle not in story:
+                    fail(failures, f"docs/app.md does not carry {needle!r} — {what} moved in "
+                                   f"registry/series/, so the narrative now describes an older artifact")
 
     # ---------------------------------------------------------------------------------------------
     if failures:
@@ -445,6 +490,8 @@ def main() -> int:
     print(f"card wins     : no published coefficient appears as a literal in the app source; every displayed "
           f"value traces to a card field")
     print(f"no model      : the app imports no database client, network client or fitting library")
+    print(f"panels        : {len(series_rows)} outcome series shown beside the cards, each with the caption "
+          f"the artifact published")
     print(f"ask tab       : {len(example_ids)} published example question(s) asked and answered from the "
           f"registry; every refusal named its rule, its plain meaning and the passage it cites")
     print()

@@ -2,11 +2,11 @@
  "schema_version": "0.1.0",
  "layer": "retrieval corpus (one card per model card, plus the results, the tables and the narrative)",
  "vintage": "2026-10-18",
- "generated_at": "2026-10-23T05:34:16+00:00",
+ "generated_at": "2026-10-24T09:47:44+00:00",
  "generator": {
   "script": "scripts/build_rag_corpus.py",
   "spec": "analysis/specs/rag.yml",
-  "git_sha": "1e1ed17"
+  "git_sha": "7489bb3"
  },
  "registry": {
   "index": "registry/dags/index.json",
@@ -264,7 +264,7 @@
   {
    "path": "registry/dags/index.json",
    "role": "registry_index",
-   "sha256": "840b4416e91f032abb27d3c7825822051af556f2ff389b6bb9494573a0658973",
+   "sha256": "fee1badd6c105910b2a9f29b12d2918cde04fc994efb81b3eda562f03cbeac44",
    "bytes": 58393,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
@@ -418,21 +418,21 @@
   {
    "path": "registry/estimates/2026-10-18/estimates.json",
    "role": "estimates",
-   "sha256": "bf62b0c6eca94df5825ab40fbd2653f6533733cf0b2be621e9e80dd92785984b",
+   "sha256": "7a95f2832a44f0ba68289f7fcfbcd7a833d5077037a35cb5c33669fe6b18e179",
    "bytes": 32385,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/events/2026-10-18/events.json",
    "role": "event_study",
-   "sha256": "e9339c4743ac008070ca4f3997c8ecefe75a0d5326c89caf6771256bbb576dcd",
+   "sha256": "da30db3aa682b50e9e721a03bd25c7b59c318876313d4304f80678e0fe1874a3",
    "bytes": 43558,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/quality/2026-10-18/report.json",
    "role": "coverage",
-   "sha256": "cf8cbd090ca275e9406b584bd709fccf22210239f925bf01d15aceccbe25db3a",
+   "sha256": "27a14af838f5b55ed91c6f19e790d55e745e01f3c29c0c358978e7d15a501729",
    "bytes": 3397175,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   }
@@ -1600,7 +1600,7 @@
    "source": {
     "path": "registry/quality/2026-10-18/report.json",
     "anchor": "counts",
-    "sha256": "cf8cbd090ca275e9406b584bd709fccf22210239f925bf01d15aceccbe25db3a"
+    "sha256": "27a14af838f5b55ed91c6f19e790d55e745e01f3c29c0c358978e7d15a501729"
    },
    "citation": "Data coverage — the Stage 3 quality gate result — registry/quality/2026-10-18/report.json (vintage 2026-10-18)",
    "metadata": {
@@ -1626,7 +1626,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "registry.card_estimate_counts",
-    "sha256": "840b4416e91f032abb27d3c7825822051af556f2ff389b6bb9494573a0658973"
+    "sha256": "fee1badd6c105910b2a9f29b12d2918cde04fc994efb81b3eda562f03cbeac44"
    },
    "citation": "Registry coverage — how many cards carry a published number — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -2640,7 +2640,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.buhari_2015",
-    "sha256": "e9339c4743ac008070ca4f3997c8ecefe75a0d5326c89caf6771256bbb576dcd"
+    "sha256": "da30db3aa682b50e9e721a03bd25c7b59c318876313d4304f80678e0fe1874a3"
    },
    "citation": "Transition event buhari_2015 — Buhari sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2666,7 +2666,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.buhari_2015",
-    "sha256": "e9339c4743ac008070ca4f3997c8ecefe75a0d5326c89caf6771256bbb576dcd"
+    "sha256": "da30db3aa682b50e9e721a03bd25c7b59c318876313d4304f80678e0fe1874a3"
    },
    "citation": "Transition event buhari_2015 — Buhari sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2692,7 +2692,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.buhari_2015",
-    "sha256": "e9339c4743ac008070ca4f3997c8ecefe75a0d5326c89caf6771256bbb576dcd"
+    "sha256": "da30db3aa682b50e9e721a03bd25c7b59c318876313d4304f80678e0fe1874a3"
    },
    "citation": "Transition event buhari_2015 — Buhari sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2718,7 +2718,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.jonathan_2010",
-    "sha256": "e9339c4743ac008070ca4f3997c8ecefe75a0d5326c89caf6771256bbb576dcd"
+    "sha256": "da30db3aa682b50e9e721a03bd25c7b59c318876313d4304f80678e0fe1874a3"
    },
    "citation": "Transition event jonathan_2010 — Jonathan sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2744,7 +2744,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.jonathan_2010",
-    "sha256": "e9339c4743ac008070ca4f3997c8ecefe75a0d5326c89caf6771256bbb576dcd"
+    "sha256": "da30db3aa682b50e9e721a03bd25c7b59c318876313d4304f80678e0fe1874a3"
    },
    "citation": "Transition event jonathan_2010 — Jonathan sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2770,7 +2770,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.jonathan_2010",
-    "sha256": "e9339c4743ac008070ca4f3997c8ecefe75a0d5326c89caf6771256bbb576dcd"
+    "sha256": "da30db3aa682b50e9e721a03bd25c7b59c318876313d4304f80678e0fe1874a3"
    },
    "citation": "Transition event jonathan_2010 — Jonathan sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2796,7 +2796,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "not_claimed",
-    "sha256": "e9339c4743ac008070ca4f3997c8ecefe75a0d5326c89caf6771256bbb576dcd"
+    "sha256": "da30db3aa682b50e9e721a03bd25c7b59c318876313d4304f80678e0fe1874a3"
    },
    "citation": "Transition event study — what it does not claim — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2817,7 +2817,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.tinubu_2023",
-    "sha256": "e9339c4743ac008070ca4f3997c8ecefe75a0d5326c89caf6771256bbb576dcd"
+    "sha256": "da30db3aa682b50e9e721a03bd25c7b59c318876313d4304f80678e0fe1874a3"
    },
    "citation": "Transition event tinubu_2023 — Tinubu sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2843,7 +2843,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.tinubu_2023",
-    "sha256": "e9339c4743ac008070ca4f3997c8ecefe75a0d5326c89caf6771256bbb576dcd"
+    "sha256": "da30db3aa682b50e9e721a03bd25c7b59c318876313d4304f80678e0fe1874a3"
    },
    "citation": "Transition event tinubu_2023 — Tinubu sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2869,7 +2869,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.tinubu_2023",
-    "sha256": "e9339c4743ac008070ca4f3997c8ecefe75a0d5326c89caf6771256bbb576dcd"
+    "sha256": "da30db3aa682b50e9e721a03bd25c7b59c318876313d4304f80678e0fe1874a3"
    },
    "citation": "Transition event tinubu_2023 — Tinubu sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2895,7 +2895,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.yaradua_2007",
-    "sha256": "e9339c4743ac008070ca4f3997c8ecefe75a0d5326c89caf6771256bbb576dcd"
+    "sha256": "da30db3aa682b50e9e721a03bd25c7b59c318876313d4304f80678e0fe1874a3"
    },
    "citation": "Transition event yaradua_2007 — Yar'Adua sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2921,7 +2921,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.yaradua_2007",
-    "sha256": "e9339c4743ac008070ca4f3997c8ecefe75a0d5326c89caf6771256bbb576dcd"
+    "sha256": "da30db3aa682b50e9e721a03bd25c7b59c318876313d4304f80678e0fe1874a3"
    },
    "citation": "Transition event yaradua_2007 — Yar'Adua sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2947,7 +2947,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.yaradua_2007",
-    "sha256": "e9339c4743ac008070ca4f3997c8ecefe75a0d5326c89caf6771256bbb576dcd"
+    "sha256": "da30db3aa682b50e9e721a03bd25c7b59c318876313d4304f80678e0fe1874a3"
    },
    "citation": "Transition event yaradua_2007 — Yar'Adua sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -11828,7 +11828,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.A",
-    "sha256": "840b4416e91f032abb27d3c7825822051af556f2ff389b6bb9494573a0658973"
+    "sha256": "fee1badd6c105910b2a9f29b12d2918cde04fc994efb81b3eda562f03cbeac44"
    },
    "citation": "Published result — Design A — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -11851,7 +11851,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.A",
-    "sha256": "840b4416e91f032abb27d3c7825822051af556f2ff389b6bb9494573a0658973"
+    "sha256": "fee1badd6c105910b2a9f29b12d2918cde04fc994efb81b3eda562f03cbeac44"
    },
    "citation": "Published result — Design A — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -11874,7 +11874,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.A",
-    "sha256": "840b4416e91f032abb27d3c7825822051af556f2ff389b6bb9494573a0658973"
+    "sha256": "fee1badd6c105910b2a9f29b12d2918cde04fc994efb81b3eda562f03cbeac44"
    },
    "citation": "Published result — Design A — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -11897,7 +11897,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "840b4416e91f032abb27d3c7825822051af556f2ff389b6bb9494573a0658973"
+    "sha256": "fee1badd6c105910b2a9f29b12d2918cde04fc994efb81b3eda562f03cbeac44"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -11920,7 +11920,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "840b4416e91f032abb27d3c7825822051af556f2ff389b6bb9494573a0658973"
+    "sha256": "fee1badd6c105910b2a9f29b12d2918cde04fc994efb81b3eda562f03cbeac44"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -11943,7 +11943,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "840b4416e91f032abb27d3c7825822051af556f2ff389b6bb9494573a0658973"
+    "sha256": "fee1badd6c105910b2a9f29b12d2918cde04fc994efb81b3eda562f03cbeac44"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -11966,7 +11966,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "840b4416e91f032abb27d3c7825822051af556f2ff389b6bb9494573a0658973"
+    "sha256": "fee1badd6c105910b2a9f29b12d2918cde04fc994efb81b3eda562f03cbeac44"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -11989,7 +11989,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "840b4416e91f032abb27d3c7825822051af556f2ff389b6bb9494573a0658973"
+    "sha256": "fee1badd6c105910b2a9f29b12d2918cde04fc994efb81b3eda562f03cbeac44"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -12012,7 +12012,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "840b4416e91f032abb27d3c7825822051af556f2ff389b6bb9494573a0658973"
+    "sha256": "fee1badd6c105910b2a9f29b12d2918cde04fc994efb81b3eda562f03cbeac44"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -12035,7 +12035,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.C",
-    "sha256": "840b4416e91f032abb27d3c7825822051af556f2ff389b6bb9494573a0658973"
+    "sha256": "fee1badd6c105910b2a9f29b12d2918cde04fc994efb81b3eda562f03cbeac44"
    },
    "citation": "Published result — Design C — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -12058,7 +12058,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.C",
-    "sha256": "840b4416e91f032abb27d3c7825822051af556f2ff389b6bb9494573a0658973"
+    "sha256": "fee1badd6c105910b2a9f29b12d2918cde04fc994efb81b3eda562f03cbeac44"
    },
    "citation": "Published result — Design C — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -12081,7 +12081,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.C",
-    "sha256": "840b4416e91f032abb27d3c7825822051af556f2ff389b6bb9494573a0658973"
+    "sha256": "fee1badd6c105910b2a9f29b12d2918cde04fc994efb81b3eda562f03cbeac44"
    },
    "citation": "Published result — Design C — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {

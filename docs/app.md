@@ -37,7 +37,17 @@ Four tabs, in the order the questions come in.
 Right column: the number, its interval, p-value, sample and window, the verdict (`identified` /
 `estimated_not_identified`) with the failed check that decided it, every field of the published specification
 in an expander, and one line placing this specification in the Stage 7 grid. Below both: the assumed graph,
-embedded as SVG.
+embedded as SVG, and then the outcome series the card is about.
+
+**The outcome series, drawn from the base.** One static panel per outcome — **12 outcome panels**, published
+at `registry/series/<vintage>/` by `analysis/R/07_series_figures.R` and reused by all three designs on that
+outcome. The twelve panels together cover 3,008 outcome-months: **764 observed**, 1,826 interpolated by the
+monthly spine, and 1,418 with no observation at all. An observed month is a dot, an interpolated month a
+dotted segment, and a run of unobserved months is shaded and labelled — so a reader can see, without reading
+a caption, that `u5mr` is 26 annual points across 275 interpolated months and that both education outcomes
+stop in 2010. The figure is rendered at build time, never at request time, and its byte count is recorded in
+the artifact so a panel that outlives its rows fails `scripts/validate_artifacts.py` rather than being noticed
+by a reader.
 
 **Design-level results.** Design B's number is about the **national FAAC channel**, and on all nine B cards
 FAAC is a mediator; Design C was not run. Both are published here, once, with their specifications, their

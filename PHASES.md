@@ -540,7 +540,7 @@ corpus currently summarises rather than chunks (the donor panel, the robustness 
 ## Stage 9 — The read-only app
 
 **STATUS: READ-ONLY APP BUILT (2026-10-21), REFUSAL GATE BUILT AND MEASURED (2026-10-22), GATE AT v3
-AND ANSWER LAYER BUILT (2026-10-22), CHAT TAB BUILT (2026-10-22).**
+AND ANSWER LAYER BUILT (2026-10-22), CHAT TAB BUILT (2026-10-22), OUTCOME PANELS BUILT (2026-10-24).**
 `app/streamlit_app.py` + `app/registry_data.py`,
 `tests/verify_app.py`, `docs/app.md`. Outcome → design → assumption → adjustment set → cannot-rule-out →
 the published number or the reason there is none, plus one tab for the two design-level results and one for
@@ -633,6 +633,11 @@ governance decision, not a packaging one.
 - ✅ **Chat tab** — the app's fourth tab, on the gate and the answer layer: a cited answer or a cited
   refusal, the plain reading first, no model and no key. The verifier asks it the four published questions
   and compares the answers with the artifacts; a held-out question on the page fails the build.
+- ✅ **Outcome panels** — `analysis/specs/series_figures.yml`, `analysis/R/07_series_figures.R`,
+  `registry/series/<vintage>/` (12 SVGs + `index.json`), `tests/verify_series_figures.py`. One panel per
+  outcome card, drawn from the base at build time: observed months as dots, interpolated months dotted, runs
+  with no observation shaded and labelled. The card shows the panel and its caption, and the caption's
+  numbers are the artifact's.
 
 **Exit criteria.** A reader can reach any card, and no number appears anywhere that is not a field of that
 card. A reader can ask the registry a question and get an answer that cites the card it came from, or a
