@@ -1,0 +1,165 @@
+# The guided flow's wording — declared, not typed into the renderer
+#
+# Every sentence, status word and label the site can show lives here, so that the wording is reviewable as a
+# document and the site is not the place where prose is invented. `tests/verify_guide.py` checks coverage both
+# ways: every design, status, reason code and grouping the renderer may show must have an entry, and every entry
+# must be used by at least one rendered page.
+#
+# **Placeholders.** `cover.paragraphs` and `study.caption` may carry `{name}` slots. The build substitutes them
+# from the artifacts and refuses to write a page if a slot has no value, or if a value has no slot. The declared
+# slots are listed under `placeholders` and are the only names the renderer will fill.
+
+version: 1
+layer: "plain words for the guided flow: design names, status words, reasons, cover copy"
+
+placeholders:
+  window_first: "the study window's first month, from registry/series/<vintage>/index.json"
+  window_last: "the study window's last month"
+  administrations: "the number of administrations, from registry/reference/administrations.json"
+  spine_total: "outcome-months covered by the twelve panels"
+  spine_observed: "outcome-months that are observations"
+  spine_interpolated: "outcome-months filled in between observations"
+  spine_unobserved: "outcome-months with no observation at all"
+  estimated: "cards carrying a published number, from registry/dags/index.json"
+  cards: "cards in the registry"
+
+cover:
+  title: "Causal Presidents"
+  caption: "Presidential transitions and national outcomes in Nigeria, 1999–present."
+  instruction: "Read the assumption before the number."
+  rail_heading: "Five administrations"
+  rail_note: "The faces are the study window, not a scorecard. No number on this site belongs to one president."
+  ratio: "{estimated} of {cards} model cards carry a published number; the rest say why not."
+  paragraphs:
+    - "This is a study of what can and cannot be said about Nigeria between {window_first} and {window_last}, across {administrations} administrations. Its first line is the honest one: most of the questions a reader wants answered about a presidency cannot be answered with this data, and the site says which, and why, before it shows a number."
+    - "The twelve outcomes here cover {spine_total} outcome-months: {spine_observed} are observations, {spine_interpolated} are months filled in between observations, and {spine_unobserved} have no observation at all. Every panel draws those three states differently, so a line that is mostly dotted is telling you it is mostly a rule rather than a record."
+    - "Begin asks which outcomes you want to study. The next page tells you which comparison the data can support for them — a design chosen from the published checks, not by preference — and then shows the estimate in plain words, or the reason there is none."
+
+study:
+  heading: "What do you want to study?"
+  intro: "Pick one or more outcomes. Every one of them has a page: it either carries a comparison the data can support, or it says why it does not."
+  caption: "Together these twelve cover {spine_total} outcome-months: {spine_observed} observed, {spine_interpolated} filled in between, {spine_unobserved} with nothing."
+  next: "Next"
+  next_disabled: "Pick at least one outcome to continue."
+  groups:
+    health: "Health"
+    education: "Education"
+    security: "Security"
+    economy: "Economy"
+
+compare:
+  heading: "What this data can tell you"
+  intro: "For each outcome you chose, this page names the comparison the project judged usable — chosen from the published checks, never by preference — and what it assumes."
+  tenure_note: "What this page will not do is tell you which president did better. That question needs a counterfactual this data does not have: 22 to 23 annual observations per outcome, four to five administrations, and a monthly spine that is 16.2 % observed. The comparisons below are the ones that survive that arithmetic, and each one says what it rests on."
+  chosen_label: "The comparison chosen for you"
+  assumes_label: "What it assumes"
+  number_label: "Number published"
+  no_number_label: "No number"
+  closest_label: "The closest thing we have"
+  prototype_note: "Prototype: this page is the second screen only. The graph, estimate and chart screens are specified and not yet built."
+
+designs:
+  A:
+    name: "State dose-response DiD"
+    short: "DiD"
+    plain_comparison: "states that received more federal money, compared with states that received less"
+    assumes: "that no other change moved states with high and low federal allocations differently in the same months"
+  B:
+    name: "National VECM / ARDL time series"
+    short: "Time series"
+    plain_comparison: "the national money that reached the states, after the oil price moved, compared with what happened before it moved"
+    assumes: "that the oil price is the only thing moving that channel in the same months"
+  C:
+    name: "Synthetic control (cross-country)"
+    short: "Synthetic control"
+    plain_comparison: "Nigeria compared with a made-up Nigeria built from similar countries"
+    assumes: "that the made-up Nigeria tracks what Nigeria would have done without the change"
+
+# Stage 5's card verdicts, in the reader's words. The tone is the colour the page may use.
+status:
+  pass:
+    word: "usable"
+    tone: "good"
+    sentence: "The check this comparison needed passed before anything was estimated."
+  degraded:
+    word: "usable with a warning"
+    tone: "warn"
+    sentence: "The comparison runs, but on a weaker version of what the design asked for."
+  fail:
+    word: "the check it needed failed"
+    tone: "bad"
+    sentence: "The comparison was tested and did not pass; the number it would carry is either absent or published as not identified."
+  not_attempted:
+    word: "not attempted"
+    tone: "bad"
+    sentence: "The design could not be run for this outcome, so there is nothing to show."
+
+# The registry's closed set of reasons a card carries no number.
+reasons:
+  outcome_series_absent:
+    sentence: "There is no usable series to estimate on."
+  no_specification_declared:
+    sentence: "No specification was declared for this pair, so nothing was estimated."
+  design_result_is_channel_level:
+    sentence: "This design was run, but its result is about the money channel rather than about this outcome."
+  design_not_run:
+    sentence: "The design was not run for this outcome."
+
+coverage:
+  ok: "measured"
+  partial: "partly measured"
+  declared_gap: "declared gap"
+
+direction:
+  up: "higher is better"
+  down: "lower is better"
+
+groupings:
+  party_tenure:
+    plain: "by who was in power"
+    technical: "party × tenure stratum"
+  state_dose_quartile:
+    plain: "by how much money a state received"
+    technical: "FAAC dose quartile"
+
+labels:
+  technical_expander: "The technical version"
+  plain_reading: "What this says in plain words"
+  graph_heading: "The assumption, drawn"
+  chart_heading: "The comparison, drawn"
+  alternatives_heading: "The other graphs for this outcome"
+  failed_check_prefix: "Failed its check"
+  back: "Back"
+  next: "Next"
+
+steps:
+  cover: "Start"
+  study: "What to study"
+  compare: "The comparisons"
+  graph: "The assumption"
+  estimates: "The estimate"
+  chart: "The chart"
+
+results:
+  heading: "The estimate, in plain words"
+  number: "The published coefficient is {coefficient}, with a 95 % interval from {ci_low} to {ci_high} and p = {p_value}."
+  includes_zero: "That interval includes zero, so this data cannot rule out no effect at all."
+  excludes_zero: "That interval stays on one side of zero."
+  sample: "It rests on {n_obs} observations over {n_units} units, {first_month} to {last_month}."
+  verdict: "Verdict: {verdict}."
+  failed_check: "The check that decided it: {failed_check}."
+  no_number: "There is no number for this comparison. {reason_sentence}"
+  channel_note: "The published number is about the national money channel, not about this outcome."
+  tiny_note: "A coefficient of this kind is read as a proportional change: {reading}."
+  expander: "The technical version"
+  groups_heading: "What each group's average is"
+  stamp_note: "Every chart on this page is a description of the series. None of them is a causal comparison."
+
+chart:
+  stamp: "description, not a causal comparison"
+  observed_mark: "a dot is a month that exists"
+  interpolated_mark: "a dotted line is a month filled in between two observations"
+
+changepoint:
+  marker_label: "the series changes here"
+  note: "A break is a description of the series. It is not evidence that a presidency caused it."

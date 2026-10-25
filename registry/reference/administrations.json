@@ -1,0 +1,79 @@
+{
+  "schema_version": "0.1.0",
+  "layer": "the five administrations of the study window, as the cover reads them",
+  "generated_at": "2026-10-25T13:47:34+01:00",
+  "generator": {
+    "script": "scripts/build_administrations.py"
+  },
+  "source": {
+    "path": "dbt/seeds/raw_administration.csv",
+    "sha256": "52cfe70ecc685f85a5fdec8fb017d423b3493775600cb10eddc8b8ef022b2589",
+    "why": "the base's spine is the seed; the site's copy exists so the app never opens DuckDB or dbt, and the hash is recorded so a seed edit without a rebuild fails the site verifier"
+  },
+  "counts": {
+    "administrations": 5,
+    "open_ended": 1
+  },
+  "administrations": [
+    {
+      "admin_id": 1,
+      "slug": "obasanjo",
+      "president": "Olusegun Obasanjo",
+      "party": "PDP",
+      "start_date": "1999-05-29",
+      "end_date": "2007-05-29",
+      "n_terms": 2,
+      "note": "Two terms — one spine row covering two terms as the base spec §7 table has it",
+      "portrait_path": "site/assets/presidents/obasanjo.jpg",
+      "portrait_status": "not_supplied"
+    },
+    {
+      "admin_id": 2,
+      "slug": "yaradua",
+      "president": "Umaru Musa Yar'Adua",
+      "party": "PDP",
+      "start_date": "2007-05-29",
+      "end_date": "2010-05-05",
+      "n_terms": 1,
+      "note": "Died in office",
+      "portrait_path": "site/assets/presidents/yaradua.jpg",
+      "portrait_status": "not_supplied"
+    },
+    {
+      "admin_id": 3,
+      "slug": "jonathan",
+      "president": "Goodluck Jonathan",
+      "party": "PDP",
+      "start_date": "2010-05-06",
+      "end_date": "2015-05-29",
+      "n_terms": 1,
+      "note": "Acting from 2010-02-09; sworn in 2010-05-06 — that sworn-in date is the single decided boundary",
+      "portrait_path": "site/assets/presidents/jonathan.jpg",
+      "portrait_status": "not_supplied"
+    },
+    {
+      "admin_id": 4,
+      "slug": "buhari",
+      "president": "Muhammadu Buhari",
+      "party": "APC",
+      "start_date": "2015-05-29",
+      "end_date": "2023-05-29",
+      "n_terms": 2,
+      "note": "Two terms — one spine row, two terms",
+      "portrait_path": "site/assets/presidents/buhari.jpg",
+      "portrait_status": "not_supplied"
+    },
+    {
+      "admin_id": 5,
+      "slug": "tinubu",
+      "president": "Bola Ahmed Tinubu",
+      "party": "APC",
+      "start_date": "2023-05-29",
+      "end_date": null,
+      "n_terms": 1,
+      "note": "Incumbent — end_date deliberately open rather than set to a date the data does not support",
+      "portrait_path": "site/assets/presidents/tinubu.jpg",
+      "portrait_status": "not_supplied"
+    }
+  ]
+}

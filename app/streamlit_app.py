@@ -13,7 +13,7 @@ registry cannot answer is refused with the passage that says why. The layer is B
 What it deliberately is not: a dashboard of the raw series. Each card carries **one static panel** of the
 outcome it is about (`registry/series/`), drawn at build time from the base, because the single most useful
 thing a reader can see about these outcomes is how little of the window is actually observed: 764 of the
-3,008 outcome months are observations, and the education series stop in 2010. The panel says that by drawing
+4,008 outcome months are observations, and the education series stop in 2010. The panel says that by drawing
 it. It is not an interactive explorer, and it is not recomputed here.
 
 Run:

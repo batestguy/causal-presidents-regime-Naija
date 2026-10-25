@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causal-presidents/registry/schema/administrations.schema.json",
+  "title": "Administrations reference",
+  "description": "The five administrations of the study window, as the cover reads them. Generated from dbt/seeds/raw_administration.csv so the site's copy cannot drift from the base's spine; a row here that disagrees with the seed is a build failure, not a style question. No outcome, estimate or verdict belongs in this file.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "layer", "generated_at", "generator", "source", "counts", "administrations"],
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "layer": { "type": "string" },
+    "generated_at": { "type": "string" },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["script"],
+      "properties": {
+        "script": { "type": "string", "const": "scripts/build_administrations.py" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "why"],
+      "properties": {
+        "path": { "type": "string", "const": "dbt/seeds/raw_administration.csv" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "why": { "type": "string" }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["administrations", "open_ended"],
+      "properties": {
+        "administrations": { "type": "integer", "minimum": 1 },
+        "open_ended": { "type": "integer", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "administrations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "admin_id", "slug", "president", "party", "start_date", "end_date",
+          "n_terms", "note", "portrait_path", "portrait_status"
+        ],
+        "properties": {
+          "admin_id": { "type": "integer", "minimum": 1 },
+          "slug": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "president": { "type": "string" },
+          "party": { "type": "string" },
+          "start_date": { "type": "string", "format": "date" },
+          "end_date": {
+            "type": ["string", "null"],
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+            "description": "Null for the incumbent: the end date is deliberately open rather than set to a date the data does not support."
+          },
+          "n_terms": { "type": "integer", "minimum": 1 },
+          "note": { "type": ["string", "null"] },
+          "portrait_path": { "type": "string" },
+          "portrait_status": { "enum": ["supplied", "not_supplied"] }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,101 @@
+# Descriptive comparisons — the guided flow's chart, declared before it is computed
+#
+# What this stage is: group means and per-group series for one outcome at a time, so the flow can draw
+# "the same outcome, grouped by who was in power" or "by how much money a state received".
+#
+# What it must never be: an estimate. There is no counterfactual here, no comparison of one group against
+# another, and no test. `forbidden_fields` is enforced by the schema, the engine and the verifier.
+#
+# Declared 2026-10-25, before any number was computed. `analysis/R/08_comparisons.R` records this file's md5
+# in the artifact, so a run against an edited spec fails `tests/verify_comparisons.py` instead of describing
+# a method nobody reviewed.
+
+version: 1
+layer: "descriptive group means and group series for the guided flow — description, not inference"
+stage: "9-prep"
+
+window:
+  first: "1999-01"
+  last: "2026-10"
+
+rules:
+  # The mean is over months that exist. An interpolated month is a filled value, so it never enters a mean;
+  # it is still drawn, as a dotted segment, because hiding it would make the series look better observed
+  # than it is. The two means are published side by side so a reader can see what the fill rule costs.
+  # Two means, because the fill rule is the thing a reader cannot see from the line. `group_mean` averages
+  # every month the group's series covers, using the value drawn that month (an observation, or the spine's
+  # interpolated value); `group_mean_native_only` averages the observations alone. Where they differ, the
+  # caption quotes both, so "the average under this stratum" cannot quietly mean "the average of a rule".
+  group_mean: >-
+    the unweighted mean over every month the group's series covers, using the value drawn that month;
+    group_mean_native_only is the mean over observed months alone, and a caption quotes both when they differ
+  interpolated_in_mean: true
+  min_units_per_group: 3
+  declared_gap: "a month with no observation is a gap, never a zero, and never a mean's zero contribution"
+  rounding: "means and series values to 6 significant digits; captions quote means to one decimal place"
+  forbidden_fields:
+    - p_value
+    - standard_error
+    - ci_low
+    - ci_high
+    - t_stat
+    - verdict
+    - stars
+    - q_value
+
+groupings:
+  - id: party_tenure
+    plain: "by who was in power"
+    technical: "party × tenure stratum"
+    kind: party_tenure
+    grain: national-month
+    source: "main_analytics.fact_metric.tenure_stratum"
+    units: "the four published strata: PDP_first, PDP_second, APC_first, APC_second"
+    excludes: >-
+      the 125 transition months whose tenure_stratum is null — a handover month belongs to no stratum's
+      average, and counting it would put a political fact into a group that did not govern it
+    note: >-
+      a stratum can cover more than one administration (APC_first covers 2015–2019 and 2023–), so the
+      series is drawn as separate runs rather than one line across the gap
+
+  - id: state_dose_quartile
+    plain: "by how much money a state received"
+    technical: "FAAC dose quartile, nominal allocation"
+    kind: state_dose_quartile
+    grain: state-month
+    source: "main_analytics.state_panel.faac_gross_total_naira"
+    applies_to: [fatalities, incidents]
+    quartile_rule: >-
+      each state's mean nominal allocation over the dose window is ranked; the ranked units are split into
+      four equal-count groups (9/9/9/9 — the FCT has no FAAC workbook row, so the dose exists for 36 states,
+      not 37) so no group is empty and a tie cannot move a boundary
+    window:
+      first: "2016-12"
+      last: "2024-12"
+    outcome_source: "main_analytics.state_panel.<outcome> where security_status = 'observed'"
+    note: >-
+      the nominal axis is what exists: the per-capita axis D1 is 0 of 12,358 rows for want of the population
+      denominator decision (X-09), so these groups are about the money a state received, not the money per person
+
+evidence:
+  # What a reader is pointed at when an outcome has no usable design of its own (spec A-03).
+  economy: design_result
+  security: event_study
+  health: series_panel
+  education: series_panel
+  plain:
+    design_result: "the design-level result published once on the registry index"
+    event_study: "the transition event study, which compares each handover with the trend before it"
+    series_panel: "this outcome's own series panel, which shows how much of the window is observed"
+
+figures:
+  width_in: 8.2
+  height_in: 3.4
+  height_in_two_panel: 5.2
+  dpi: 110
+  palette: ["#1d6b5a", "#a9691a", "#8c3a2f", "#4a4f59"]
+  stamp: "description, not a causal comparison"
+  marks:
+    observed: "solid point and solid segment"
+    interpolated: "dotted segment"
+    definition_break: "vertical dashed rule with its label"

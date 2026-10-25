@@ -466,9 +466,16 @@ def main() -> int:
         # The panels are prose claims too: how many there are and how little of the window they observe are
         # both fields of the series artifact, so they are required from it rather than retyped here.
         if series_rows:
-            observed = (series_counts.get("spine_rows") or {}).get("observed")
+            spine = series_counts.get("spine_rows") or {}
+            observed = spine.get("observed")
+            # The total the narrative quotes is the sum of the artifact's own three counts, not a fourth
+            # number typed beside them: the page said 3,008 outcome-months against 12 panels of 334 months
+            # each (4,008) and nothing caught it, because the total was prose and the other two were derived.
+            total_months = sum(int(v) for v in spine.values())
             for needle, what in ((f"{len(series_rows)} outcome panels", "the panel count"),
-                                 (f"{observed} observed", "the observed-month total across the panels")):
+                                 (f"{observed} observed", "the observed-month total across the panels"),
+                                 (f"{total_months:,} outcome-months",
+                                  "the outcome-month total, summed from the artifact's own spine counts")):
                 if needle not in story:
                     fail(failures, f"docs/app.md does not carry {needle!r} — {what} moved in "
                                    f"registry/series/, so the narrative now describes an older artifact")

@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causal-presidents/registry/schema/changepoints.schema.json",
+  "title": "Changepoint description artifact",
+  "description": "When each outcome series changes — a description of the series, not an inference about a presidency. The schema forbids p-values, standard errors, intervals (including break-date intervals) and test statistics: on 27 annual observations a break-date interval would be read as precision the data does not have. Every break here is recomputable from the native observations by tests/verify_changepoints.py, which also refuses a fit on the interpolated monthly spine.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "stage", "layer", "vintage", "generated_at", "generator", "spec",
+    "verifier", "input", "counts", "rules", "outcomes", "notes"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "stage": { "type": "string" },
+    "layer": { "type": "string" },
+    "vintage": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "generated_at": { "type": "string" },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["script", "git_sha"],
+      "properties": {
+        "script": { "type": "string", "const": "analysis/R/09_changepoints.R" },
+        "git_sha": { "type": ["string", "null"] }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "md5", "version"],
+      "properties": {
+        "path": { "type": "string", "const": "analysis/specs/changepoints.yml" },
+        "md5": { "type": "string", "pattern": "^[0-9a-f]{32}$" },
+        "version": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "verifier": { "type": "string", "const": "tests/verify_changepoints.py" },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["database", "native_table", "metric_dimension", "definition_break_table", "administrations_source"],
+      "properties": {
+        "database": { "type": "string" },
+        "native_table": { "type": "string" },
+        "metric_dimension": { "type": "string" },
+        "definition_break_table": { "type": "string" },
+        "administrations_source": { "type": "string" }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcomes_considered", "outcomes_searched", "outcomes_fixed_date",
+        "outcomes_refused", "breaks_estimated", "known_breaks_passed"
+      ],
+      "properties": {
+        "outcomes_considered": { "type": "integer", "minimum": 0 },
+        "outcomes_searched": { "type": "integer", "minimum": 0 },
+        "outcomes_fixed_date": { "type": "integer", "minimum": 0 },
+        "outcomes_refused": { "type": "integer", "minimum": 0 },
+        "breaks_estimated": { "type": "integer", "minimum": 0 },
+        "known_breaks_passed": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method", "package", "criterion", "input_rule", "min_native_search",
+        "min_native_fixed_date", "max_breaks", "definition_break_rule",
+        "attribution_rule", "forbidden_fields"
+      ],
+      "properties": {
+        "method": { "type": "string" },
+        "package": { "type": "string", "const": "strucchange" },
+        "criterion": { "type": "string" },
+        "input_rule": {
+          "type": "string",
+          "description": "Must state that only native observations are fitted; the interpolated spine is excluded because a filled month is not an observation."
+        },
+        "min_native_search": { "type": "integer", "minimum": 1 },
+        "min_native_fixed_date": { "type": "integer", "minimum": 1 },
+        "max_breaks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["monthly", "annual", "annual_short"],
+          "properties": {
+            "monthly": { "type": "integer", "minimum": 0 },
+            "annual": { "type": "integer", "minimum": 0 },
+            "annual_short": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "definition_break_rule": { "type": "string" },
+        "attribution_rule": { "type": "string" },
+        "forbidden_fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "outcomes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id", "label", "short", "native_frequency", "regime", "native_in_window",
+          "span", "status", "method_detail", "breaks", "plain_caption", "figure", "refused"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "short": { "type": "string" },
+          "native_frequency": { "enum": ["monthly", "annual"] },
+          "regime": { "enum": ["monthly", "annual", "annual_short"] },
+          "native_in_window": { "type": "integer", "minimum": 0 },
+          "span": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["first", "last"],
+            "properties": {
+              "first": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$" },
+              "last": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$" }
+            }
+          },
+          "status": { "enum": ["search", "fixed_date", "refused"] },
+          "method_detail": { "type": "string" },
+          "breaks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["month", "kind", "label", "statement"],
+              "properties": {
+                "month": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$" },
+                "kind": { "enum": ["estimated", "known_definition_break", "inauguration"] },
+                "label": { "type": "string" },
+                "statement": { "type": "string" },
+                "coincides_with_inauguration": { "type": ["string", "null"] }
+              }
+            }
+          },
+          "plain_caption": { "type": "string" },
+          "figure": {
+            "oneOf": [
+              { "type": "null" },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["path", "bytes"],
+                "properties": {
+                  "path": { "type": "string" },
+                  "bytes": { "type": "integer", "minimum": 1 }
+                }
+              }
+            ]
+          },
+          "refused": {
+            "oneOf": [
+              { "type": "null" },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["reason", "detail"],
+                "properties": {
+                  "reason": {
+                    "enum": ["too_few_native_observations", "series_stops_before_window", "no_native_observations", "declared_gap"]
+                  },
+                  "detail": { "type": "string" }
+                }
+              }
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "status": { "const": "refused" } }, "required": ["status"] },
+            "then": {
+              "properties": {
+                "breaks": { "type": "array", "maxItems": 0 },
+                "figure": { "type": "null" }
+              },
+              "required": ["refused"]
+            }
+          },
+          {
+            "if": { "properties": { "status": { "enum": ["search", "fixed_date"] } }, "required": ["status"] },
+            "then": {
+              "properties": {
+                "breaks": { "type": "array", "minItems": 1 },
+                "refused": { "type": "null" }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

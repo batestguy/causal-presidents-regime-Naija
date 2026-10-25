@@ -108,12 +108,18 @@ if command -v Rscript >/dev/null 2>&1; then
   # dbt step just rebuilt.
   step "stage 8d: outcome series figures"
   Rscript analysis/R/07_series_figures.R
+  # Stage 8e describes the outcome series by group — the guided flow's comparison screen reads it. It is
+  # description only: no test, no interval, no contrast, and the verifier refuses an inferential field. It
+  # runs after the series panels because it restates their counts rather than computing its own.
+  step "stage 8e: descriptive comparisons"
+  Rscript analysis/R/08_comparisons.R
 else
   printf '\n=== stage 6: SKIPPED — no Rscript on PATH; verify_stage6.py will check the committed estimates\n'
   printf '\n=== stage 7: SKIPPED — no Rscript on PATH; verify_stage7.py will check the committed grid\n'
   printf '\n=== stage 8: SKIPPED — no Rscript on PATH; verify_registry.py will check the committed registry\n'
   printf '\n=== stage 8b: SKIPPED — no Rscript on PATH; verify_events.py will check the committed artifact\n'
   printf '\n=== stage 8d: SKIPPED — no Rscript on PATH; verify_series_figures.py will check the committed panels\n'
+  printf '\n=== stage 8e: SKIPPED — no Rscript on PATH; verify_comparisons.py will check the committed groups\n'
 fi
 
 # Stage 8c — the retrieval corpus. The text half needs only Python and PyYAML; the vectors need
@@ -160,6 +166,7 @@ $PYTHON tests/verify_dags.py
 $PYTHON tests/verify_stage5.py
 $PYTHON tests/verify_events.py
 $PYTHON tests/verify_series_figures.py
+$PYTHON tests/verify_comparisons.py
 $PYTHON tests/verify_provenance.py
 $PYTHON tests/verify_rag.py
 $PYTHON tests/verify_intent.py

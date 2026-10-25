@@ -31,6 +31,11 @@ renv/staging/
 .Rproj.user/
 .Rhistory
 
+# The guided-flow site is a build artifact: `python site/build.py` writes it from registry/ and
+# analysis/specs/. Committing it would put a second copy of every published number in the repo, free to
+# disagree with the artifacts it was generated from.
+site/dist/
+
 # dbt
 dbt/target/
 dbt/logs/

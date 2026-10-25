@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causal-presidents/registry/schema/comparisons.schema.json",
+  "title": "Descriptive comparison artifact",
+  "description": "Group means and per-group series for the guided flow's comparison chart. Description only: the schema forbids every inferential field (test statistic, p-value, standard error, interval, verdict), because a contrast between groups is an estimate and estimates belong to Stage 6. Every number here is recomputable from the analytical base by tests/verify_comparisons.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "stage", "layer", "vintage", "generated_at", "generator", "spec",
+    "verifier", "input", "counts", "rules", "groupings", "outcomes", "notes"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "stage": { "type": "string" },
+    "layer": { "type": "string" },
+    "vintage": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "generated_at": { "type": "string" },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["script", "git_sha"],
+      "properties": {
+        "script": { "type": "string", "const": "analysis/R/08_comparisons.R" },
+        "git_sha": { "type": ["string", "null"] }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "md5", "version"],
+      "properties": {
+        "path": { "type": "string", "const": "analysis/specs/comparisons.yml" },
+        "md5": { "type": "string", "pattern": "^[0-9a-f]{32}$" },
+        "version": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "verifier": { "type": "string", "const": "tests/verify_comparisons.py" },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["database", "fact_table", "native_table", "metric_dimension", "definition_break_table", "outcomes_spec"],
+      "properties": {
+        "database": { "type": "string" },
+        "fact_table": { "type": "string" },
+        "native_table": { "type": "string" },
+        "metric_dimension": { "type": "string" },
+        "definition_break_table": { "type": "string" },
+        "outcomes_spec": { "type": "string" },
+        "dose_metric_id": { "type": "string" }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcomes", "groupings", "charts", "groups_total", "outcomes_refused"],
+      "properties": {
+        "outcomes": { "type": "integer", "minimum": 0 },
+        "groupings": { "type": "integer", "minimum": 0 },
+        "charts": { "type": "integer", "minimum": 0 },
+        "groups_total": { "type": "integer", "minimum": 0 },
+        "outcomes_refused": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["group_mean", "grain", "forbidden_fields", "min_units_per_group", "declared_gap_rule"],
+      "properties": {
+        "group_mean": { "type": "string" },
+        "grain": { "type": "string" },
+        "forbidden_fields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "Field names that must not appear anywhere in this artifact, or in any group object."
+        },
+        "min_units_per_group": { "type": "integer", "minimum": 1 },
+        "declared_gap_rule": { "type": "string" }
+      }
+    },
+    "groupings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "plain", "technical", "group_kind", "grain", "window", "n_groups", "source_note"],
+        "properties": {
+          "id": { "type": "string" },
+          "plain": { "type": "string" },
+          "technical": { "type": "string" },
+          "group_kind": { "enum": ["party_tenure", "state_dose_quartile", "donor_pool"] },
+          "grain": { "enum": ["national-month", "national-year", "state-month", "country-year"] },
+          "window": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["first", "last"],
+            "properties": {
+              "first": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$" },
+              "last": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$" }
+            }
+          },
+          "n_groups": { "type": "integer", "minimum": 1 },
+          "source_note": { "type": "string" }
+        }
+      }
+    },
+    "outcomes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id", "label", "short", "domain", "unit", "direction", "native_frequency",
+          "quality_status", "window", "observed", "definition_breaks", "closest_evidence",
+          "groups", "caption", "figure", "refused"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "short": { "type": "string" },
+          "domain": { "enum": ["health", "education", "security", "economy"] },
+          "unit": { "type": "string" },
+          "direction": { "enum": ["up", "down"] },
+          "native_frequency": { "enum": ["monthly", "annual", "quarterly"] },
+          "quality_status": { "enum": ["ok", "flagged", "empty"] },
+          "window": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["first", "last"],
+            "properties": {
+              "first": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$" },
+              "last": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$" }
+            }
+          },
+          "observed": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["native_in_window", "observed_months", "interpolated_months", "unobserved_months"],
+            "properties": {
+              "native_in_window": { "type": "integer", "minimum": 0 },
+              "observed_months": { "type": "integer", "minimum": 0 },
+              "interpolated_months": { "type": "integer", "minimum": 0 },
+              "unobserved_months": { "type": "integer", "minimum": 0 }
+            }
+          },
+          "definition_breaks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["date", "name"],
+              "properties": {
+                "date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$" },
+                "name": { "type": "string" },
+                "note": { "type": ["string", "null"] }
+              }
+            }
+          },
+          "closest_evidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "artifact", "plain"],
+            "properties": {
+              "kind": { "enum": ["design_result", "event_study", "series_panel", "none"] },
+              "artifact": { "type": ["string", "null"] },
+              "outcome_id": { "type": ["string", "null"] },
+              "plain": { "type": "string" }
+            }
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["grouping_id", "group_id", "plain", "technical", "n_units", "months", "group_mean", "series", "caption"],
+              "properties": {
+                "grouping_id": { "type": "string" },
+                "group_id": { "type": "string" },
+                "plain": { "type": "string" },
+                "technical": { "type": "string" },
+                "n_units": { "type": "integer", "minimum": 1 },
+                "months": { "type": "integer", "minimum": 1 },
+                "group_mean": { "type": ["number", "null"] },
+                "group_mean_native_only": { "type": ["number", "null"] },
+                "series": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["month", "value", "observed"],
+                    "properties": {
+                      "month": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$" },
+                      "value": { "type": ["number", "null"] },
+                      "observed": { "type": "boolean" }
+                    }
+                  }
+                },
+                "caption": { "type": "string" }
+              }
+            }
+          },
+          "caption": { "type": "string" },
+          "figure": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "bytes"],
+            "properties": {
+              "path": { "type": "string" },
+              "bytes": { "type": "integer", "minimum": 1 }
+            }
+          },
+          "refused": {
+            "oneOf": [
+              { "type": "null" },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["reason", "detail"],
+                "properties": {
+                  "reason": {
+                    "enum": ["no_monthly_life", "too_few_native_observations", "declared_gap", "no_grouping_declared"]
+                  },
+                  "detail": { "type": "string" }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}
