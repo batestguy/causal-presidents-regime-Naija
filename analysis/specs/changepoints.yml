@@ -6,6 +6,10 @@
 #
 # Declared 2026-10-25, before the first fit. `analysis/R/09_changepoints.R` records this file's md5, so a run
 # against an edited spec fails `tests/verify_changepoints.py` instead of describing a method nobody reviewed.
+#
+# 2026-10-27: a residual bootstrap on the break dates was considered to make this stage inferential, and dropped.
+# A bootstrap interval on a date invites "the change is significant", which is the reading this stage exists to
+# refuse; the tenure stage answers the comparison question descriptively instead. The rules below stand unchanged.
 
 version: 1
 layer: "declared breaks in each outcome series — description, never attribution"

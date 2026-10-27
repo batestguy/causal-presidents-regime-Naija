@@ -1,0 +1,87 @@
+# Describing a tenure - declared before the engine that applies it
+#
+# The question this stage answers is **descriptive**: during this administration's window, was the series above or
+# below its own long-run path? It is not "did the president move it". The trend is fitted without knowing who was
+# in power, so a tenure's deviation cannot be built into the trend it is measured against.
+#
+# Why not interrupted time series: ITS is a quasi-experimental design whose coefficients are read as effects of the
+# intervention (Wagner 2002; Bernal 2017). Using it here would put a causal coefficient on the screen under a
+# descriptive label, which is the failure this project exists to avoid. Segmented regression already exists in this
+# repository as the *changepoint* stage, where it is required to say "the series changes here" and nothing about a
+# presidency.
+#
+# Why not a plain tenure mean: the series trend. Comparing 1999-2007 with 2015-2023 on a level that falls monotonically
+# compares the calendar, not the tenures.
+#
+# Declared 2026-10-27. `analysis/R/10_tenure.R` records this file's md5, so a run against an edited spec fails the
+# verifier rather than describing a method nobody reviewed.
+
+version: 1
+layer: "descriptive tenure deviations from a tenure-blind trend - never an effect"
+
+input:
+  table: fact_observation_native
+  rule: "native observations only. The interpolated spine is a rule, not a record, and a scatter around a trend
+    fitted to filled months would describe the fill"
+  metric: "every outcome in registry/series/<vintage>/index.json"
+
+window:
+  first: "1999-01"
+  last: "2026-10"
+
+trend:
+  method: "LOESS on the native observations, degree 1, evaluated at each native point"
+  span_grid: [0.5, 0.75, 1.0]
+  why: >-
+    The span is an analyst choice, not a sampling quantity. Three declared spans are fitted and the summary is
+    reported as the **range across them**, which is the range of that choice. It is deliberately not a confidence
+    interval: this stage has no model of the counterfactual and must not imply one.
+  evaluation: "fitted at the observed points only; no extrapolation beyond the last native observation"
+
+summary_per_tenure:
+  - mean_deviation: "mean of (observed - trend) over the tenure's native points"
+  - mean_absolute_deviation: "mean of |observed - trend|, so offsetting months do not cancel"
+  - n_native: "native points inside the tenure window"
+  - coverage: "share of the window's months with a native observation"
+  - deviation_range: "[min, max] of mean_deviation across the declared spans"
+
+# The closest thing to a number between presidents that this data supports. It is the difference of two tenure
+# mean deviations - a descriptive contrast, not an effect. Its only assumption is that the tenure-blind smoother
+# is a fair description of the long-run path; it does not assume parallel trends, ignorability, or a counterfactual.
+contrasts:
+  rule: "for every ordered pair of tenures with a published deviation, difference = mean_deviation(a) - mean_deviation(b)"
+  reported_as: "the difference in outcome units plus its range across the declared spans"
+  sign: "positive means tenure a sat further above the trend than tenure b"
+  forbidden: "never 'a caused', 'a added', 'a's effect', and never a share of a total"
+  why: >-
+    A reader who wants a number comparing tenures gets one, in units, with the smoother's range attached. What they
+    do not get is a counterfactual: two windows on the same trend are compared, not one window against what would
+    have happened.
+
+windows:
+  rule: "half-open [start_date, next_start_date), the base's own span rule (dim_administration), so a month belongs
+    to exactly one tenure and no point is counted twice"
+  incumbent: "the last tenure ends at the study window's last month"
+
+refusals:
+  min_native: 20
+  detail: "below 20 native points there is no trend to deviate from; the outcome is refused with its count and no
+    deviation is published"
+  min_native_per_tenure: 3
+  tenure_detail: >-
+    a tenure holding fewer than three native points publishes "insufficient points" rather than a deviation. The
+    preview exposed why: an annual outcome gives a two-year administration two points, and a mean of two residuals
+    is a statement about the smoother, not about the window
+
+forbidden:
+  - p_value
+  - standard_error
+  - confidence_interval
+  - effect
+  - significance
+
+attribution_rule: >-
+  A deviation labels a window. It is never described as an effect, an impact, or a contribution of a president, in
+  the artifact, the page, a caption or a tooltip.
+
+stamp: "description, not a causal comparison"

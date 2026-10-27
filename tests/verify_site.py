@@ -98,12 +98,27 @@ def main() -> int:
                            f"place where an outcome is put next to a face")
 
     # ---- no flow page attributes an outcome to a president ----------------------------------------------
+    # A president's name is permitted in exactly two places, both of which are labels rather than verdicts: the
+    # tenure table (a period label) and a published question offered as an autocomplete option. Everywhere else the
+    # name stays forbidden, and the tension inside the tenure table is checked separately below.
+    def without_period_labels(markup: str) -> str:
+        markup = re.sub(r'<section class="tenure">.*?</section>', "", markup, flags=re.S)
+        return re.sub(r"<datalist[^>]*>.*?</datalist>", "", markup, flags=re.S)
+
     surnames = {admin["president"].split()[-1] for admin in admins["administrations"]}
+    verdict_words = ("caused", "because of", "effect of", "improved", "worsened", "blame", "credit")
     for page, html in flow.items():
+        scanned = without_period_labels(html)
         for surname in surnames:
-            if re.search(rf"\b{surname}\b", html):
+            if re.search(rf"\b{surname}\b", scanned):
                 fail(failures, f"{page} names {surname} — a per-president verdict is the claim this build "
                                f"refuses to make, in a tab, a label or a caption")
+    for label_block in re.findall(r'<section class="tenure">.*?</section>', read(DIST / "chart" / "index.html"),
+                                  flags=re.S):
+        for word in verdict_words:
+            if word in label_block.lower():
+                fail(failures, f"chart/: the tenure table carries the verdict word {word!r} — a deviation labels a "
+                               f"window and may not be narrated")
 
     # ---- twelve outcomes reachable on every flow screen -------------------------------------------------
     expected_ids = {row["id"] for row in index["outcomes"]}

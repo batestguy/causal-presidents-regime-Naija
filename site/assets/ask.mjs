@@ -85,6 +85,24 @@ function paint(answer) {
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
+  // Snap to the closest measured question before asking. The layer is only measured on its own question set, so
+  // submitting free text would be a question nobody scored; the reader sees the snapped text in the field.
+  const questions = (document.getElementById("ask-questions")?.options || []).map((o) => o.value);
+  const snap = (text) => {
+    const words = (s) => new Set((s.toLowerCase().match(/[a-z0-9']+/g) || []));
+    const target = words(text);
+    let best = "", score = 0;
+    for (const candidate of questions) {
+      const set = words(candidate);
+      let hit = 0;
+      target.forEach((w) => { if (set.has(w)) hit += 1; });
+      const jaccard = hit / (target.size + set.size - hit);
+      if (jaccard > score) { score = jaccard; best = candidate; }
+    }
+    return score >= 0.34 ? best : text;
+  };
+  const snapped = snap(input.value.trim());
+  if (snapped && snapped !== input.value.trim()) input.value = snapped;
   const question = input.value.trim();
   if (!question) {
     panel.hidden = true;

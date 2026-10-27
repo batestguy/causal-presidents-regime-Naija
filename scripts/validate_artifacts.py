@@ -754,6 +754,14 @@ def check_schemas(failures: list[str]) -> int:
             failures.append(f"{artifact.relative_to(REPO_ROOT)}: {error.message[:200]}")
         validated += 1
 
+    tenure_schema = json.loads((SCHEMA_DIR / "tenure.schema.json").read_text(encoding="utf-8"))
+    tenure_validator = jsonschema.Draft202012Validator(tenure_schema)
+    for artifact in sorted((REPO_ROOT / "registry" / "tenure").glob("*/tenure.json")):
+        document = json.loads(artifact.read_text(encoding="utf-8"))
+        for error in tenure_validator.iter_errors(document):
+            failures.append(f"{artifact.relative_to(REPO_ROOT)}: {error.message[:200]}")
+        validated += 1
+
     for name, path in (("country_vocabulary.schema.json", REFERENCE_DIR / "countries.json"),
                        ("donor_panel.schema.json", DONORS_DIR / "2026-10-18" / "panel.json")):
         schema = json.loads((SCHEMA_DIR / name).read_text(encoding="utf-8"))

@@ -203,6 +203,14 @@ changepoint:
   refused: "No break is fitted for this outcome: it has too few native observations for the search to be meaningful."
   timing_note: "A break within two months of a swearing-in is recorded as timing only."
 
+# Stage 8g - the tenure description (analysis/specs/tenure.yml)
+tenure:
+  heading: "Deviation from the long-run trend"
+  note: "Native observations only, against a trend fitted without knowing who was in power. A deviation names a window, not a causal claim about a president."
+  heads: ["Tenure", "Party", "Points", "Deviation, range across spans"]
+  contrast_heading: "Largest pairwise contrast"
+  refused: "Too few native observations to describe a deviation."
+
 # Screen 6b — the design-level results. One section per artifact family. Every value below is filled from an
 # artifact field; the templates carry no number of their own.
 design_results:

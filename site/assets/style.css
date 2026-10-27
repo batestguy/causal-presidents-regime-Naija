@@ -440,6 +440,17 @@ img.chart { width: 100%; height: auto; background: #fff; border: 1px solid var(-
 .graph-figure img.graph { width: 100%; max-height: 68vh; object-fit: contain; }
 .graph-figure figcaption { font-size: .82rem; color: var(--ink-faint); margin-top: .45rem; }
 
+/* ---------------------------------------------------------------- tenure deviations */
+
+.tenure { margin-top: 1.4rem; }
+.deviation-table { width: 100%; border-collapse: collapse; font-size: .84rem; margin: .5rem 0 .8rem; }
+.deviation-table th {
+  text-align: left; font-weight: 600; font-size: .74rem; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--ink-faint); border-bottom: 1px solid var(--rule); padding: .35rem .5rem;
+}
+.deviation-table td { padding: .35rem .5rem; border-bottom: 1px dashed var(--rule); }
+.deviation-table td.num { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; text-align: right; }
+
 /* ---------------------------------------------------------------- small screens */
 
 @media (max-width: 860px) {

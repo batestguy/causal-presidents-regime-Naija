@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://causal-presidents.local/schema/tenure.schema.json",
+  "title": "Stage 8g - tenure description",
+  "description": "Deviations of each outcome from a tenure-blind LOESS trend, by administration, plus the descriptive contrast between two tenures. Description, never an effect.",
+  "type": "object",
+  "required": ["schema_version", "stage", "layer", "vintage", "generated_at", "generator", "spec", "input", "counts", "outcomes"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "stage": { "const": "8g" },
+    "layer": { "type": "string" },
+    "vintage": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "generated_at": { "type": "string" },
+    "generator": {
+      "type": "object",
+      "required": ["script"],
+      "properties": { "script": { "type": "string" }, "git_sha": { "type": ["string", "null"] } }
+    },
+    "spec": {
+      "type": "object",
+      "required": ["path", "md5", "spans", "min_native", "min_native_per_tenure", "stamp"],
+      "properties": {
+        "path": { "const": "analysis/specs/tenure.yml" },
+        "md5": { "type": "string", "pattern": "^[0-9a-f]{32}$" },
+        "spans": { "type": "array", "items": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }, "minItems": 1 },
+        "min_native": { "type": "integer", "minimum": 1 },
+        "min_native_per_tenure": { "type": "integer", "minimum": 1 },
+        "forbidden": { "type": "array", "items": { "type": "string" } },
+        "stamp": { "type": "string" }
+      }
+    },
+    "input": {
+      "type": "object",
+      "required": ["table", "rule"],
+      "properties": { "table": { "const": "fact_observation_native" }, "rule": { "type": "string" } }
+    },
+    "counts": {
+      "type": "object",
+      "required": ["outcomes", "described", "refused", "tenures_described", "tenures_insufficient", "contrasts"],
+      "properties": {
+        "outcomes": { "type": "integer", "minimum": 0 },
+        "described": { "type": "integer", "minimum": 0 },
+        "refused": { "type": "integer", "minimum": 0 },
+        "tenures_described": { "type": "integer", "minimum": 0 },
+        "tenures_insufficient": { "type": "integer", "minimum": 0 },
+        "contrasts": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "outcomes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "unit", "status", "n_native"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "unit": { "type": "string" },
+          "status": { "enum": ["described", "refused"] },
+          "n_native": { "type": "integer", "minimum": 0 },
+          "refused": {
+            "type": "object",
+            "required": ["reason", "detail"],
+            "properties": { "reason": { "const": "too_few_native_observations" }, "detail": { "type": "string" } }
+          },
+          "trend": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["span", "points"],
+              "properties": {
+                "span": { "type": "number" },
+                "points": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["month", "value", "trend", "deviation"],
+                    "properties": {
+                      "month": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$" },
+                      "value": { "type": "number" },
+                      "trend": { "type": "number" },
+                      "deviation": { "type": "number" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tenures": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["president", "party", "start", "end", "n_native", "status"],
+              "properties": {
+                "president": { "type": "string" },
+                "party": { "type": "string" },
+                "start": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$" },
+                "end": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$" },
+                "n_native": { "type": "integer", "minimum": 0 },
+                "coverage": { "type": "number", "minimum": 0, "maximum": 1 },
+                "status": { "enum": ["described", "insufficient_points"] },
+                "detail": { "type": "string" },
+                "mean_deviation": { "type": "number" },
+                "mean_absolute_deviation": { "type": "number", "minimum": 0 },
+                "deviation_range": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 }
+              }
+            }
+          },
+          "contrasts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["a", "b", "difference", "range", "reading"],
+              "properties": {
+                "a": { "type": "string" },
+                "b": { "type": "string" },
+                "difference": { "type": "number" },
+                "range": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+                "reading": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

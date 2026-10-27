@@ -118,6 +118,10 @@ if command -v Rscript >/dev/null 2>&1; then
   # series in a separate script, so a break month that the declared method cannot reproduce fails the step.
   step "stage 8f: changepoint description"
   Rscript analysis/R/09_changepoints.R
+  # Stage 8g describes a tenure without claiming anything about it: a deviation from a LOESS trend fitted without
+  # knowing who was in power, and the descriptive contrast between two tenures. Native observations only.
+  step "stage 8g: tenure description"
+  Rscript analysis/R/10_tenure.R
 else
   printf '\n=== stage 6: SKIPPED — no Rscript on PATH; verify_stage6.py will check the committed estimates\n'
   printf '\n=== stage 7: SKIPPED — no Rscript on PATH; verify_stage7.py will check the committed grid\n'
@@ -126,6 +130,7 @@ else
   printf '\n=== stage 8d: SKIPPED — no Rscript on PATH; verify_series_figures.py will check the committed panels\n'
   printf '\n=== stage 8e: SKIPPED — no Rscript on PATH; verify_comparisons.py will check the committed groups\n'
   printf '\n=== stage 8f: SKIPPED — no Rscript on PATH; verify_changepoints.py will refit the committed breaks\n'
+  printf '\n=== stage 8g: SKIPPED — no Rscript on PATH; verify_tenure.py will check the committed deviations\n'
 fi
 
 # Stage 8c — the retrieval corpus. The text half needs only Python and PyYAML; the vectors need
@@ -174,6 +179,7 @@ $PYTHON tests/verify_events.py
 $PYTHON tests/verify_series_figures.py
 $PYTHON tests/verify_comparisons.py
 $PYTHON tests/verify_changepoints.py
+$PYTHON tests/verify_tenure.py
 $PYTHON tests/verify_provenance.py
 $PYTHON tests/verify_rag.py
 $PYTHON tests/verify_intent.py

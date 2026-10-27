@@ -163,6 +163,9 @@ def build_context(root: Path) -> dict:
     portraits = {}
     if manifest_path.exists():
         portraits = {row["slug"]: row for row in load(manifest_path)["portraits"]}
+    # Stage 8g: the tenure description. Loaded by vintage like every other artifact.
+    tenure_path = root / "registry" / "tenure" / vintage / "tenure.json"
+    tenure = {row["id"]: row for row in load(tenure_path)["outcomes"]} if tenure_path.exists() else {}
 
     cards: dict[tuple[str, str], tuple[dict, dict]] = {}
     for entry in index["dags"]:
@@ -474,6 +477,10 @@ def build_context(root: Path) -> dict:
         "comparisons_generated_at": comparisons.get("generated_at"),
         "changepoints_generated_at": changepoints.get("generated_at"),
         "answer_sets": load(root / "registry" / "rag" / vintage / "answer_eval.json").get("sets", {}),
+        "answer_questions": [q["question"] for q in
+                             (load(root / "registry" / "rag" / vintage / "answer_eval.json").get("questions") or [])
+                             if q.get("set") == "published"],
+        "tenure": tenure,
     }
 
 
@@ -797,6 +804,36 @@ def render_estimates(ctx: dict) -> str:
 # ------------------------------------------------------------------------------------------------------------
 # Screen 5 — the chart, described
 # ------------------------------------------------------------------------------------------------------------
+def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
+    """Stage 8g: the outcome's deviation from a tenure-blind trend, and the largest pairwise contrast."""
+    copy = guide["tenure"]
+    row = (ctx.get("tenure") or {}).get(outcome["id"])
+    if not row:
+        return ""
+    if row["status"] != "described":
+        return (f"<section class='tenure'><h3>{html.escape(copy['heading'])}</h3>"
+                f"<p class='blocker'>{html.escape(copy['refused'])} "
+                f"({row['n_native']} native observations).</p></section>")
+    described = [t for t in row["tenures"] if t["status"] == "described"]
+    body = "".join(
+        f"<tr><td>{html.escape(t['president'])}</td><td>{html.escape(t['party'])}</td>"
+        f"<td class='num'>{t['n_native']}</td>"
+        f"<td class='num'>{t['deviation_range'][0]:+.2f} &hellip; {t['deviation_range'][1]:+.2f}</td></tr>"
+        for t in described)
+    heads = "".join(f"<th>{html.escape(h)}</th>" for h in copy["heads"])
+    contrast = ""
+    if row["contrasts"]:
+        best = max(row["contrasts"], key=lambda c: abs(c["difference"]))
+        contrast = (f"<p class='note'><strong>{html.escape(copy['contrast_heading'])}.</strong> "
+                    f"{html.escape(best['reading'])}.</p>")
+    return f"""<section class="tenure">
+  <h3>{html.escape(copy['heading'])}</h3>
+  <p class="tech">{html.escape(copy['note'])}</p>
+  <table class="deviation-table"><thead><tr>{heads}</tr></thead><tbody>{body}</tbody></table>
+  {contrast}
+</section>"""
+
+
 def render_chart(ctx: dict) -> str:
     guide = ctx["guide"]
     groupings = guide["groupings"]
@@ -832,7 +869,7 @@ def render_chart(ctx: dict) -> str:
   </figure>
   <h3>{html.escape(guide['results']['groups_heading'])}</h3>
   {''.join(lists)}
-  {render_breaks(outcome, guide)}"""
+  {render_breaks(outcome, guide)}{render_tenure(outcome, ctx, guide)}"""
         blocks.append(outcome_shell(outcome, inner))
 
     return flow_page(ctx, "chart", "The comparison, drawn", guide["labels"]["chart_heading"],
@@ -863,7 +900,9 @@ def render_ask(ctx: dict) -> str:
   </header>
   <form class="ask-form" id="ask-form" autocomplete="off">
     <label for="ask-input">{html.escape(copy['heading'])}</label>
-    <textarea id="ask-input" name="question" rows="3" placeholder="{html.escape(copy['placeholder'])}"></textarea>
+    <input id="ask-input" name="question" type="text" list="ask-questions"
+           placeholder="{html.escape(copy['placeholder'])}" autocomplete="off">
+    <datalist id="ask-questions">{''.join(f'<option value="{html.escape(q)}"></option>' for q in ctx.get("answer_questions") or [])}</datalist>
     <button class="primary" type="submit">{html.escape(copy['button'])}</button>
   </form>
   <p class="control-note" id="ask-status" role="status">{html.escape(copy['empty'])}</p>

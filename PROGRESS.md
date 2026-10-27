@@ -113,6 +113,44 @@ are answered above; the rest are here.
   The three decisions that shaped this pass are recorded in `docs/decisions.md` as P-05 (grid + flag), P-06 (the
   ratio stated once) and P-07 (tenancy bands drawn in R, not overlaid).
 
+**Then, same session — Stage 8g: describing a tenure without calling it an effect.** The requester asked for the
+closest thing to an estimate *between presidents* that carries fewer assumptions. That is a **descriptive
+contrast**: the difference between two tenures' mean deviation from a trend fitted without knowing who was in power.
+
+- **Why not interrupted time series.** ITS/segmented regression is a quasi-experimental design whose coefficients
+  are read as effects (Wagner 2002; Bernal 2017). Putting one on a page labelled "descriptive" is the failure this
+  repository exists to prevent. The changepoint stage already owns "the series changes here"; this stage answers a
+  different question — "was the series above or below its own path during this window?"
+- **The method.** LOESS, degree 1, on **native observations only**, over a declared span grid of 0.5/0.75/1.0.
+  Each tenure's deviation is reported as a **range across the three spans** — the range of an analyst choice, not a
+  confidence interval. `analysis/specs/tenure.yml` declares the method, the windows (the base's half-open spans),
+  the refusals and the forbidden fields (`p_value`, `standard_error`, `confidence_interval`, `effect`,
+  `significance`).
+- **The estimate between presidents.** `difference = mean deviation(a) - mean deviation(b)`, in outcome units, with
+  its range across spans. Its only assumption is that the tenure-blind smoother is a fair description of the long-run
+  path — no parallel trends, no ignorability, no counterfactual. 68 contrasts are published across 8 outcomes.
+  The largest for conflict: **Jonathan − Yar'Adua = +202.9 fatalities** (range +106.5 to +282.0); for under-5
+  mortality **Obasanjo − Yar'Adua = +3.8 per 1,000** (range +0.8 to +8.0); for growth **Jonathan − Buhari = +2.8 pp**
+  (range +1.8 to +3.5).
+- **Two refusals keep it honest.** Four outcomes have < 20 native points and are refused with the count (8, 8, 9, 9).
+  A tenure holding < 3 native points publishes *"insufficient points"* rather than a deviation — the preview showed
+  a two-year administration on an annual series has two points, and a mean of two residuals describes the smoother.
+- **The verifier found three bugs before the artifact shipped.** A window boundary off by one month (Yar'Adua read
+  33 points where the artifact said 32), a coverage denominator counted on a different month convention, and the
+  incumbent's band running to **9999-12** because `end_date_effective` is a sentinel. All three were arithmetic, not
+  judgement; `tests/verify_tenure.py` recomputes every deviation from the published trend and every contrast from
+  the two deviations.
+- **The surname guard was made precise, not removed.** The chart's tenure table names presidents as period labels,
+  and the Ask page's autocomplete offers the project's own published questions, some of which name a president. The
+  verifier now allows a surname in those two blocks only, and fails on any verdict word inside the tenure table.
+- **The Ask page autocompletes to a measured question.** Typing offers the published question set, and on submit the
+  field snaps to the closest match by word overlap, so the layer is only ever asked a question it was measured on.
+- **The bootstrap was dropped.** A residual bootstrap on break dates was considered and abandoned: an interval on a
+  date invites "the change is significant", which is the reading the descriptive stage exists to refuse. Recorded in
+  `analysis/specs/changepoints.yml` so the next reader does not re-propose it.
+- **Not done from the same brief:** the cover primer on causal inference and methods, the ≤100-word answer cap (a
+  contract change that needs re-measurement), and the role-coloured DAG nodes.
+
 **Previous session, in one line:** the **outcome panels** — `analysis/specs/series_figures.yml`,
 `analysis/R/07_series_figures.R`, `registry/series/2026-10-18/` (12 SVGs + `index.json`) and
 `tests/verify_series_figures.py` — so that a card's reason is shown beside the series it is about, and the
