@@ -781,7 +781,7 @@
     "Youth literacy (15-24) [NBS / UNESCO UIS]"
   ],
   "registry": {
-    "generated_at": "2026-10-27T05:21:32+0100",
+    "generated_at": "2026-10-27T07:43:51+0100",
     "generated_by": "analysis/R/05_registry.R",
     "spec": "analysis/specs/registry.yml",
     "rule": "A card with design `A` is `estimated` **iff** the estimates artifact publishes a Design A specification whose `outcome` is the card's outcome id. The number, interval and sample are copied from that specification, not from anywhere else.",

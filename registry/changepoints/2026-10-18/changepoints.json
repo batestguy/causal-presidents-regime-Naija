@@ -3,14 +3,14 @@
   "stage": "9-prep",
   "layer": "declared breaks in each outcome series — description, never attribution",
   "vintage": "2026-10-18",
-  "generated_at": "2026-10-27T05:21:54+0100",
+  "generated_at": "2026-10-27T07:44:10+0100",
   "generator": {
     "script": "analysis/R/09_changepoints.R",
-    "git_sha": "0b94758"
+    "git_sha": "7cfa9a7"
   },
   "spec": {
     "path": "analysis/specs/changepoints.yml",
-    "md5": "e6b2d3b6f122e62fc424bc13ef5163eb",
+    "md5": "b321b8a8992810cb8138c715e0a887b5",
     "version": 1
   },
   "verifier": "tests/verify_changepoints.py",

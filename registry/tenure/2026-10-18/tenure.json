@@ -3,10 +3,10 @@
   "stage": "8g",
   "layer": "descriptive tenure deviations from a tenure-blind trend, and the contrast between tenures - never an effect",
   "vintage": "2026-10-18",
-  "generated_at": "2026-10-27T06:44:14+0100",
+  "generated_at": "2026-10-27T07:44:12+0100",
   "generator": {
     "script": "analysis/R/10_tenure.R",
-    "git_sha": "70c86e7"
+    "git_sha": "7cfa9a7"
   },
   "spec": {
     "path": "analysis/specs/tenure.yml",
