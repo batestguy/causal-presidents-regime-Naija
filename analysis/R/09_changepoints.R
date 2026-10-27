@@ -89,6 +89,19 @@ draw_series <- function(meta, d, breaks, path) {
   par(op); invisible(dev.off())
 }
 
+# The figure's size is recorded on its *canonical* bytes (CRLF collapsed to LF), because `.gitattributes`
+# stores this repository's text with `eol=lf`. A raw `file.size()` is true only on the Windows checkout that
+# produced it; after any clone or the Linux runner the file is a few hundred bytes smaller and the contract
+# test would call a fresh break panel stale. The Python consumers apply the same rule.
+canonical_bytes <- function(path) {
+  bytes_raw <- readBin(path, "raw", n = file.info(path)$size)
+  if (length(bytes_raw) == 0) return(0L)
+  is_cr <- bytes_raw == as.raw(13)
+  is_lf <- bytes_raw == as.raw(10)
+  crlf <- is_cr & c(is_lf[-1], FALSE)
+  sum(!crlf)
+}
+
 outcomes <- list()
 for (meta in series_index$outcomes) {
   oid <- meta$id
@@ -176,7 +189,7 @@ for (meta in series_index$outcomes) {
   } else {
     path <- file.path(fig_dir, sprintf("%s.svg", oid))
     draw_series(meta, d, found, path)
-    figure <- list(path = path, bytes = as.integer(file.size(path)))
+    figure <- list(path = path, bytes = canonical_bytes(path))
   }
 
   breaks_json <- lapply(found, function(b) list(month = b$month, kind = b$kind, label = b$label,

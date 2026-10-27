@@ -163,6 +163,19 @@ svg_has_text <- function(path, needles) {
 panels <- vector("list", length(outcomes))
 index_rows <- vector("list", length(outcomes))
 
+# The figure's size is recorded on its *canonical* bytes (CRLF collapsed to LF), because `.gitattributes`
+# stores this repository's text with `eol=lf`. A raw `file.info()$size` is true only on the Windows checkout
+# that produced it: after any clone or the Linux runner the file is a few hundred bytes smaller and the
+# contract test would call a fresh panel stale. The Python consumers apply the same rule.
+canonical_bytes <- function(path) {
+  bytes_raw <- readBin(path, "raw", n = file.info(path)$size)
+  if (length(bytes_raw) == 0) return(0L)
+  is_cr <- bytes_raw == as.raw(13)
+  is_lf <- bytes_raw == as.raw(10)
+  crlf <- is_cr & c(is_lf[-1], FALSE)
+  sum(!crlf)
+}
+
 for (i in seq_along(outcomes)) {
   o <- outcomes[[i]]
   id <- o$id
@@ -328,12 +341,12 @@ for (i in seq_along(outcomes)) {
         note = in_window$note[k])),
     caption = caption,
     figure = list(path = sprintf("registry/series/%s/%s/%s", vintage, spec$output$figure_dir, fig_name),
-                  bytes = unname(file.info(fig_path)$size))
+                  bytes = canonical_bytes(fig_path))
   )
 
   message(sprintf("  %-18s observed %3d  interpolated %3d  none %3d  breaks %d  (%d bytes)",
                   id, counts$observed, counts$interpolated, counts$unobserved, length(break_names),
-                  as.integer(file.info(fig_path)$size)))
+                  canonical_bytes(fig_path)))
   panels[[i]] <- index_rows[[i]]
 }
 

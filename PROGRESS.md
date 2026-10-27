@@ -2010,6 +2010,17 @@ with `HF_HUB_OFFLINE=1` the whole chain completes, and the flag is recorded here
 and `verify_changepoints.py` were inside that same run, so the newest stage is not being signed off by a chain
 that predates it.
 
+**The clone check found one more defect, in the stage this session was committing.** The three stages added
+since the forest plot recorded a raw `file.size()` as each figure's byte count, and their verifiers compared it
+to a raw `st_size` — a pair that is true only on the Windows checkout that wrote the files, because
+`.gitattributes` stores this repository's text with `eol=lf`. Checked on a clone of the commit that added
+stage 8f: **32 of 32 figures mismatch**, each recorded number 90–900 bytes larger than the file the clone
+holds. Stage 6 had solved it already (`canonical_bytes()` in `03_estimate.R`, canonical comparison in
+`verify_stage6.py` and `validate_artifacts.py`), so the three later stages were the exception rather than the
+rule — and the chain could not see it, because the chain only ever ran on the machine that wrote the files.
+The three R stages and their three verifiers now share Stage 6's rule, the artifacts were regenerated rather
+than re-worded, and the same clone check on the fix reads **0 of 32**.
+
 **What this does not cover.** The suite mutates the *artifacts and the renderer*, not the browser: no
 click-through, no keyboard path, no DOM state after the script runs. Those are declared limits in
 `presidents-guided-flow-spec.md`, and `verify_answer_js.py` runs the layer under node, where its answers can be

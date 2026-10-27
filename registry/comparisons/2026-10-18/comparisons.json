@@ -3,10 +3,10 @@
   "stage": "9-prep",
   "layer": "descriptive group means and group series for the guided flow — description, not inference",
   "vintage": "2026-10-18",
-  "generated_at": "2026-10-27T02:03:33+0100",
+  "generated_at": "2026-10-27T02:32:15+0100",
   "generator": {
     "script": "analysis/R/08_comparisons.R",
-    "git_sha": "2f8284d"
+    "git_sha": "08de24c"
   },
   "spec": {
     "path": "analysis/specs/comparisons.yml",
@@ -1794,7 +1794,7 @@
       "caption": "Under-5 mortality: 334 months of which 26 observed. Grouped by who was in power (no state grouping is declared for this outcome). Native frequency annual; ok (1999-07 to 2024-07).",
       "figure": {
         "path": "registry/comparisons/2026-10-18/figures/u5mr.svg",
-        "bytes": 47085
+        "bytes": 46690
       },
       "refused": null
     },
@@ -3526,7 +3526,7 @@
       "caption": "Maternal mortality: 334 months of which 25 observed. Grouped by who was in power (no state grouping is declared for this outcome). Native frequency annual; ok (1999-07 to 2023-07).",
       "figure": {
         "path": "registry/comparisons/2026-10-18/figures/mmr.svg",
-        "bytes": 44482
+        "bytes": 44106
       },
       "refused": null
     },
@@ -5258,7 +5258,7 @@
       "caption": "Penta3 coverage: 334 months of which 26 observed. Grouped by who was in power (no state grouping is declared for this outcome). Native frequency annual; flagged (1999-07 to 2024-07).",
       "figure": {
         "path": "registry/comparisons/2026-10-18/figures/immun_penta3.svg",
-        "bytes": 46161
+        "bytes": 45772
       },
       "refused": null
     },
@@ -6990,7 +6990,7 @@
       "caption": "Skilled birth attendance: 334 months of which 8 observed. Grouped by who was in power (no state grouping is declared for this outcome). Native frequency annual; flagged (1999-07 to 2022-07).",
       "figure": {
         "path": "registry/comparisons/2026-10-18/figures/skilled_birth.svg",
-        "bytes": 7213
+        "bytes": 7125
       },
       "refused": null
     },
@@ -8722,7 +8722,7 @@
       "caption": "Youth literacy: 334 months of which 7 observed. Grouped by who was in power (no state grouping is declared for this outcome). Native frequency annual; flagged (2003-07 to 2024-07).",
       "figure": {
         "path": "registry/comparisons/2026-10-18/figures/literacy_youth.svg",
-        "bytes": 5266
+        "bytes": 5193
       },
       "refused": null
     },
@@ -10454,7 +10454,7 @@
       "caption": "Primary completion: 334 months of which 8 observed. Grouped by who was in power (no state grouping is declared for this outcome). Native frequency annual; flagged (2000-07 to 2010-07).",
       "figure": {
         "path": "registry/comparisons/2026-10-18/figures/primary_completion.svg",
-        "bytes": 15178
+        "bytes": 15029
       },
       "refused": null
     },
@@ -12186,7 +12186,7 @@
       "caption": "Net enrolment (primary): 334 months of which 9 observed. Grouped by who was in power (no state grouping is declared for this outcome). Native frequency annual; flagged (1999-07 to 2010-07).",
       "figure": {
         "path": "registry/comparisons/2026-10-18/figures/ner_primary.svg",
-        "bytes": 16861
+        "bytes": 16699
       },
       "refused": null
     },
@@ -15910,7 +15910,7 @@
       "caption": "Security fatalities: 334 months of which 287 observed. Grouped both by who was in power and by state allocation (2016-12 to 2024-12). ",
       "figure": {
         "path": "registry/comparisons/2026-10-18/figures/fatalities.svg",
-        "bytes": 112869
+        "bytes": 111806
       },
       "refused": null
     },
@@ -19634,7 +19634,7 @@
       "caption": "Security incidents: 334 months of which 287 observed. Grouped both by who was in power and by state allocation (2016-12 to 2024-12). ",
       "figure": {
         "path": "registry/comparisons/2026-10-18/figures/incidents.svg",
-        "bytes": 112866
+        "bytes": 111801
       },
       "refused": null
     },
@@ -21372,7 +21372,7 @@
       "caption": "GDP growth (y/y): 334 months of which 27 observed. Grouped by who was in power (no state grouping is declared for this outcome). Native frequency annual; ok (1999-07 to 2025-07).",
       "figure": {
         "path": "registry/comparisons/2026-10-18/figures/gdp_growth.svg",
-        "bytes": 48535
+        "bytes": 48129
       },
       "refused": null
     },
@@ -23110,7 +23110,7 @@
       "caption": "Inflation (y/y): 334 months of which 27 observed. Grouped by who was in power (no state grouping is declared for this outcome). Native frequency annual; flagged (1999-07 to 2025-07).",
       "figure": {
         "path": "registry/comparisons/2026-10-18/figures/cpi_yoy.svg",
-        "bytes": 48876
+        "bytes": 48468
       },
       "refused": null
     },
@@ -24853,7 +24853,7 @@
       "caption": "Unemployment rate: 334 months of which 27 observed. Grouped by who was in power (no state grouping is declared for this outcome). Native frequency annual; ok (1999-07 to 2025-07).",
       "figure": {
         "path": "registry/comparisons/2026-10-18/figures/unemp.svg",
-        "bytes": 49163
+        "bytes": 48753
       },
       "refused": null
     }

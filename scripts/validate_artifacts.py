@@ -690,10 +690,13 @@ def check_series(failures: list[str]) -> None:
             continue
         if "<svg" not in path.read_text(encoding="utf-8", errors="replace"):
             failures.append(f"registry/series/{newest.name}: {relative} is not an SVG")
-        if figure.get("bytes") != path.stat().st_size:
+        # Canonical bytes (CRLF collapsed to LF), as git stores the file: a raw size would call a fresh panel
+        # stale on the Linux runner and on any clone.
+        size = len(path.read_bytes().replace(b"\r\n", b"\n"))
+        if figure.get("bytes") != size:
             failures.append(
                 f"registry/series/{newest.name}: {row.get('id')} records {figure.get('bytes')} bytes and the "
-                f"file is {path.stat().st_size} — the figure is one rebuild behind its index"
+                f"file is {size} — the figure is one rebuild behind its index"
             )
 
     for path in sorted((newest / "figures").glob("*.svg")) if (newest / "figures").exists() else []:

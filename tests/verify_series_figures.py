@@ -254,7 +254,9 @@ def main() -> int:
         if path in figures_seen:
             fail(failures, f"{oid}: two outcomes share one figure file ({figure.get('path')})")
         figures_seen.add(str(path))
-        size = path.stat().st_size
+        # Canonical bytes: the artifacts record CRLF collapsed to LF, because git stores this repository's
+        # text with `eol=lf`. A raw `st_size` is true only on the Windows checkout that produced it.
+        size = len(path.read_bytes().replace(b"\r\n", b"\n"))
         if figure.get("bytes") != size:
             fail(failures, f"{oid}: the artifact records {figure.get('bytes')} bytes and the file is {size} — "
                            f"the figure is not the one the artifact describes")

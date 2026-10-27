@@ -3,10 +3,10 @@
   "stage": "9-prep",
   "layer": "declared breaks in each outcome series — description, never attribution",
   "vintage": "2026-10-18",
-  "generated_at": "2026-10-27T02:03:38+0100",
+  "generated_at": "2026-10-27T02:32:19+0100",
   "generator": {
     "script": "analysis/R/09_changepoints.R",
-    "git_sha": "2f8284d"
+    "git_sha": "08de24c"
   },
   "spec": {
     "path": "analysis/specs/changepoints.yml",
@@ -71,7 +71,7 @@
       "plain_caption": "Under-5 mortality: 26 native observations; 1 marked month (2006-07).",
       "figure": {
         "path": "registry/changepoints/2026-10-18/figures/u5mr.svg",
-        "bytes": 7734
+        "bytes": 7639
       },
       "refused": null
     },
@@ -100,7 +100,7 @@
       "plain_caption": "Maternal mortality: 25 native observations; 1 marked month (2020-07).",
       "figure": {
         "path": "registry/changepoints/2026-10-18/figures/mmr.svg",
-        "bytes": 7394
+        "bytes": 7302
       },
       "refused": null
     },
@@ -129,7 +129,7 @@
       "plain_caption": "Penta3 coverage: 26 native observations; 1 marked month (2008-07).",
       "figure": {
         "path": "registry/changepoints/2026-10-18/figures/immun_penta3.svg",
-        "bytes": 6989
+        "bytes": 6900
       },
       "refused": null
     },
@@ -249,7 +249,7 @@
       "plain_caption": "Security fatalities: 287 native observations; 2 marked months (2013-03, 2016-10).",
       "figure": {
         "path": "registry/changepoints/2026-10-18/figures/fatalities.svg",
-        "bytes": 39236
+        "bytes": 38879
       },
       "refused": null
     },
@@ -285,7 +285,7 @@
       "plain_caption": "Security incidents: 287 native observations; 2 marked months (2010-10, 2014-05).",
       "figure": {
         "path": "registry/changepoints/2026-10-18/figures/incidents.svg",
-        "bytes": 38869
+        "bytes": 38514
       },
       "refused": null
     },
@@ -321,7 +321,7 @@
       "plain_caption": "GDP growth (y/y): 27 native observations; 2 marked months (2014-04, 2015-07).",
       "figure": {
         "path": "registry/changepoints/2026-10-18/figures/gdp_growth.svg",
-        "bytes": 7636
+        "bytes": 7542
       },
       "refused": null
     },
@@ -357,7 +357,7 @@
       "plain_caption": "Inflation (y/y): 27 native observations; 2 marked months (2022-07, 2025-01).",
       "figure": {
         "path": "registry/changepoints/2026-10-18/figures/cpi_yoy.svg",
-        "bytes": 7903
+        "bytes": 7807
       },
       "refused": null
     },
@@ -400,7 +400,7 @@
       "plain_caption": "Unemployment rate: 27 native observations; 3 marked months (2014-01, 2022-07, 2023-03).",
       "figure": {
         "path": "registry/changepoints/2026-10-18/figures/unemp.svg",
-        "bytes": 8248
+        "bytes": 8150
       },
       "refused": null
     }

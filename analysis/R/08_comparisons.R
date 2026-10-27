@@ -254,6 +254,19 @@ evidence_artifact <- function(kind) switch(kind,
   event_study = file.path("registry", "events", vintage, "events.json"),
   series_panel = file.path("registry", "series", vintage, "index.json"))
 
+# The figure's size is recorded on its *canonical* bytes (CRLF collapsed to LF), because `.gitattributes`
+# stores this repository's text with `eol=lf`. A raw `file.size()` is true only on the Windows checkout that
+# produced it; after any clone or the Linux runner the file is a few hundred bytes smaller and the contract
+# test would call a fresh chart stale. The Python consumers apply the same rule.
+canonical_bytes <- function(path) {
+  bytes_raw <- readBin(path, "raw", n = file.info(path)$size)
+  if (length(bytes_raw) == 0) return(0L)
+  is_cr <- bytes_raw == as.raw(13)
+  is_lf <- bytes_raw == as.raw(10)
+  crlf <- is_cr & c(is_lf[-1], FALSE)
+  sum(!crlf)
+}
+
 outcomes <- list()
 for (meta in series_index$outcomes) {
   oid <- meta$id
@@ -298,7 +311,7 @@ for (meta in series_index$outcomes) {
       plain = spec$evidence$plain[[kind]]),
     groups = c(pg, sg),
     caption = caption,
-    figure = list(path = fig_path, bytes = as.integer(file.size(fig_path))),
+    figure = list(path = fig_path, bytes = canonical_bytes(fig_path)),
     refused = NULL)
 }
 

@@ -244,8 +244,11 @@ def main() -> int:
         if not path.exists():
             fail(failures, f"{outcome['id']}: figure {figure['path']} is not on disk")
             continue
-        if path.stat().st_size != figure["bytes"]:
-            fail(failures, f"{outcome['id']}: figure bytes recorded as {figure['bytes']}, file is {path.stat().st_size}")
+        # Canonical bytes, for the same reason as the series panels: the artifact records LF, the Windows
+        # checkout holds CRLF, and a raw size would call a fresh chart stale after any clone.
+        size = len(path.read_bytes().replace(b"\r\n", b"\n"))
+        if size != figure["bytes"]:
+            fail(failures, f"{outcome['id']}: figure bytes recorded as {figure['bytes']}, file is {size}")
         svg = path.read_text(encoding="utf-8", errors="replace")
         if spec["figures"]["stamp"] not in svg:
             fail(failures, f"{outcome['id']}: the figure does not carry the '{spec['figures']['stamp']}' stamp")

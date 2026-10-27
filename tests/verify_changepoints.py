@@ -70,6 +70,11 @@ def month_of(value: str) -> date:
     return date(int(value[:4]), int(value[5:7]), 1)
 
 
+def canonical_bytes(path: Path) -> int:
+    """Bytes as git stores them: CRLF collapsed to LF, so the check holds on a clone and on the Linux runner."""
+    return len(path.read_bytes().replace(b"\r\n", b"\n"))
+
+
 def main() -> int:
     failures: list[str] = []
     index = json.loads((REPO_ROOT / "registry" / "dags" / "index.json").read_text(encoding="utf-8"))
@@ -194,9 +199,9 @@ def main() -> int:
                 target = REPO_ROOT / figure["path"]
                 if not target.exists():
                     fail(failures, f"{oid}: figure {figure['path']} is missing")
-                elif target.stat().st_size != figure["bytes"]:
+                elif canonical_bytes(target) != figure["bytes"]:
                     fail(failures, f"{oid}: figure bytes recorded as {figure['bytes']}, file is "
-                                   f"{target.stat().st_size}")
+                                   f"{canonical_bytes(target)}")
                 else:
                     svg = target.read_text(encoding="utf-8", errors="replace")
                     if spec["figures"]["stamp"] not in svg:
