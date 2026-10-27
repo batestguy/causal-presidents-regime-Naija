@@ -1,10 +1,10 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-10-27 (seventeenth session) · **Stage:** 9 — the design-level results screen, the cover's
-five portraits, and the GitHub Pages site enabled for the first time · **verified at vintage 2026-10-18**:
-`scripts/verify.sh` in one unbroken run (stages 0–8f, then the corpus, both evals and all twenty verifiers) with
-`HF_HUB_OFFLINE=1` for the cached embedding model; **`all checks passed`, 50 registry documents schema-validated,
-9 new break-test mutations (6 design-screen, 3 portrait) — all caught and restored byte-for-byte**
+**Last updated:** 2026-10-27 (eighteenth session) · **Stage:** 9 — Stage 8g (tenure description) shipped, the
+cover's portraits, and the site deployed from Pages · **verified at vintage 2026-10-18**: `scripts/verify.sh` in
+one unbroken run (stages 0–8g, then the corpus, both evals and all twenty-two verifiers) with
+`HF_HUB_OFFLINE=1` for the cached embedding model; **`all checks passed`, 51 registry documents
+schema-validated, 9 break-test mutations (6 design-screen, 3 portrait) — all caught and restored byte-for-byte**
 
 **This session, in one line:** **Screen 6b — the design-level results** (`site/build.py` → `/designs/`, from
 `registry/estimates`, `registry/robustness` and `registry/events`), because the three figures Stage 8 published
@@ -150,6 +150,23 @@ contrast**: the difference between two tenures' mean deviation from a trend fitt
   `analysis/specs/changepoints.yml` so the next reader does not re-propose it.
 - **Not done from the same brief:** the cover primer on causal inference and methods, the ≤100-word answer cap (a
   contract change that needs re-measurement), and the role-coloured DAG nodes.
+- **Re-verified end to end and shipped.** `scripts/verify.sh` → **`all checks passed`** (exit 0) over the new stage,
+  with `verify_tenure.py` recomputing every deviation from the published trend and every contrast from the two
+  deviations; deployed from CI (`7cfa9a7`, `64df7f3`) and the tenure table renders on the live chart page.
+
+**Statistical work still not run, in the order it could move a number.** (None of these is a declared specification
+left unfitted — all 12 are fitted. Each is a new estimand whose input is missing.)
+
+| Estimand | Blocked on | Where it is recorded |
+|---|---|---|
+| Design C synthetic control on `u5mr` | the estimator and its placebos are unbuilt; the gate passes 3 of 4 windows, and 9 outcomes cannot enter the donor panel at all | `estimates.json → designs.C` |
+| Per-capita dose axis | the population-denominator decision (**X-09**); `d1_faac_per_capita` is 0 of 12,358 rows | `robustness.json → unbuilt_axes` |
+| D2, FAAC as a share of state revenue | NBS state IGR parsed (same parser family as FAAC) | same |
+| Monthly CPI for the 2023 window | monthly NBS CPI is a parser; annual is landed | `limitations.md` §13 |
+| Monthly security after 2024-12 | the UCDP archive ends there; ACLED is not wired | same |
+| Monthly sub-national health | DHIS2 credentials were never obtained | same |
+| RAGAS with the real library | a judge model; the four definitions are implemented in house and labelled `library: false` | `answer_quality_eval.json` |
+
 
 **Previous session, in one line:** the **outcome panels** — `analysis/specs/series_figures.yml`,
 `analysis/R/07_series_figures.R`, `registry/series/2026-10-18/` (12 SVGs + `index.json`) and
