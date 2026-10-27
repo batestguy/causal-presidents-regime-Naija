@@ -526,7 +526,7 @@ def render_cover(ctx: dict) -> str:
             portrait = (f'<div class="frame frame-empty"><span class="initials">{initials.get(slug, "")}</span>'
                         f'<span class="frame-note">image not supplied</span></div>')
             figure_open = '<figure class="slide-figure">'
-        slides.append(f"""<li class="slide">
+        slides.append(f"""<li class="president">
   {figure_open}{portrait}</figure>
   <div class="slide-body">
     <p class="slide-name">{html.escape(admin["president"])}</p>
@@ -549,18 +549,12 @@ def render_cover(ctx: dict) -> str:
     <p class="caption">{html.escape(cover['caption'])} <span class="instruction">{html.escape(cover['instruction'])}</span></p>
   </header>
 
-  <section class="carousel" aria-label="{html.escape(cover['rail_heading'])}">
-    <div class="track-wrap">
-      <ul class="track" id="track">
+  <section class="presidents" aria-label="{html.escape(cover['rail_heading'])}">
+    <div class="flag-band" style="--flag-bands: {party_bands(ctx['guide']['national_flag']['bands'])}" aria-hidden="true"></div>
+    <ul class="president-grid">
 {''.join(slides)}
-      </ul>
-      <button class="carousel-btn prev" type="button" id="prev" aria-label="Previous administration">‹</button>
-      <button class="carousel-btn next" type="button" id="next" aria-label="Next administration">›</button>
-    </div>
-    <div class="carousel-bar">
-      <p class="rail-note">{md(cover['rail_note'])}</p>
-      <button class="motion-toggle" type="button" id="motion" aria-pressed="true">Pause</button>
-    </div>
+    </ul>
+    <p class="rail-note">{md(cover['rail_note'])}</p>
   </section>
 
   <footer class="cover-foot">
@@ -582,7 +576,8 @@ def render_cover(ctx: dict) -> str:
 # Flow shell
 # ------------------------------------------------------------------------------------------------------------
 def flow_page(ctx: dict, key: str, title: str, heading: str, intro: str, note: str | None,
-              blocks: str, back: str, forward: str | None, extra_head: str = "") -> str:
+              blocks: str, back: str, forward: str | None, extra_head: str = "",
+              wide: bool = False) -> str:
     guide = ctx["guide"]
     steps = list(guide["steps"].items())
     order = [name for name, _label in steps]
@@ -611,7 +606,7 @@ def flow_page(ctx: dict, key: str, title: str, heading: str, intro: str, note: s
   <p class="vintage">Registry vintage {ctx['vintage']}</p>
 </main>
 """
-    return page(title, 1, body, data={"outcomes": [o["id"] for o in ctx["outcomes"]]})
+    return page(title, 1, body, data={"outcomes": [o["id"] for o in ctx["outcomes"]]}, wide=wide)
 
 
 def outcome_shell(outcome: dict, inner: str, tone: str | None = None) -> str:
@@ -645,10 +640,16 @@ def render_study(ctx: dict) -> str:
   </label>
 </li>"""
             for o in rows)
-        sections.append(f"""<section class="domain">
+        sections.append(f"""<section class="domain" data-domain="{domain}">
   <h2>{html.escape(DOMAIN_LABEL[domain])}</h2>
   <ul class="choices">{items}</ul>
 </section>""")
+    options = "".join(f'<option value="{domain}">{html.escape(DOMAIN_LABEL[domain])}</option>'
+                      for domain in DOMAIN_ORDER)
+    picker = f"""  <div class="domain-picker">
+    <label for="domain-select">{html.escape(study['category_label'])}</label>
+    <select id="domain-select" name="domain">{options}</select>
+  </div>"""
     body = f"""<main class="flow">
   <header class="flow-head">
     <p class="eyebrow"><a href="../">Causal Presidents</a> · step 1 of 6</p>
@@ -656,6 +657,7 @@ def render_study(ctx: dict) -> str:
     <p class="caption">{html.escape(study['intro'])}</p>
     <p class="note">{md(fill_text(study['caption'], ctx['fills']))}</p>
   </header>
+{picker}
   <div class="domains">{''.join(sections)}</div>
   <footer class="controls">
     <a class="ghost" href="../">{html.escape(guide['labels']['back'])}</a>
@@ -716,10 +718,16 @@ def render_graph(ctx: dict) -> str:
             for a in g["alternatives"])
         inner = f"""
   <p class="chosen"><strong>{g['design']} — {html.escape(g['design_name'])}.</strong> {html.escape(outcome['compare']['plain'])}.</p>
+  <figure class="graph-figure">
+    <img class="graph" src="../{g['svg']}" alt="Assumed causal graph for {html.escape(outcome['label'])} under Design {g['design']}">
+    <figcaption>The unobserved node is drawn and named rather than omitted. Adjustment sets are computed on the assumed graph, never hand-listed.</figcaption>
+  </figure>
   <div class="columns">
     <div class="col">
       <h3>{html.escape(labels['graph_heading'])}</h3>
       <p class="assumption">{html.escape(g['assumption'])}</p>
+    </div>
+    <div class="col">
       <h4>Adjustment set</h4>
       <ul class="tight">{adjustment}</ul>
       <h4>Assumed absent</h4>
@@ -727,10 +735,6 @@ def render_graph(ctx: dict) -> str:
       <h4>What this cannot rule out</h4>
       <ul class="tight">{caveats}</ul>
     </div>
-    <figure class="col figure-col">
-      <img class="graph" src="../{g['svg']}" alt="Assumed causal graph for {html.escape(outcome['label'])} under Design {g['design']}">
-      <figcaption>The unobserved node is drawn and named rather than omitted. Adjustment sets are computed on the assumed graph, never hand-listed.</figcaption>
-    </figure>
   </div>
   <details class="alt-group">
     <summary>{html.escape(labels['alternatives_heading'])}</summary>
@@ -739,7 +743,8 @@ def render_graph(ctx: dict) -> str:
         blocks.append(outcome_shell(outcome, inner))
     return flow_page(ctx, "graph", "The assumption, drawn", labels["graph_heading"],
                      "This is the graph the chosen comparison rests on. If the assumption is false, the number "
-                     "below it is not an effect.", None, "".join(blocks), back="compare", forward="estimates")
+                     "below it is not an effect.", None, "".join(blocks), back="compare", forward="estimates",
+                     wide=True)
 
 
 # ------------------------------------------------------------------------------------------------------------

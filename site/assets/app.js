@@ -104,6 +104,20 @@ function initStudy() {
   update();
 }
 
+// ------------------------------------------------------------------ study category
+
+function initDomains() {
+  const select = document.getElementById("domain-select");
+  if (!select) return;
+  const apply = () => {
+    document.querySelectorAll(".domain[data-domain]").forEach((section) => {
+      section.hidden = section.dataset.domain !== select.value;
+    });
+  };
+  select.addEventListener("change", apply);
+  apply();
+}
+
 // ------------------------------------------------------------------ flow screens
 
 function initFlow() {
@@ -160,6 +174,7 @@ function initGrouping() {
 document.addEventListener("DOMContentLoaded", () => {
   initCarousel();
   initStudy();
+  initDomains();
   initFlow();
   initGrouping();
 });

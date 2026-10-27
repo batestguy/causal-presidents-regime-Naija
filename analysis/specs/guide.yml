@@ -27,22 +27,22 @@ cover:
   eyebrow: "Nigeria · 1999–present"
   title: "Causal Presidents"
   caption: "Presidential transitions and national outcomes in Nigeria, 1999–present."
-  instruction: "Read the assumption before the number."
+  instruction: "Causal models have assumptions. Study them before you read the numbers."
   rail_heading: "Five administrations"
   rail_note: "The faces are the study window, not a scorecard. No number on this site belongs to one president."
   ratio: "{estimated} of {cards} model cards carry a published number; the rest say why not."
   portrait_credits: "Photograph credits"
   paragraphs:
-    - "This is a study of what can and cannot be said about Nigeria between {window_first} and {window_last}, across {administrations} administrations. Its first line is the honest one: most of the questions a reader wants answered about a presidency cannot be answered with this data, and the site says which, and why, before it shows a number."
-    - "The twelve outcomes here cover {spine_total} outcome-months: {spine_observed} are observations, {spine_interpolated} are months filled in between observations, and {spine_unobserved} have no observation at all. Every panel draws those three states differently, so a line that is mostly dotted is telling you it is mostly a rule rather than a record."
-    - "Begin asks which outcomes you want to study. The next page tells you which comparison the data can support for them — a design chosen from the published checks, not by preference — and then shows the estimate in plain words, or the reason there is none."
+    - "What can and cannot be said about Nigeria between {window_first} and {window_last}, across {administrations} administrations."
+    - "The twelve outcomes cover {spine_total} outcome-months: {spine_observed} observed, {spine_interpolated} filled in, {spine_unobserved} with no observation at all. Each panel draws the three states differently."
 
 study:
   heading: "What do you want to study?"
-  intro: "Pick one or more outcomes. Every one of them has a page: it either carries a comparison the data can support, or it says why it does not."
-  caption: "Together these twelve cover {spine_total} outcome-months: {spine_observed} observed, {spine_interpolated} filled in between, {spine_unobserved} with nothing."
+  intro: "Pick a category, then an outcome. Every outcome has a page: the comparison the data supports, or the reason there is none."
+  caption: "{spine_total} outcome-months across the twelve: {spine_observed} observed, {spine_interpolated} filled in, {spine_unobserved} with nothing."
   next: "Next"
   next_disabled: "Pick at least one outcome to continue."
+  category_label: "Category"
   groups:
     health: "Health"
     education: "Education"
@@ -51,8 +51,8 @@ study:
 
 compare:
   heading: "What this data can tell you"
-  intro: "For each outcome you chose, this page names the comparison the project judged usable — chosen from the published checks, never by preference — and what it assumes."
-  tenure_note: "What this page will not do is tell you which president did better. That question needs a counterfactual this data does not have: 22 to 23 annual observations per outcome, four to five administrations, and a monthly spine that is 16.2 % observed. The comparisons below are the ones that survive that arithmetic, and each one says what it rests on."
+  intro: "The comparison the project judged usable for each outcome, and what it assumes."
+  tenure_note: "This page will not say which president did better. That needs a counterfactual this data does not have: 22 to 23 annual observations per outcome, against four to five administrations."
   chosen_label: "The comparison chosen for you"
   assumes_label: "What it assumes"
   number_label: "Number published"
@@ -125,6 +125,11 @@ parties:
     bands: ["#87BEEB", "#39944A", "#FFFFFF", "#E52B33"]
     source: "English Wikipedia infobox colour swatches, retrieved 2026-10-27"
 
+# The national flag, drawn as a backdrop behind the cover's photographs: a green-white-green vertical triband.
+national_flag:
+  bands: ["#008751", "#FFFFFF", "#008751"]
+  source: "Nigerian flag, green-white-green vertical triband"
+
 direction:
   up: "higher is better"
   down: "lower is better"
@@ -158,7 +163,7 @@ steps:
 
 ask:
   heading: "Ask the corpus"
-  intro: "The same gate and the same published passages the local app uses, running here in the browser over the committed corpus. Nothing is fetched and no model is called."
+  intro: "The same gate and passages the local app uses, running in this browser. Nothing is fetched and no model is called."
   placeholder: "e.g. how much of the monthly series is observed?"
   button: "Ask"
   empty: "Type a question about the study."
@@ -202,7 +207,7 @@ changepoint:
 # artifact field; the templates carry no number of their own.
 design_results:
   heading: "The design-level results"
-  intro: "Three designs were specified. Two were estimated and one was not, and the figures on this page are the artifacts that decided those verdicts — not illustrations of them. Each one is drawn by R from the same rows this page counts, and its byte count is recorded in the JSON beside it."
+  intro: "The three figures that decided the verdicts below. Each is drawn by R from the same rows this page counts."
   figure_note: "The figure is the artifact. If it were one re-fit behind the table, its recorded byte count would no longer match the file."
   verdict_label: "Verdict"
   published_heading: "What was published"

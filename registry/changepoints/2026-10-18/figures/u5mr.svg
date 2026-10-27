@@ -33,21 +33,17 @@
 <text x='89.19' y='188.64' text-anchor='middle' style='font-size: 8.64px; font-family: "Arial";' textLength='19.19px' lengthAdjust='spacingAndGlyphs'>2000</text>
 <text x='280.13' y='188.64' text-anchor='middle' style='font-size: 8.64px; font-family: "Arial";' textLength='19.19px' lengthAdjust='spacingAndGlyphs'>2010</text>
 <text x='471.03' y='188.64' text-anchor='middle' style='font-size: 8.64px; font-family: "Arial";' textLength='19.19px' lengthAdjust='spacingAndGlyphs'>2020</text>
-<line x1='60.48' y1='155.78' x2='60.48' y2='48.72' style='stroke-width: 0.75;' />
-<line x1='60.48' y1='155.78' x2='53.28' y2='155.78' style='stroke-width: 0.75;' />
-<line x1='60.48' y1='137.93' x2='53.28' y2='137.93' style='stroke-width: 0.75;' />
-<line x1='60.48' y1='120.09' x2='53.28' y2='120.09' style='stroke-width: 0.75;' />
-<line x1='60.48' y1='102.25' x2='53.28' y2='102.25' style='stroke-width: 0.75;' />
-<line x1='60.48' y1='84.40' x2='53.28' y2='84.40' style='stroke-width: 0.75;' />
-<line x1='60.48' y1='66.56' x2='53.28' y2='66.56' style='stroke-width: 0.75;' />
-<line x1='60.48' y1='48.72' x2='53.28' y2='48.72' style='stroke-width: 0.75;' />
-<text x='51.84' y='158.86' text-anchor='end' style='font-size: 8.64px; font-family: "Arial";' textLength='14.39px' lengthAdjust='spacingAndGlyphs'>120</text>
-<text x='51.84' y='141.02' text-anchor='end' style='font-size: 8.64px; font-family: "Arial";' textLength='14.39px' lengthAdjust='spacingAndGlyphs'>130</text>
-<text x='51.84' y='123.18' text-anchor='end' style='font-size: 8.64px; font-family: "Arial";' textLength='14.39px' lengthAdjust='spacingAndGlyphs'>140</text>
-<text x='51.84' y='105.34' text-anchor='end' style='font-size: 8.64px; font-family: "Arial";' textLength='14.39px' lengthAdjust='spacingAndGlyphs'>150</text>
-<text x='51.84' y='87.49' text-anchor='end' style='font-size: 8.64px; font-family: "Arial";' textLength='14.39px' lengthAdjust='spacingAndGlyphs'>160</text>
-<text x='51.84' y='69.65' text-anchor='end' style='font-size: 8.64px; font-family: "Arial";' textLength='14.39px' lengthAdjust='spacingAndGlyphs'>170</text>
-<text x='51.84' y='51.81' text-anchor='end' style='font-size: 8.64px; font-family: "Arial";' textLength='14.39px' lengthAdjust='spacingAndGlyphs'>180</text>
+<line x1='60.48' y1='157.19' x2='60.48' y2='40.19' style='stroke-width: 0.75;' />
+<line x1='60.48' y1='157.19' x2='53.28' y2='157.19' style='stroke-width: 0.75;' />
+<line x1='60.48' y1='127.94' x2='53.28' y2='127.94' style='stroke-width: 0.75;' />
+<line x1='60.48' y1='98.69' x2='53.28' y2='98.69' style='stroke-width: 0.75;' />
+<line x1='60.48' y1='69.44' x2='53.28' y2='69.44' style='stroke-width: 0.75;' />
+<line x1='60.48' y1='40.19' x2='53.28' y2='40.19' style='stroke-width: 0.75;' />
+<text x='51.84' y='160.28' text-anchor='end' style='font-size: 8.64px; font-family: "Arial";' textLength='14.39px' lengthAdjust='spacingAndGlyphs'>120</text>
+<text x='51.84' y='131.03' text-anchor='end' style='font-size: 8.64px; font-family: "Arial";' textLength='14.39px' lengthAdjust='spacingAndGlyphs'>140</text>
+<text x='51.84' y='101.78' text-anchor='end' style='font-size: 8.64px; font-family: "Arial";' textLength='14.39px' lengthAdjust='spacingAndGlyphs'>160</text>
+<text x='51.84' y='72.53' text-anchor='end' style='font-size: 8.64px; font-family: "Arial";' textLength='14.39px' lengthAdjust='spacingAndGlyphs'>180</text>
+<text x='51.84' y='43.28' text-anchor='end' style='font-size: 8.64px; font-family: "Arial";' textLength='14.39px' lengthAdjust='spacingAndGlyphs'>200</text>
 <polygon points='60.48,168.48 576.00,168.48 576.00,37.44 60.48,37.44 ' style='stroke-width: 0.75;' />
 <text x='60.48' y='22.80' style='font-size: 11.40px; font-family: "Arial";' textLength='231.06px' lengthAdjust='spacingAndGlyphs'>Under-5 mortality — when the series changes</text>
 <text transform='translate(25.92,168.48) rotate(-90)' style='font-size: 12.00px; font-family: "Arial";' textLength='104.70px' lengthAdjust='spacingAndGlyphs'>per 1,000 live births</text>
@@ -58,34 +54,49 @@
   </clipPath>
 </defs>
 <g clip-path='url(#cpNjAuNDh8NTc2LjAwfDM3LjQ0fDE2OC40OA==)'>
-<circle cx='79.57' cy='42.29' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='98.70' cy='53.53' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='117.78' cy='65.67' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='136.86' cy='77.44' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='155.94' cy='89.04' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='175.07' cy='99.75' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='194.15' cy='109.74' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='213.23' cy='118.48' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='232.31' cy='126.33' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='251.44' cy='133.47' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='270.52' cy='139.36' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='289.60' cy='144.53' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='308.67' cy='149.00' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='327.81' cy='152.92' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='346.88' cy='155.95' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='365.96' cy='158.10' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='385.04' cy='159.70' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='404.17' cy='160.41' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='423.25' cy='160.77' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='442.33' cy='160.77' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='461.41' cy='160.41' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='480.54' cy='160.41' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='499.62' cy='160.06' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='518.70' cy='160.24' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='537.78' cy='161.49' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<rect x='79.57' y='64.17' width='151.01' height='99.45' style='stroke-width: 0.75; stroke: none; fill: #EEF6F0;' />
+<text x='155.05' y='63.38' text-anchor='middle' style='font-size: 5.40px;fill: #3F5A4A; font-family: "Arial";' textLength='47.69px' lengthAdjust='spacingAndGlyphs'>Olusegun Obasanjo</text>
+<rect x='230.58' y='64.17' width='56.03' height='99.45' style='stroke-width: 0.75; stroke: none; fill: #E3EFE6;' />
+<text x='258.60' y='63.88' text-anchor='middle' style='font-size: 5.40px;fill: #3F5A4A; font-family: "Arial";' textLength='53.88px' lengthAdjust='spacingAndGlyphs'>Umaru Musa Yar'Adua</text>
+<rect x='286.67' y='64.17' width='96.65' height='99.45' style='stroke-width: 0.75; stroke: none; fill: #EEF6F0;' />
+<text x='334.97' y='63.91' text-anchor='middle' style='font-size: 5.40px;fill: #3F5A4A; font-family: "Arial";' textLength='46.50px' lengthAdjust='spacingAndGlyphs'>Goodluck Jonathan</text>
+<rect x='383.32' y='64.17' width='152.73' height='99.45' style='stroke-width: 0.75; stroke: none; fill: #E3EFE6;' />
+<text x='459.68' y='63.88' text-anchor='middle' style='font-size: 5.40px;fill: #3F5A4A; font-family: "Arial";' textLength='48.55px' lengthAdjust='spacingAndGlyphs'>Muhammadu Buhari</text>
+<rect x='536.05' y='64.17' width='20.86' height='99.45' style='stroke-width: 0.75; stroke: none; fill: #EEF6F0;' />
+<text x='546.50' y='63.88' text-anchor='middle' style='font-size: 5.40px;fill: #3F5A4A; font-family: "Arial";' textLength='46.78px' lengthAdjust='spacingAndGlyphs'>Bola Ahmed Tinubu</text>
+<line x1='77.85' y1='168.48' x2='77.85' y2='37.44' style='stroke-width: 0.75; stroke: #C9D8CD; stroke-dasharray: 1.00,3.00;' />
+<line x1='230.58' y1='168.48' x2='230.58' y2='37.44' style='stroke-width: 0.75; stroke: #C9D8CD; stroke-dasharray: 1.00,3.00;' />
+<line x1='286.67' y1='168.48' x2='286.67' y2='37.44' style='stroke-width: 0.75; stroke: #C9D8CD; stroke-dasharray: 1.00,3.00;' />
+<line x1='383.32' y1='168.48' x2='383.32' y2='37.44' style='stroke-width: 0.75; stroke: #C9D8CD; stroke-dasharray: 1.00,3.00;' />
+<line x1='536.05' y1='168.48' x2='536.05' y2='37.44' style='stroke-width: 0.75; stroke: #C9D8CD; stroke-dasharray: 1.00,3.00;' />
+<circle cx='79.57' cy='64.17' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='98.70' cy='73.39' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='117.78' cy='83.33' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='136.86' cy='92.99' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='155.94' cy='102.49' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='175.07' cy='111.27' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='194.15' cy='119.46' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='213.23' cy='126.62' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='232.31' cy='133.06' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='251.44' cy='138.91' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='270.52' cy='143.74' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='289.60' cy='147.98' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='308.67' cy='151.63' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='327.81' cy='154.85' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='346.88' cy='157.34' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='365.96' cy='159.09' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='385.04' cy='160.41' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='404.17' cy='160.99' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='423.25' cy='161.29' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='442.33' cy='161.29' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='461.41' cy='160.99' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='480.54' cy='160.99' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='499.62' cy='160.70' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='518.70' cy='160.85' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='537.78' cy='161.87' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
 <circle cx='556.91' cy='163.63' r='2.16' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
 <line x1='213.23' y1='168.48' x2='213.23' y2='37.44' style='stroke-width: 0.98; stroke: #8C3A2F;' />
-<text transform='translate(222.00,42.29) rotate(-90)' style='font-size: 6.60px;fill: #8C3A2F; font-family: "Arial";' textLength='24.23px' lengthAdjust='spacingAndGlyphs'>2006-07</text>
+<text transform='translate(222.00,64.17) rotate(-90)' style='font-size: 6.60px;fill: #8C3A2F; font-family: "Arial";' textLength='24.23px' lengthAdjust='spacingAndGlyphs'>2006-07</text>
 </g>
 <g clip-path='url(#cpMC4wMHw1OTAuNDB8MC4wMHwyMDguODA=)'>
 <text x='576.00' y='51.84' text-anchor='end' style='font-size: 6.60px;fill: #8C3A2F; font-family: "Arial";' textLength='107.11px' lengthAdjust='spacingAndGlyphs'>description, not a causal comparison</text>

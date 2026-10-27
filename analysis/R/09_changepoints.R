@@ -46,6 +46,25 @@ admins <- fromJSON(file.path("registry", "reference", "administrations.json"), s
 inaugurations <- lapply(admins$administrations, function(a)
   list(slug = a$slug, month = substr(a$start_date, 1, 7)))
 
+# The tenancy bands, from the same reference the handover-adjacency rule reads. The incumbent's span ends at the
+# study window's last month, so a band never runs past the axis.
+tenure_admin <- rbindlist(lapply(admins$administrations, function(a) {
+  end <- if (is.null(a$end_date)) as.Date(paste0(spec$window$last, "-01")) else as.Date(a$end_date)
+  data.table(president = a$president, start_date = as.Date(a$start_date), end_date_effective = end)
+}))
+
+tenure_bands <- function(adm, xlim, data_ylim, label_y, cex_label = 0.45) {
+  shades <- c("#eef6f0", "#e3efe6")
+  for (i in seq_len(nrow(adm))) {
+    a <- max(as.Date(adm$start_date[i]), as.Date(xlim[1]))
+    b <- min(as.Date(adm$end_date_effective[i]), as.Date(xlim[2]))
+    if (is.na(a) || is.na(b) || b <= a) next
+    rect(a, data_ylim[1], b, data_ylim[2], col = shades[(i - 1) %% length(shades) + 1], border = NA)
+    text(a + (b - a) / 2, label_y, labels = adm$president[i], cex = cex_label, col = "#3f5a4a")
+  }
+  abline(v = as.Date(adm$start_date), col = "#c9d8cd", lty = 3)
+}
+
 regime_of <- function(frequency, n) {
   if (identical(frequency, "monthly") && n >= 60) return("monthly")
   if (n >= 20) return("annual")
@@ -68,9 +87,13 @@ coincident_slug <- function(month_label) {
 draw_series <- function(meta, d, breaks, path) {
   svglite(path, width = spec$figures$width_in, height = spec$figures$height_in)
   op <- par(mar = c(2.8, 4.2, 2.6, 1), mgp = c(2.2, 0.6, 0))
-  plot(d$month, d$value, type = "n", las = 1, cex.axis = 0.72,
+  data_ylim <- range(d$value, na.rm = TRUE)
+  if (!all(is.finite(data_ylim)) || diff(data_ylim) == 0) data_ylim <- data_ylim + c(-1, 1)
+  pad <- 0.22 * diff(data_ylim)
+  plot(d$month, d$value, type = "n", las = 1, cex.axis = 0.72, ylim = c(data_ylim[1], data_ylim[2] + pad),
        xlab = "", ylab = meta$unit,
        main = sprintf("%s — when the series changes", meta$short), adj = 0, cex.main = 0.95, font.main = 1)
+  tenure_bands(tenure_admin, range(d$month), data_ylim, data_ylim[2] + 0.10 * pad)
   if (nrow(d) >= 2) {
     if (identical(meta$native_frequency, "monthly")) lines(d$month, d$value, col = spec$figures$palette$line, lwd = 1.2)
     points(d$month, d$value, pch = 19, cex = if (identical(meta$native_frequency, "annual")) 0.8 else 0.3,

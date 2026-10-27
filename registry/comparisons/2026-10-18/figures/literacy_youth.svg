@@ -26,48 +26,65 @@
   </clipPath>
 </defs>
 <g clip-path='url(#cpMC4wMHw1OTAuNDB8MC4wMHwyNDQuODA=)'>
-<line x1='96.76' y1='207.36' x2='440.81' y2='207.36' style='stroke-width: 0.75;' />
-<line x1='96.76' y1='207.36' x2='96.76' y2='214.56' style='stroke-width: 0.75;' />
-<line x1='268.81' y1='207.36' x2='268.81' y2='214.56' style='stroke-width: 0.75;' />
-<line x1='440.81' y1='207.36' x2='440.81' y2='214.56' style='stroke-width: 0.75;' />
-<text x='96.76' y='227.52' text-anchor='middle' style='font-size: 8.40px; font-family: "Arial";' textLength='18.69px' lengthAdjust='spacingAndGlyphs'>2000</text>
-<text x='268.81' y='227.52' text-anchor='middle' style='font-size: 8.40px; font-family: "Arial";' textLength='18.69px' lengthAdjust='spacingAndGlyphs'>2010</text>
-<text x='440.81' y='227.52' text-anchor='middle' style='font-size: 8.40px; font-family: "Arial";' textLength='18.69px' lengthAdjust='spacingAndGlyphs'>2020</text>
-<line x1='60.48' y1='164.93' x2='60.48' y2='53.36' style='stroke-width: 0.75;' />
-<line x1='60.48' y1='164.93' x2='53.28' y2='164.93' style='stroke-width: 0.75;' />
-<line x1='60.48' y1='109.14' x2='53.28' y2='109.14' style='stroke-width: 0.75;' />
-<line x1='60.48' y1='53.36' x2='53.28' y2='53.36' style='stroke-width: 0.75;' />
-<text x='51.84' y='167.93' text-anchor='end' style='font-size: 8.40px; font-family: "Arial";' textLength='9.34px' lengthAdjust='spacingAndGlyphs'>70</text>
-<text x='51.84' y='112.15' text-anchor='end' style='font-size: 8.40px; font-family: "Arial";' textLength='9.34px' lengthAdjust='spacingAndGlyphs'>75</text>
-<text x='51.84' y='56.36' text-anchor='end' style='font-size: 8.40px; font-family: "Arial";' textLength='9.34px' lengthAdjust='spacingAndGlyphs'>80</text>
-<polygon points='60.48,207.36 576.00,207.36 576.00,31.68 60.48,31.68 ' style='stroke-width: 0.75;' />
+<line x1='88.25' y1='207.36' x2='351.57' y2='207.36' style='stroke-width: 0.75;' />
+<line x1='88.25' y1='207.36' x2='88.25' y2='214.56' style='stroke-width: 0.75;' />
+<line x1='219.93' y1='207.36' x2='219.93' y2='214.56' style='stroke-width: 0.75;' />
+<line x1='351.57' y1='207.36' x2='351.57' y2='214.56' style='stroke-width: 0.75;' />
+<text x='88.25' y='227.52' text-anchor='middle' style='font-size: 8.40px; font-family: "Arial";' textLength='18.69px' lengthAdjust='spacingAndGlyphs'>2000</text>
+<text x='219.93' y='227.52' text-anchor='middle' style='font-size: 8.40px; font-family: "Arial";' textLength='18.69px' lengthAdjust='spacingAndGlyphs'>2010</text>
+<text x='351.57' y='227.52' text-anchor='middle' style='font-size: 8.40px; font-family: "Arial";' textLength='18.69px' lengthAdjust='spacingAndGlyphs'>2020</text>
+<line x1='60.48' y1='171.41' x2='60.48' y2='34.23' style='stroke-width: 0.75;' />
+<line x1='60.48' y1='171.41' x2='53.28' y2='171.41' style='stroke-width: 0.75;' />
+<line x1='60.48' y1='125.68' x2='53.28' y2='125.68' style='stroke-width: 0.75;' />
+<line x1='60.48' y1='79.96' x2='53.28' y2='79.96' style='stroke-width: 0.75;' />
+<line x1='60.48' y1='34.23' x2='53.28' y2='34.23' style='stroke-width: 0.75;' />
+<text x='51.84' y='174.41' text-anchor='end' style='font-size: 8.40px; font-family: "Arial";' textLength='9.34px' lengthAdjust='spacingAndGlyphs'>70</text>
+<text x='51.84' y='128.68' text-anchor='end' style='font-size: 8.40px; font-family: "Arial";' textLength='9.34px' lengthAdjust='spacingAndGlyphs'>75</text>
+<text x='51.84' y='82.96' text-anchor='end' style='font-size: 8.40px; font-family: "Arial";' textLength='9.34px' lengthAdjust='spacingAndGlyphs'>80</text>
+<text x='51.84' y='37.23' text-anchor='end' style='font-size: 8.40px; font-family: "Arial";' textLength='9.34px' lengthAdjust='spacingAndGlyphs'>85</text>
+<polygon points='60.48,207.36 455.04,207.36 455.04,31.68 60.48,31.68 ' style='stroke-width: 0.75;' />
 <text x='60.48' y='19.92' style='font-size: 11.40px; font-family: "Arial";' textLength='191.41px' lengthAdjust='spacingAndGlyphs'>Youth literacy — by who was in power</text>
 <text transform='translate(25.92,207.36) rotate(-90)' style='font-size: 12.00px; font-family: "Arial";' textLength='10.67px' lengthAdjust='spacingAndGlyphs'>%</text>
 </g>
 <defs>
-  <clipPath id='cpNjAuNDh8NTc2LjAwfDMxLjY4fDIwNy4zNg=='>
-    <rect x='60.48' y='31.68' width='515.52' height='175.68' />
+  <clipPath id='cpNjAuNDh8NDU1LjA0fDMxLjY4fDIwNy4zNg=='>
+    <rect x='60.48' y='31.68' width='394.56' height='175.68' />
   </clipPath>
 </defs>
-<g clip-path='url(#cpNjAuNDh8NTc2LjAwfDMxLjY4fDIwNy4zNg==)'>
-<circle cx='242.95' cy='200.85' r='1.21' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='328.95' cy='62.73' r='1.21' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
-<circle cx='156.91' cy='176.20' r='1.21' style='stroke-width: 0.75; stroke: #A9691A; fill: #A9691A;' />
-<circle cx='208.53' cy='67.98' r='1.21' style='stroke-width: 0.75; stroke: #A9691A; fill: #A9691A;' />
-<circle cx='380.57' cy='131.90' r='1.21' style='stroke-width: 0.75; stroke: #8C3A2F; fill: #8C3A2F;' />
-<circle cx='518.19' cy='38.19' r='1.21' style='stroke-width: 0.75; stroke: #8C3A2F; fill: #8C3A2F;' />
-<circle cx='466.57' cy='123.98' r='1.21' style='stroke-width: 0.75; stroke: #4A4F59; fill: #4A4F59;' />
-<line x1='508.04' y1='41.04' x2='522.08' y2='41.04' style='stroke-width: 0.75; stroke: #1D6B5A;' />
-<line x1='508.04' y1='50.40' x2='522.08' y2='50.40' style='stroke-width: 0.75; stroke: #A9691A;' />
-<line x1='508.04' y1='59.76' x2='522.08' y2='59.76' style='stroke-width: 0.75; stroke: #8C3A2F;' />
-<line x1='508.04' y1='69.12' x2='522.08' y2='69.12' style='stroke-width: 0.75; stroke: #4A4F59;' />
-<text x='529.10' y='43.83' style='font-size: 7.80px; font-family: "Arial";' textLength='30.64px' lengthAdjust='spacingAndGlyphs'>PDP first</text>
-<text x='529.10' y='53.19' style='font-size: 7.80px; font-family: "Arial";' textLength='43.25px' lengthAdjust='spacingAndGlyphs'>PDP second</text>
-<text x='529.10' y='62.55' style='font-size: 7.80px; font-family: "Arial";' textLength='30.78px' lengthAdjust='spacingAndGlyphs'>APC first</text>
-<text x='529.10' y='71.91' style='font-size: 7.80px; font-family: "Arial";' textLength='43.39px' lengthAdjust='spacingAndGlyphs'>APC second</text>
+<g clip-path='url(#cpNjAuNDh8NDU1LjA0fDMxLjY4fDIwNy4zNg==)'>
+<rect x='80.43' y='67.52' width='105.33' height='133.33' style='stroke-width: 0.75; stroke: none; fill: #EEF6F0;' />
+<text x='133.09' y='65.98' text-anchor='middle' style='font-size: 5.40px;fill: #3F5A4A; font-family: "Arial";' textLength='47.69px' lengthAdjust='spacingAndGlyphs'>Olusegun Obasanjo</text>
+<rect x='185.76' y='67.52' width='38.68' height='133.33' style='stroke-width: 0.75; stroke: none; fill: #E3EFE6;' />
+<text x='205.08' y='66.48' text-anchor='middle' style='font-size: 5.40px;fill: #3F5A4A; font-family: "Arial";' textLength='53.88px' lengthAdjust='spacingAndGlyphs'>Umaru Musa Yar'Adua</text>
+<rect x='224.43' y='67.52' width='66.65' height='133.33' style='stroke-width: 0.75; stroke: none; fill: #EEF6F0;' />
+<text x='257.74' y='66.52' text-anchor='middle' style='font-size: 5.40px;fill: #3F5A4A; font-family: "Arial";' textLength='46.50px' lengthAdjust='spacingAndGlyphs'>Goodluck Jonathan</text>
+<rect x='291.09' y='67.52' width='105.33' height='133.33' style='stroke-width: 0.75; stroke: none; fill: #E3EFE6;' />
+<text x='343.75' y='66.48' text-anchor='middle' style='font-size: 5.40px;fill: #3F5A4A; font-family: "Arial";' textLength='48.55px' lengthAdjust='spacingAndGlyphs'>Muhammadu Buhari</text>
+<rect x='396.41' y='67.52' width='44.01' height='133.33' style='stroke-width: 0.75; stroke: none; fill: #EEF6F0;' />
+<text x='418.40' y='66.48' text-anchor='middle' style='font-size: 5.40px;fill: #3F5A4A; font-family: "Arial";' textLength='46.78px' lengthAdjust='spacingAndGlyphs'>Bola Ahmed Tinubu</text>
+<line x1='80.43' y1='207.36' x2='80.43' y2='31.68' style='stroke-width: 0.75; stroke: #C9D8CD; stroke-dasharray: 1.00,3.00;' />
+<line x1='185.76' y1='207.36' x2='185.76' y2='31.68' style='stroke-width: 0.75; stroke: #C9D8CD; stroke-dasharray: 1.00,3.00;' />
+<line x1='224.43' y1='207.36' x2='224.43' y2='31.68' style='stroke-width: 0.75; stroke: #C9D8CD; stroke-dasharray: 1.00,3.00;' />
+<line x1='291.09' y1='207.36' x2='291.09' y2='31.68' style='stroke-width: 0.75; stroke: #C9D8CD; stroke-dasharray: 1.00,3.00;' />
+<line x1='396.41' y1='207.36' x2='396.41' y2='31.68' style='stroke-width: 0.75; stroke: #C9D8CD; stroke-dasharray: 1.00,3.00;' />
+<circle cx='200.14' cy='200.85' r='1.21' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='265.96' cy='87.64' r='1.21' style='stroke-width: 0.75; stroke: #1D6B5A; fill: #1D6B5A;' />
+<circle cx='134.28' cy='180.64' r='1.21' style='stroke-width: 0.75; stroke: #A9691A; fill: #A9691A;' />
+<circle cx='173.79' cy='91.94' r='1.21' style='stroke-width: 0.75; stroke: #A9691A; fill: #A9691A;' />
+<circle cx='305.47' cy='144.34' r='1.21' style='stroke-width: 0.75; stroke: #8C3A2F; fill: #8C3A2F;' />
+<circle cx='410.80' cy='67.52' r='1.21' style='stroke-width: 0.75; stroke: #8C3A2F; fill: #8C3A2F;' />
+<circle cx='371.29' cy='137.84' r='1.21' style='stroke-width: 0.75; stroke: #4A4F59; fill: #4A4F59;' />
 </g>
 <g clip-path='url(#cpMC4wMHw1OTAuNDB8MC4wMHwyNDQuODA=)'>
-<text x='576.00' y='46.08' text-anchor='end' style='font-size: 6.60px;fill: #8C3A2F; font-family: "Arial";' textLength='107.11px' lengthAdjust='spacingAndGlyphs'>description, not a causal comparison</text>
+<line x1='468.87' y1='39.60' x2='480.75' y2='39.60' style='stroke-width: 0.75; stroke: #1D6B5A;' />
+<line x1='468.87' y1='47.52' x2='480.75' y2='47.52' style='stroke-width: 0.75; stroke: #A9691A;' />
+<line x1='468.87' y1='55.44' x2='480.75' y2='55.44' style='stroke-width: 0.75; stroke: #8C3A2F;' />
+<line x1='468.87' y1='63.36' x2='480.75' y2='63.36' style='stroke-width: 0.75; stroke: #4A4F59;' />
+<text x='486.69' y='41.96' style='font-size: 6.60px; font-family: "Arial";' textLength='25.88px' lengthAdjust='spacingAndGlyphs'>PDP first</text>
+<text x='486.69' y='49.88' style='font-size: 6.60px; font-family: "Arial";' textLength='36.53px' lengthAdjust='spacingAndGlyphs'>PDP second</text>
+<text x='486.69' y='57.80' style='font-size: 6.60px; font-family: "Arial";' textLength='26.00px' lengthAdjust='spacingAndGlyphs'>APC first</text>
+<text x='486.69' y='65.72' style='font-size: 6.60px; font-family: "Arial";' textLength='36.66px' lengthAdjust='spacingAndGlyphs'>APC second</text>
+<text x='455.04' y='27.36' text-anchor='end' style='font-size: 6.60px;fill: #8C3A2F; font-family: "Arial";' textLength='107.11px' lengthAdjust='spacingAndGlyphs'>description, not a causal comparison</text>
 </g>
 </g>
 </svg>

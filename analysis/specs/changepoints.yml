@@ -64,3 +64,10 @@ figures:
   marks:
     break: "vertical solid rule, labelled with the month"
     definition_break: "vertical dashed rule, labelled with the definition's name"
+  # The same tenancy decoration the comparison charts carry, from the same reference, so the two descriptive
+  # families read as one timeline.
+  tenure_bands:
+    source: "registry/reference/administrations.json (start_date, end_date)"
+    fill: ["#eef6f0", "#e3efe6"]
+    label: "the president's name, centred in the headroom above the data"
+    headroom: "22 % of the data range"

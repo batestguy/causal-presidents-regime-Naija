@@ -81,6 +81,33 @@ design (`docs/portraits.md`), so this was a licence task before it was a design 
   passed`** (exit 0), including the corpus and both evals, with `verify_site.py` reporting 8 pages and
   `verify_answer_js.py` reproducing **38 of 38** measured answers field for field.
 
+**Then, same session — the visual pass: dropdown, tenancy bands, flag, green.** Nine changes asked for in one
+message; three were decisions (flag vs party strip, where the failure ratio lives, how to shade the charts) and
+are answered above; the rest are here.
+
+- **The study screen is a category dropdown plus its outcomes.** `<select id="domain-select">` filters the four
+  declared domains, and all twelve checkboxes stay in the HTML, so the site verifier still sees every outcome and
+  the flow still carries a selection across screens.
+- **The causal graphs are full width.** `render_graph` puts the SVG above the written assumption instead of in a
+  half column, on a `wide_page` that raises the flow to 1240 px; the height is capped at 68 vh so a card cannot
+  become a mile long.
+- **Every outcome chart now shades the tenures.** `08_comparisons.R` and `09_changepoints.R` draw a light band per
+  administration with the president's name, from `dim_administration`'s half-open spans (comparisons) and
+  `administrations.json` (changepoints). Both specs declare the decoration (`figures.tenure_bands`), including the
+  22 % headroom reserved above the data and the legend moved outside the plot region — the first attempt put the
+  names and the legend on top of each other, and the second clipped the legend at the device edge.
+- **The site is green-and-white with a flag behind the presidents.** The palette is the Nigerian green
+  (`#008751`) on a green-tinted paper with white cards; the cover's header is a green panel, and a large
+  green-white-green `flag-band` sits behind the portrait grid at 16 % opacity. The colours are declared in
+  `guide.yml` (`national_flag`, `parties`), not typed into the stylesheet.
+- **The carousel is a grid.** Four portraits to a row, so the fifth — Tinubu — sits on a row of his own, as asked;
+  the arrows and the auto-advance are gone, which also removes the one piece of JavaScript the cover needed.
+- **The copy is shorter and the tagline changed.** "Read the assumption before the number" became "Causal models
+  have assumptions. Study them before you read the numbers"; the cover's three long paragraphs became two
+  sentences, and the study, compare, designs and ask intros lost their throat-clearing.
+- **The failure ratio now appears once.** `2 of 36 model cards carry a published number` stays in the cover footer
+  only, per the requester, and is not repeated on the way to the estimate page where the absent number is met.
+
 **Previous session, in one line:** the **outcome panels** — `analysis/specs/series_figures.yml`,
 `analysis/R/07_series_figures.R`, `registry/series/2026-10-18/` (12 SVGs + `index.json`) and
 `tests/verify_series_figures.py` — so that a card's reason is shown beside the series it is about, and the

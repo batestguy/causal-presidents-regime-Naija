@@ -101,7 +101,7 @@ Both artifacts share this shape. The schema enforces every field listed here.
 | `closest_evidence` | `{kind, artifact, outcome_id?, plain}` | the per-outcome mapping (A-03): `design_result` for economy outcomes, `event_study` for security, `series_panel` otherwise |
 | `groups[]` | see 3.5 | empty only when `refused != null` |
 | `caption` | string | assembled from the fields above, so it cannot disagree with them |
-| `figure` | `{path, bytes}` | one SVG per outcome covering every grouping; `bytes` compared to disk |
+| `figure` | `{path, bytes}` | one SVG per outcome covering every grouping; `bytes` compared to disk. Every panel also draws the **tenancy bands** — one light band per administration, its president named in the headroom above the data, from `dim_administration`'s half-open spans (`figures.tenure_bands` in the spec) |
 | `refused` | null \| `{reason, detail}` | closed set: `no_monthly_life`, `too_few_native_observations`, `declared_gap`, `no_grouping_declared` |
 
 ### 3.5 `outcomes[].groups[]`

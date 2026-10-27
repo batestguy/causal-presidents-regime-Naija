@@ -99,3 +99,12 @@ figures:
     observed: "solid point and solid segment"
     interpolated: "dotted segment"
     definition_break: "vertical dashed rule with its label"
+  # The tenancy decoration: a light band per administration, its president named in the headroom reserved above
+  # the data, and a hair line at each handover. The dates are `main_analytics.dim_administration`'s half-open
+  # spans, so a band cannot disagree with the spine.
+  tenure_bands:
+    source: "main_analytics.dim_administration (start_date, end_date_effective)"
+    fill: ["#eef6f0", "#e3efe6"]
+    label: "the president's name, centred in the headroom above the data"
+    headroom: "22 % of the data range, reserved so the names and the legend never cover a point"
+    legend: "outside the plot region, so it cannot overlap the last band's name"

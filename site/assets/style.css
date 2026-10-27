@@ -2,20 +2,20 @@
    No external fonts, no @import, no network: the page renders identically offline and over HTTP. */
 
 :root {
-  --ink: #16181d;
-  --ink-soft: #4a4f59;
-  --ink-faint: #767d89;
-  --paper: #f6f4ee;
-  --paper-raise: #fffdf8;
-  --rule: #ddd8cc;
-  --accent: #1d6b5a;
-  --accent-soft: #e4efe9;
-  --warn: #a9691a;
-  --warn-soft: #f6ecdc;
+  --ink: #0f241a;
+  --ink-soft: #33503f;
+  --ink-faint: #60796a;
+  --paper: #eef6f0;
+  --paper-raise: #ffffff;
+  --rule: #d3e4d8;
+  --accent: #008751;
+  --accent-soft: #e2f1e7;
+  --warn: #8a6414;
+  --warn-soft: #f7efdc;
   --bad: #8c3a2f;
   --bad-soft: #f4e5e1;
   --radius: 12px;
-  --shadow: 0 1px 2px rgba(22, 24, 29, .06), 0 10px 30px rgba(22, 24, 29, .05);
+  --shadow: 0 1px 2px rgba(15, 36, 26, .06), 0 10px 30px rgba(15, 36, 26, .06);
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
@@ -366,9 +366,84 @@ img.chart { width: 100%; height: auto; background: #fff; border: 1px solid var(-
   letter-spacing: .08em;
 }
 
+/* ---------------------------------------------------------------- the cover's grid and flag */
+
+.cover-head {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 18px;
+  padding: clamp(18px, 3vw, 34px);
+}
+.cover-head h1 { color: #fff; }
+.cover-head .caption, .cover-head .eyebrow, .cover-head .instruction { color: rgba(255, 255, 255, .88); }
+.cover-head .eyebrow a { border-bottom-color: rgba(255, 255, 255, .45); }
+
+/* Five presidents, no arrows: four to a row, so the fifth sits on a row of its own. */
+.presidents { position: relative; margin: 1.2rem 0 0; }
+.flag-band {
+  position: absolute;
+  inset: -16px -16px 0;
+  border-radius: 22px;
+  background: var(--flag-bands);
+  opacity: .16;
+  z-index: 0;
+}
+.president-grid {
+  position: relative;
+  z-index: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+.president {
+  display: flex;
+  flex-direction: column;
+  background: var(--paper-raise);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: .5rem .5rem 0;
+  box-shadow: var(--shadow);
+}
+.president .slide-figure { height: auto; width: 100%; aspect-ratio: 3 / 4; }
+.president .slide-figure.has-portrait img {
+  left: 8px; right: 8px; top: 8px; bottom: 34px;
+  width: calc(100% - 16px); height: calc(100% - 42px);
+}
+.president .party-tag { font-size: .56rem; padding: .35rem .3rem; }
+.president .slide-body { padding: .55rem .35rem .7rem; max-width: none; }
+.president .slide-name { font-size: 1rem; }
+.president .slide-meta { font-size: .74rem; }
+.president .slide-note { font-size: .72rem; }
+.presidents .rail-note { position: relative; z-index: 1; margin-top: .9rem; font-size: .84rem; color: var(--ink-faint); }
+
+/* ---------------------------------------------------------------- study category picker */
+
+.domain-picker { display: flex; align-items: center; gap: .8rem; margin: 0 0 1.1rem; flex-wrap: wrap; }
+.domain-picker label {
+  font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint);
+}
+.domain-picker select {
+  font: inherit; padding: .45rem .7rem; border-radius: 8px; border: 1px solid var(--rule);
+  background: var(--paper-raise); color: var(--ink); min-width: 13rem;
+}
+.domain[hidden] { display: none; }
+
+/* ---------------------------------------------------------------- bigger graphs */
+
+.wide-page .flow { max-width: 1240px; }
+.wide-page img.graph { border-radius: 10px; }
+.flow img.graph { width: 100%; height: auto; background: #fff; }
+.graph-figure { margin: 0 0 1.3rem; }
+.graph-figure img.graph { width: 100%; max-height: 68vh; object-fit: contain; }
+.graph-figure figcaption { font-size: .82rem; color: var(--ink-faint); margin-top: .45rem; }
+
 /* ---------------------------------------------------------------- small screens */
 
 @media (max-width: 860px) {
+  .president-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .columns { grid-template-columns: 1fr; }
   .figure-col { order: -1; }
   .slide-figure { height: min(46vh, 380px); }

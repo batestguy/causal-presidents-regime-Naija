@@ -56,6 +56,27 @@ fm[, month_label := format(month, "%Y-%m")]
 breaks <- as.data.table(dbGetQuery(con,
   "select metric_id, break_month::DATE as break_month, label, note from main_analytics.dim_definition_break"))
 
+# The tenancy bands drawn behind every panel. The dates are the base's own half-open spans, so a band cannot
+# disagree with the spine that decided which rows belong to which administration.
+tenure_admin <- as.data.table(dbGetQuery(con,
+  "select president, party, start_date::DATE as start_date, end_date_effective::DATE as end_date_effective
+     from main_analytics.dim_administration
+    order by start_date"))
+
+# Behind the series, never over it: a light band per administration, its president named at the top, and a hair
+# line at each handover. Clipped to the plotted window so the first and last bands do not run off the axis.
+tenure_bands <- function(adm, xlim, data_ylim, label_y, cex_label = 0.45) {
+  shades <- c("#eef6f0", "#e3efe6")
+  for (i in seq_len(nrow(adm))) {
+    a <- max(as.Date(adm$start_date[i]), as.Date(xlim[1]))
+    b <- min(as.Date(adm$end_date_effective[i]), as.Date(xlim[2]))
+    if (is.na(a) || is.na(b) || b <= a) next
+    rect(a, data_ylim[1], b, data_ylim[2], col = shades[(i - 1) %% length(shades) + 1], border = NA)
+    text(a + (b - a) / 2, label_y, labels = adm$president[i], cex = cex_label, col = "#3f5a4a")
+  }
+  abline(v = as.Date(adm$start_date), col = "#c9d8cd", lty = 3)
+}
+
 # ---- party/tenure groups ------------------------------------------------------------------------------
 # A stratum's months can be non-contiguous (APC_first covers 2015-2019 and 2023-), so runs are found here and
 # the figure draws them separately. The mean still covers the whole stratum, which is what the model uses.
@@ -176,11 +197,15 @@ runs_of <- function(months) {
 
 party_panel <- function(oid, meta) {
   d <- fm[metric_id == oid & !is.na(tenure_stratum) & !is.na(value)]
-  ylim <- range(d$value, na.rm = TRUE)
-  if (!all(is.finite(ylim)) || diff(ylim) == 0) ylim <- ylim + c(-1, 1)
-  plot(window_months, rep(NA_real_, length(window_months)), type = "n", ylim = ylim,
+  data_ylim <- range(d$value, na.rm = TRUE)
+  if (!all(is.finite(data_ylim)) || diff(data_ylim) == 0) data_ylim <- data_ylim + c(-1, 1)
+  # Headroom above the data: the tenancy names and the legend live there, so neither covers a point.
+  pad <- 0.22 * diff(data_ylim)
+  plot_ylim <- c(data_ylim[1], data_ylim[2] + pad)
+  plot(window_months, rep(NA_real_, length(window_months)), type = "n", ylim = plot_ylim,
        xlab = "", ylab = meta$unit, las = 1, cex.axis = 0.7,
        main = sprintf("%s — by who was in power", meta$short), adj = 0, cex.main = 0.95, font.main = 1)
+  tenure_bands(tenure_admin, range(window_months), data_ylim, data_ylim[2] + 0.10 * pad)
   for (i in seq_along(strata_order)) {
     s <- strata_order[i]
     g <- d[tenure_stratum == s][order(month)]
@@ -202,41 +227,48 @@ party_panel <- function(oid, meta) {
   brk <- breaks[metric_id == oid]
   if (nrow(brk) > 0) {
     abline(v = brk$break_month, lty = 2, col = "#b9b3a5")
-    text(brk$break_month, ylim[2], labels = brk$label, pos = 4, cex = 0.55, col = "#767d89", srt = 90)
+    text(brk$break_month, data_ylim[2], labels = brk$label, pos = 4, cex = 0.55, col = "#767d89", srt = 90)
   }
-  legend("topright", legend = c("PDP first", "PDP second", "APC first", "APC second"),
-         col = palette, lty = 1, bty = "n", cex = 0.65)
-  mtext(stamp, side = 3, adj = 1, line = -1.2, cex = 0.55, col = "#8c3a2f")
+  usr <- par("usr")
+  legend(x = usr[2] + 0.02 * (usr[2] - usr[1]), y = usr[4], xjust = 0, yjust = 1,
+         legend = c("PDP first", "PDP second", "APC first", "APC second"),
+         col = palette, lty = 1, bty = "n", cex = 0.55, xpd = NA)
+  mtext(stamp, side = 3, adj = 1, line = 0.1, cex = 0.55, col = "#8c3a2f")
 }
 
 state_panel <- function(oid, meta) {
   d <- merge(sp, state_mean_dose[, .(state_name, quartile)], by = "state_name")
   d <- d[security_status == "observed" & !is.na(get(oid))]
   per_month <- d[, .(value = mean(get(oid))), by = .(quartile, month)]
-  ylim <- range(per_month$value, na.rm = TRUE)
-  if (!all(is.finite(ylim)) || diff(ylim) == 0) ylim <- ylim + c(-1, 1)
-  plot(range(per_month$month), c(ylim[1], ylim[2]), type = "n",
+  data_ylim <- range(per_month$value, na.rm = TRUE)
+  if (!all(is.finite(data_ylim)) || diff(data_ylim) == 0) data_ylim <- data_ylim + c(-1, 1)
+  pad <- 0.22 * diff(data_ylim)
+  plot_ylim <- c(data_ylim[1], data_ylim[2] + pad)
+  plot(range(per_month$month), plot_ylim, type = "n",
        xlab = "", ylab = sprintf("mean %s per state", meta$unit), las = 1, cex.axis = 0.7,
        main = sprintf("%s — by how much money a state received", meta$short), adj = 0, cex.main = 0.95,
        font.main = 1)
+  tenure_bands(tenure_admin, range(per_month$month), data_ylim, data_ylim[2] + 0.10 * pad)
   for (q in 1:4) {
     g <- per_month[quartile == q][order(month)]
     if (nrow(g) == 0) next
     lines(g$month, g$value, col = palette[q], lwd = 1.6)
     points(g$month, g$value, pch = 19, cex = 0.3, col = palette[q])
   }
-  legend("topleft", legend = c("least money", "lower middle", "upper middle", "most money"),
-         col = palette, lty = 1, bty = "n", cex = 0.65)
+  usr <- par("usr")
+  legend(x = usr[2] + 0.02 * (usr[2] - usr[1]), y = usr[4], xjust = 0, yjust = 1,
+         legend = c("least money", "lower middle", "upper middle", "most money"),
+         col = palette, lty = 1, bty = "n", cex = 0.55, xpd = NA)
   mtext(sprintf("%s to %s — %d states", dose_first, dose_last, n_states),
-        side = 3, adj = 0, line = -1.2, cex = 0.55, col = "#767d89")
-  mtext(stamp, side = 3, adj = 1, line = -1.2, cex = 0.55, col = "#8c3a2f")
+        side = 3, adj = 0, line = 0.1, cex = 0.55, col = "#767d89")
+  mtext(stamp, side = 3, adj = 1, line = 0.1, cex = 0.55, col = "#8c3a2f")
 }
 
 draw_outcome <- function(oid, meta, has_state) {
   path <- file.path(fig_dir, sprintf("%s.svg", oid))
   h <- if (has_state) spec$figures$height_in_two_panel else spec$figures$height_in
   svglite(path, width = spec$figures$width_in, height = h)
-  op <- par(mar = c(2.6, 4.2, 2.2, 1), oma = c(0, 0, 0, 0), mgp = c(2.2, 0.6, 0))
+  op <- par(mar = c(2.6, 4.2, 2.2, 9.4), oma = c(0, 0, 0, 0), mgp = c(2.2, 0.6, 0))
   if (has_state) {
     layout(matrix(1:2, ncol = 1), heights = c(1.15, 1))
     party_panel(oid, meta); state_panel(oid, meta)
