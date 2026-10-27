@@ -107,6 +107,11 @@ are answered above; the rest are here.
   sentences, and the study, compare, designs and ask intros lost their throat-clearing.
 - **The failure ratio now appears once.** `2 of 36 model cards carry a published number` stays in the cover footer
   only, per the requester, and is not repeated on the way to the estimate page where the absent number is met.
+- **Re-verified end to end.** `scripts/verify.sh` over the regenerated figures: **`all checks passed`** (exit 0),
+  including `verify_comparisons.py` (every group mean and caption recomputed) and `verify_changepoints.py`
+  (8 series refitted independently, month for month), then `verify_site.py` on the new grid, flag and dropdown.
+  The three decisions that shaped this pass are recorded in `docs/decisions.md` as P-05 (grid + flag), P-06 (the
+  ratio stated once) and P-07 (tenancy bands drawn in R, not overlaid).
 
 **Previous session, in one line:** the **outcome panels** — `analysis/specs/series_figures.yml`,
 `analysis/R/07_series_figures.R`, `registry/series/2026-10-18/` (12 SVGs + `index.json`) and
