@@ -58,7 +58,7 @@ from. If any of those six is missing, the candidate is not usable; move to the n
 |---|---|---|
 | Format | PNG or JPEG (JPEG for photographs) | the build copies the file; it does not transcode |
 | Crop | 3:4 portrait, head and shoulders, eyes on the upper third | the frames are 3:4; a mismatch would letterbox a face |
-| Size | 600 × 750 px (1200 × 1500 acceptable) | sharp on retina at the rendered size, small enough for a static page |
+| Size | 600 × 800 px (1200 × 1600 acceptable) | the frame is 3:4, so the file must be too (this row said 600 × 750 until 2026-10-27, a 4:5 file that no frame could display un-cropped); sharp on retina at the rendered size, small enough for a static page |
 | Colour | sRGB, JPEG quality ≈ 85 | consistent across five images |
 | Weight | ≤ 200 KB each | the cover is the first page a reader loads |
 | Metadata | EXIF stripped except a copyright field if the licence requires it | no camera GPS or software strings on a public page |
@@ -137,7 +137,12 @@ labelled). A stock photograph would be the portrait equivalent of a typed coeffi
 
 ## 7. Decision needed from the requester
 
-The build does not need the images to proceed — five placeholder frames are a complete cover. To go from
-placeholder to photograph, the requester needs to answer one question per president: **may this file be
-redistributed?** The answer must come from the licence on the file page, not from the fact that the person is a
-public figure. Until then, `portrait_status` stays `not_supplied` and the page says so.
+**Answered 2026-10-27.** The requester asked for the frames filled and for each portrait to sit on its party's
+colours. Five files were sourced under §1's first rank, their licences were read on the Commons file pages and
+recorded in `docs/licences.md` and the manifest, and a party-colour backdrop was accepted as an explicit
+override of §1's "no party-branded imagery" exclusion. All four decisions are recorded in `docs/decisions.md`
+(P-01…P-04), and `tests/verify_site.py` now enforces the five invariants in §4 — so the answer is auditable
+rather than remembered.
+
+The original question stands for any *future* portrait, and the answer must still come from the licence on the
+file page, not from the fact that the person is a public figure.

@@ -17,6 +17,7 @@ Run:
 from __future__ import annotations
 
 import html as html_module
+import hashlib
 import json
 import re
 import subprocess
@@ -28,7 +29,7 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DIST = REPO_ROOT / "site" / "dist"
 PAGES = ("index.html", "study/index.html", "compare/index.html", "graph/index.html",
-         "estimates/index.html", "chart/index.html", "ask/index.html")
+         "estimates/index.html", "chart/index.html", "ask/index.html", "designs/index.html")
 
 
 def fail(failures: list[str], message: str) -> None:
@@ -153,7 +154,7 @@ def main() -> int:
         if not (DIST / "assets" / "graphs" / f"{row['dag_id']}.svg").exists():
             fail(failures, f"assets/graphs/{row['dag_id']}.svg is not in the build")
     for oid, block in graph_blocks.items():
-        if not re.search(rf'<img class="graph" src="assets/graphs/{oid}__[ABC]\.svg"', block):
+        if not re.search(rf'<img class="graph" src="\.\./assets/graphs/{oid}__[ABC]\.svg"', block):
             fail(failures, f"graph/{oid}: no assumed graph is rendered")
 
     # ---- the chart uses the comparison artifact, stamps it, and draws every declared grouping ------------
@@ -220,10 +221,175 @@ def main() -> int:
             read(REPO_ROOT / "analysis" / "specs" / "rag.yml"))["answer_contract"]:
         fail(failures, "ask/: the emitted answer contract is not rag.yml's")
 
+    # ---- Screen 6b is the three design-level artifacts: figure, layout, verdict and check ------------------
+    def plain(markup: str) -> str:
+        """The page as text: tags removed *before* entities are resolved, so a literal `<` in the prose (`p <= 0.05`)
+        is not mistaken for the start of a tag and swallowed."""
+        return html_module.unescape(re.sub(r"<[^>]+>", "", markup))
+
+    designs_page = plain(read(DIST / "designs" / "index.html"))
+    estimates = json.loads(read(REPO_ROOT / "registry" / "estimates" / index["vintage_date"] / "estimates.json"))
+    robustness = json.loads(read(REPO_ROOT / "registry" / "robustness" / index["vintage_date"] / "robustness.json"))
+    events = json.loads(read(REPO_ROOT / "registry" / "events" / index["vintage_date"] / "events.json"))
+    by_design = {row["id"]: row for row in estimates["designs"]}
+
+    def stripped(value: str) -> str:
+        """The artifact's prose as a reader sees it: the three Markdown markers removed."""
+        return str(value).replace("**", "").replace("*", "").replace("`", "")
+
+    def canonical_size(path: Path) -> int:
+        """Bytes as git stores them: CRLF collapsed to LF, the rule `verify_stage6`/`verify_changepoints` use, so
+        a figure's recorded size holds on this Windows checkout and on the Linux runner alike."""
+        return len(path.read_bytes().replace(b"\r\n", b"\n"))
+
+    figure_families = (("estimates", estimates["figure"], "the forest plot"),
+                       ("robustness", robustness["figure"], "the specification curve"),
+                       ("events", events["figure"], "the event study"))
+    for family, record, label in figure_families:
+        source = REPO_ROOT / "registry" / family / index["vintage_date"] / Path(record["path"]).name
+        copied = DIST / "assets" / "designs" / Path(record["path"]).name
+        if not copied.exists():
+            fail(failures, f"designs/: {label} was not copied into the build")
+            continue
+        if canonical_size(copied) != canonical_size(source):
+            fail(failures, f"designs/: the copied {label} differs from {family}'s artifact file")
+        if record["bytes"] != canonical_size(copied):
+            fail(failures, f"designs/: the {family} artifact records {record['bytes']} bytes for {label} "
+                           f"but the file is {canonical_size(copied)} — a figure one re-fit behind its artifact")
+        if stripped(record["layout"]) not in designs_page:
+            fail(failures, f"designs/: the {family} artifact's layout sentence is not on the page — the figure "
+                           f"would be drawn with no account of what it draws")
+
+    # Design A's verdict, the check that decided it, and every number it published.
+    a_verdict = by_design["A"].get("verdict") or {}
+    if a_verdict.get("status") and a_verdict["status"] not in designs_page:
+        fail(failures, f"designs/: Design A's verdict {a_verdict['status']!r} is not on the page")
+    if a_verdict.get("failed_checks") and stripped(a_verdict["failed_checks"]) not in designs_page:
+        fail(failures, "designs/: the check that decided Design A's verdict is not on the page")
+    for row in estimates["specifications"]:
+        if row["design"] != "A":
+            continue
+        coefficient = f"{row['coefficient']:+.4f}"
+        if coefficient not in designs_page:
+            fail(failures, f"designs/: Design A's published coefficient {coefficient} is missing")
+        if f"{row['ci_low']:.4f}" not in designs_page or f"{row['ci_high']:.4f}" not in designs_page:
+            fail(failures, f"designs/: the interval for {row['outcome']} is missing")
+
+    # Design B's number, and the grid that qualifies it.
+    b_status = (by_design["B"].get("verdict") or {}).get("status")
+    if b_status and b_status not in designs_page:
+        fail(failures, f"designs/: Design B's verdict {b_status!r} is not on the page")
+    preferred_b = robustness["preferred"]["design_b"]
+    if f"{preferred_b['coefficient']:+.4f}" not in designs_page:
+        fail(failures, "designs/: Design B's published coefficient is missing")
+    for design_id in ("A", "B"):
+        support = robustness["support"]["by_design"][design_id]
+        needle = f"{support['n_positive']} of {support['n']} specifications"
+        if needle not in designs_page:
+            fail(failures, f"designs/: the grid's {design_id} support count ({needle!r}) is not on the page")
+    placebo = robustness["sensitivity"]["design_b"]["in_time_placebo"]
+    if f"p = {placebo['p_value']:.4f}" not in designs_page:
+        fail(failures, f"designs/: the in-time placebo p ({placebo['p_value']}) is not on the page")
+    for row in robustness["support"]["flips"]["levels"]:
+        needle = f"{row['n_opposite']} of {row['n']} specifications point the other way"
+        if needle not in designs_page:
+            fail(failures, f"designs/: the sign-flip at {row['axis']}={row['level']} is not on the page")
+
+    # Design C: not run, and the reason travels rather than the section being empty.
+    c_row = by_design["C"]
+    if stripped(c_row.get("why") or "") not in designs_page:
+        fail(failures, "designs/: Design C's reason for not running is not on the page")
+    if stripped(c_row.get("next_step") or "") not in designs_page:
+        fail(failures, "designs/: Design C's next step is not on the page")
+
+    # The transition study: one line per artifact verdict, its rule, and what it does not claim.
+    expected_rows = []
+    for verdict in events["verdicts"]:
+        transition = next((row for row in events["events"] if row["id"] == verdict["event"]), None)
+        if transition is None:
+            fail(failures, f"designs/: a verdict names {verdict['event']!r}, which has no transition row")
+            continue
+        expected_rows.append((transition["transition_month"], f"{verdict['placebo_p']:.4f}"))
+    found_rows = re.findall(r"(\d{4}-\d{2})[^\n]*?placebo p = (\d\.\d{4})", designs_page)
+    if sorted(found_rows) != sorted(expected_rows):
+        fail(failures, f"designs/: the transition rows on the page are not the artifact's — "
+                       f"{len(found_rows)} found against {len(expected_rows)} verdicts, and the month/p pairs "
+                       f"must match one for one")
+    if stripped(events["verdict_rule"]) not in designs_page:
+        fail(failures, "designs/: the rule the transition verdicts were read against is not on the page")
+    for claim in events["not_claimed"]:
+        if stripped(claim) not in designs_page:
+            fail(failures, f"designs/: the not-claimed statement {claim[:40]!r}… is not on the page")
+
+    # The screen is reachable from where a reader meets the gap it fills.
+    for origin in ("estimates/index.html", "ask/index.html"):
+        if "../designs/" not in flow[origin]:
+            fail(failures, f"{origin}: no link to the design-level results — the screen would be unreadable "
+                           f"from the flow that names it")
+
+    # ---- the cover's portraits: the licence manifest is the gate, not the file's presence ------------------
+    # docs/portraits.md §4 lists five invariants the build and this verifier enforce. Four of them are here; the
+    # fifth (portrait_status supplied iff the manifest has an entry) is the loop's closing check.
+    manifest_path = REPO_ROOT / "site" / "assets" / "presidents" / "manifest.json"
+    manifest = json.loads(read(manifest_path)) if manifest_path.exists() else {"portraits": []}
+    portrait_rows = {row["slug"]: row for row in manifest["portraits"]}
+    licence_lines = [line for line in read(REPO_ROOT / "docs" / "licences.md").splitlines()
+                     if line.startswith("|")]
+    admin_by_slug = {a["slug"]: a for a in admins["administrations"]}
+
+    for slug, row in portrait_rows.items():
+        path = REPO_ROOT / row["file"]
+        if not path.exists():
+            fail(failures, f"portrait {slug}: {row['file']} is in the manifest but not on disk")
+            continue
+        if hashlib.sha256(path.read_bytes()).hexdigest() != row["sha256"]:
+            fail(failures, f"portrait {slug}: the file's sha256 does not match the manifest — the image was "
+                           f"swapped without a licence review")
+        if slug not in admin_by_slug:
+            fail(failures, f"portrait {slug}: no administration carries this slug")
+        elif admin_by_slug[slug]["portrait_status"] != "supplied":
+            fail(failures, f"portrait {slug}: the file and manifest exist but administrations.json says "
+                           f"{admin_by_slug[slug]['portrait_status']!r} — regenerate the reference")
+        matches = [line for line in licence_lines if row.get("file_title", "~none~") in line]
+        if len(matches) != 1:
+            fail(failures, f"portrait {slug}: {len(matches)} rows in docs/licences.md name its file title; the "
+                           f"licence register must carry exactly one")
+        else:
+            cells = [cell.strip() for cell in matches[0].strip().strip("|").split("|")]
+            if len(cells) < 4 or "yes" not in cells[3].lower():
+                fail(failures, f"portrait {slug}: docs/licences.md does not permit redistribution "
+                               f"({cells[3] if len(cells) > 3 else 'no cell'!r})")
+        if f'assets/presidents/{slug}.jpg' not in cover:
+            fail(failures, f"portrait {slug}: the cover does not render the supplied file")
+        if row["attribution_text"] not in cover:
+            fail(failures, f"portrait {slug}: its attribution text is not in the cover footer")
+
+    for slug, admin in admin_by_slug.items():
+        if admin["portrait_status"] == "supplied" and slug not in portrait_rows:
+            fail(failures, f"portrait {slug}: administrations.json claims a portrait the manifest does not carry")
+        if admin["portrait_status"] == "supplied" and 'has-portrait' not in cover:
+            fail(failures, f"portrait {slug}: supplied but the cover draws no party backdrop for it")
+
     # ---- nothing on the site reaches the network -------------------------------------------------------
     for page, markup in flow.items():
         for match in re.findall(r'(?:src|href)="(https?:[^"]+)"', markup):
             fail(failures, f"{page}: {match} is an external reference — the site reads only its own files")
+
+    # ---- every asset a page points at resolves from that page's own URL --------------------------------
+    # The blind spot this closes: the checks above proved a figure existed in `dist/assets/…` but never that
+    # the markup pointed *at* it. Every figure on /chart/ and /graph/ was written `assets/…` on a page served
+    # from /chart/ or /graph/, so the deployed site requested `/chart/assets/…` and 404ed while all checks
+    # stayed green. A path is a claim until something resolves it.
+    for page in PAGES:
+        base = (DIST / page).parent
+        for attr, value in re.findall(r'(src|href)="([^"]+)"', read(DIST / page)):
+            if value.startswith(("http://", "https://", "#", "mailto:", "data:", "javascript:")):
+                continue
+            target = (base / value.split("?", 1)[0]).resolve()
+            if value.split("?", 1)[0].endswith("/"):
+                target = target / "index.html"
+            if not target.exists():
+                fail(failures, f"{page}: {attr}={value!r} does not resolve to a file in the build")
 
     # ---- the wording on screen is the declared wording --------------------------------------------------
     statuses = set(guide["status"])
@@ -256,6 +422,9 @@ def main() -> int:
           f"published coefficients, each on its own outcome with its verdict and failed check")
     print(f"charts        : {len(comparisons)} comparison figures, every group labelled, every chart stamped")
     print(f"breaks        : {len(breaks)} changepoint panels, every declared break shown, every refusal explained")
+    print(f"designs       : 3 figures byte-matched to their artifacts, A's number and check, the grid's support "
+          f"and flips, C's reason, {len(events['verdicts'])} transition verdicts, the rule, {len(events['not_claimed'])} "
+          f"not-claimed statements")
     print(f"ask           : the gate's own rules, the contract and the corpus emitted; the measured limit stated")
     print("wording       : every status pill is a declared word; no count is typed into the renderer")
     return 0

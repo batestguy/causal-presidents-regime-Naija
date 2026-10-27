@@ -38,9 +38,9 @@ or a constant declared in an `analysis/specs/` file. The page computes nothing.
 | `registry/dags/index.json` + 36 cards | 2026-10-18 | 12 outcomes, 3 designs, per-card status/blocker, adjustment sets, published results A/B, counts 2/34 | 2, 3, 4 |
 | `registry/dags/*.svg` | 2026-10-18 | one causal graph per (outcome × design) = 36 | 3 |
 | `registry/series/2026-10-18/` | 2026-10-18 | 12 outcome panels + captions, observed/interpolated/unobserved counts, Stage 3 status, definition breaks | 1, 4, 5 |
-| `registry/events/2026-10-18/` | 2026-10-18 | 4 transitions × 2 outcomes, placebo p, pre-trend verdicts, party split as description, `not_claimed` | 5 |
-| `registry/estimates/2026-10-18/` + forest plot | 2026-10-18 | 12 specifications, verdicts with failed checks | 4 |
-| `registry/robustness/2026-10-18/` + curve | 2026-10-18 | 105 specifications, support counts, sign-flip levels | 4 (bonus) |
+| `registry/events/2026-10-18/` | 2026-10-18 | 4 transitions × 2 outcomes, placebo p, pre-trend verdicts, party split as description, `not_claimed` | 6b |
+| `registry/estimates/2026-10-18/` + forest plot | 2026-10-18 | 12 specifications, verdicts with failed checks | 4, 6b |
+| `registry/robustness/2026-10-18/` + curve | 2026-10-18 | 105 specifications, support counts, sign-flip levels | 6b |
 | `registry/diagnostics/2026-10-18/` | 2026-10-18 | per-design gates, blockers, next steps, card status counts | 2, 3 |
 | `registry/rag/2026-10-18/` + gate/contract specs + glossary | 2026-10-18 | corpus, eval set, eight gate rules, three answer shapes | 6 |
 | **`registry/reference/administrations.json`** (new) | as index | five administrations, portrait paths and status | 0 |
@@ -75,6 +75,7 @@ or a constant declared in an `analysis/specs/` file. The page computes nothing.
 | D-18 | Hosting | **GitHub Pages, deployed from CI only when `verify.sh` is green.** The Streamlit app stays in the repo as the local working tool. |
 | D-19 | Framework | **Static site generated from the registry** (HTML/CSS/SVG, no framework, no npm dependency), because the content is already static and the flow needs real layout and real URLs. |
 | D-20 | Changepoints | **In scope for this build**: a third descriptive family describing when each outcome series changes, held to the rules in §6.3. |
+| D-22 | Design-level figures | **One page, `/designs/`, outside the flow.** The forest plot, the specification curve and the event study already exist as artifact-backed figures with recorded byte counts; they were reachable from nowhere. The page reads them and the fields that decided each verdict, shows transitions by month rather than by president, and is linked from the estimate screen and the Ask footer. |
 
 ### Assumptions where the interview left a gap
 
@@ -169,7 +170,33 @@ A Design B number says in those words that it is about the **national FAAC chann
   layer reads (§6.4). It states its measured limit (36 of 38 answered) in one line and refuses with rule, meaning,
   passage and citation.
 - **Go deeper:** the card-level screens (Model card, Design-level results, What this reads) generated into the
-  same site, so the contract of `docs/app.md` §4 still holds on the published page.
+  same site, so the contract of `docs/app.md` §4 still holds on the published page. The **Design-level results**
+  half is built as Screen 6b; the Model card and What-this-reads halves are not.
+
+### Screen 6b — The design-level results → `/designs/`
+
+The three figures Stage 8 published — the forest plot, the specification curve and the event study — each exist
+as an artifact with a recorded byte count, and each is reachable from exactly one page. This is that page. It is
+**not a step in the flow**: it is not per-outcome, so putting it between two outcome screens would either break
+the selection carried in the URL or imply that the reader's outcomes change what it shows.
+
+- **One section per artifact family:** what was published (the forest plot, which carries a panel per design),
+  the grid that qualifies it (the specification curve), Design C's non-run, and the transition study. Each
+  section carries the figure, the artifact's own `layout` sentence describing what it draws, and the fields that
+  decided the verdict.
+- **The number is never alone.** Design A's section shows its verdict (`estimated_not_identified`), the failed
+  check in the artifact's words, the 24-month placebo estimate and the lead-shift p with its draw count. Design B's
+  shows its support counts, the coefficient range across the grid and the in-time placebo p. Design C's shows why
+  it was not run and its declared next step — the absence is an argument, not a blank.
+- **The transitions are shown by month, never by name.** The event study is a timing comparison; the artifacts
+  carry surnames in their `label` fields, and this page prints none of them. That is the "no per-president
+  verdict" rule (§5.5) applied to the one screen where breaking it would be easy.
+- **What it reads:** `registry/estimates/<vintage>/` (specifications, verdicts, checks, the forest figure),
+  `registry/robustness/<vintage>/` (support, spread, the in-time placebo, the curve) and
+  `registry/events/<vintage>/` (verdicts, the declared rule, `not_claimed`, the event figure). No new stage and
+  no new number: this screen is a reader for artifacts that already exist.
+- **Reached from:** the estimate screen, where a card with no number already names the design's result instead of
+  showing one, and the Ask screen's footer.
 
 ---
 

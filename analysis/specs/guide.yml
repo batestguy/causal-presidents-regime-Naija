@@ -31,6 +31,7 @@ cover:
   rail_heading: "Five administrations"
   rail_note: "The faces are the study window, not a scorecard. No number on this site belongs to one president."
   ratio: "{estimated} of {cards} model cards carry a published number; the rest say why not."
+  portrait_credits: "Photograph credits"
   paragraphs:
     - "This is a study of what can and cannot be said about Nigeria between {window_first} and {window_last}, across {administrations} administrations. Its first line is the honest one: most of the questions a reader wants answered about a presidency cannot be answered with this data, and the site says which, and why, before it shows a number."
     - "The twelve outcomes here cover {spine_total} outcome-months: {spine_observed} are observations, {spine_interpolated} are months filled in between observations, and {spine_unobserved} have no observation at all. Every panel draws those three states differently, so a line that is mostly dotted is telling you it is mostly a rule rather than a record."
@@ -111,6 +112,19 @@ coverage:
   partial: "partly measured"
   declared_gap: "declared gap"
 
+# The parties the five administrations belong to, with the colours their Wikipedia infoboxes declare. The site
+# draws these as vertical bands behind each portrait — a declared backdrop, not an endorsement (see
+# docs/portraits.md §1, and the override recorded in docs/decisions.md).
+parties:
+  PDP:
+    name: "Peoples Democratic Party"
+    bands: ["#006903", "#FFFFFF", "#F0001C"]
+    source: "English Wikipedia infobox colour swatches, retrieved 2026-10-27"
+  APC:
+    name: "All Progressives Congress"
+    bands: ["#87BEEB", "#39944A", "#FFFFFF", "#E52B33"]
+    source: "English Wikipedia infobox colour swatches, retrieved 2026-10-27"
+
 direction:
   up: "higher is better"
   down: "lower is better"
@@ -151,6 +165,7 @@ ask:
   loading: "Reading the corpus…"
   error: "The answer layer did not load in this browser. The local app's Ask tab reads the same corpus."
   measured: "{answered} of {total} questions in the measured set are answered; the rest are declined by the answer contract and say why."
+  deeper: "The design-level results"
   refused_heading: "Why this is refused"
   declined_heading: "Why there is no answer"
   source_heading: "Where this comes from"
@@ -182,3 +197,38 @@ changepoint:
   note: "A break is a description of the series. It is not evidence that a presidency caused it."
   refused: "No break is fitted for this outcome: it has too few native observations for the search to be meaningful."
   timing_note: "A break within two months of a swearing-in is recorded as timing only."
+
+# Screen 6b — the design-level results. One section per artifact family. Every value below is filled from an
+# artifact field; the templates carry no number of their own.
+design_results:
+  heading: "The design-level results"
+  intro: "Three designs were specified. Two were estimated and one was not, and the figures on this page are the artifacts that decided those verdicts — not illustrations of them. Each one is drawn by R from the same rows this page counts, and its byte count is recorded in the JSON beside it."
+  figure_note: "The figure is the artifact. If it were one re-fit behind the table, its recorded byte count would no longer match the file."
+  verdict_label: "Verdict"
+  published_heading: "What was published"
+  row: "{outcome} — {coefficient}, 95 % interval [{interval}], {obs} observations"
+  channel_outcome: "the national money that reached the states"
+  outcome_labels:
+    fatalities_civilians: "civilian fatalities (a UCDP item counted inside the security outcome)"
+  checks_heading: "The checks that decided it"
+  grid_heading: "What the grid found"
+  flip: "{axis} = {level} — {n_opposite} of {n} specifications point the other way"
+  support: "{n_positive} of {n} specifications are positive, {n_negative} negative, and {n_near_zero} sit inside the near-zero band."
+  spread: "Across the grid the coefficient runs from {min} to {max}."
+  placebo: "The in-time placebo returns p = {p_value} over {n_draws} shifted alignments."
+  mis_timed: "The mis-timed dose, shifted {lead_months} months, returns {coefficient}."
+  lead_shift: "The lead-shift check covers {n_draws} shifted alignments and returns p = {p_value}."
+  not_run_heading: "Why this design was not run"
+  next_step: "Next step"
+  transition_heading: "Did anything move at a transition?"
+  transition_note: "Four transitions, two outcomes, and a placebo drawn from every eligible month. The rows below name the month, not the person: a shift at a transition is not a verdict on a presidency, and this page will not print one."
+  not_claimed_heading: "What this does not claim"
+  rule_heading: "The rule the verdicts were read against"
+  event_line: "{month} · {outcome} · {status} · placebo p = {p_value}"
+  event_status:
+    shift_detected: "a shift survives both checks"
+    not_interpretable_pre_trend: "a shift, but the pre-trend check fails"
+    no_shift_detected: "no shift beyond the placebo"
+    check_not_available: "the check cannot be run"
+  outcome_unknown: "an outcome the registry does not label"
+  back: "Back to the flow"

@@ -3,10 +3,10 @@
   "stage": "9-prep",
   "layer": "descriptive group means and group series for the guided flow — description, not inference",
   "vintage": "2026-10-18",
-  "generated_at": "2026-10-27T02:32:15+0100",
+  "generated_at": "2026-10-27T03:19:03+0100",
   "generator": {
     "script": "analysis/R/08_comparisons.R",
-    "git_sha": "08de24c"
+    "git_sha": "ff2757c"
   },
   "spec": {
     "path": "analysis/specs/comparisons.yml",

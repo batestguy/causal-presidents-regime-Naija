@@ -105,6 +105,21 @@ h4 { font-size: .86rem; font-family: var(--sans); text-transform: uppercase; let
   position: relative;
 }
 .slide-figure img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* A supplied portrait sits on its party's declared colours: the bands show as a matte and a caption strip.
+   The photograph itself is only cropped and resized (docs/portraits.md §3); nothing is cut out of it. */
+.slide-figure.has-portrait { position: relative; background: var(--party-bands); }
+.slide-figure.has-portrait img {
+  position: absolute; left: 12px; right: 12px; top: 12px; bottom: 46px;
+  width: calc(100% - 24px); height: calc(100% - 58px);
+  border-radius: 6px;
+}
+.party-tag {
+  position: absolute; left: 0; right: 0; bottom: 0; margin: 0; padding: .6rem .5rem;
+  font-size: .66rem; letter-spacing: .09em; text-transform: uppercase; text-align: center;
+  color: #fff; background: rgba(12, 24, 16, .55);
+}
+.credit-list { margin: .5rem 0 0; padding-left: 1.1rem; font-size: .78rem; color: var(--ink-faint); }
+.credit-list li { margin-bottom: .2rem; }
 .frame-empty { width: 100%; height: 100%; display: grid; place-items: center; text-align: center; gap: .2rem; }
 .frame-empty .initials { font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.2rem); color: #b7b0a0; letter-spacing: .04em; }
 .frame-empty .frame-note { font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: #a49d8c; }
@@ -337,6 +352,19 @@ details.alt summary { display: flex; gap: .5rem; align-items: center; }
 img.chart { width: 100%; height: auto; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
 .chart-figure figcaption { font-size: .78rem; color: var(--ink-faint); margin-top: .5rem; }
 .group-list[hidden] { display: none; }
+
+/* ---------------------------------------------------------------- design-level results */
+
+.designs .block { margin-bottom: 1.2rem; }
+.designs .block h2 { font-size: 1.3rem; margin-bottom: .8rem; }
+.designs .block h3 { font-size: 1.05rem; margin: 1.6rem 0 .5rem; }
+.designs .block h4 {
+  font-size: .82rem;
+  margin: 1.1rem 0 .35rem;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
 
 /* ---------------------------------------------------------------- small screens */
 

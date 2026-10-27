@@ -541,13 +541,26 @@ corpus currently summarises rather than chunks (the donor panel, the robustness 
 
 **STATUS: READ-ONLY APP BUILT (2026-10-21), REFUSAL GATE BUILT AND MEASURED (2026-10-22), GATE AT v3
 AND ANSWER LAYER BUILT (2026-10-22), CHAT TAB BUILT (2026-10-22), OUTCOME PANELS BUILT (2026-10-24),
-STATIC GUIDED FLOW BUILT (2026-10-25), ITS VERIFIERS BROKEN ON PURPOSE (2026-10-27).**
+STATIC GUIDED FLOW BUILT (2026-10-25), ITS VERIFIERS BROKEN ON PURPOSE (2026-10-27), DESIGN-LEVEL RESULTS
+SCREEN BUILT AND THE FIGURE PATHS FIXED (2026-10-27).**
 `app/streamlit_app.py` + `app/registry_data.py`,
 `tests/verify_app.py`, `docs/app.md`. Outcome → design → assumption → adjustment set → cannot-rule-out →
 the published number or the reason there is none, plus one tab for the two design-level results and one for
 asking the registry a question. It reads `registry/dags/`, and for the chat tab `registry/rag/<vintage>/`,
 `analysis/specs/` and `docs/glossary.md`: no database, no network, no model, and no coefficient typed into
 the UI.
+
+**Screen 6b, the design-level results (2026-10-27).** The three figures Stage 8 published — the forest plot, the
+specification curve and the event study — existed as artifact-backed SVG files with recorded byte counts and were
+reachable from **no page at all**. `site/build.py` now renders `/designs/`: the figure, the artifact's own
+`layout` sentence, the verdict and the check that decided it, the grid's support counts and sign-flip levels,
+Design C's reason and next step, and the transition verdicts **by month, never by president** (the screen where
+the no-attribution rule is easiest to break). It is not a flow step — it is not per-outcome, so it sits outside
+the selection the URL carries — and it is linked from the estimate screen and the Ask footer. The same session
+found a site-wide defect the verifier could not see: every figure on `/chart/` and `/graph/` was written
+`src="assets/…"` on a page served from `/chart/` or `/graph/`, so the deployed site requested
+`/chart/assets/…` and **404ed while every check stayed green**. The verifier proved a file existed in `dist/`;
+it never resolved the markup. It now does, for every `src` and `href` on every page.
 
 **Why read-only first.** The page a reader can use today is the one Stage 8 was built to make possible, and
 it has no failing gate in front of it. The chat tab does: out-of-scope refusal measures **0.25**, so a

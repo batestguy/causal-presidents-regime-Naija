@@ -2,7 +2,7 @@
   "stage": 7,
   "layer": "robustness",
   "vintage": "2026-10-18",
-  "generated_at": "2026-10-27T02:03:15+0100",
+  "generated_at": "2026-10-27T03:18:39+0100",
   "generator": "analysis/R/04_robustness.R",
   "spec": "analysis/specs/robustness.yml",
   "verifier": "tests/verify_stage7.py",
@@ -25,7 +25,7 @@
       "design_b": {
         "stage6": 0.51811762897,
         "robustness": 0.51811762897,
-        "abs_diff": 4.2580383663e-12
+        "abs_diff": 4.2583714333e-12
       },
       "tolerance": 1e-08
     }
@@ -1055,7 +1055,7 @@
     "path": "specification_curve.svg",
     "layout": "two panels (A above, B below), each sorted by coefficient. Top: estimate with its 95 % interval, coloured by sign, the zero line, and the pre-registered specification marked. Bottom: the axis levels of each specification in the same order, so a sign flip can be read against the choice that caused it.",
     "n_points": 105,
-    "bytes": 94502
+    "bytes": 93677
   },
   "specifications": [
     {

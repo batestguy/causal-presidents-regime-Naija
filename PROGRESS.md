@@ -1,12 +1,87 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-10-27 (sixteenth session) · **Stage:** 9 — the guided flow is built and deployed from
-CI, and its three new verifiers are break-tested · **verified at vintage 2026-10-18**: `scripts/verify.sh` in
-one unbroken run (stages 0–8f, then the corpus, both evals and all twenty verifiers) with
-`HF_HUB_OFFLINE=1` for the cached embedding model; **0 failures, 50 registry documents schema-validated,
-13 break-test cases — 12 caught, 1 measured to change nothing**
+**Last updated:** 2026-10-27 (seventeenth session) · **Stage:** 9 — the design-level results screen, the cover's
+five portraits, and the GitHub Pages site enabled for the first time · **verified at vintage 2026-10-18**:
+`scripts/verify.sh` in one unbroken run (stages 0–8f, then the corpus, both evals and all twenty verifiers) with
+`HF_HUB_OFFLINE=1` for the cached embedding model; **`all checks passed`, 50 registry documents schema-validated,
+9 new break-test mutations (6 design-screen, 3 portrait) — all caught and restored byte-for-byte**
 
-**This session, in one line:** the **outcome panels** — `analysis/specs/series_figures.yml`,
+**This session, in one line:** **Screen 6b — the design-level results** (`site/build.py` → `/designs/`, from
+`registry/estimates`, `registry/robustness` and `registry/events`), because the three figures Stage 8 published
+were reachable from **no page at all** — and building the reader for them found two defects, one of which the
+published site had been serving since the day the flow went up.
+
+- **The screen reads; it does not compute.** Each section is the artifact's own fields: the figure and its
+  `layout` sentence, Design A's verdict and the check that decided it (the lead-shift p, the 24-month placebo),
+  its three published rows, Design B's number with the grid's support counts and the five sign-flip levels,
+  Design C's reason and next step, and the transition study's eight verdicts with the rule they were read
+  against and four `not_claimed` statements. `analysis/specs/guide.yml` gained a `design_results` section, so
+  every sentence on the page is declared wording or an artifact string. No new stage, no new number.
+- **It is not a flow step, and that is deliberate.** It is not per-outcome, so putting it between two outcome
+  screens would either break the selection carried in the URL or imply the reader's outcomes change it. It is
+  linked from the estimate screen — where a card with no number already names the design's result — and from the
+  Ask footer, which is the "go deeper" the spec declared and never built.
+- **The transitions are shown by month, never by name.** The event artifact carries surnames in its `label`
+  fields; the page prints none of them. This is the one screen where a per-president reading would be easiest to
+  produce by accident, and `verify_site.py`'s surname guard now covers it like every other page.
+- **The site was serving 404s for every figure on `/chart/` and `/graph/`.** Figure paths were written
+  `src="assets/…"` on pages served one directory down, so the browser requested `/chart/assets/…` and got nothing
+  — while the verifier stayed green, because it proved the file existed in `dist/assets/` and never that the
+  markup pointed at it. Found by opening the page in a browser, not by reading it. Every `src` and `href` on
+  every page is now resolved from that page's own URL; the three design figures return 200 over HTTP.
+- **The robustness curve's byte count was platform-dependent, and the new check caught it.** `04_robustness.R`
+  recorded `file.info()$size` — raw bytes on this Windows checkout — so it published **94,502** for a file whose
+  canonical (LF) size is **93,677**. `03_estimate.R` had recorded canonical bytes since the forest plot's own
+  contract was fixed; `verify_stage7.py` never checked the number, so nothing failed. The engine now uses the
+  same `canonical_bytes()` rule, the vintage was regenerated in place, and a field-by-field diff of the artifact
+  before and after shows **only `figure.bytes` and `generated_at` moved** — no coefficient, count or verdict.
+- **Six mutations, six caught, every file restored byte-for-byte** (`.probe/break_designs.py`, gitignored): the
+  curve dropped from the page, A's failed check dropped, C's next step dropped, all transition rows dropped, the
+  support count stripped of its positive tally, and the forest plot's recorded size moved by one byte.
+- **Two verifier defects were found while writing the check, not by reading it.** `plain()` stripped tags
+  *after* resolving entities, so a literal `<` in the artifact prose (`p <= 0.05`) ate the rest of the sentence;
+  and the transition regex swallowed `0.6102` plus the next row's `2007-05` once tags were removed. Both are
+  fixed by making the check stricter, not looser.
+- **Left standing, and recorded rather than fixed:** the forest plot's right-hand labels are clipped at the
+  SVG's own edge (`B — oil to state allocations (114 national months, 2016-12 to 2026-0…`). That is a layout
+  question for `03_estimate.R`, and fixing it means re-rendering Stage 6 and everything whose bytes it records —
+  a separate decision, not a side effect of this page.
+- **Not done:** the chat still cannot point at a panel (no `figure` answer shape, no figure chunks in the
+  corpus), and the Model card and What-this-reads halves of the "go deeper" screens remain unbuilt.
+
+**Then, same session — the cover's five empty frames, and a deploy that had never happened.** The requester asked
+for photographs of all five presidents with their party flag behind them. The cover had shipped placeholders by
+design (`docs/portraits.md`), so this was a licence task before it was a design task.
+
+- **Five Commons portraits, each licence read on its own file page.** Obasanjo is public domain (Helene C.
+  Stikkel); Yar'Adua and Jonathan are CC BY-SA 2.0 (World Economic Forum); Buhari and Tinubu are CC BY-SA 4.0
+  (Bayo Omoboriowo; Nosa Asemota). Each is recorded twice, as `docs/portraits.md` requires: a row in
+  `docs/licences.md` with the licence URL and the attribution string, and an entry in
+  `site/assets/presidents/manifest.json` with the `sha256`, source, author, retrieval date and crop note.
+  `scripts/build_administrations.py` was re-run rather than hand-edited, so `portrait_status` is `supplied`
+  because the files exist.
+- **The party backdrop is an override, and it is written down.** `docs/portraits.md` §1 excludes "campaign or
+  party-branded imagery" because a portrait on an analysis is not an endorsement. The requester asked for the
+  flag and accepted the override; it is recorded in `docs/decisions.md` as **P-02**, with the colours declared in
+  `guide.yml` from the parties' Wikipedia infobox swatches (PDP `#006903`/white/`#F0001C`; APC
+  `#87BEEB`/`#39944A`/white/`#E52B33`) rather than sampled from a logo.
+- **Crop and resize only, so the bands are a matte, not a silhouette.** Every file is 600 × 800 (the frame is
+  `aspect-ratio: 3 / 4`, which the procedure's 600 × 750 row contradicted — **P-03** corrects it), JPEG q85,
+  EXIF stripped, 76–101 KB each, and the photograph itself is never cut out (**P-04**).
+- **The manifest is now enforced rather than decorative.** None of the five invariants `docs/portraits.md` §4
+  declared had ever been implemented. `tests/verify_site.py` now checks the file exists, its `sha256` matches,
+  the slug names an administration marked `supplied`, exactly one `docs/licences.md` row permits redistribution,
+  and the attribution text appears in the cover footer — so a swapped image fails on the hash and an unlicensed
+  one fails on the register.
+- **The deployed site had never existed.** `https://batestguy.github.io/causal-presidents-regime-Naija/`
+  returned GitHub Pages' 404: the repository had no Pages site at all, so the `pages` job had nothing to deploy
+  to. Pages is now enabled with `build_type: workflow` (C-74) — the deploy still only happens from a green chain,
+  and this commit is the first one that can reach it.
+- **The full chain was run after the design screen and is green end-to-end:** `scripts/verify.sh` → **`all checks
+  passed`** (exit 0), including the corpus and both evals, with `verify_site.py` reporting 8 pages and
+  `verify_answer_js.py` reproducing **38 of 38** measured answers field for field.
+
+**Previous session, in one line:** the **outcome panels** — `analysis/specs/series_figures.yml`,
 `analysis/R/07_series_figures.R`, `registry/series/2026-10-18/` (12 SVGs + `index.json`) and
 `tests/verify_series_figures.py` — so that a card's reason is shown beside the series it is about, and the
 series is the reason: **764 of the 3,008 outcome-months are observations; 1,826 are interpolated; 1,418 have

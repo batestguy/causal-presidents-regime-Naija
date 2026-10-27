@@ -602,7 +602,21 @@ draw_strip(all_rows, "A", unlist(axis_names$A))
 draw_panel(all_rows, "B", sprintf("Design B — national fiscal transmission, cumulative elasticity at h=%d, 24 specifications", h_focus))
 draw_strip(all_rows, "B", unlist(axis_names$B))
 invisible(dev.off())
-message(sprintf("figure: %s (%d bytes)", spec$figure$path, file.info(svg_path)$size))
+# The figure's size is recorded on its *canonical* bytes (CRLF collapsed to LF), because `.gitattributes`
+# stores this repository's text with `eol=lf`. A raw `file.info()$size` is true only on the Windows checkout that
+# produced it: after any clone or on the Linux runner the file is ~800 bytes smaller and the contract check would
+# call a fresh figure stale. `03_estimate.R` applies the same rule to the forest plot, and the Python consumers
+# (`tests/verify_stage7.py`, `tests/verify_site.py`) apply it too — this engine recorded raw bytes until that
+# mismatch was found by the site verifier.
+canonical_bytes <- function(path) {
+  raw <- readBin(path, "raw", n = file.info(path)$size)
+  if (length(raw) == 0) return(0L)
+  is_cr <- raw == as.raw(13)
+  is_lf <- raw == as.raw(10)
+  crlf <- c(FALSE, is_cr[-length(is_cr)] & is_lf[-1])
+  sum(!crlf)
+}
+message(sprintf("figure: %s (%d canonical bytes)", spec$figure$path, canonical_bytes(svg_path)))
 
 # ---------------------------------------------------------------------------------------------
 # Write
@@ -680,7 +694,7 @@ robustness <- list(
   spread = list(design_b = spread_b),
   unbuilt_axes = unname(spec$unbuilt_axes),
   figure = list(path = spec$figure$path, layout = spec$figure$layout,
-                n_points = nrow(rows_dt), bytes = unname(file.info(svg_path)$size)),
+                n_points = nrow(rows_dt), bytes = canonical_bytes(svg_path)),
   specifications = unname(lapply(all_rows, function(r) {
     r$preferred <- isTRUE(r$preferred)
     r$sign <- if (r$coefficient > 0) "positive" else if (r$coefficient < 0) "negative" else "zero"

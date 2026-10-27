@@ -124,6 +124,28 @@ stale vintage cannot be published without the stamp saying so.
 
 **Exit gate:** the chain is green end to end, every new verifier is in it, and the record says what was not done.
 
+### P8 — Screen 6b: the design-level results (built 2026-10-27)
+
+The plan above stopped at seven screens because the three figures Stage 8 published — the forest plot, the
+specification curve, the event study — are not per-outcome and had no home in the flow. They were therefore
+reachable from **nowhere** on the published site. This phase is the reader they were missing.
+
+| Deliverable | Gate |
+|---|---|
+| `site/build.py` renders `/designs/` from `registry/{estimates,robustness,events}/<vintage>/` | every string is an artifact field or a `guide.yml` entry; no number typed |
+| `analysis/specs/guide.yml` gains a `design_results` section | every figure label, verdict line and event-status word is declared there |
+| `tests/verify_site.py` extends to the screen | three figures byte-matched to their artifacts, A's number and failed check, the grid's support and flips, C's reason and next step, one line per transition verdict, the verdict rule, every `not_claimed` statement |
+| Every `src`/`href` on every page resolves from that page's URL | **the check that found the defect** — figure paths were written root-relative on pages served one directory down, so `/chart/` and `/graph/` 404ed every image while the verifier stayed green |
+
+**Exit gate:** the chain is green with the screen in it, the figures load over HTTP, and six mutations — a dropped
+figure, a dropped failed check, a dropped next step, dropped transition rows, a support count with its positive
+tally removed, and a byte count one out — each turn the verifier red and are restored byte-for-byte.
+
+**Not in this phase:** the chat cannot point at a figure (no `figure` answer shape, no figure chunks in the
+corpus), the Model card and What-this-reads halves of the "go deeper" screens are still unbuilt, and the forest
+plot's right-hand labels are clipped at the SVG's own edge — an artifact layout question for `03_estimate.R`, not
+for this page.
+
 ---
 
 ## 3. Risks, and what each one costs if ignored

@@ -2,21 +2,21 @@
  "schema_version": "0.1.0",
  "layer": "RAG retrieval evaluation (offline; generation metrics declared, not measured)",
  "vintage": "2026-10-18",
- "generated_at": "2026-10-27T01:05:36+00:00",
+ "generated_at": "2026-10-27T02:21:38+00:00",
  "generator": {
   "script": "scripts/eval_rag.py",
   "spec": "analysis/specs/rag.yml",
-  "git_sha": "2f8284d"
+  "git_sha": "ff2757c"
  },
  "corpus": {
   "path": "corpus.json",
-  "sha256": "ba56e232fdc837708380fd6ac8d6314454fdb913a557fbca6cbd099a8211da80",
+  "sha256": "981bcd71231d33dc24450663948b3ed4bc2e0ab982d2eb9eeacedd22fabc380f",
   "chunks": 482,
   "vintage": "2026-10-18"
  },
  "eval_set": {
   "path": "eval_set.json",
-  "sha256": "b12efe9c5e2346aec99821ff5c535b95ba467d7949e034eedc6783b94fdaaf4c",
+  "sha256": "a2ab01c04c9dcc8d84e71cbf6f15b6278c43fb08cea4e0b47c2e0b7804e78bbe",
   "counts": {
    "questions": 22,
    "answerable": 16,

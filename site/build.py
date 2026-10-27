@@ -38,7 +38,7 @@ DIST = REPO_ROOT / "site" / "dist"
 RANK = {"pass": 0, "degraded": 1, "fail": 2, "not_attempted": 3}
 DOMAIN_ORDER = ("health", "education", "security", "economy")
 PAGES = ("index.html", "study/index.html", "compare/index.html", "graph/index.html",
-         "estimates/index.html", "chart/index.html", "ask/index.html")
+         "estimates/index.html", "chart/index.html", "ask/index.html", "designs/index.html")
 DOMAIN_LABEL = {"health": "Health", "education": "Education", "security": "Security", "economy": "Economy"}
 
 
@@ -47,12 +47,28 @@ def load(path: Path):
 
 
 def md(value) -> str:
-    """The subset of Markdown the artifacts use in their captions: **bold** only."""
+    """The subset of Markdown the artifacts use in their prose: **bold**, *italic* and `code`.
+
+    A single unmatched marker is put back rather than left as half a tag, so an artifact with an odd number of
+    asterisks renders as text instead of breaking the page.
+    """
     text = html.escape(str(value))
     while "**" in text:
         text = text.replace("**", "<strong>", 1)
         if "**" in text:
             text = text.replace("**", "</strong>", 1)
+    while "*" in text:
+        text = text.replace("*", "<em>", 1)
+        if "*" in text:
+            text = text.replace("*", "</em>", 1)
+        else:
+            text = text.replace("<em>", "*", 1)
+    while "`" in text:
+        text = text.replace("`", "<code>", 1)
+        if "`" in text:
+            text = text.replace("`", "</code>", 1)
+        else:
+            text = text.replace("<code>", "`", 1)
     return text
 
 
@@ -76,6 +92,13 @@ def fill_text(template: str, values: dict) -> str:
 
 def signed(value: float) -> str:
     return f"{value:+.4f}"
+
+
+def party_bands(bands: list[str]) -> str:
+    """A flag-like backdrop from declared colours: equal vertical bands, left to right."""
+    n = len(bands)
+    stops = ", ".join(f"{colour} {i * 100 / n:.4f}% {(i + 1) * 100 / n:.4f}%" for i, colour in enumerate(bands))
+    return f"linear-gradient(90deg, {stops})"
 
 
 def load_glossary(root: Path) -> dict[str, str]:
@@ -129,6 +152,17 @@ def build_context(root: Path) -> dict:
     breaks_path = root / "registry" / "changepoints" / vintage / "changepoints.json"
     changepoints = load(breaks_path) if breaks_path.exists() else {"outcomes": []}
     breaks = {row["id"]: row for row in changepoints.get("outcomes") or []}
+    # Screen 6b reads the three design-level artifact families. They are loaded by vintage, like every other
+    # input, so a figure from one vintage can never sit beside a verdict from another.
+    estimates = load(root / "registry" / "estimates" / vintage / "estimates.json")
+    robustness = load(root / "registry" / "robustness" / vintage / "robustness.json")
+    events = load(root / "registry" / "events" / vintage / "events.json")
+    # The supplied portraits, keyed by slug. A file is only rendered when the licence manifest has a row for it;
+    # an entry without its file fails the site verifier, not the build.
+    manifest_path = root / "site" / "assets" / "presidents" / "manifest.json"
+    portraits = {}
+    if manifest_path.exists():
+        portraits = {row["slug"]: row for row in load(manifest_path)["portraits"]}
 
     cards: dict[tuple[str, str], tuple[dict, dict]] = {}
     for entry in index["dags"]:
@@ -290,6 +324,126 @@ def build_context(root: Path) -> dict:
             } if oid in breaks else None,
         })
 
+    # ---- Screen 6b: the design-level results, read field by field from the artifacts ------------------------
+    outcome_labels = {o["id"]: o["label"] for o in outcomes}
+    copy = guide["design_results"]
+    by_design = {row["id"]: row for row in estimates["designs"]}
+
+    def published_rows(design_id: str) -> list[dict]:
+        # An outcome the twelve-outcome index does not carry (a UCDP item inside `fatalities`) is named by the
+        # declared wording in guide.yml rather than dropped from the table under a plot row that drew it.
+        declared = copy.get("outcome_labels") or {}
+        return [{
+            "outcome": outcome_labels.get(row["outcome"], declared.get(row["outcome"], copy["outcome_unknown"])),
+            "line": fill_text(copy["row"], {
+                "outcome": outcome_labels.get(row["outcome"],
+                                              declared.get(row["outcome"], copy["outcome_unknown"])),
+                "coefficient": signed(row["coefficient"]),
+                "interval": f"{row['ci_low']:.4f} – {row['ci_high']:.4f}",
+                "obs": f"{row['n_obs']:,}",
+            }),
+        } for row in estimates["specifications"] if row["design"] == design_id]
+
+    a_checks = by_design["A"]["checks"]
+    support_by_design = robustness["support"]["by_design"]
+    b_spread = robustness["spread"]["design_b"]
+    b_placebo = robustness["sensitivity"]["design_b"]["in_time_placebo"]
+    preferred_b = robustness["preferred"]["design_b"]
+
+    status_words = copy["event_status"]
+    transitions = {row["id"]: row for row in events["events"]}
+    event_rows = []
+    for verdict in events["verdicts"]:
+        if verdict["status"] not in status_words:
+            raise SystemExit(f"guide.yml design_results.event_status has no entry for {verdict['status']!r}")
+        transition = transitions.get(verdict["event"])
+        if transition is None:
+            raise SystemExit(f"events.json carries a verdict for an event with no row: {verdict['event']}")
+        event_rows.append({
+            "month": transition["transition_month"],
+            "outcome": outcome_labels.get(verdict["outcome"], copy["outcome_unknown"]),
+            "status": status_words[verdict["status"]],
+            "p_value": f"{verdict['placebo_p']:.4f}",
+        })
+    event_rows.sort(key=lambda row: (row["month"], row["outcome"]))
+
+    def support_line(design_id: str) -> str:
+        row = support_by_design[design_id]
+        return fill_text(copy["support"], {
+            "n": row["n"], "n_positive": row["n_positive"],
+            "n_negative": row["n_negative"], "n_near_zero": row["n_near_zero"],
+        })
+
+    design_results = {
+        "forest": {
+            "figure": f"assets/designs/{Path(estimates['figure']['path']).name}",
+            "bytes": estimates["figure"]["bytes"],
+            "layout": estimates["figure"]["layout"],
+        },
+        "curve": {
+            "figure": f"assets/designs/{Path(robustness['figure']['path']).name}",
+            "bytes": robustness["figure"]["bytes"],
+            "layout": robustness["figure"]["layout"],
+            "n_points": robustness["figure"].get("n_points"),
+        },
+        "event_figure": {
+            "figure": f"assets/designs/{Path(events['figure']['path']).name}",
+            "bytes": events["figure"]["bytes"],
+            "layout": events["figure"]["layout"],
+        },
+        "a": {
+            "status": (by_design["A"].get("verdict") or {}).get("status"),
+            "failed_check": (by_design["A"].get("verdict") or {}).get("failed_checks"),
+            "rows": published_rows("A"),
+            "mis_timed": fill_text(copy["mis_timed"], {
+                "lead_months": a_checks["placebo"]["lead_months"],
+                "coefficient": signed(a_checks["placebo"]["coefficient"]),
+            }),
+            "lead_shift": fill_text(copy["lead_shift"], {
+                "p_value": f"{a_checks['lead_shift']['p_value']:.4f}",
+                "n_draws": a_checks["lead_shift"]["n_draws"],
+            }),
+        },
+        "b": {
+            "status": (by_design["B"].get("verdict") or {}).get("status"),
+            "published": fill_text(copy["row"], {
+                "outcome": copy["channel_outcome"],
+                "coefficient": signed(preferred_b["coefficient"]),
+                "interval": f"{preferred_b['ci_low']:.4f} – {preferred_b['ci_high']:.4f}",
+                "obs": f"{preferred_b['n_obs']:,}",
+            }),
+        },
+        "grid": {
+            "a_support": support_line("A"),
+            "b_support": support_line("B"),
+            "b_spread": fill_text(copy["spread"], {
+                "min": f"{b_spread['coefficient_min']:.4f}",
+                "max": f"{b_spread['coefficient_max']:.4f}",
+            }),
+            "b_placebo": fill_text(copy["placebo"], {
+                "p_value": f"{b_placebo['p_value']:.4f}",
+                "n_draws": b_placebo["n_draws"],
+            }),
+            "reading": robustness["sensitivity"]["design_b"].get("in_time_placebo_interpretation"),
+            "flips": [fill_text(copy["flip"], {
+                "axis": row["axis"].replace("_", " "),
+                "level": str(row["level"]).replace("_", " "),
+                "n_opposite": row["n_opposite"],
+                "n": row["n"],
+            }) for row in robustness["support"]["flips"]["levels"]],
+        },
+        "c": {
+            "status": by_design["C"].get("status"),
+            "why": by_design["C"].get("why"),
+            "next_step": by_design["C"].get("next_step"),
+        },
+        "events": {
+            "rows": event_rows,
+            "rule": events["verdict_rule"],
+            "not_claimed": events["not_claimed"],
+        },
+    }
+
     counts = index["registry"]["card_estimate_counts"]
     spine = series["counts"]["spine_rows"]
     fills = {
@@ -311,10 +465,12 @@ def build_context(root: Path) -> dict:
         "generated_at": datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds"),
         "guide": guide,
         "administrations": admins["administrations"],
+        "portraits": portraits,
         "outcomes": outcomes,
         "counts": counts,
         "fills": fills,
         "spine": spine,
+        "design_results": design_results,
         "comparisons_generated_at": comparisons.get("generated_at"),
         "changepoints_generated_at": changepoints.get("generated_at"),
         "answer_sets": load(root / "registry" / "rag" / vintage / "answer_eval.json").get("sets", {}),
@@ -351,18 +507,27 @@ def render_cover(ctx: dict) -> str:
     guide = ctx["guide"]
     cover = guide["cover"]
     initials = {"obasanjo": "OO", "yaradua": "MY", "jonathan": "GJ", "buhari": "MB", "tinubu": "BT"}
+    parties = guide["parties"]
+    supplied = ctx["portraits"]
     slides = []
     for admin in ctx["administrations"]:
         slug = admin["slug"]
         end = admin["end_date"] or "present"
-        portrait = (
-            f'<img src="assets/presidents/{slug}.jpg" alt="Portrait of {html.escape(admin["president"])}">'
-            if admin["portrait_status"] == "supplied"
-            else f'<div class="frame frame-empty"><span class="initials">{initials.get(slug, "")}</span>'
-                 f'<span class="frame-note">image not supplied</span></div>'
-        )
+        credit = supplied.get(slug)
+        if credit:
+            party = parties[admin["party"]]
+            portrait = (f'<img src="assets/presidents/{slug}.jpg" '
+                        f'alt="Portrait of {html.escape(admin["president"])}">'
+                        f'<figcaption class="party-tag">{html.escape(admin["party"])} &middot; '
+                        f'{html.escape(party["name"])}</figcaption>')
+            figure_open = (f'<figure class="slide-figure has-portrait" '
+                           f'style="--party-bands: {party_bands(party["bands"])}">')
+        else:
+            portrait = (f'<div class="frame frame-empty"><span class="initials">{initials.get(slug, "")}</span>'
+                        f'<span class="frame-note">image not supplied</span></div>')
+            figure_open = '<figure class="slide-figure">'
         slides.append(f"""<li class="slide">
-  <figure class="slide-figure">{portrait}</figure>
+  {figure_open}{portrait}</figure>
   <div class="slide-body">
     <p class="slide-name">{html.escape(admin["president"])}</p>
     <p class="slide-meta">{html.escape(admin["party"])} · {admin["start_date"][:4]}–{end[:4]}
@@ -372,6 +537,11 @@ def render_cover(ctx: dict) -> str:
 </li>""")
 
     paragraphs = "".join(f"<p>{md(fill_text(p, ctx['fills']))}</p>" for p in cover["paragraphs"])
+    credits = ""
+    if supplied:
+        items = "".join(f"<li>{html.escape(row['attribution_text'])}</li>" for row in supplied.values())
+        credits = (f'<details class="about credits"><summary>{html.escape(cover["portrait_credits"])}</summary>'
+                   f'<ul class="credit-list">{items}</ul></details>')
     body = f"""<main class="cover">
   <header class="cover-head">
     <p class="eyebrow">{html.escape(cover['eyebrow'])}</p>
@@ -400,6 +570,7 @@ def render_cover(ctx: dict) -> str:
       <summary>About this study</summary>
       <div class="prose">{paragraphs}</div>
     </details>
+    {credits}
     <p class="vintage">Registry vintage {ctx['vintage']} · built {ctx['generated_at'][:16].replace('T', ' ')}</p>
   </footer>
 </main>
@@ -540,7 +711,7 @@ def render_graph(ctx: dict) -> str:
     {a['design']} — {html.escape(a['design_name'])}
   </summary>
   <p class="assumes">{html.escape(a['assumption'] or 'not stated')}</p>
-  <img class="graph" src="{a['svg']}" alt="Assumed causal graph for {html.escape(outcome['label'])} under Design {a['design']}">
+  <img class="graph" src="../{a['svg']}" alt="Assumed causal graph for {html.escape(outcome['label'])} under Design {a['design']}">
 </details>"""
             for a in g["alternatives"])
         inner = f"""
@@ -557,7 +728,7 @@ def render_graph(ctx: dict) -> str:
       <ul class="tight">{caveats}</ul>
     </div>
     <figure class="col figure-col">
-      <img class="graph" src="{g['svg']}" alt="Assumed causal graph for {html.escape(outcome['label'])} under Design {g['design']}">
+      <img class="graph" src="../{g['svg']}" alt="Assumed causal graph for {html.escape(outcome['label'])} under Design {g['design']}">
       <figcaption>The unobserved node is drawn and named rather than omitted. Adjustment sets are computed on the assumed graph, never hand-listed.</figcaption>
     </figure>
   </div>
@@ -599,7 +770,8 @@ def render_estimates(ctx: dict) -> str:
   </details>"""
         else:
             pointer = (f'<p class="blocker">The design\'s own result is published once, at '
-                       f'<code>{html.escape(e["published_result"])}</code>. It is not an estimate for this outcome.</p>'
+                       f'<a href="../designs/">the design-level results</a> '
+                       f'(<code>{html.escape(e["published_result"])}</code>). It is not an estimate for this outcome.</p>'
                        if e["published_result"] else "")
             detail = f'<p class="blocker">{html.escape(e["reason_detail"])}</p>' if e["reason_detail"] else ""
             inner = f"""
@@ -650,7 +822,7 @@ def render_chart(ctx: dict) -> str:
         inner = f"""
   <p class="chosen">{html.escape(chart['caption'] or '')}</p>
   <figure class="chart-figure">
-    <img class="chart" src="{chart['figure']}" alt="Outcome series grouped for {html.escape(outcome['label'])}">
+    <img class="chart" src="../{chart['figure']}" alt="Outcome series grouped for {html.escape(outcome['label'])}">
     <figcaption>{html.escape(guide['chart']['stamp'])}. {html.escape(guide['results']['stamp_note'])}</figcaption>
   </figure>
   <h3>{html.escape(guide['results']['groups_heading'])}</h3>
@@ -693,12 +865,100 @@ def render_ask(ctx: dict) -> str:
   <section class="ask-answer" id="ask-answer" hidden aria-live="polite"></section>
   <footer class="controls">
     <a class="ghost" href="../chart/">{html.escape(guide['labels']['back'])}</a>
+    <a class="ghost" href="../designs/">{html.escape(copy['deeper'])}</a>
     <a class="ghost" href="../">Causal Presidents</a>
   </footer>
   <p class="vintage">Registry vintage {ctx['vintage']}</p>
 </main>
 <script type="module" src="../assets/ask.mjs"></script>"""
     return page("Ask the corpus", 1, body)
+
+
+# ------------------------------------------------------------------------------------------------------------
+# Screen 6b — the design-level results
+# ------------------------------------------------------------------------------------------------------------
+def render_designs(ctx: dict) -> str:
+    """One reader for the three figures Stage 8 published. Not a flow step: it is not per-outcome, so it sits
+    outside the selection the URL carries and is linked from the estimate screen and the Ask footer."""
+    guide = ctx["guide"]
+    copy = guide["design_results"]
+    d = ctx["design_results"]
+    names = {key: guide["designs"][key]["name"] for key in ("A", "B", "C")}
+
+    def figure(block: dict, alt: str) -> str:
+        return f"""<figure class="chart-figure">
+    <img class="chart" src="../{block['figure']}" alt="{html.escape(alt)}">
+    <figcaption>{md(block['layout'])} <span class="tech">{html.escape(copy['figure_note'])}</span></figcaption>
+  </figure>"""
+
+    a_rows = "".join(f"<li>{html.escape(row['line'])}</li>" for row in d["a"]["rows"])
+    flips = "".join(f"<li>{html.escape(line)}</li>" for line in d["grid"]["flips"])
+    event_rows = "".join(
+        f"<li>{html.escape(fill_text(copy['event_line'], row))}</li>" for row in d["events"]["rows"])
+    not_claimed = "".join(f"<li>{md(claim)}</li>" for claim in d["events"]["not_claimed"])
+
+    body = f"""<main class="flow designs">
+  <header class="flow-head">
+    <p class="eyebrow"><a href="../">Causal Presidents</a> · the design-level results</p>
+    <h1>{html.escape(copy['heading'])}</h1>
+    <p class="caption">{html.escape(copy['intro'])}</p>
+  </header>
+
+  <section class="block design-section">
+    <h2>{html.escape(copy['published_heading'])}</h2>
+    {figure(d['forest'], 'Forest plot of the published estimates, one panel per design, with each decisive check drawn hollow')}
+    <h3>{html.escape(names['A'])}</h3>
+    <p class="status-line"><span class="tech">{html.escape(copy['verdict_label'])}</span>
+       <strong>{html.escape(d['a']['status'])}</strong></p>
+    <p class="blocker">{md(d['a']['failed_check'])}</p>
+    <ul class="tight">{a_rows}</ul>
+    <h4>{html.escape(copy['checks_heading'])}</h4>
+    <ul class="tight"><li>{html.escape(d['a']['mis_timed'])}</li><li>{html.escape(d['a']['lead_shift'])}</li></ul>
+    <h3>{html.escape(names['B'])}</h3>
+    <p class="status-line"><span class="tech">{html.escape(copy['verdict_label'])}</span>
+       <strong>{html.escape(d['b']['status'])}</strong></p>
+    <ul class="tight"><li>{html.escape(d['b']['published'])}</li></ul>
+  </section>
+
+  <section class="block design-section">
+    <h2>{html.escape(copy['grid_heading'])}</h2>
+    {figure(d['curve'], 'Specification curve: every fitted specification sorted by coefficient, with the axis levels that produced it')}
+    <p>{html.escape(d['grid']['a_support'])}</p>
+    <ul class="tight">{flips}</ul>
+    <p>{html.escape(d['grid']['b_support'])}</p>
+    <p>{html.escape(d['grid']['b_spread'])}</p>
+    <p>{html.escape(d['grid']['b_placebo'])}</p>
+    <p class="tech">{md(d['grid']['reading'] or '')}</p>
+  </section>
+
+  <section class="block design-section">
+    <h2>{html.escape(copy['not_run_heading'])}</h2>
+    <h3>{html.escape(names['C'])}</h3>
+    <p>{md(d['c']['why'] or '')}</p>
+    <p><span class="tech">{html.escape(copy['next_step'])}</span> {md(d['c']['next_step'] or '')}</p>
+  </section>
+
+  <section class="block design-section">
+    <h2>{html.escape(copy['transition_heading'])}</h2>
+    <p class="note">{html.escape(copy['transition_note'])}</p>
+    {figure(d['event_figure'], 'Event study: the conflict series with its transitions marked, and each transition shift against the placebo distribution')}
+    <ul class="tight">{event_rows}</ul>
+    <details class="technical">
+      <summary>{html.escape(copy['rule_heading'])}</summary>
+      <p>{md(d['events']['rule'])}</p>
+    </details>
+    <h3>{html.escape(copy['not_claimed_heading'])}</h3>
+    <ul class="tight">{not_claimed}</ul>
+  </section>
+
+  <footer class="controls">
+    <a class="ghost" href="../ask/">{html.escape(copy['back'])}</a>
+    <a class="ghost" href="../">Causal Presidents</a>
+  </footer>
+  <p class="vintage">Registry vintage {ctx['vintage']}</p>
+</main>
+"""
+    return page("The design-level results", 1, body)
 
 
 def render_breaks(outcome: dict, guide: dict) -> str:
@@ -719,7 +979,7 @@ def render_breaks(outcome: dict, guide: dict) -> str:
     return f"""<section class="breaks">
   {head}
   <figure class="chart-figure">
-    <img class="chart" src="{brk['figure']}" alt="Outcome series with its declared breaks for {html.escape(outcome['label'])}">
+    <img class="chart" src="../{brk['figure']}" alt="Outcome series with its declared breaks for {html.escape(outcome['label'])}">
     <figcaption>{html.escape(guide['chart']['stamp'])}. {html.escape(copy['note'])}</figcaption>
   </figure>
   <p class="chosen">{html.escape(brk['caption'])}</p>
@@ -732,9 +992,10 @@ def render_breaks(outcome: dict, guide: dict) -> str:
 def main() -> int:
     ctx = build_context(REPO_ROOT)
 
-    for name in ("", "study", "compare", "graph", "estimates", "chart", "ask"):
+    for name in ("", "study", "compare", "graph", "estimates", "chart", "ask", "designs"):
         (DIST / name).mkdir(parents=True, exist_ok=True)
-    for name in ("assets", "assets/graphs", "assets/comparisons", "assets/series", "assets/breaks", "data"):
+    for name in ("assets", "assets/graphs", "assets/comparisons", "assets/series", "assets/breaks",
+                 "assets/designs", "assets/presidents", "data"):
         (DIST / name).mkdir(parents=True, exist_ok=True)
 
     for name in ("style.css", "app.js", "answer.mjs", "ask.mjs"):
@@ -758,6 +1019,22 @@ def main() -> int:
         for svg in series_dir.glob("*.svg"):
             shutil.copyfile(svg, DIST / "assets" / "series" / svg.name)
 
+    # The three design-level figures, copied from the vintage directory that holds the artifact describing them.
+    design_sources = (
+        (ctx["design_results"]["forest"], REPO_ROOT / "registry" / "estimates" / ctx["vintage"]),
+        (ctx["design_results"]["curve"], REPO_ROOT / "registry" / "robustness" / ctx["vintage"]),
+        (ctx["design_results"]["event_figure"], REPO_ROOT / "registry" / "events" / ctx["vintage"]),
+    )
+    for block, source in design_sources:
+        name = Path(block["figure"]).name
+        shutil.copyfile(source / name, DIST / "assets" / "designs" / name)
+
+    # The supplied cover portraits. The manifest is the licence record; a file with no entry is not copied,
+    # because a photograph with no licence row is the one thing the cover may not show.
+    for row in ctx["portraits"].values():
+        source = REPO_ROOT / row["file"]
+        shutil.copyfile(source, DIST / "assets" / "presidents" / source.name)
+
     (DIST / "index.html").write_text(render_cover(ctx), encoding="utf-8", newline="\n")
     (DIST / "study" / "index.html").write_text(render_study(ctx), encoding="utf-8", newline="\n")
     (DIST / "compare" / "index.html").write_text(render_compare(ctx), encoding="utf-8", newline="\n")
@@ -765,6 +1042,7 @@ def main() -> int:
     (DIST / "estimates" / "index.html").write_text(render_estimates(ctx), encoding="utf-8", newline="\n")
     (DIST / "chart" / "index.html").write_text(render_chart(ctx), encoding="utf-8", newline="\n")
     (DIST / "ask" / "index.html").write_text(render_ask(ctx), encoding="utf-8", newline="\n")
+    (DIST / "designs" / "index.html").write_text(render_designs(ctx), encoding="utf-8", newline="\n")
 
     # The answer layer's inputs: the gate's rules, the contract, the glossary and the corpus, emitted from the
     # same specs `app/` reads. Nothing here is a second copy of a rule.
