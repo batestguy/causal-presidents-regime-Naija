@@ -24,6 +24,7 @@ placeholders:
   cards: "cards in the registry"
 
 cover:
+  eyebrow: "Nigeria · 1999–present"
   title: "Causal Presidents"
   caption: "Presidential transitions and national outcomes in Nigeria, 1999–present."
   instruction: "Read the assumption before the number."
@@ -139,6 +140,20 @@ steps:
   graph: "The assumption"
   estimates: "The estimate"
   chart: "The chart"
+  ask: "Ask"
+
+ask:
+  heading: "Ask the corpus"
+  intro: "The same gate and the same published passages the local app uses, running here in the browser over the committed corpus. Nothing is fetched and no model is called."
+  placeholder: "e.g. how much of the monthly series is observed?"
+  button: "Ask"
+  empty: "Type a question about the study."
+  loading: "Reading the corpus…"
+  error: "The answer layer did not load in this browser. The local app's Ask tab reads the same corpus."
+  measured: "{answered} of {total} questions in the measured set are answered; the rest are declined by the answer contract and say why."
+  refused_heading: "Why this is refused"
+  declined_heading: "Why there is no answer"
+  source_heading: "Where this comes from"
 
 results:
   heading: "The estimate, in plain words"
@@ -161,5 +176,9 @@ chart:
   interpolated_mark: "a dotted line is a month filled in between two observations"
 
 changepoint:
+  heading: "When the series changes"
+  intro: "A segmented fit on the native observations, with the number of breaks chosen by BIC. It describes the shape of the series and nothing about who was in office."
   marker_label: "the series changes here"
   note: "A break is a description of the series. It is not evidence that a presidency caused it."
+  refused: "No break is fitted for this outcome: it has too few native observations for the search to be meaningful."
+  timing_note: "A break within two months of a swearing-in is recorded as timing only."

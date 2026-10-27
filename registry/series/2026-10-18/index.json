@@ -3,10 +3,10 @@
   "stage": "9-prep",
   "layer": "outcome series, drawn from the analytical base",
   "vintage": "2026-10-18",
-  "generated_at": "2026-10-24T10:42:29+0100",
+  "generated_at": "2026-10-27T02:03:24+0100",
   "generator": {
     "script": "analysis/R/07_series_figures.R",
-    "git_sha": "7489bb3"
+    "git_sha": "2f8284d"
   },
   "spec": {
     "path": "analysis/specs/series_figures.yml",

@@ -146,7 +146,10 @@ disagree, the artifact is right and the app is wrong.
   administrations.
 - **The app is not deployed.** It runs locally against the committed registry; a hosted instance would need a
   decision about whether a stale vintage may ever be served, which is a governance question, not a packaging
-  one (decision log, UI-08).
+  one (decision log, UI-08). **The static guided flow is deployed**, and answers that question the other way:
+  `.github/workflows/verify.yml`'s `pages` job rebuilds from the same commit only after the static job has
+  passed, and every page stamps the registry vintage (`site/build.py`, checked by `tests/verify_site.py`), so
+  a reader can see which vintage they are being served rather than being told it is current.
 
 ## 6. Why Streamlit, and what that costs
 

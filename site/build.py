@@ -1,8 +1,9 @@
 """Build the guided-flow site from the published registry.
 
 **Screens.** The cover (`/`), the study screen (`/study/`), the comparison screen (`/compare/`), the graph
-screen (`/graph/`), the estimate screen (`/estimates/`) and the chart screen (`/chart/`). The JavaScript answer
-layer (`/ask/`) is specified and not built here.
+screen (`/graph/`), the estimate screen (`/estimates/`), the chart screen (`/chart/`) and the answer screen
+(`/ask/`). The Ask screen runs the JavaScript answer layer over JSON this build emits from the same specs the
+Python layer reads; it carries no rules of its own.
 
 **What it will not do.** It computes no statistic. Counts come from the artifacts' own `counts` blocks, dates
 from `registry/reference/administrations.json`, wording from `analysis/specs/guide.yml`, group means from
@@ -36,6 +37,8 @@ DIST = REPO_ROOT / "site" / "dist"
 # the outcome on the card — ahead of the one design that published a number for the outcome itself.
 RANK = {"pass": 0, "degraded": 1, "fail": 2, "not_attempted": 3}
 DOMAIN_ORDER = ("health", "education", "security", "economy")
+PAGES = ("index.html", "study/index.html", "compare/index.html", "graph/index.html",
+         "estimates/index.html", "chart/index.html", "ask/index.html")
 DOMAIN_LABEL = {"health": "Health", "education": "Education", "security": "Security", "economy": "Economy"}
 
 
@@ -75,6 +78,45 @@ def signed(value: float) -> str:
     return f"{value:+.4f}"
 
 
+def load_glossary(root: Path) -> dict[str, str]:
+    """The plain-language meanings, straight from `docs/glossary.md` — never retyped here."""
+    path = root / "docs" / "glossary.md"
+    entries: dict[str, str] = {}
+    if not path.exists():
+        return entries
+    for line in path.read_text(encoding="utf-8").splitlines():
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) == 2 and cells[0].startswith("**") and cells[0].endswith("**"):
+            entries[cells[0].strip("*").strip()] = cells[1]
+    return entries
+
+
+def answer_data(root: Path, vintage: str) -> dict:
+    """Everything the browser's answer layer reads, emitted from the specs it shares with Python."""
+    gate_spec = yaml.safe_load((root / "analysis" / "specs" / "intent_gate.yml").read_text(encoding="utf-8"))
+    rag = yaml.safe_load((root / "analysis" / "specs" / "rag.yml").read_text(encoding="utf-8"))
+    quality = load(root / "registry" / "quality" / vintage / "report.json")
+    corpus = load(root / "registry" / "rag" / vintage / "corpus.json")
+    countries = load(root / "registry" / "reference" / "countries.json")
+    contract = rag.get("answer_contract") or {}
+    chunks = [{key: chunk.get(key) for key in ("chunk_id", "doc_type", "title", "text", "citation", "metadata", "vintage")}
+              for chunk in corpus.get("chunks") or []]
+    return {
+        "gate": {
+            "spec": gate_spec,
+            "vintage": vintage,
+            "window_start": (quality.get("study_window") or {}).get("start"),
+            "countries": countries.get("countries") or [],
+        },
+        "contract": {
+            "contract": contract,
+            "k": int((rag.get("retrieval") or {}).get("k") or 5),
+            "glossary": load_glossary(root),
+        },
+        "corpus": {"chunks": chunks},
+    }
+
+
 def build_context(root: Path) -> dict:
     index = load(root / "registry" / "dags" / "index.json")
     vintage = index["vintage_date"]
@@ -84,6 +126,9 @@ def build_context(root: Path) -> dict:
     comparisons_path = root / "registry" / "comparisons" / vintage / "comparisons.json"
     comparisons = load(comparisons_path) if comparisons_path.exists() else {"outcomes": []}
     charts = {row["id"]: row for row in comparisons.get("outcomes") or []}
+    breaks_path = root / "registry" / "changepoints" / vintage / "changepoints.json"
+    changepoints = load(breaks_path) if breaks_path.exists() else {"outcomes": []}
+    breaks = {row["id"]: row for row in changepoints.get("outcomes") or []}
 
     cards: dict[tuple[str, str], tuple[dict, dict]] = {}
     for entry in index["dags"]:
@@ -228,6 +273,21 @@ def build_context(root: Path) -> dict:
                 "groups": group_rows,
                 "has_state": any(g["grouping"] == "state_dose_quartile" for g in group_rows),
             } if chart else None,
+            "breaks": {
+                "status": breaks[oid]["status"],
+                "figure": f"assets/breaks/{oid}.svg" if breaks[oid].get("figure") else None,
+                "caption": breaks[oid]["plain_caption"],
+                "method": breaks[oid]["method_detail"],
+                "native": breaks[oid]["native_in_window"],
+                "refused": breaks[oid].get("refused"),
+                "rows": [{
+                    "month": brk["month"],
+                    "label": brk["label"],
+                    "statement": brk["statement"],
+                    "kind": brk["kind"],
+                    "coincides": brk.get("coincides_with_inauguration"),
+                } for brk in breaks[oid]["breaks"]],
+            } if oid in breaks else None,
         })
 
     counts = index["registry"]["card_estimate_counts"]
@@ -256,6 +316,8 @@ def build_context(root: Path) -> dict:
         "fills": fills,
         "spine": spine,
         "comparisons_generated_at": comparisons.get("generated_at"),
+        "changepoints_generated_at": changepoints.get("generated_at"),
+        "answer_sets": load(root / "registry" / "rag" / vintage / "answer_eval.json").get("sets", {}),
     }
 
 
@@ -312,7 +374,7 @@ def render_cover(ctx: dict) -> str:
     paragraphs = "".join(f"<p>{md(fill_text(p, ctx['fills']))}</p>" for p in cover["paragraphs"])
     body = f"""<main class="cover">
   <header class="cover-head">
-    <p class="eyebrow">Nigeria · 1999–present</p>
+    <p class="eyebrow">{html.escape(cover['eyebrow'])}</p>
     <h1>{html.escape(cover['title'])}</h1>
     <p class="caption">{html.escape(cover['caption'])} <span class="instruction">{html.escape(cover['instruction'])}</span></p>
   </header>
@@ -592,25 +654,90 @@ def render_chart(ctx: dict) -> str:
     <figcaption>{html.escape(guide['chart']['stamp'])}. {html.escape(guide['results']['stamp_note'])}</figcaption>
   </figure>
   <h3>{html.escape(guide['results']['groups_heading'])}</h3>
-  {''.join(lists)}"""
+  {''.join(lists)}
+  {render_breaks(outcome, guide)}"""
         blocks.append(outcome_shell(outcome, inner))
 
     return flow_page(ctx, "chart", "The comparison, drawn", guide["labels"]["chart_heading"],
                      "Two ways to look at the same outcome: by who was in power, and — where the outcome is "
                      "measured state by state — by how much money a state received.", None, "".join(blocks),
-                     back="estimates", forward=None, extra_head=extra_head)
+                     back="estimates", forward="ask", extra_head=extra_head)
+
+
+# ------------------------------------------------------------------------------------------------------------
+# Screen 6 — ask the corpus, in the browser
+# ------------------------------------------------------------------------------------------------------------
+def render_ask(ctx: dict) -> str:
+    guide = ctx["guide"]
+    copy = guide["ask"]
+    overall = (ctx.get("answer_sets") or {}).get("all") or {}
+    measured = ""
+    if overall.get("n"):
+        measured = fill_text(copy["measured"], {"answered": overall["answered"], "total": overall["n"]})
+    body = f"""<main class="flow ask">
+  <ol class="steps" aria-label="Steps">
+    {''.join(f'<li class="step{" is-active" if name == "ask" else ""}">{html.escape(label)}</li>' for name, label in guide['steps'].items())}
+  </ol>
+  <header class="flow-head">
+    <p class="eyebrow"><a href="../">Causal Presidents</a> · step {len(guide['steps'])} of {len(guide['steps'])}</p>
+    <h1>{html.escape(copy['heading'])}</h1>
+    <p class="caption">{html.escape(copy['intro'])}</p>
+    {f'<p class="note">{html.escape(measured)}</p>' if measured else ''}
+  </header>
+  <form class="ask-form" id="ask-form" autocomplete="off">
+    <label for="ask-input">{html.escape(copy['heading'])}</label>
+    <textarea id="ask-input" name="question" rows="3" placeholder="{html.escape(copy['placeholder'])}"></textarea>
+    <button class="primary" type="submit">{html.escape(copy['button'])}</button>
+  </form>
+  <p class="control-note" id="ask-status" role="status">{html.escape(copy['empty'])}</p>
+  <section class="ask-answer" id="ask-answer" hidden aria-live="polite"></section>
+  <footer class="controls">
+    <a class="ghost" href="../chart/">{html.escape(guide['labels']['back'])}</a>
+    <a class="ghost" href="../">Causal Presidents</a>
+  </footer>
+  <p class="vintage">Registry vintage {ctx['vintage']}</p>
+</main>
+<script type="module" src="../assets/ask.mjs"></script>"""
+    return page("Ask the corpus", 1, body)
+
+
+def render_breaks(outcome: dict, guide: dict) -> str:
+    """The changepoint half of the chart screen: when the series changes, and the rule that it is not a cause."""
+    copy = guide["changepoint"]
+    brk = outcome.get("breaks")
+    if not brk:
+        return ""
+    head = (f"<h3>{html.escape(copy['heading'])}</h3>"
+            f"<p class='tech'>{html.escape(copy['intro'])}</p>")
+    if brk["status"] == "refused" or not brk["figure"]:
+        return (f"<section class='breaks'>{head}<p class='blocker'>{html.escape(copy['refused'])} "
+                f"{html.escape(brk['caption'])}</p></section>")
+    rows = "".join(
+        f"<li><strong>{html.escape(r['month'])}</strong> — {html.escape(r['statement'])}"
+        + (f" <span class='tech'>({html.escape(copy['timing_note'])})</span>" if r["coincides"] else "")
+        + "</li>" for r in brk["rows"])
+    return f"""<section class="breaks">
+  {head}
+  <figure class="chart-figure">
+    <img class="chart" src="{brk['figure']}" alt="Outcome series with its declared breaks for {html.escape(outcome['label'])}">
+    <figcaption>{html.escape(guide['chart']['stamp'])}. {html.escape(copy['note'])}</figcaption>
+  </figure>
+  <p class="chosen">{html.escape(brk['caption'])}</p>
+  <ul class="tight">{rows}</ul>
+  <p class="tech">{html.escape(brk['method'])}</p>
+</section>"""
 
 
 # ------------------------------------------------------------------------------------------------------------
 def main() -> int:
     ctx = build_context(REPO_ROOT)
 
-    for name in ("", "study", "compare", "graph", "estimates", "chart"):
+    for name in ("", "study", "compare", "graph", "estimates", "chart", "ask"):
         (DIST / name).mkdir(parents=True, exist_ok=True)
-    for name in ("assets", "assets/graphs", "assets/comparisons", "assets/series", "data"):
+    for name in ("assets", "assets/graphs", "assets/comparisons", "assets/series", "assets/breaks", "data"):
         (DIST / name).mkdir(parents=True, exist_ok=True)
 
-    for name in ("style.css", "app.js"):
+    for name in ("style.css", "app.js", "answer.mjs", "ask.mjs"):
         shutil.copyfile(SITE_SRC / name, DIST / "assets" / name)
 
     for svg in (REPO_ROOT / "registry" / "dags").glob("*.svg"):
@@ -620,6 +747,11 @@ def main() -> int:
     if comparisons_dir.exists():
         for svg in (comparisons_dir / "figures").glob("*.svg"):
             shutil.copyfile(svg, DIST / "assets" / "comparisons" / svg.name)
+
+    breaks_dir = REPO_ROOT / "registry" / "changepoints" / ctx["vintage"] / "figures"
+    if breaks_dir.exists():
+        for svg in breaks_dir.glob("*.svg"):
+            shutil.copyfile(svg, DIST / "assets" / "breaks" / svg.name)
 
     series_dir = REPO_ROOT / "registry" / "series" / ctx["vintage"] / "figures"
     if series_dir.exists():
@@ -632,6 +764,17 @@ def main() -> int:
     (DIST / "graph" / "index.html").write_text(render_graph(ctx), encoding="utf-8", newline="\n")
     (DIST / "estimates" / "index.html").write_text(render_estimates(ctx), encoding="utf-8", newline="\n")
     (DIST / "chart" / "index.html").write_text(render_chart(ctx), encoding="utf-8", newline="\n")
+    (DIST / "ask" / "index.html").write_text(render_ask(ctx), encoding="utf-8", newline="\n")
+
+    # The answer layer's inputs: the gate's rules, the contract, the glossary and the corpus, emitted from the
+    # same specs `app/` reads. Nothing here is a second copy of a rule.
+    answers = answer_data(REPO_ROOT, ctx["vintage"])
+    (DIST / "data" / "gate.json").write_text(
+        json.dumps(answers["gate"], indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+    (DIST / "data" / "contract.json").write_text(
+        json.dumps(answers["contract"], indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+    (DIST / "data" / "corpus.json").write_text(
+        json.dumps(answers["corpus"], indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
 
     (DIST / "data" / "site.json").write_text(
         json.dumps({
@@ -644,7 +787,8 @@ def main() -> int:
         }, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8", newline="\n")
 
-    print(f"built {DIST.relative_to(REPO_ROOT)} — 6 pages, {len(ctx['outcomes'])} outcomes, vintage {ctx['vintage']}")
+    print(f"built {DIST.relative_to(REPO_ROOT)} — {len(PAGES)} pages, {len(ctx['outcomes'])} outcomes, "
+          f"vintage {ctx['vintage']}")
     return 0
 
 

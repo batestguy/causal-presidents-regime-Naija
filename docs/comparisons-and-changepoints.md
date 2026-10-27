@@ -6,7 +6,7 @@ must fail on it.
 
 Companions: `registry/schema/comparisons.schema.json`, `registry/schema/changepoints.schema.json`,
 `presidents-guided-flow-spec.md` (§6.2, §6.3), `analysis/specs/comparisons.yml` and
-`analysis/specs/changepoints.yml` (both to be written first, before any number).
+`analysis/specs/changepoints.yml` — both written on 2026-10-25, before any number was fitted.
 
 ---
 

@@ -1,9 +1,10 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-10-24 (fourteenth session) · **Stage:** 9 — every card now carries the outcome series
-it is about · **verified at vintage 2026-10-18**: `scripts/verify.sh` through stage 8d, then its tail
-(stage 8c → 9 and all sixteen verifiers) with `HF_HUB_OFFLINE=1` because the model-card lookup failed
-online; **0 failures, 50 registry documents schema-validated**
+**Last updated:** 2026-10-27 (sixteenth session) · **Stage:** 9 — the guided flow is built and deployed from
+CI, and its three new verifiers are break-tested · **verified at vintage 2026-10-18**: `scripts/verify.sh` in
+one unbroken run (stages 0–8f, then the corpus, both evals and all twenty verifiers) with
+`HF_HUB_OFFLINE=1` for the cached embedding model; **0 failures, 50 registry documents schema-validated,
+13 break-test cases — 12 caught, 1 measured to change nothing**
 
 **This session, in one line:** the **outcome panels** — `analysis/specs/series_figures.yml`,
 `analysis/R/07_series_figures.R`, `registry/series/2026-10-18/` (12 SVGs + `index.json`) and
@@ -1932,3 +1933,89 @@ doing both together is cheaper than either alone. The full reasoning is `docs/de
   redistributed, which is why this repo's `.gitignore` excludes `data/raw/`.
 - **Never a point estimate without its interval.** Six-item rigor floor acts as a shipping gate.
 - **The app never fits a model at render time.**
+
+## 2026-10-25 — the guided flow, built and measured
+
+The static site now has all seven screens (`/`, `/study/`, `/compare/`, `/graph/`, `/estimates/`,
+`/chart/`, `/ask/`) and two new descriptive artifact families behind them. What was added, and what
+each one is checked by:
+
+- **`registry/comparisons/`** — 12 outcome panels, 56 groups, group means only. `tests/verify_comparisons.py`
+  recomputes every mean, both means, unit and month counts and byte counts from DuckDB and refuses any
+  inferential field.
+- **`registry/changepoints/`** — 8 searched series, 10 estimated breaks, 4 definition breaks marked,
+  4 refusals with the count that caused them. Fitted on native observations only; a break on the
+  interpolated spine fails `tests/verify_changepoints.py`, which also refits every searched series in a
+  separate R script.
+- **`site/assets/answer.mjs`** — the gate, BM25, the three-shape contract and the plain reading, ported to
+  JavaScript over JSON the build emits from `intent_gate.yml` and `rag.yml`. `tests/verify_answer_js.py`
+  runs it over the artifact's 38 questions and compares status, shape, rule, citation, passages, text and
+  plain reading field for field: 38 of 38 reproduce, 36 answered in the artifact's own 8/14/14 shape split.
+- **`tests/verify_site.py`** — builds the site and compares every page with the registry: the ratio, the
+  chosen design per outcome, each published coefficient on its own block, every group and break caption,
+  every stamp, and no external reference.
+- **`.github/workflows/verify.yml`** — `site pages` and `answer layer (JavaScript)` join the static job, and a
+  `pages` job deploys `site/dist/` only after `static` passes.
+
+**Correction to an earlier entry.** The 2026-10-24 header said the twelve panels cover 3,008 outcome-months.
+They cover 4,008: the artifact's own `spine_rows` sum to 764 + 1,826 + 1,418. `docs/app.md` was corrected and
+`tests/verify_app.py` now derives the total from those three counts instead of trusting prose.
+
+## 2026-10-27 — the guided flow's verifiers, broken on purpose
+
+The 2026-10-25 session shipped three verifiers — `verify_site.py`, `verify_changepoints.py`,
+`verify_answer_js.py` — and no attempt to make any of them fail. A verifier that has never been red is a
+claim, not a check, and this repository has had the other kind before: a check that reported its own declared
+budget as a violation, and a prose total that every verifier passed. So this session did the missing half.
+
+**`.probe/break_guided_flow.py` applies thirteen cases, one at a time, to the real files.** Each case names
+the verifier that owns the claim and **the sentence the red run must contain**, so a mutation caught by a
+crash, or by some unrelated check, is reported as a failure of the probe rather than counted as a catch.
+Every file is restored from the bytes read before the mutation and its sha256 compared afterwards, and the
+three verifiers are re-run on the restored tree at the end.
+
+**What was broken, and what caught it:**
+
+- **The renderer (5).** A published coefficient rounded to two places (its own block; `+0.4793` is not
+  `+0.48`); an undeclared pill word (`proven`); the changepoint caption dropped from the chart screen; a
+  president named beside an outcome (`Buhari`, which is the claim the build refuses to make anywhere); and an
+  external stylesheet, which the no-network check reads as a reach for the network.
+- **The changepoint artifact (4).** An estimated break moved one month off the refit (the separate R script
+  found `2013-03`, the artifact declared `2013-04`); a break statement carrying `because of the
+  administration`; a native count the base does not have; and a `counts` block moved by one.
+- **The browser answer layer (4).** The ranking direction inverted, and IDF flattened to a constant — both
+  break the parity with `answer_eval.json`; a `fetch(` smuggled into the module, which the "no second copy"
+  scan reads as a network call.
+
+**Twelve of thirteen were caught. The thirteenth is a measurement, and it is the interesting one.** Retuning
+BM25 — `k1` from 1.5 to 0.5, or `b` from 0.75 to 0, or both — changes **no published answer**: all 38 stay
+identical, so the parity check stays green. The 38 questions are decided by *which* chunks carry their terms
+(IDF and the ranking order are live: flattening IDF fails on `q12_interpolation_visible`, inverting the order
+fails on `q04_oil_to_states`), not by how the score trades term frequency against document length. That is
+now a published statement about the check's power rather than an assumption about it, and the case stays in
+the probe with no expected failure attached, so the next session re-measures it instead of rediscovering it.
+
+**Writing the suite found a real gap, which is the reason to write it.** `verify_changepoints.py` printed the
+artifact's `counts` block — `outcomes_searched`, `breaks_estimated`, `known_breaks_passed` — without
+recomputing any of it, so the stale-count mutation passed. The counts are now derived from the outcomes array
+(five tallies, `outcomes_considered` included), and the mutation fails on `counts.breaks_estimated is 11, the
+outcomes array gives 10`. `verify_comparisons.py` had recomputed its own counts since it was written; the
+newer verifier had not.
+
+**The chain ran green in one unbroken run, which it had not done since 2026-10-24.** `scripts/verify.sh`
+returned `all checks passed`: stages 0–8f, the corpus rebuild with its vectors, both answer evaluations, and
+**all twenty verifiers** — **0 failures, 50 registry documents schema-validated**. It had been green in two
+pieces because the embedding step's model lookup fails online on this machine although the snapshot is cached;
+with `HF_HUB_OFFLINE=1` the whole chain completes, and the flag is recorded here rather than assumed. Stage 8f
+and `verify_changepoints.py` were inside that same run, so the newest stage is not being signed off by a chain
+that predates it.
+
+**What this does not cover.** The suite mutates the *artifacts and the renderer*, not the browser: no
+click-through, no keyboard path, no DOM state after the script runs. Those are declared limits in
+`presidents-guided-flow-spec.md`, and `verify_answer_js.py` runs the layer under node, where its answers can be
+compared with the artifact — nothing here proves the page paints them. The Streamlit app's own verifier
+(`verify_app.py`) is untouched: its 2026-10-21 break-tests still stand and still cover the card side. And the
+site's coefficient check has only two rows to look at, because no card carries a Design B number — that absence
+is the card rule's doing (`design_result_is_channel_level`), not this verifier's, and `verify_site.py` says so
+in the count it prints rather than in a promise it cannot keep.
+

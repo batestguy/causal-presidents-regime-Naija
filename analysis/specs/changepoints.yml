@@ -1,0 +1,66 @@
+# When each outcome series changes — declared before anything is fitted
+#
+# This stage describes a series. It does not estimate an effect, does not test a hypothesis and does not name
+# a president as a cause: a break near a handover is a statement about timing, and the events stage already owns
+# timing inference with an enumerated placebo distribution.
+#
+# Declared 2026-10-25, before the first fit. `analysis/R/09_changepoints.R` records this file's md5, so a run
+# against an edited spec fails `tests/verify_changepoints.py` instead of describing a method nobody reviewed.
+
+version: 1
+layer: "declared breaks in each outcome series — description, never attribution"
+stage: "9-prep"
+
+window:
+  first: "1999-01"
+  last: "2026-10"
+
+rules:
+  method: >-
+    Bai–Perron break search (strucchange::breakpoints) on a mean-only model of the native observations, with
+    the number of breaks chosen by BIC against the no-break model
+  package: strucchange
+  criterion: "BIC, compared with the no-break model; the smallest BIC wins, and no break wins ties"
+  # The trap this exists to close: 1,826 of the 4,008 outcome-months are interpolated, and a detector run on
+  # the spine finds the fills. Only native observations enter the fit; the verifier fails on a break month whose
+  # fact_metric row is not an observation.
+  input_rule: >-
+    native observations only (`fact_observation_native`, anchored at anchor_month); the interpolated monthly
+    spine is never fitted, because a filled month is a rule and not a record
+  min_native_search: 20
+  # Below the minimum there is no fit and no marker. A fixed-date segmented fit on 8 points would produce a
+  # break wherever it was told to, which is a drawing rather than a description — so the branch that used to be
+  # allowed here is withdrawn, and the refusal is published with the count that caused it.
+  min_native_fixed_date: 0
+  h: 0.15
+  max_breaks:
+    monthly: 2
+    annual: 1
+    annual_short: 0
+  definition_break_rule: >-
+    a declared definition break inside the span is always published as `known_definition_break`; an estimated
+    break within ±1 native period of one is relabelled as measurement and the two are not listed twice
+  attribution_rule: >-
+    no break is described as an effect of a president, party or tenure; `coincides_with_inauguration` records
+    timing only and is null unless the break falls within ±2 months of a swearing-in
+  forbidden_fields:
+    - p_value
+    - standard_error
+    - ci_low
+    - ci_high
+    - date_ci_low
+    - date_ci_high
+    - t_stat
+    - RSS_p_value
+    - verdict
+
+figures:
+  width_in: 8.2
+  height_in: 2.9
+  dpi: 110
+  # `break` is a reserved word in R, so `$break` cannot be written: the keys are `estimated` and `measurement`.
+  palette: { line: "#1d6b5a", point: "#1d6b5a", estimated: "#8c3a2f", measurement: "#a9691a" }
+  stamp: "description, not a causal comparison"
+  marks:
+    break: "vertical solid rule, labelled with the month"
+    definition_break: "vertical dashed rule, labelled with the definition's name"

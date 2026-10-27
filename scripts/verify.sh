@@ -113,6 +113,11 @@ if command -v Rscript >/dev/null 2>&1; then
   # runs after the series panels because it restates their counts rather than computing its own.
   step "stage 8e: descriptive comparisons"
   Rscript analysis/R/08_comparisons.R
+  # Stage 8f asks when each series changes. It fits native observations only — never the interpolated spine —
+  # and labels a break near a declared definition break as measurement. Its verifier refits every searched
+  # series in a separate script, so a break month that the declared method cannot reproduce fails the step.
+  step "stage 8f: changepoint description"
+  Rscript analysis/R/09_changepoints.R
 else
   printf '\n=== stage 6: SKIPPED — no Rscript on PATH; verify_stage6.py will check the committed estimates\n'
   printf '\n=== stage 7: SKIPPED — no Rscript on PATH; verify_stage7.py will check the committed grid\n'
@@ -120,6 +125,7 @@ else
   printf '\n=== stage 8b: SKIPPED — no Rscript on PATH; verify_events.py will check the committed artifact\n'
   printf '\n=== stage 8d: SKIPPED — no Rscript on PATH; verify_series_figures.py will check the committed panels\n'
   printf '\n=== stage 8e: SKIPPED — no Rscript on PATH; verify_comparisons.py will check the committed groups\n'
+  printf '\n=== stage 8f: SKIPPED — no Rscript on PATH; verify_changepoints.py will refit the committed breaks\n'
 fi
 
 # Stage 8c — the retrieval corpus. The text half needs only Python and PyYAML; the vectors need
@@ -167,11 +173,19 @@ $PYTHON tests/verify_stage5.py
 $PYTHON tests/verify_events.py
 $PYTHON tests/verify_series_figures.py
 $PYTHON tests/verify_comparisons.py
+$PYTHON tests/verify_changepoints.py
 $PYTHON tests/verify_provenance.py
 $PYTHON tests/verify_rag.py
 $PYTHON tests/verify_intent.py
 $PYTHON tests/verify_answer.py
 $PYTHON tests/verify_answer_quality.py
 $PYTHON tests/verify_app.py
+# The site is the second renderer over the same registry, so it is checked the same way: verify_site.py builds
+# it and parses the emitted HTML, comparing every rendered count, coefficient, caption and status word with the
+# artifacts. Without this line the pages would be a claim nobody runs.
+$PYTHON tests/verify_site.py
+# The browser's answer layer is the second implementation of the gate, so it is measured, not trusted: this
+# runs it under node over the artifact's own questions and fails on a single field that drifts.
+$PYTHON tests/verify_answer_js.py
 
 printf '\nall checks passed\n'

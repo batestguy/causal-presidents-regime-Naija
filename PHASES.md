@@ -540,7 +540,8 @@ corpus currently summarises rather than chunks (the donor panel, the robustness 
 ## Stage 9 — The read-only app
 
 **STATUS: READ-ONLY APP BUILT (2026-10-21), REFUSAL GATE BUILT AND MEASURED (2026-10-22), GATE AT v3
-AND ANSWER LAYER BUILT (2026-10-22), CHAT TAB BUILT (2026-10-22), OUTCOME PANELS BUILT (2026-10-24).**
+AND ANSWER LAYER BUILT (2026-10-22), CHAT TAB BUILT (2026-10-22), OUTCOME PANELS BUILT (2026-10-24),
+STATIC GUIDED FLOW BUILT (2026-10-25), ITS VERIFIERS BROKEN ON PURPOSE (2026-10-27).**
 `app/streamlit_app.py` + `app/registry_data.py`,
 `tests/verify_app.py`, `docs/app.md`. Outcome → design → assumption → adjustment set → cannot-rule-out →
 the published number or the reason there is none, plus one tab for the two design-level results and one for
@@ -610,8 +611,9 @@ framework is the interactive graph becoming the product, not styling; Dash is th
 there, and `app/registry_data.py` is framework-free so it would survive the move.
 
 **Not built, and declared as such in `docs/app.md`:** node-level graph interaction, links from the card to
-the narrative that explains each design, per-card URLs, and any deployment — serving a stale vintage is a
-governance decision, not a packaging one.
+the narrative that explains each design, and per-card URLs. **The deployment question is now answered for the
+static guided flow** — GitHub Pages, rebuilt from the same commit only after the static job passes, with the
+registry vintage stamped on every page — and remains open for the Streamlit app, which is still a local tool.
 
 **Work**
 
@@ -638,6 +640,23 @@ governance decision, not a packaging one.
   outcome card, drawn from the base at build time: observed months as dots, interpolated months dotted, runs
   with no observation shaded and labelled. The card shows the panel and its caption, and the caption's
   numbers are the artifact's.
+- ✅ **The static guided flow** — `site/build.py` over `analysis/specs/guide.yml` and the registry: **seven
+  screens** (`/`, `/study/`, `/compare/`, `/graph/`, `/estimates/`, `/chart/`, `/ask/`), a second renderer
+  over the same cards, `tests/verify_site.py` in the chain, and a Pages deploy gated on the static job.
+- ✅ **Two descriptive artifact families behind it** — `registry/comparisons/<vintage>/` (12 outcome panels,
+  56 groups, group means only) and `registry/changepoints/<vintage>/` (8 searched series, 10 estimated
+  breaks, 4 definition breaks marked, 4 refusals with the count that caused them), each with its spec
+  written before any number was fitted, its schema, its verifier, and its own stage in `verify.sh`.
+- ✅ **The answer layer in the browser** — `site/assets/answer.mjs` runs the gate, BM25, the three-shape
+  contract and the plain reading over JSON the build emits from `intent_gate.yml`, `rag.yml` and the corpus;
+  `tests/verify_answer_js.py` accepts it only if it reproduces the published answers **38 of 38**, field for
+  field. The JS carries no rule and no answer text of its own, so there is no second copy to drift.
+- ✅ **The guided flow's verifiers are break-tested** — `.probe/break_guided_flow.py` applies **13** cases
+  (5 site, 4 changepoints, 4 JS), requires the named defect in each red run, and restores every file
+  byte-for-byte; **12 are caught** and the thirteenth is kept as a measurement: retuning BM25's `k1` and `b`
+  changes no published answer, so the parity check is a check on decisions, not on weights. Writing it also
+  closed a real gap — `tests/verify_changepoints.py` printed the artifact's `counts` block without
+  recomputing it, which the stale-count mutation proved, so counts are now derived from the outcomes array.
 
 **Exit criteria.** A reader can reach any card, and no number appears anywhere that is not a field of that
 card. A reader can ask the registry a question and get an answer that cites the card it came from, or a

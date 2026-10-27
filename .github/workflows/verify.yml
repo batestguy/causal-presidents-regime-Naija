@@ -49,6 +49,52 @@ jobs:
         run: python scripts/validate_artifacts.py
       - name: lint
         run: ruff check . || true # recorded, not gating: the repo carries pre-existing noqa conventions
+      # The site is a second renderer over the same artifacts, and the browser's answer layer is a second
+      # implementation of the gate. Both are checked here, on the runner that needs nothing but the repo:
+      # verify_site.py rebuilds the pages and compares them with the registry, and verify_answer_js.py runs
+      # the JS layer over the published answer artifact and accepts it only if it reproduces those answers.
+      - name: site pages against the registry
+        run: python tests/verify_site.py
+      - name: answer layer (JavaScript) against the published answers
+        run: python tests/verify_answer_js.py
+        # verify_comparisons.py and verify_changepoints.py are deliberately not here: they re-derive their
+        # numbers from data/analytics.duckdb, which is a build artifact and is never committed. They run in
+        # the data job, where `dbt build` has produced it.
+
+  # Deploy only what the static job has already checked. The pages job does not build its own site from an
+  # unchecked tree: it rebuilds from the same commit after `static` passed, so a page that disagreed with the
+  # registry cannot reach the public URL.
+  pages:
+    name: deploy the site
+    needs: static
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: install build dependencies
+        run: pip install -r requirements-dev.txt
+      - name: build the site
+        run: python site/build.py
+      - name: upload the site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/dist
+      - name: deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
 
   data:
     name: full data chain

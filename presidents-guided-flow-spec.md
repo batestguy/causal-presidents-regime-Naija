@@ -1,6 +1,7 @@
 # Presidents guided flow — specification
 
-**Short name:** `presidents-guided-flow` · **Status:** spec only, nothing built
+**Short name:** `presidents-guided-flow` · **Status:** built — seven screens, two descriptive artifacts, both
+verifiers, and the Pages deploy. Portraits remain empty frames (§7.1).
 **Written:** 2026-10-25 · **Revised:** 2026-10-25 (framework → static site; changepoint family added)
 
 Adds a guided front end over the published registry. The registry contract, the 36-card rule and the
