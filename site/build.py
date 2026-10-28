@@ -534,8 +534,8 @@ def render_cover(ctx: dict) -> str:
             party = parties[admin["party"]]
             portrait = (f'<img src="assets/presidents/{slug}.jpg" '
                         f'alt="Portrait of {html.escape(admin["president"])}">'
-                        f'<figcaption class="party-tag">{html.escape(admin["party"])} &middot; '
-                        f'{html.escape(party["name"])}</figcaption>')
+                        f'<figcaption class="party-tag" title="{html.escape(party["name"])}">'
+                        f'{html.escape(admin["party"])}</figcaption>')
             figure_open = (f'<figure class="slide-figure has-portrait" '
                            f'style="--party-bands: {party_bands(party["bands"])}">')
         else:
@@ -560,9 +560,15 @@ def render_cover(ctx: dict) -> str:
                    f'<ul class="credit-list">{items}</ul></details>')
     body = f"""<main class="cover">
   <header class="cover-head">
-    <p class="eyebrow">{html.escape(cover['eyebrow'])}</p>
-    <h1>{html.escape(cover['title'])}</h1>
-    <p class="caption">{html.escape(cover['caption'])} <span class="instruction">{html.escape(cover['instruction'])}</span></p>
+    <div class="cover-lead">
+      <p class="eyebrow">{html.escape(cover['eyebrow'])}</p>
+      <h1>{html.escape(cover['title'])}</h1>
+      <p class="caption">{html.escape(cover['caption'])} <span class="instruction">{html.escape(cover['instruction'])}</span></p>
+    </div>
+    <div class="cover-cta">
+      <p class="ratio">{md(fill_text(cover['ratio'], ctx['fills']))}</p>
+      <a class="primary" href="study/">Begin</a>
+    </div>
   </header>
 
   <section class="presidents" aria-label="{html.escape(cover['rail_heading'])}">
@@ -574,8 +580,6 @@ def render_cover(ctx: dict) -> str:
   </section>
 
   <footer class="cover-foot">
-    <p class="ratio">{md(fill_text(cover['ratio'], ctx['fills']))}</p>
-    <a class="primary" href="study/" role="button">Begin</a>
     <details class="about">
       <summary>About this study</summary>
       <div class="prose">{paragraphs}</div>

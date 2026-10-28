@@ -1,0 +1,54 @@
+- main [ref=f7e2]:
+  - generic [ref=f7e3]:
+    - generic [ref=f7e4]:
+      - paragraph [ref=f7e5]: Nigeria · 1999–present
+      - heading "Causal Presidents" [level=1] [ref=f7e6]
+      - paragraph [ref=f7e7]: Presidential transitions and national outcomes in Nigeria, 1999–present. Causal models have assumptions. Study them before you read the numbers.
+    - generic [ref=f7e8]:
+      - paragraph [ref=f7e9]: 2 of 36 model cards carry a published number; the rest say why not.
+      - link "Begin" [ref=f7e10] [cursor=pointer]:
+        - /url: study/
+  - region "Five administrations" [ref=f7e11]:
+    - list [ref=f7e13]:
+      - listitem [ref=f7e14]:
+        - figure "PDP · Peoples Democratic Party" [ref=f7e15]:
+          - img "Portrait of Olusegun Obasanjo" [ref=f7e16]
+        - generic [ref=f7e18]:
+          - paragraph [ref=f7e19]: Olusegun Obasanjo
+          - paragraph [ref=f7e20]: PDP · 1999–2007 · 2 terms
+          - paragraph [ref=f7e21]: Two terms — one spine row covering two terms as the base spec §7 table has it
+      - listitem [ref=f7e22]:
+        - figure "PDP · Peoples Democratic Party" [ref=f7e23]:
+          - img "Portrait of Umaru Musa Yar'Adua" [ref=f7e24]
+        - generic [ref=f7e26]:
+          - paragraph [ref=f7e27]: Umaru Musa Yar'Adua
+          - paragraph [ref=f7e28]: PDP · 2007–2010 · 1 term
+          - paragraph [ref=f7e29]: Died in office
+      - listitem [ref=f7e30]:
+        - figure "PDP · Peoples Democratic Party" [ref=f7e31]:
+          - img "Portrait of Goodluck Jonathan" [ref=f7e32]
+        - generic [ref=f7e34]:
+          - paragraph [ref=f7e35]: Goodluck Jonathan
+          - paragraph [ref=f7e36]: PDP · 2010–2015 · 1 term
+          - paragraph [ref=f7e37]: Acting from 2010-02-09; sworn in 2010-05-06 — that sworn-in date is the single decided boundary
+      - listitem [ref=f7e38]:
+        - figure "APC · All Progressives Congress" [ref=f7e39]:
+          - img "Portrait of Muhammadu Buhari" [ref=f7e40]
+        - generic [ref=f7e42]:
+          - paragraph [ref=f7e43]: Muhammadu Buhari
+          - paragraph [ref=f7e44]: APC · 2015–2023 · 2 terms
+          - paragraph [ref=f7e45]: Two terms — one spine row, two terms
+      - listitem [ref=f7e46]:
+        - figure "APC · All Progressives Congress" [ref=f7e47]:
+          - img "Portrait of Bola Ahmed Tinubu" [ref=f7e48]
+        - generic [ref=f7e50]:
+          - paragraph [ref=f7e51]: Bola Ahmed Tinubu
+          - paragraph [ref=f7e52]: APC · 2023–pres · 1 term
+          - paragraph [ref=f7e53]: Incumbent — end_date deliberately open rather than set to a date the data does not support
+    - paragraph [ref=f7e54]: The faces are the study window, not a scorecard. No number on this site belongs to one president.
+  - generic [ref=f7e55]:
+    - group [ref=f7e56]:
+      - generic "About this study" [ref=f7e57] [cursor=pointer]
+    - group [ref=f7e58]:
+      - generic "Photograph credits" [ref=f7e59] [cursor=pointer]
+    - paragraph [ref=f7e60]: Registry vintage 2026-10-18 · built 2026-10-28 07:20

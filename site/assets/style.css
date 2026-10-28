@@ -60,9 +60,26 @@ h4 { font-size: .86rem; font-family: var(--sans); text-transform: uppercase; let
   margin: 0 auto;
   padding: 0 clamp(18px, 4vw, 48px);
 }
-.cover-head { padding-top: clamp(26px, 5vw, 54px); }
-.cover-head h1 { font-size: clamp(2.1rem, 5vw, 3.2rem); line-height: 1.03; margin-bottom: .4em; }
-.cover-head .caption { max-width: 60ch; }
+.cover-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+  gap: clamp(18px, 3vw, 44px);
+  align-items: end;
+  padding-top: clamp(26px, 4vw, 46px);
+  padding-bottom: clamp(22px, 3vw, 34px);
+}
+.cover-head h1 { font-size: clamp(2.1rem, 4.4vw, 3.1rem); line-height: 1.03; margin-bottom: .45em; }
+.cover-head .caption { max-width: 54ch; }
+.cover-lead { min-width: 0; }
+.cover-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 1rem; }
+.cover-cta .ratio { margin: 0; border-left-color: rgba(255, 255, 255, .55); }
+.cover-cta .primary {
+  background: #fff;
+  color: var(--accent);
+  border-color: #fff;
+  padding: .62em 1.6em;
+}
+.cover-cta .primary:hover { background: #e7f3ec; }
 
 .carousel {
   width: 100vw;
@@ -114,9 +131,10 @@ h4 { font-size: .86rem; font-family: var(--sans); text-transform: uppercase; let
   border-radius: 6px;
 }
 .party-tag {
-  position: absolute; left: 0; right: 0; bottom: 0; margin: 0; padding: .6rem .5rem;
-  font-size: .66rem; letter-spacing: .09em; text-transform: uppercase; text-align: center;
+  position: absolute; left: 0; right: 0; bottom: 0; margin: 0; padding: .5rem .4rem;
+  font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; text-align: center;
   color: #fff; background: rgba(12, 24, 16, .55);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .credit-list { margin: .5rem 0 0; padding-left: 1.1rem; font-size: .78rem; color: var(--ink-faint); }
 .credit-list li { margin-bottom: .2rem; }
@@ -375,17 +393,24 @@ img.chart { width: 100%; height: auto; background: #fff; border: 1px solid var(-
   padding: clamp(18px, 3vw, 34px);
 }
 .cover-head h1 { color: #fff; }
-.cover-head .caption, .cover-head .eyebrow, .cover-head .instruction { color: rgba(255, 255, 255, .88); }
-.cover-head .eyebrow a { border-bottom-color: rgba(255, 255, 255, .45); }
+/* Full white, not an alpha: 88 % white on the flag green measures about 3.9:1 and drops the caption below
+   AA, while #fff on #008751 measures 4.6:1 and passes for every size in this panel. */
+.cover-head .caption, .cover-head .eyebrow, .cover-head .instruction { color: #fff; }
+.cover-head .eyebrow a { border-bottom-color: rgba(255, 255, 255, .6); }
 
-/* Five presidents, no arrows: four to a row, so the fifth sits on a row of its own. */
-.presidents { position: relative; margin: 1.2rem 0 0; }
+/* Five presidents in one row: the rail is the study window, so no card sits on a row of its own. */
+.presidents {
+  position: relative;
+  max-width: 1180px;
+  margin: 1.1rem auto 0;
+  padding: 0 clamp(18px, 4vw, 48px);
+}
 .flag-band {
   position: absolute;
-  inset: -16px -16px 0;
-  border-radius: 22px;
+  inset: -10px clamp(8px, 3vw, 38px) 0;
+  border-radius: 20px;
   background: var(--flag-bands);
-  opacity: .16;
+  opacity: .14;
   z-index: 0;
 }
 .president-grid {
@@ -395,8 +420,8 @@ img.chart { width: 100%; height: auto; background: #fff; border: 1px solid var(-
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(10px, 1.2vw, 16px);
 }
 .president {
   display: flex;
@@ -409,10 +434,10 @@ img.chart { width: 100%; height: auto; background: #fff; border: 1px solid var(-
 }
 .president .slide-figure { height: auto; width: 100%; aspect-ratio: 3 / 4; }
 .president .slide-figure.has-portrait img {
-  left: 8px; right: 8px; top: 8px; bottom: 34px;
-  width: calc(100% - 16px); height: calc(100% - 42px);
+  left: 6px; right: 6px; top: 6px; bottom: 26px;
+  width: calc(100% - 12px); height: calc(100% - 32px);
 }
-.president .party-tag { font-size: .56rem; padding: .35rem .3rem; }
+.president .party-tag { font-size: .58rem; padding: .3rem .25rem; }
 .president .slide-body { padding: .55rem .35rem .7rem; max-width: none; }
 .president .slide-name { font-size: 1rem; }
 .president .slide-meta { font-size: .74rem; }
@@ -453,8 +478,26 @@ img.chart { width: 100%; height: auto; background: #fff; border: 1px solid var(-
 
 /* ---------------------------------------------------------------- small screens */
 
+@media (max-width: 1079px) {
+  /* Three up, with the last two centred: a 6-column track means the 4th and 5th cards can sit as a
+     balanced pair instead of leaving a dead column under the first row. */
+  .president-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .president { grid-column: span 2; }
+  .president:nth-child(4) { grid-column: 2 / span 2; }
+  .president:nth-child(5) { grid-column: 4 / span 2; }
+  .cover-head { grid-template-columns: 1fr; align-items: start; }
+  .cover-cta { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+
+@media (max-width: 719px) {
+  .president-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .president { grid-column: span 2; }
+  .president:nth-child(4) { grid-column: auto / span 2; }
+  .president:nth-child(5) { grid-column: 2 / span 2; }
+  .cover-cta { flex-direction: column; align-items: flex-start; }
+}
+
 @media (max-width: 860px) {
-  .president-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .columns { grid-template-columns: 1fr; }
   .figure-col { order: -1; }
   .slide-figure { height: min(46vh, 380px); }

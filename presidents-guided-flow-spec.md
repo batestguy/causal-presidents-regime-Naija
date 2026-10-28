@@ -118,6 +118,12 @@ Six screens. Every sentence that is not chrome comes from an artifact or a spec 
   and *"Read the assumption before the number"*, three derived paragraphs, and the ratio — **2 of 36 model cards
   carry a published number; the rest say why not.** One button: **Begin**.
 
+  **Built differently, and the difference is the layout (2026-10-28):** the cards sit in one row of five on a
+  wide screen (3 + 2 centred on tablet, 2-up on a phone) rather than in a vertical rail, and the ratio and
+  **Begin** live in the green header band so the page's whole argument is above the fold. The three paragraphs
+  moved into the "About this study" disclosure in the footer; every sentence is still declared in `guide.yml`
+  or an artifact field.
+
 ### Screen 1 — What do you want to study? · `/study/`
 
 Multi-select of the 12 outcomes grouped Health / Education / Security / Economy, each row with plain name, unit,
