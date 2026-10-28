@@ -146,6 +146,27 @@ corpus), the Model card and What-this-reads halves of the "go deeper" screens ar
 plot's right-hand labels are clipped at the SVG's own edge — an artifact layout question for `03_estimate.R`, not
 for this page.
 
+### P9 — Ask in the navigation, and charts with the presidents over them (next)
+
+Two changes the requester queued on 2026-10-28. Both are site-only: no artifact, count or verdict moves.
+
+| Deliverable | Gate |
+|---|---|
+| `guide.yml → nav.ask` and one more entry in `site/build.py::page()` | `tests/verify_site.py` checks the Ask link on all 11 pages, with the same per-page href resolution as the other four |
+| `/ask/` stays a flow step and becomes a nav destination | the nav does not break the step rail or the selection carried in the URL; the answer layer still loads only on its own page |
+| the chart screen takes the wide measure (1240 px) and a taller cap | figures are scaled in CSS, so the artifact byte counts recorded by R do not move; the comparison and changepoint panels stay readable at 420 px |
+| portraits over each chart as **period markers** aligned to the tenure bands | `alt=""` and `aria-hidden` on the portrait, no name and no verdict word; the surname scan gets an explicit, named exception for the block rather than a loosened pattern |
+| portrait reuse respects the licence record | the files come from `site/assets/presidents/` via the manifest; the credit list is repeated on `/chart/` or linked to the cover footer, and `docs/licences.md` is not edited |
+
+**Open before coding:** the composition. One row of five portraits above the panel, aligned to the tenure bands
+(recommended — it reads as a time axis and cannot be mistaken for a result), or one portrait per band as a faint
+watermark behind the line. The first is cheaper to verify: the row has an explicit order, the watermark does not.
+The portraits apply to the time-axis panels — the comparison charts and the changepoint panels — and not to the
+forest plot or the specification curve, which have no time axis.
+
+**Exit gate:** the chain is green, the Ask tab answers the same measured questions from a bookmarked page as
+from the flow, and the surname scan fails on a portrait that carries a name.
+
 ---
 
 ## 3. Risks, and what each one costs if ignored

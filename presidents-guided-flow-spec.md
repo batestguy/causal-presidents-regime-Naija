@@ -228,6 +228,17 @@ Methodology).
   variables, the model table and the equations with every symbol defined. Methodology keeps the argument and is
   short; its reference material lives here (P-11).
 
+### Next revision (queued 2026-10-28, not built)
+
+- **Ask joins the primary navigation.** Every bookmarked page should be able to search the registry; the step
+  screen stays, the nav gains a fifth link. Five links plus the wordmark need a wrap rule at 420 px.
+- **Charts take the wide measure, with the presidents over them.** `/chart/` moves to 1240 px and a taller cap,
+  and the licensed portraits sit over each panel **as period markers aligned to the tenure bands** — decorative
+  (`alt=""`, `aria-hidden`), no name and no verdict word, with an explicit exception in the surname scan. The
+  open decision is one row of five above the panel (recommended) versus a watermark per band. Time-axis panels
+  only: the forest plot and the specification curve have no time axis and take no portraits.
+
+
 ---
 
 ## 5. What the built site must never do

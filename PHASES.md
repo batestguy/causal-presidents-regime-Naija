@@ -639,6 +639,25 @@ the narrative that explains each design, and per-card URLs. **The deployment que
 static guided flow** — GitHub Pages, rebuilt from the same commit only after the static job passes, with the
 registry vintage stamped on every page — and remains open for the Streamlit app, which is still a local tool.
 
+**Queued for the next static pass (2026-10-28, not built):**
+
+1. **Put Ask in the primary navigation.** `/ask/` is the flow's sixth step and is reachable only by walking the
+   flow or from the Ask footer; it should be one click from Home, About, Methodology and Technical, because a
+   reader who arrives on a bookmarked page should be able to search the registry from there. The change is
+   `guide.yml → nav.ask` plus one entry in the loop in `site/build.py::page()`, and `tests/verify_site.py` gains
+   the link to its per-page nav check. Five links plus the wordmark no longer fit one line at 420 px; the
+   handoff is to let the links wrap under the wordmark, not to shrink the wordmark further.
+2. **Bigger charts, with the presidents over them.** The chart screen's comparison and changepoint panels are
+   drawn at the 960 px measure while `/designs/` and `/technical/` use 1240; the chart should take the wide
+   measure and a taller cap. The portraits (`site/assets/presidents/<slug>.jpg`, already licensed and in the
+   manifest) should appear **over each graph as period markers aligned to the tenure bands** — the bands are
+   already drawn in R from the administration spans, so the portraits label the axis, not the series. The
+   guardrail that makes this safe: a portrait is `aria-hidden` with empty `alt`, carries no name and no verdict
+   word, and the surname scan in `tests/verify_site.py` must be told about the block explicitly rather than
+   loosened. If the portraits carry attribution text on `/chart/`, the credit list is repeated there or linked
+   to the cover's. The first decision to take is the composition: one row of five above the panel (recommended,
+   because it reads as a time axis) or one portrait per band as a faint watermark.
+
 **Work**
 
 - ✅ App skeleton reading the index and cards, with the vintage cross-check in the loader.

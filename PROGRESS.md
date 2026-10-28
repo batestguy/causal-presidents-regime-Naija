@@ -113,6 +113,25 @@ dictionary, the model table and the equations should live, and whether that shou
   `verify_site.py` fails if a metric id, an estimator string, an equation title or a term symbol is missing
   (P-11).
 
+**Queued for the next session (recorded here and in `PHASES.md`, `presidents-guided-flow-build-plan.md` P9 and
+the flow spec, so the handoff survives this conversation).** Neither item is built.
+
+1. **Ask in the primary navigation.** `/ask/` is the sixth step and reachable only by walking the flow or via
+   the Ask footer; a reader who lands on a bookmarked page (Home, About, Methodology, Technical) should be able
+   to search the registry from there. Add `nav.ask` to `guide.yml`, one entry to the loop in `site/build.py::page()`,
+   and the link to every page in the `verify_site.py` nav check. At 420 px five links plus the wordmark do not
+   fit one line — let the links wrap under the wordmark rather than shrinking the wordmark again.
+2. **Bigger charts, with the presidents over them.** Take `/chart/` to the 1240 px wide measure and a taller cap
+   (CSS scaling only, so the SVGs' recorded byte counts do not move), and place the licensed portraits
+   (`site/assets/presidents/`, manifest-backed) over each graph as **period markers aligned to the tenure bands**
+   the R stage already draws. The guardrail is the project's no-attribution rule: the portrait is `alt=""` and
+   `aria-hidden`, carries no name and no verdict word, and `tests/verify_site.py` gets an explicit named exception
+   for the block - not a loosened surname scan. Composition is the open decision: one row of five above the
+   panel (recommended; it reads as a time axis) or a faint watermark per band. The portraits apply to the
+   **time-axis panels** only — the comparison charts and the changepoint panels; the forest plot and the
+   specification curve have no time axis and take none.
+
+
 
 
 **This session, in one line:** **Screen 6b — the design-level results** (`site/build.py` → `/designs/`, from
