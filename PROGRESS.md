@@ -95,6 +95,25 @@ and party emblems on the portrait strip.
 - **The site is now 10 pages** and `verify_site.py` covers the new ones: nav on every page, the About frame, the
   five methodology sections, every reference, and each derived number on the page.
 
+**Then, same session — Technical details, and a shorter Methodology.** The requester asked where the variable
+dictionary, the model table and the equations should live, and whether that should shorten the methodology.
+
+- **A separate page, not a dropdown.** `/technical/` carries four reference tables: the **25 catalogue
+  variables** (id, meaning, unit, direction, source, coverage — read from `raw_metric_catalogue.csv` at build
+  time), the **design variables** (dose, per-capita axis, IGR share, UCDP counts, Brent, donor weights), the
+  **model table** (A, B, C and the grid: estimator, outcome, treatment, controls, inference, artifact path,
+  with estimator/treatment strings read from `estimation.yml`), and the **equations** with every symbol
+  defined. Equations are typeset from the spec's own plain notation (`x_{s,t}` → subscript), so the spec stays
+  reviewable and the page stays readable.
+- **Methodology is now brief**: five sections became four — the problem, prior work, what this project does
+  differently (four items), and what it does not claim. The "how it is checked" section folded into the
+  data-honesty item, which still carries the verifier count. The page says where the reference material is.
+- **`analysis/specs/technical.yml`** is the new declared source for the reference page: the equations, the term
+  definitions and the design-variable meanings. The variable and model tables are generated, not retyped, and
+  `verify_site.py` fails if a metric id, an estimator string, an equation title or a term symbol is missing
+  (P-11).
+
+
 
 **This session, in one line:** **Screen 6b — the design-level results** (`site/build.py` → `/designs/`, from
 `registry/estimates`, `registry/robustness` and `registry/events`), because the three figures Stage 8 published

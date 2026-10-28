@@ -20,6 +20,7 @@ Run:
 from __future__ import annotations
 
 import html
+import csv
 import json
 import re
 import shutil
@@ -40,7 +41,7 @@ RANK = {"pass": 0, "degraded": 1, "fail": 2, "not_attempted": 3}
 DOMAIN_ORDER = ("health", "education", "security", "economy")
 PAGES = ("index.html", "study/index.html", "compare/index.html", "graph/index.html",
          "estimates/index.html", "chart/index.html", "ask/index.html", "designs/index.html",
-         "about/index.html", "methodology/index.html")
+         "about/index.html", "methodology/index.html", "technical/index.html")
 DOMAIN_LABEL = {"health": "Health", "education": "Education", "security": "Security", "economy": "Economy"}
 
 
@@ -518,10 +519,70 @@ def build_context(root: Path) -> dict:
     for key, value in fills.items():
         fills[key] = f"{value:,}" if isinstance(value, int) else value
 
+    tech = yaml.safe_load((root / "analysis" / "specs" / "technical.yml").read_text(encoding="utf-8"))
+    estimation = yaml.safe_load((root / "analysis" / "specs" / "estimation.yml").read_text(encoding="utf-8"))
+    grid = yaml.safe_load((root / "analysis" / "specs" / "robustness.yml").read_text(encoding="utf-8"))
+    with (root / "dbt" / "seeds" / "raw_metric_catalogue.csv").open(encoding="utf-8", newline="") as handle:
+        catalogue = list(csv.DictReader(handle))
+    variables = [{
+        "id": row["metric_id"],
+        "label": row["label"],
+        "unit": row["unit"],
+        "direction": "higher is better" if row["direction"] == "up" else "lower is better",
+        "source": row["source_label"],
+        "coverage": row["coverage_status"],
+        "outcome": row["is_outcome"] == "true",
+    } for row in catalogue]
+    design_a = estimation["design_a"]
+    design_b = estimation["design_b"]
+    design_c_spec = yaml.safe_load((root / "analysis" / "specs" / "design_c.yml").read_text(encoding="utf-8"))
+    models = [
+        {
+            "design": "A",
+            "estimator": design_a["estimator"].split(",")[0],
+            "outcome": ", ".join([design_a["outcome"], *design_a["robustness_outcomes"]]),
+            "treatment": f"log({design_a['exposure']['column']})",
+            "controls": ", ".join(design_a["fixed_effects"]) + " (fixed effects)",
+            "inference": "cluster by state",
+            "artifact": f"registry/estimates/{vintage}/estimates.json",
+        },
+        {
+            "design": "B",
+            "estimator": design_b["estimator"],
+            "outcome": f"national {design_b['outcome']['column']} (log cumulative change)",
+            "treatment": "Δ log Brent",
+            "controls": ", ".join(design_b["controls"]),
+            "inference": f"Newey–West, {design_b['inference']['maxlags']} lags",
+            "artifact": f"registry/estimates/{vintage}/estimates.json",
+        },
+        {
+            "design": "C",
+            "estimator": design_c_spec["estimator"]["name"],
+            "outcome": "u5mr (annual native observations)",
+            "treatment": "transition window (1 July year rule)",
+            "controls": "simplex donor weights; screening predictors as balance only",
+            "inference": "in-space and in-time placebos",
+            "artifact": f"registry/design_c/{vintage}/design_c.json",
+        },
+        {
+            "design": "Grid",
+            "estimator": "PPML (A) and local projection (B)",
+            "outcome": "three A outcomes, national FAAC",
+            "treatment": "log FAAC at lag 0–2; Δ log Brent",
+            "controls": f"{len(grid['design_a']['axes']['adjustment_set'])} adjustment sets (A); "
+                        f"{len(grid['design_b']['axes']['controls'])} control sets (B)",
+            "inference": "clustered by state; Newey–West",
+            "artifact": f"registry/robustness/{vintage}/robustness.json",
+        },
+    ]
+
     return {
         "vintage": vintage,
         "generated_at": datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds"),
         "guide": guide,
+        "technical": tech,
+        "variables": variables,
+        "models": models,
         "administrations": admins["administrations"],
         "portraits": portraits,
         "outcomes": outcomes,
@@ -551,7 +612,7 @@ def page(title: str, depth: int, body: str, data: dict | None = None, wide: bool
         payload = ('<script id="page-data" type="application/json">'
                    + json.dumps(data, ensure_ascii=False) + "</script>")
     nav_items = []
-    for key in ("home", "about", "methodology"):
+    for key in ("home", "about", "methodology", "technical"):
         href = home if key == "home" else f"{prefix}{key}/"
         current = ' aria-current="page"' if nav_active == key else ""
         nav_items.append(f'<li><a href="{href}"{current}>{html.escape(NAV_LABELS.get(key, key.title()))}</a></li>')
@@ -1215,12 +1276,107 @@ def render_methodology(ctx: dict) -> str:
     return page("Methodology", 1, body, nav_active="methodology")
 
 
+def mathify(code: str) -> str:
+    """Typeset a declared equation just enough: `x_{a,b}` and `x_t` become subscripts, the rest is literal.
+    The equation stays a readable string in the spec, which is what keeps it reviewable there."""
+    escaped = html.escape(code)
+    escaped = re.sub(r"_\{([^}]*)\}", r"<sub>\1</sub>", escaped)
+    escaped = re.sub(r"(?<=[A-Za-zΑ-ωŷΔ])_([A-Za-z0-9])", r"<sub>\1</sub>", escaped)
+    return escaped
+
+
+def render_technical(ctx: dict) -> str:
+    t = ctx["technical"]
+    page_copy = t["page"]
+
+    def table(columns, rows) -> str:
+        head = "".join(f"<th scope='col'>{html.escape(c)}</th>" for c in columns)
+        body = "".join("<tr>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>" for row in rows)
+        return (f'<div class="table-scroll"><table class="data-table"><thead><tr>{head}</tr></thead>'
+                f"<tbody>{body}</tbody></table></div>")
+
+    variable_rows = []
+    for v in ctx["variables"]:
+        label = html.escape(v["label"])
+        if v["outcome"]:
+            label += ' <span class="tag">outcome</span>'
+        variable_rows.append([
+            f"<code>{html.escape(v['id'])}</code>", label, html.escape(v["unit"]),
+            html.escape(v["direction"]), html.escape(v["source"]), html.escape(v["coverage"]),
+        ])
+    variables = table(t["variables"]["columns"], variable_rows)
+
+    design_rows = [[f"<code>{html.escape(row['name'])}</code>", html.escape(row["role"]),
+                    html.escape(row["meaning"])] for row in t["design_variables"]["rows"]]
+    design_table = table(["Column", "Role", "Meaning"], design_rows)
+
+    model_rows = []
+    for m in ctx["models"]:
+        model_rows.append([
+            f"<strong>{html.escape(m['design'])}</strong>", html.escape(m["estimator"]),
+            html.escape(m["outcome"]), f"<code>{html.escape(m['treatment'])}</code>",
+            html.escape(m["controls"]), html.escape(m["inference"]),
+            f"<code>{html.escape(m['artifact'])}</code>",
+        ])
+    models = table(t["models"]["columns"], model_rows)
+
+    equations = []
+    for block in t["equations"]["blocks"]:
+        terms = "".join(f"<dt>{mathify(symbol)}</dt><dd>{html.escape(meaning)}</dd>"
+                        for symbol, meaning in block["terms"])
+        equations.append(
+            f'<section class="equation-block"><h3>{html.escape(block["design"])} — '
+            f'{html.escape(block["title"])}</h3>'
+            f'<pre class="equation">{mathify(block["code"])}</pre>'
+            f'<dl class="terms">{terms}</dl></section>')
+
+    body = f"""<main class="flow page-technical">
+  <header class="flow-head">
+    <p class="eyebrow">{html.escape(page_copy['eyebrow'])}</p>
+    <h1>{html.escape(page_copy['heading'])}</h1>
+    <p class="caption">{html.escape(page_copy['intro'])}</p>
+  </header>
+
+  <section class="method-section" id="variables">
+    <h2>{html.escape(t['variables']['heading'])}</h2>
+    <p class="note">{html.escape(t['variables']['note'])}</p>
+    {variables}
+  </section>
+
+  <section class="method-section" id="design-variables">
+    <h2>{html.escape(t['design_variables']['heading'])}</h2>
+    <p class="note">{html.escape(t['design_variables']['note'])}</p>
+    {design_table}
+  </section>
+
+  <section class="method-section" id="models">
+    <h2>{html.escape(t['models']['heading'])}</h2>
+    <p class="note">{html.escape(t['models']['note'])}</p>
+    {models}
+  </section>
+
+  <section class="method-section" id="equations">
+    <h2>{html.escape(t['equations']['heading'])}</h2>
+    <p class="note">{html.escape(t['equations']['note'])}</p>
+    {''.join(equations)}
+  </section>
+
+  <footer class="controls">
+    <a class="ghost" href="../methodology/">Methodology</a>
+    <a class="ghost" href="../">Causal Presidents</a>
+  </footer>
+  <p class="vintage">Registry vintage {ctx['vintage']}</p>
+</main>
+"""
+    return page("Technical details", 1, body, nav_active="technical", wide=True)
+
+
 def main() -> int:
     ctx = build_context(REPO_ROOT)
     NAV_LABELS.update(ctx["guide"]["nav"])
 
     for name in ("", "study", "compare", "graph", "estimates", "chart", "ask", "designs", "about",
-                 "methodology"):
+                 "methodology", "technical"):
         (DIST / name).mkdir(parents=True, exist_ok=True)
     for name in ("assets", "assets/graphs", "assets/comparisons", "assets/series", "assets/breaks",
                  "assets/designs", "assets/presidents", "data"):
@@ -1273,6 +1429,7 @@ def main() -> int:
     (DIST / "designs" / "index.html").write_text(render_designs(ctx), encoding="utf-8", newline="\n")
     (DIST / "about" / "index.html").write_text(render_about(ctx), encoding="utf-8", newline="\n")
     (DIST / "methodology" / "index.html").write_text(render_methodology(ctx), encoding="utf-8", newline="\n")
+    (DIST / "technical" / "index.html").write_text(render_technical(ctx), encoding="utf-8", newline="\n")
 
     # The answer layer's inputs: the gate's rules, the contract, the glossary and the corpus, emitted from the
     # same specs `app/` reads. Nothing here is a second copy of a rule.

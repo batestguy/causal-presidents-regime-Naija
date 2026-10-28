@@ -260,6 +260,7 @@ nav:
   home: "Home"
   about: "About"
   methodology: "Methodology"
+  technical: "Technical"
 
 about:
   eyebrow: "About"
@@ -281,7 +282,7 @@ about:
 methodology:
   eyebrow: "Why these models"
   heading: "Methodology"
-  intro: "The problem, the work this sits beside, and the specific things this project does differently. Every number on this page is generated from the registry when the page is built."
+  intro: "The problem, the work this sits beside, and what this project does differently. Variable names, the model table and the estimating equations are on the Technical details page. Every number here is generated from the registry when the page is built."
   sections:
     - id: problem
       heading: "1. The problem"
@@ -290,40 +291,35 @@ methodology:
         - "This project asks what can be identified instead. It treats every outcome-and-design pair as its own model, publishes the number when a design earns one, and publishes the reason when it does not. {models} models are compared across {designs} identification designs and {specifications} fitted specifications, {first_year} to {last_year}."
       bullets:
         - "Twelve outcomes across health, education, security and the economy."
-        - "Three designs: a state-level two-way fixed-effects panel, a national local projection, and a synthetic control."
-        - "One rule: no causal verb without a named design, its identifying assumption, and the check that could have killed it."
+        - "No causal verb without a named design, its identifying assumption, and the check that could have killed it."
     - id: prior
       heading: "2. What exists"
       paragraphs:
         - "Four strands of work bear directly on this one. The project uses their methods and inherits their warnings; the references are listed at the end with DOIs, checked against Crossref on 2026-10-28."
       works:
         - strand: "Synthetic control"
-          body: "Comparative case studies with a weighted donor pool, from the Basque Country to California's tobacco programme, and the later statement of when the method is credible."
+          body: "Comparative case studies with a weighted donor pool, and the later statement of when the method is credible."
           refs: "Abadie & Gardeazabal (2003); Abadie, Diamond & Hainmueller (2010); Abadie (2021)"
         - strand: "Panel designs and local projections"
-          body: "Difference-in-differences with staggered adoption, the decomposition of two-way fixed effects under variable timing, and local projections for shock transmission."
+          body: "Staggered difference-in-differences, the decomposition of two-way fixed effects under variable timing, and local projections for shock transmission."
           refs: "Callaway & Sant'Anna (2021); Goodman-Bacon (2021); Jordà (2005)"
         - strand: "Reporting the multiverse"
-          body: "Specification-curve analysis and the credibility agenda: fit the grid, publish the distribution, and say which specification was preferred before seeing it."
+          body: "Fit the grid, publish the distribution, and say which specification was preferred before seeing it."
           refs: "Simonsohn, Simmons & Nelson (2020); Athey & Imbens (2017)"
         - strand: "Nigeria and the region"
           body: "The resource-curse account of Nigeria's political economy, the greed-and-grievance account of civil war, and the micro evidence that democratisation reduced infant mortality in sub-Saharan Africa."
           refs: "Sala-i-Martin & Subramanian (2003); Collier & Hoeffler (2004); Kudamatsu (2012)"
     - id: improve
-      heading: "3. How this work improves on it"
+      heading: "3. What this project does differently"
       items:
         - title: "The specification is written before the number"
-          body: "Every design lives in a committed spec file with a declared estimator, sample, checks and verdict rule, and the artifact records the spec's md5. Windows and thresholds are read from those files at run time, not retyped."
-        - title: "Absence is a published output, not a gap in the table"
-          body: "Of {models} model cards, {estimated} carry a published number and {no_number} carry a reason from a closed set. A reader who opens a card cannot mistake thirty-four unexplained blanks for thirty-four null results."
-        - title: "Placebos decide, and a gate that fails is published"
-          body: "The synthetic control publishes its in-space and in-time placebos. {placebos_passing} of {placebos_total} placebo fits clear the same pre-fit threshold as the treated unit, which is why the design reports no identified effect rather than a gap."
-        - title: "The solver's own choice is on the record"
-          body: "The declared simplex problem is underdetermined with {donors} donors and a short pre-period, so the artifact publishes the solver's vertex and a unique ridge refit side by side. For one window they disagree in sign; that disagreement is the finding."
+          body: "Every design lives in a committed spec file whose md5 the artifact records. Windows and verdict rules are read from those files at run time, not retyped."
+        - title: "Absence is a published output"
+          body: "Of {models} model cards, {estimated} carry a number and {no_number} carry a reason from a closed set. Thirty-four unexplained blanks cannot be mistaken for thirty-four null results."
+        - title: "Placebos decide, and the solver's choice is on the record"
+          body: "The synthetic control publishes its in-space and in-time placebos: {placebos_passing} of {placebos_total} placebo fits clear the same pre-fit threshold, which is why it reports no identified effect. Because the weights are not unique with {donors} donors, the artifact publishes the vertex and a ridge refit side by side."
         - title: "Data honesty is drawn, not asserted"
-          body: "Of {spine_total} outcome-months, {spine_observed} are observations. Interpolated months are drawn dashed, unobserved runs are shaded, and every test runs on the native grain a source published."
-        - title: "The whole chain is re-derived"
-          body: "Each stage has an independent verifier that recomputes its numbers rather than importing the code under test. The chain runs in CI, and the prose on this site is checked against the artifacts it quotes."
+          body: "Of {spine_total} outcome-months, {spine_observed} are observations; interpolated months are drawn dashed and tests run on the native grain. Every stage is re-derived by one of {verifiers} independent verifiers in the chain."
     - id: limits
       heading: "4. What it does not claim"
       bullets:
@@ -332,11 +328,6 @@ methodology:
         - "No forecast: the site publishes what happened, not what will."
         - "No monthly causal statement from an annual series."
         - "No causal verb without a named design, its assumption and its failed-check evidence."
-    - id: checked
-      heading: "5. How it is checked"
-      paragraphs:
-        - "The registry is rebuilt from raw payloads by one chain: acquisition, parsing, quality gates, the analytical base, then the stages that fit and describe. {verifiers} verifiers re-derive the published numbers from the artifacts and, where possible, from the base."
-        - "A number displayed anywhere on the site is a field of a registry artifact. A literal coefficient in the renderer is a build failure, and a prose number that drifts from its artifact fails the same way."
   references_heading: "References"
   references_note: "Bibliographic details checked against Crossref on 2026-10-28. DOIs are printed as text, not links: the site makes no network request, by design."
   references:

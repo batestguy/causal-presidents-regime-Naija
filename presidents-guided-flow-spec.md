@@ -224,6 +224,9 @@ Methodology).
   time, and `tests/verify_site.py` fails if any of them drifts.
 - **The cover band now states scope rather than the ratio.** It reads the models compared, the three methods and
   the span; the ratio moved into "About this study" (P-08).
+- **Technical details is its own page** (`/technical/`), not a dropdown: the 25 catalogue variables, the design
+  variables, the model table and the equations with every symbol defined. Methodology keeps the argument and is
+  short; its reference material lives here (P-11).
 
 ---
 

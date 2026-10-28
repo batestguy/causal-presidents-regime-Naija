@@ -17,6 +17,7 @@ Run:
 from __future__ import annotations
 
 import html as html_module
+import csv
 import hashlib
 import json
 import re
@@ -30,7 +31,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 DIST = REPO_ROOT / "site" / "dist"
 PAGES = ("index.html", "study/index.html", "compare/index.html", "graph/index.html",
          "estimates/index.html", "chart/index.html", "ask/index.html", "designs/index.html",
-         "about/index.html", "methodology/index.html")
+         "about/index.html", "methodology/index.html", "technical/index.html")
 
 
 def fail(failures: list[str], message: str) -> None:
@@ -129,7 +130,8 @@ def main() -> int:
             if f">{label}</a>" not in markup:
                 fail(failures, f"{page}: the navigation does not carry {label!r}")
         depth = "" if page == "index.html" else "../"
-        if f'href="{depth}about/"' not in markup or f'href="{depth}methodology/"' not in markup:
+        if (f'href="{depth}about/"' not in markup or f'href="{depth}methodology/"' not in markup
+                or f'href="{depth}technical/"' not in markup):
             fail(failures, f"{page}: the navigation's links do not resolve from this page's own URL")
 
     # ---- the About frame, which is deliberately unfinished ------------------------------------------------
@@ -155,7 +157,7 @@ def main() -> int:
          f"placebo fits", "the placebo saturation"),
         (f"{dc_doc['counts']['donors']} donors", "the donor count"),
         (f"{series_doc['counts']['spine_rows']['observed']:,} are observations", "the observed share"),
-        (f"{len(list((REPO_ROOT / 'tests').glob('verify_*.py')))} verifiers", "the verifier count"),
+        (f"{len(list((REPO_ROOT / 'tests').glob('verify_*.py')))} independent verifiers", "the verifier count"),
     ):
         if needle not in method_page:
             fail(failures, f"methodology/: {what} is not on the page ({needle!r})")
@@ -165,6 +167,36 @@ def main() -> int:
             fail(failures, f"methodology/: the reference by {surname!r} is not in the list")
     if method_page.count("https://doi.org/") < len(method_copy["references"]):
         fail(failures, "methodology/: a reference is missing its DOI link")
+
+    # ---- Technical details: every variable, every model, every equation -----------------------------------
+    tech_page = text_of(read(DIST / "technical" / "index.html"))
+    tech_copy = yaml.safe_load(read(REPO_ROOT / "analysis" / "specs" / "technical.yml"))
+    with (REPO_ROOT / "dbt" / "seeds" / "raw_metric_catalogue.csv").open(encoding="utf-8", newline="") as handle:
+        catalogue = list(csv.DictReader(handle))
+    for row in catalogue:
+        if row["metric_id"] not in tech_page:
+            fail(failures, f"technical/: the variable {row['metric_id']!r} is not in the table")
+    estimation = yaml.safe_load(read(REPO_ROOT / "analysis" / "specs" / "estimation.yml"))
+    for design, key in (("A", "design_a"), ("B", "design_b")):
+        estimator = str(estimation[key]["estimator"]).split(",")[0]
+        if estimator not in tech_page:
+            fail(failures, f"technical/: design {design}'s estimator ({estimator!r}) is not in the model table")
+    for design in ("A", "B", "C", "Grid"):
+        if f">{design}</strong>" not in tech_page:
+            fail(failures, f"technical/: the model table carries no {design} row")
+    for row in tech_copy["design_variables"]["rows"]:
+        if row["name"] not in tech_page:
+            fail(failures, f"technical/: the design variable {row['name']!r} is not described")
+    for block in tech_copy["equations"]["blocks"]:
+        if block["title"] not in tech_page:
+            fail(failures, f"technical/: design {block['design']}'s equation title is not on the page")
+        for symbol, _meaning in block["terms"]:
+            plain = re.sub(r"_\{([^}]*)\}", r"\1", re.sub(r"_([A-Za-z0-9])", r"\1", symbol))
+            if plain not in re.sub(r"<[^>]+>", "", tech_page):
+                safe = symbol.encode("unicode_escape").decode("ascii")
+                fail(failures, f"technical/: design {block['design']} does not define {safe!r}")
+    if tech_page.count('class="equation"') != len(tech_copy["equations"]["blocks"]):
+        fail(failures, "technical/: the page does not carry one equation block per design")
 
     # ---- no flow page attributes an outcome to a president ----------------------------------------------
     # A president's name is permitted in exactly two places, both of which are labels rather than verdicts: the

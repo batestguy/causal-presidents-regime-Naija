@@ -69,12 +69,14 @@ body[data-page="Causal Presidents"] .topnav {
   padding-left: clamp(18px, 4vw, 48px);
   padding-right: clamp(18px, 4vw, 48px);
 }
+body.wide-page .topnav { max-width: 1240px; }
 .topnav .wordmark {
   font-family: var(--serif);
   font-size: 1.02rem;
   color: var(--ink);
   text-decoration: none;
   letter-spacing: -.01em;
+  white-space: nowrap;
 }
 .topnav ul { list-style: none; display: flex; gap: clamp(.9rem, 2vw, 1.7rem); margin: 0; padding: 0; }
 .topnav a { color: var(--ink-soft); text-decoration: none; font-size: .86rem; }
@@ -538,6 +540,69 @@ img.chart { width: 100%; height: auto; background: #fff; border: 1px solid var(-
 .page-about .prose { max-width: 70ch; }
 .page-about .block h2 { font-size: 1.3rem; margin-bottom: .4rem; }
 
+/* ---------------------------------------------------------------- technical details */
+
+.table-scroll {
+  overflow-x: auto;
+  margin: 1rem 0 0;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: #fff;
+}
+.data-table { border-collapse: collapse; width: 100%; font-size: .82rem; }
+.data-table th, .data-table td {
+  text-align: left;
+  padding: .55rem .7rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+.data-table thead th {
+  background: var(--paper);
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  font-weight: 600;
+}
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table code { font-size: .95em; }
+.tag {
+  display: inline-block;
+  font-size: .6rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: .05rem .4rem;
+  margin-left: .35rem;
+  white-space: nowrap;
+}
+.equation-block { margin: 1.5rem 0 0; }
+.equation-block h3 { font-size: 1.02rem; margin-bottom: .45rem; }
+.equation {
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: .9rem 1rem;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .84rem;
+  line-height: 1.65;
+  margin: 0;
+}
+.terms {
+  display: grid;
+  grid-template-columns: minmax(92px, 150px) 1fr;
+  gap: .35rem 1rem;
+  margin: .75rem 0 0;
+  font-size: .86rem;
+}
+.terms dt { margin: 0; }
+.terms dd { margin: 0; color: var(--ink-soft); }
+
 @media (max-width: 1079px) {
   /* Three up, with the last two centred: a 6-column track means the 4th and 5th cards can sit as a
      balanced pair instead of leaving a dead column under the first row. */
@@ -564,6 +629,10 @@ img.chart { width: 100%; height: auto; background: #fff; border: 1px solid var(-
   .president:nth-child(4) { grid-column: auto / span 2; }
   .president:nth-child(5) { grid-column: 2 / span 2; }
   .cover-cta { flex-direction: column; align-items: flex-start; }
+  .topnav { flex-wrap: wrap; row-gap: .25rem; }
+  .topnav ul { gap: .75rem; }
+  .topnav a { font-size: .8rem; }
+  .topnav .wordmark { font-size: .95rem; }
 }
 
 @media (max-width: 860px) {

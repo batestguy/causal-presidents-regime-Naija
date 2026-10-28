@@ -1,0 +1,103 @@
+# Technical details - the reference tables behind the methodology page.
+#
+# The argument lives in `guide.yml` under `methodology`; this file carries the material a reader checks
+# against: the variable dictionary, the model table and the estimating equations. The variable table is
+# **generated from the metric catalogue seed** at build time and the model table from the estimation and
+# robustness specs, so neither can drift from the thing it describes. The equations are declared here
+# because they are notation, not data; `tests/verify_site.py` requires every block and every term, and the
+# model table's treatment and estimator strings are read from `estimation.yml` rather than retyped.
+version: 1
+stamp: "declared 2026-10-28"
+
+page:
+  eyebrow: "Reference"
+  heading: "Technical details"
+  intro: "Every variable in the analytical base, every model the project fitted, and the equation each one estimates. The methodology page carries the argument; this page carries the material."
+
+variables:
+  heading: "Variables"
+  source: "dbt/seeds/raw_metric_catalogue.csv"
+  note: "The twenty-five metrics the base carries: twelve catalogue outcomes (each with model cards) and thirteen covariates and context series. The unit, direction and coverage status are the catalogue's own fields, never retyped here."
+  columns: ["Metric", "Meaning", "Unit", "Direction", "Source", "Coverage"]
+
+design_variables:
+  heading: "Treatments, outcomes and design variables"
+  note: "The columns a design uses, beyond the catalogue metrics."
+  rows:
+    - name: "faac_gross_total_naira"
+      role: "Treatment (A)"
+      meaning: "The state's gross FAAC allocation for the month, naira. The dose Design A estimates against."
+    - name: "log_dose"
+      role: "Treatment transform (A)"
+      meaning: "log of the allocation. In a specification with state fixed effects the elasticity is invariant to a state-constant denominator, which is why the per-capita axis is not needed for the slope."
+    - name: "d1_faac_per_capita"
+      role: "Declared dose axis (A)"
+      meaning: "The per-capita axis the estimand is written on. The column is typed and empty: the state-population denominator is an unmade decision (X-09), so every specification in the grid is nominal."
+    - name: "d2_faac_share_of_state_revenue"
+      role: "Declared instrument (A)"
+      meaning: "FAAC divided by FAAC plus internally generated revenue. The IGR half has no landed series, so the non-oil instrument does not exist yet."
+    - name: "fatalities, incidents, fatalities_civilians"
+      role: "Outcomes (A)"
+      meaning: "UCDP GED counts by state and month. An event count and a death toll are different objects, which is why all three are published."
+    - name: "oil"
+      role: "Treatment (B)"
+      meaning: "Brent crude spot price, monthly. Design B uses its first difference in logs: the shock, not the level."
+    - name: "gross_total_naira"
+      role: "Outcome (B)"
+      meaning: "The national monthly FAAC allocation, the same dose aggregated across states."
+    - name: "u5mr"
+      role: "Outcome (C)"
+      meaning: "Under-5 mortality per 1,000 live births, annual native observations. The treated unit of the synthetic control."
+    - name: "w_j"
+      role: "Estimand (C)"
+      meaning: "The simplex weight on donor country j. Weights are negative-free and sum to one; the post-treatment gap is what the design reports."
+
+models:
+  heading: "Models"
+  note: "One row per design. The estimator, treatment and outcome strings are read from the committed specs; the artifact column names the file that carries the numbers."
+  columns: ["Design", "Estimator", "Outcome", "Treatment", "Controls", "Inference", "Artifact"]
+
+equations:
+  heading: "Mathematical specification"
+  note: "Notation is the specs' own: a state-month panel for A and the grid, a national month for B, an annual country panel for C."
+  blocks:
+    - design: "A"
+      title: "State dose-response, PPML"
+      code: |-
+        μ_{s,t} = exp( β · log(FAAC_{s,t}) + α_s + γ_t )
+        fatalities_{s,t} ~ Poisson( μ_{s,t} )
+      terms:
+        - ["β", "elasticity of conflict fatalities to the state's allocation"]
+        - ["α_s", "state fixed effect: every time-invariant difference, including size and the level of the allocation"]
+        - ["γ_t", "month fixed effect: the country-wide month, including national shocks"]
+        - ["s, t", "state and month"]
+    - design: "B"
+      title: "National transmission, local projection"
+      code: |-
+        Δ_h log FAAC_t = β_h · Δ log Brent_t + δ_{m(t)} + ε_{t,h}
+        Δ_h log FAAC_t = log FAAC_{t+h} − log FAAC_{t−1}
+      terms:
+        - ["β_h", "cumulative pass-through at horizon h: the fraction of a 1 % oil move that has reached the states by h"]
+        - ["δ_{m(t)}", "month-of-year dummy: the disbursement calendar"]
+        - ["h", "horizon in months, 0 to 12"]
+        - ["ε_{t,h}", "residual, autocorrelated by construction; Newey–West with 12 lags"]
+    - design: "C"
+      title: "Synthetic control on under-5 mortality"
+      code: |-
+        ŷ_{NGA,t} = Σ_j w_j · y_{j,t}
+        w = argmin_{w ≥ 0, Σ_j w_j = 1} ‖ y_{NGA,pre} − Y_{pre} w ‖²
+        gap_t = y_{NGA,t} − ŷ_{NGA,t}
+      terms:
+        - ["w_j", "simplex weight on donor country j"]
+        - ["pre", "every year before the window's first post year"]
+        - ["gap_t", "the difference between Nigeria and its synthetic counterfactual, in deaths per 1,000 live births"]
+        - ["placebo", "the same fit with each donor treated in turn, and with the treatment date moved back 3, 5 and 7 years"]
+    - design: "Grid"
+      title: "The specification curve"
+      code: |-
+        y_{s,t} = β_k · log(FAAC_{s,t−k}) + α_s + γ_t + u_{s,t}
+      terms:
+        - ["k", "dose lag in months, 0 to 2"]
+        - ["adjustment set", "state only; state and month; state and month with a state trend"]
+        - ["window", "full; excluding COVID; post-2019"]
+        - ["note", "the grid varies Design A's axes on the state panel and Design B's on the national month; every fitted cell is published, and the preferred cell is the pre-registered one"]
