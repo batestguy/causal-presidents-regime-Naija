@@ -44,6 +44,6 @@ The refusal quotes the passage that says so and cites it, so a refusal is an arg
 | **G04** | The question asks the project to make a policy decision. The project measures what it can measure; it does not decide what should be done. |
 | **G05** | The question asks about a year the corpus does not cover, so there is nothing to quote for it. |
 | **G06** | The question asks which tenure did better, and this data cannot identify it: four to five administrations against twenty-two to twenty-three annual observations is arithmetic, not evidence. |
-| **G07** | The question asks the synthetic-control design for a causal answer, and that design was never run: its estimator and its placebos were not built. |
+| **G07** | The question asks the synthetic-control design for a causal answer, and that design did not identify one: it was fitted on four windows, none survived its placebos, and a synthetic control has no sampling distribution to read an interval from. |
 | **G08** | The question asks for advice rather than for what the record says. |
 | **G09** | The question asks about a country other than Nigeria. The corpus carries Nigerian data and a donor pool it was unable to download. |

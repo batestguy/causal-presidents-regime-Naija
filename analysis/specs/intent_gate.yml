@@ -8,8 +8,8 @@
 #     441-chunk corpus.
 #   * `refusal_reason_recall`   0.5  (target 1.0) — one of the two reason-bearing questions did not
 #     retrieve its reason chunk in the top 5, because "can the synthetic control tell me whether
-#     Buhari's tenure caused …" retrieves tenure prose rather than the sentence that says the
-#     estimator was never run.
+#     Buhari's tenure caused …" retrieves tenure prose rather than the sentence that says what the
+#     design found.
 #
 # Both failures have the same cause: **the decision is made by the retriever.** The retriever answers
 # "what is similar to this text?"; a refusal needs "can this corpus answer this question at all?".
@@ -31,13 +31,13 @@
 # The gate does not generate answers. It decides an intent and, for a refusal, pins the chunk the
 # answer must cite. The answer layer (not built) assembles from the pinned chunk.
 
-version: 3
-labelled: "2026-10-22"
+version: 4
+labelled: "2026-10-28"
 spec_path: "analysis/specs/intent_gate.yml"
 engine: "app/intent_gate.py"
 harness: "scripts/eval_intent.py"
 verifier: "tests/verify_intent.py"
-eval_spec: "analysis/specs/intent_gate_eval_v3.yml"
+eval_spec: "analysis/specs/intent_gate_eval_v4.yml"
 built_on: "analysis/specs/rag.yml"
 
 # Artifacts the rules read at run time, both committed so the rule behaves the same on a fresh clone as
@@ -49,10 +49,16 @@ country_vocabulary: "registry/reference/countries.json"
 donor_panel: "registry/donors/2026-10-18/panel.json"
 
 revision:
-  version: 3
-  date: "2026-10-22"
-  previous: "version 2, frozen at 8b9ba3b, measured on 49 questions"
-  changed: "G09 refuses a question naming a country outside the donor panel, closing KG01"
+  version: 4
+  date: "2026-10-28"
+  previous: "version 3, frozen at 3dcb555, measured on 49 questions"
+  changed: "G07's reason sentence describes what the fitted design found, not a design that had not been run"
+  why: >-
+    The text-only change is forced by the artifact: Design C was fitted on 2026-10-28, and a refusal that
+    told a reader the design had never been run would be false. No matching condition, route or threshold
+    moves — G07 refuses the same class for the same reason — but the freeze is a hash of the whole file, so
+    the change still costs a new held-out set and a fourth freeze, which is the process working rather than
+    being worked around.
   why: >-
     KG01 declared a class the scope names — "questions about countries outside the donor panel" — and did
     not detect it, because the panel's membership lived in a gitignored acquisition manifest. The 99 members
@@ -80,7 +86,7 @@ revision:
 # first, and the held-out set that measures it is written afterwards, from a new path. The v1 set is
 # retained — it is the set the change was made in response to, so it cannot measure v2 — and v2 carries a
 # `regression` block for the questions that are now published cases rather than held-out ones.
-revision:
+revision_v2:
   version: 2
   date: "2026-10-22"
   previous: "version 1, frozen at 30afc23, measured on 49 questions"
@@ -339,14 +345,15 @@ rules:
   - id: "G07"
     priority: 70
     intent: "refusal_with_reason"
-    implements: "the scope clause 'anything requiring an estimate that was never fitted'"
+    implements: "the scope clause 'anything requiring an estimate the design did not identify'"
     why: >-
-      Design C was never run — Stage 5's pre-check recorded it as infeasible and the published result
-      says so (registry/dags/index.json#published_results.C, docs/limitations.md §7). A question asking
-      that design to deliver a causal answer must be refused, and the refusal must cite the result
-      that records that it was not estimated. The rule asks for a causal verb alongside the design, so
-      a question about the design's *status* ("was it estimated, and if not, why not?") stays
-      answerable — the corpus answers that.
+      Design C was fitted in stage 8h (registry/design_c/2026-10-18/): four windows estimated, one
+      refused by the declared minimum, and none identified — the in-space rank p runs 0.17 to 0.50 and
+      the pre-fit gate does not discriminate on this pool. A question asking that design to deliver a
+      causal answer must be refused, and the refusal must cite the result that records what the design
+      found. The rule asks for a causal verb alongside the design, so a question about the design's
+      *status* ("was it estimated, and what did its placebos find?") stays answerable — the corpus
+      answers that.
     conditions:
       all_of:
         - ['\bsynthetic[- ]control\b|\bdesign c\b|\bmatched control\b|\bsynth\b']
