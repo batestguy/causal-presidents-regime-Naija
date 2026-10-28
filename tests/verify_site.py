@@ -29,7 +29,8 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DIST = REPO_ROOT / "site" / "dist"
 PAGES = ("index.html", "study/index.html", "compare/index.html", "graph/index.html",
-         "estimates/index.html", "chart/index.html", "ask/index.html", "designs/index.html")
+         "estimates/index.html", "chart/index.html", "ask/index.html", "designs/index.html",
+         "about/index.html", "methodology/index.html")
 
 
 def fail(failures: list[str], message: str) -> None:
@@ -96,6 +97,74 @@ def main() -> int:
         if outcome["label"] in cover:
             fail(failures, f"the cover names the outcome {outcome['label']!r} — the cover is a spine, not a "
                            f"place where an outcome is put next to a face")
+
+    # ---- the cover states what was compared, how, and over what span (2026-10-28) --------------------------
+    # The ratio moved into the About disclosure; the band states the comparison instead, and every part of it is
+    # derived from the registry, not typed into the renderer.
+    vintage = index["vintage_date"]
+    est_doc = json.loads(read(REPO_ROOT / "registry" / "estimates" / vintage / "estimates.json"))
+    rob_doc = json.loads(read(REPO_ROOT / "registry" / "robustness" / vintage / "robustness.json"))
+    series_doc = json.loads(read(REPO_ROOT / "registry" / "series" / vintage / "index.json"))
+    dc_doc = json.loads(read(REPO_ROOT / "registry" / "design_c" / vintage / "design_c.json"))
+    models = counts["estimated"] + counts["not_estimated"]
+    specs = len(est_doc["specifications"]) + len(rob_doc["specifications"])
+    span = f"{series_doc['window']['first'][:4]}–{series_doc['window']['last'][:4]}"
+    for needle, what in (
+        (f"{models} models compared", "the count of models compared"),
+        ("Two-way fixed effects, local projections and synthetic control", "the methods used"),
+        (f"{len(index['designs'])} identification designs", "the design count"),
+        (f"{specs} fitted specifications", "the specification count"),
+        (span, "the time span"),
+    ):
+        if needle not in cover:
+            fail(failures, f"the cover does not state {what} ({needle!r})")
+
+    # ---- the primary navigation, on every page ------------------------------------------------------------
+    for page in PAGES:
+        markup = cover if page == "index.html" else text_of(read(DIST / page))
+        if 'class="topnav"' not in markup:
+            fail(failures, f"{page}: no primary navigation")
+            continue
+        for label in ("Home", "About", "Methodology"):
+            if f">{label}</a>" not in markup:
+                fail(failures, f"{page}: the navigation does not carry {label!r}")
+        depth = "" if page == "index.html" else "../"
+        if f'href="{depth}about/"' not in markup or f'href="{depth}methodology/"' not in markup:
+            fail(failures, f"{page}: the navigation's links do not resolve from this page's own URL")
+
+    # ---- the About frame, which is deliberately unfinished ------------------------------------------------
+    about_page = text_of(read(DIST / "about" / "index.html"))
+    about_copy = guide["about"]
+    for needle, what in ((about_copy["heading"], "its heading"),
+                         (about_copy["todo_heading"], "the still-to-come heading"),
+                         (about_copy["todo_note"], "the note that it is a frame")):
+        if needle not in about_page:
+            fail(failures, f"about/: {what} is not on the page")
+
+    # ---- Methodology: the five claims, the derived numbers, and a reference for every strand ---------------
+    method_page = text_of(read(DIST / "methodology" / "index.html"))
+    method_copy = guide["methodology"]
+    for section in method_copy["sections"]:
+        if section["heading"] not in method_page:
+            fail(failures, f"methodology/: the section {section['heading']!r} is not on the page")
+    for needle, what in (
+        (f"{models} models are compared", "the model count"),
+        (f"{specs} fitted specifications", "the specification count"),
+        (span.replace('–', ' to '), "the time span"),
+        (f"{dc_doc['counts']['placebos_passing_pre_fit']} of {dc_doc['counts']['placebos_in_space']} "
+         f"placebo fits", "the placebo saturation"),
+        (f"{dc_doc['counts']['donors']} donors", "the donor count"),
+        (f"{series_doc['counts']['spine_rows']['observed']:,} are observations", "the observed share"),
+        (f"{len(list((REPO_ROOT / 'tests').glob('verify_*.py')))} verifiers", "the verifier count"),
+    ):
+        if needle not in method_page:
+            fail(failures, f"methodology/: {what} is not on the page ({needle!r})")
+    for ref in method_copy["references"]:
+        surname = ref.split(",")[0]
+        if surname not in method_page:
+            fail(failures, f"methodology/: the reference by {surname!r} is not in the list")
+    if method_page.count("https://doi.org/") < len(method_copy["references"]):
+        fail(failures, "methodology/: a reference is missing its DOI link")
 
     # ---- no flow page attributes an outcome to a president ----------------------------------------------
     # A president's name is permitted in exactly two places, both of which are labels rather than verdicts: the

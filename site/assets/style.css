@@ -53,6 +53,34 @@ h4 { font-size: .86rem; font-family: var(--sans); text-transform: uppercase; let
 .vintage { margin-top: 2.5rem; }
 .tech { font-size: .8rem; }
 
+/* ---------------------------------------------------------------- primary navigation */
+
+.topnav {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: .85rem clamp(18px, 4vw, 40px) .1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+body[data-page="Causal Presidents"] .topnav {
+  max-width: 1180px;
+  padding-left: clamp(18px, 4vw, 48px);
+  padding-right: clamp(18px, 4vw, 48px);
+}
+.topnav .wordmark {
+  font-family: var(--serif);
+  font-size: 1.02rem;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: -.01em;
+}
+.topnav ul { list-style: none; display: flex; gap: clamp(.9rem, 2vw, 1.7rem); margin: 0; padding: 0; }
+.topnav a { color: var(--ink-soft); text-decoration: none; font-size: .86rem; }
+.topnav a:hover { color: var(--accent); }
+.topnav a[aria-current="page"] { color: var(--accent); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
+
 /* ---------------------------------------------------------------- cover */
 
 .cover-head, .cover-foot {
@@ -73,6 +101,15 @@ h4 { font-size: .86rem; font-family: var(--sans); text-transform: uppercase; let
 .cover-lead { min-width: 0; }
 .cover-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 1rem; }
 .cover-cta .ratio { margin: 0; border-left-color: rgba(255, 255, 255, .55); }
+.cover-count {
+  font-family: var(--serif);
+  font-size: clamp(1.45rem, 2.2vw, 1.9rem);
+  line-height: 1.1;
+  color: #fff;
+  margin: 0;
+}
+.cover-methods { color: #fff; font-size: .95rem; margin: 0; }
+.cover-span { color: #fff; font-size: .82rem; margin: 0; }
 .cover-cta .primary {
   background: #fff;
   color: var(--accent);
@@ -135,7 +172,9 @@ h4 { font-size: .86rem; font-family: var(--sans); text-transform: uppercase; let
   font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; text-align: center;
   color: #fff; background: rgba(12, 24, 16, .55);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  display: flex; align-items: center; justify-content: center; gap: .4rem;
 }
+.party-tag svg { width: 15px; height: 15px; flex: none; }
 .credit-list { margin: .5rem 0 0; padding-left: 1.1rem; font-size: .78rem; color: var(--ink-faint); }
 .credit-list li { margin-bottom: .2rem; }
 .frame-empty { width: 100%; height: 100%; display: grid; place-items: center; text-align: center; gap: .2rem; }
@@ -478,6 +517,27 @@ img.chart { width: 100%; height: auto; background: #fff; border: 1px solid var(-
 
 /* ---------------------------------------------------------------- small screens */
 
+/* ---------------------------------------------------------------- about and methodology */
+
+.method-section { margin: 2.6rem 0 0; }
+.method-section h2 { font-size: 1.45rem; margin-bottom: .6rem; }
+.method-section p, .method-section li, .method-section dd { max-width: 68ch; }
+.method-works, .method-items { margin: .9rem 0 0; }
+.method-works dt, .method-items dt {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  margin-top: 1.1rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--rule);
+}
+.method-works dt:first-of-type, .method-items dt:first-of-type { padding-top: .2rem; border-top: none; margin-top: .4rem; }
+.method-works dd, .method-items dd { margin: .3rem 0 0; color: var(--ink-soft); }
+.references ol { padding-left: 1.15rem; font-size: .86rem; color: var(--ink-soft); }
+.references li { margin-bottom: .55rem; max-width: 76ch; }
+.doi { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .82em; word-break: break-all; }
+.page-about .prose { max-width: 70ch; }
+.page-about .block h2 { font-size: 1.3rem; margin-bottom: .4rem; }
+
 @media (max-width: 1079px) {
   /* Three up, with the last two centred: a 6-column track means the 4th and 5th cards can sit as a
      balanced pair instead of leaving a dead column under the first row. */
@@ -486,7 +546,16 @@ img.chart { width: 100%; height: auto; background: #fff; border: 1px solid var(-
   .president:nth-child(4) { grid-column: 2 / span 2; }
   .president:nth-child(5) { grid-column: 4 / span 2; }
   .cover-head { grid-template-columns: 1fr; align-items: start; }
-  .cover-cta { flex-direction: row; align-items: center; justify-content: space-between; }
+  .cover-cta {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: .35rem 1.4rem;
+  }
+  .cover-count { grid-column: 1 / -1; }
+  .cover-methods { grid-column: 1; }
+  .cover-span { grid-column: 1; }
+  .cover-cta .primary { grid-column: 2; grid-row: 2 / span 2; }
 }
 
 @media (max-width: 719px) {

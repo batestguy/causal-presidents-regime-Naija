@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import html
 import json
+import re
 import shutil
 from datetime import datetime, timezone
 from pathlib import Path
@@ -38,7 +39,8 @@ DIST = REPO_ROOT / "site" / "dist"
 RANK = {"pass": 0, "degraded": 1, "fail": 2, "not_attempted": 3}
 DOMAIN_ORDER = ("health", "education", "security", "economy")
 PAGES = ("index.html", "study/index.html", "compare/index.html", "graph/index.html",
-         "estimates/index.html", "chart/index.html", "ask/index.html", "designs/index.html")
+         "estimates/index.html", "chart/index.html", "ask/index.html", "designs/index.html",
+         "about/index.html", "methodology/index.html")
 DOMAIN_LABEL = {"health": "Health", "education": "Education", "security": "Security", "economy": "Economy"}
 
 
@@ -99,6 +101,39 @@ def party_bands(bands: list[str]) -> str:
     n = len(bands)
     stops = ", ".join(f"{colour} {i * 100 / n:.4f}% {(i + 1) * 100 / n:.4f}%" for i, colour in enumerate(bands))
     return f"linear-gradient(90deg, {stops})"
+
+
+# The parties' emblems are drawn here as plain line art, not copied from the official marks: an umbrella for
+# the PDP and a broom for the APC, at 14px and in the strip's own white. A copied logo would be a trademark
+# question and, on an analysis about presidencies, an endorsement the project does not make (docs/decisions.md
+# P-09). The shapes are public-domain objects; the drawing is ours.
+PARTY_EMBLEMS = {
+    "PDP": (
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
+        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'
+        '<path d="M2.4 11.4a9.6 9.6 0 0 1 19.2 0Z"/>'
+        '<path d="M12 11.4V19a2.2 2.2 0 0 0 4.4 0"/>'
+        '<path d="M12 2.2v1.2"/>'
+        '<path d="M6.2 11.4a5.8 5.8 0 0 1 11.6 0"/>'
+        '</svg>'
+    ),
+    "APC": (
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
+        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'
+        '<path d="M15.6 2.6 11.2 9.8"/>'
+        '<path d="M11.2 9.8 3.8 17.6"/>'
+        '<path d="M11.2 9.8 6.4 19.4"/>'
+        '<path d="M11.2 9.8 9.4 20.2"/>'
+        '<path d="M11.2 9.8 12.6 19.6"/>'
+        '<path d="M11.2 9.8 15 17.4"/>'
+        '<path d="M5.4 14.6c3.4 2.6 7.4 2.8 10.2.6"/>'
+        '</svg>'
+    ),
+}
+
+
+def party_emblem(code: str) -> str:
+    return PARTY_EMBLEMS.get(code, "")
 
 
 def load_glossary(root: Path) -> dict[str, str]:
@@ -458,16 +493,27 @@ def build_context(root: Path) -> dict:
 
     counts = index["registry"]["card_estimate_counts"]
     spine = series["counts"]["spine_rows"]
+    design_c = load(root / "registry" / "design_c" / vintage / "design_c.json")
     fills = {
         "window_first": series["window"]["first"],
         "window_last": series["window"]["last"],
+        "first_year": series["window"]["first"][:4],
+        "last_year": series["window"]["last"][:4],
         "administrations": admins["counts"]["administrations"],
         "spine_total": sum(int(v) for v in spine.values()),
         "spine_observed": spine["observed"],
         "spine_interpolated": spine["interpolated"],
         "spine_unobserved": spine["unobserved"],
         "estimated": counts["estimated"],
+        "no_number": counts["not_estimated"],
         "cards": counts["estimated"] + counts["not_estimated"],
+        "models": counts["estimated"] + counts["not_estimated"],
+        "designs": len(index["designs"]),
+        "specifications": len(estimates["specifications"]) + len(robustness["specifications"]),
+        "donors": design_c["counts"]["donors"],
+        "placebos_total": design_c["counts"]["placebos_in_space"],
+        "placebos_passing": design_c["counts"]["placebos_passing_pre_fit"],
+        "verifiers": len(list((root / "tests").glob("verify_*.py"))),
     }
     for key, value in fills.items():
         fills[key] = f"{value:,}" if isinstance(value, int) else value
@@ -493,12 +539,25 @@ def build_context(root: Path) -> dict:
     }
 
 
-def page(title: str, depth: int, body: str, data: dict | None = None, wide: bool = False) -> str:
+NAV_LABELS: dict[str, str] = {}
+
+
+def page(title: str, depth: int, body: str, data: dict | None = None, wide: bool = False,
+         nav_active: str = "") -> str:
     prefix = "../" * depth
+    home = prefix or "./"
     payload = ""
     if data is not None:
         payload = ('<script id="page-data" type="application/json">'
                    + json.dumps(data, ensure_ascii=False) + "</script>")
+    nav_items = []
+    for key in ("home", "about", "methodology"):
+        href = home if key == "home" else f"{prefix}{key}/"
+        current = ' aria-current="page"' if nav_active == key else ""
+        nav_items.append(f'<li><a href="{href}"{current}>{html.escape(NAV_LABELS.get(key, key.title()))}</a></li>')
+    nav = (f'<nav class="topnav" aria-label="Primary">'
+           f'<a class="wordmark" href="{home}">Causal Presidents</a>'
+           f'<ul>{"".join(nav_items)}</ul></nav>')
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -508,6 +567,7 @@ def page(title: str, depth: int, body: str, data: dict | None = None, wide: bool
 <link rel="stylesheet" href="{prefix}assets/style.css">
 </head>
 <body data-page="{html.escape(title)}"{' class="wide-page"' if wide else ''}>
+{nav}
 {body}
 {payload}
 <script src="{prefix}assets/app.js" defer></script>
@@ -535,7 +595,7 @@ def render_cover(ctx: dict) -> str:
             portrait = (f'<img src="assets/presidents/{slug}.jpg" '
                         f'alt="Portrait of {html.escape(admin["president"])}">'
                         f'<figcaption class="party-tag" title="{html.escape(party["name"])}">'
-                        f'{html.escape(admin["party"])}</figcaption>')
+                        f'{party_emblem(admin["party"])}<span>{html.escape(admin["party"])}</span></figcaption>')
             figure_open = (f'<figure class="slide-figure has-portrait" '
                            f'style="--party-bands: {party_bands(party["bands"])}">')
         else:
@@ -566,7 +626,9 @@ def render_cover(ctx: dict) -> str:
       <p class="caption">{html.escape(cover['caption'])} <span class="instruction">{html.escape(cover['instruction'])}</span></p>
     </div>
     <div class="cover-cta">
-      <p class="ratio">{md(fill_text(cover['ratio'], ctx['fills']))}</p>
+      <p class="cover-count">{html.escape(fill_text(cover['models_line'], ctx['fills']))}</p>
+      <p class="cover-methods">{html.escape(cover['methods_line'])}</p>
+      <p class="cover-span">{html.escape(fill_text(cover['span_line'], ctx['fills']))}</p>
       <a class="primary" href="study/">Begin</a>
     </div>
   </header>
@@ -582,14 +644,16 @@ def render_cover(ctx: dict) -> str:
   <footer class="cover-foot">
     <details class="about">
       <summary>About this study</summary>
-      <div class="prose">{paragraphs}</div>
+      <div class="prose">{paragraphs}
+        <p class="ratio">{md(fill_text(cover['ratio'], ctx['fills']))}</p>
+      </div>
     </details>
     {credits}
     <p class="vintage">Registry vintage {ctx['vintage']} · built {ctx['generated_at'][:16].replace('T', ' ')}</p>
   </footer>
 </main>
 """
-    return page("Causal Presidents", 0, body)
+    return page("Causal Presidents", 0, body, nav_active="home")
 
 
 # ------------------------------------------------------------------------------------------------------------
@@ -1065,10 +1129,98 @@ def render_breaks(outcome: dict, guide: dict) -> str:
 
 
 # ------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------
+# The two pages outside the flow: About, and Methodology
+# ------------------------------------------------------------------------------------------------------------
+def mark_doi(text: str) -> str:
+    """Escape a reference and mark its bare DOI. Printed, not linked: the site makes no network request, and a
+    reader who wants the paper can copy the DOI out of the page."""
+    escaped = html.escape(text)
+    return re.sub(r"(https?://[^\s<]+)", lambda m: f'<span class="doi">{m.group(1)}</span>', escaped)
+
+
+def render_about(ctx: dict) -> str:
+    about = ctx["guide"]["about"]
+    paragraphs = "".join(f"<p>{md(p)}</p>" for p in about["paragraphs"])
+    todo = "".join(f"<li>{html.escape(item)}</li>" for item in about["todo"])
+    body = f"""<main class="flow page-about">
+  <header class="flow-head">
+    <p class="eyebrow">{html.escape(about['eyebrow'])}</p>
+    <h1>{html.escape(about['heading'])}</h1>
+    <p class="caption">{html.escape(about['intro'])}</p>
+  </header>
+  <section class="block">
+    <div class="prose">{paragraphs}</div>
+  </section>
+  <section class="block">
+    <h2>{html.escape(about['todo_heading'])}</h2>
+    <p class="note">{html.escape(about['todo_note'])}</p>
+    <ul class="tight">{todo}</ul>
+  </section>
+  <footer class="controls">
+    <a class="ghost" href="../">Causal Presidents</a>
+  </footer>
+  <p class="vintage">Registry vintage {ctx['vintage']}</p>
+</main>
+"""
+    return page("About", 1, body, nav_active="about")
+
+
+def render_methodology(ctx: dict) -> str:
+    m = ctx["guide"]["methodology"]
+    fills = ctx["fills"]
+    sections = []
+    for section in m["sections"]:
+        parts = [f'<section class="method-section" id="{html.escape(section["id"])}">',
+                 f'<h2>{html.escape(section["heading"])}</h2>']
+        for para in section.get("paragraphs") or []:
+            parts.append(f"<p>{md(fill_text(para, fills))}</p>")
+        if section.get("bullets"):
+            parts.append('<ul class="tight">' + "".join(
+                f"<li>{md(fill_text(item, fills))}</li>" for item in section["bullets"]) + "</ul>")
+        if section.get("works"):
+            parts.append('<dl class="method-works">')
+            for work in section["works"]:
+                parts.append(f'<dt>{html.escape(work["strand"])}</dt>'
+                             f'<dd>{md(work["body"])} <span class="tech">{html.escape(work["refs"])}</span></dd>')
+            parts.append("</dl>")
+        if section.get("items"):
+            parts.append('<dl class="method-items">')
+            for item in section["items"]:
+                parts.append(f'<dt>{html.escape(item["title"])}</dt>'
+                             f'<dd>{md(fill_text(item["body"], fills))}</dd>')
+            parts.append("</dl>")
+        parts.append("</section>")
+        sections.append("".join(parts))
+
+    references = "".join(f"<li>{mark_doi(ref)}</li>" for ref in m["references"])
+    body = f"""<main class="flow page-method">
+  <header class="flow-head">
+    <p class="eyebrow">{html.escape(m['eyebrow'])}</p>
+    <h1>{html.escape(m['heading'])}</h1>
+    <p class="caption">{html.escape(m['intro'])}</p>
+  </header>
+  {''.join(sections)}
+  <section class="method-section references">
+    <h2>{html.escape(m['references_heading'])}</h2>
+    <p class="note">{html.escape(m['references_note'])}</p>
+    <ol>{references}</ol>
+  </section>
+  <footer class="controls">
+    <a class="ghost" href="../">Causal Presidents</a>
+  </footer>
+  <p class="vintage">Registry vintage {ctx['vintage']}</p>
+</main>
+"""
+    return page("Methodology", 1, body, nav_active="methodology")
+
+
 def main() -> int:
     ctx = build_context(REPO_ROOT)
+    NAV_LABELS.update(ctx["guide"]["nav"])
 
-    for name in ("", "study", "compare", "graph", "estimates", "chart", "ask", "designs"):
+    for name in ("", "study", "compare", "graph", "estimates", "chart", "ask", "designs", "about",
+                 "methodology"):
         (DIST / name).mkdir(parents=True, exist_ok=True)
     for name in ("assets", "assets/graphs", "assets/comparisons", "assets/series", "assets/breaks",
                  "assets/designs", "assets/presidents", "data"):
@@ -1119,6 +1271,8 @@ def main() -> int:
     (DIST / "chart" / "index.html").write_text(render_chart(ctx), encoding="utf-8", newline="\n")
     (DIST / "ask" / "index.html").write_text(render_ask(ctx), encoding="utf-8", newline="\n")
     (DIST / "designs" / "index.html").write_text(render_designs(ctx), encoding="utf-8", newline="\n")
+    (DIST / "about" / "index.html").write_text(render_about(ctx), encoding="utf-8", newline="\n")
+    (DIST / "methodology" / "index.html").write_text(render_methodology(ctx), encoding="utf-8", newline="\n")
 
     # The answer layer's inputs: the gate's rules, the contract, the glossary and the corpus, emitted from the
     # same specs `app/` reads. Nothing here is a second copy of a rule.

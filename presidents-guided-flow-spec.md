@@ -204,6 +204,27 @@ the selection carried in the URL or imply that the reader's outcomes change what
 - **Reached from:** the estimate screen, where a card with no number already names the design's result instead of
   showing one, and the Ask screen's footer.
 
+### Screens outside the flow — About (`/about/`) and Methodology (`/methodology/`)
+
+Added 2026-10-28 at the requester's ask, reachable from a primary navigation bar on every page (Home, About,
+Methodology).
+
+- **About is a declared frame, not a biography.** It states what the site is and where its numbers come from,
+  then lists what is not yet published — author and contact, funding, citation, licences, changelog. The list is
+  the honest content: an About page that invented those fields would be the only page on the site without an
+  artifact behind it.
+- **Methodology carries the argument.** §1 the problem (what five administrations and ~27 annual observations can
+  and cannot identify), §2 what exists (synthetic control, staggered DiD and local projections, specification
+  curves, and the Nigeria/region literature), §3 what this project does differently (pre-declared specs, absence
+  as a published output, placebo saturation, solver sensitivity, drawn imputation, re-derived chain), §4 what it
+  does not claim, §5 how it is checked. References carry DOIs, printed as text rather than linked: the site makes
+  no network request.
+- **Every number is still derived.** The model count, design count, fitted specifications, study span, donor
+  count, placebo saturation, observed outcome-months and verifier count are all filled from artifacts at build
+  time, and `tests/verify_site.py` fails if any of them drifts.
+- **The cover band now states scope rather than the ratio.** It reads the models compared, the three methods and
+  the span; the ratio moved into "About this study" (P-08).
+
 ---
 
 ## 5. What the built site must never do

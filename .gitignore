@@ -24,6 +24,7 @@ __pycache__/
 # snapshot of a credential-issuing page holds the credential — one such file captured the FRED
 # API key on 2026-10-11. Never commit them.
 .playwright-cli/
+.playwright-mcp/
 
 # R / renv — library is local, renv.lock IS committed
 renv/library/

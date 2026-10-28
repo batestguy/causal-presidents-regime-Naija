@@ -530,3 +530,11 @@ frames filled with photographs and for each portrait to sit on its party's colou
 | # | Finding | Status | Consequence |
 |---|---|---|---|
 | C-76 | **Stage 8g publishes 8 described outcomes, 4 refused and 68 pairwise contrasts**; the verifier recomputes every deviation from the published trend | VERIFIED | Three arithmetic bugs were found before the artifact shipped: a one-month window boundary, a coverage denominator, and the incumbent's band running to 9999-12 |
+
+## Layout pass - the cover, the navigation and the methodology page - 2026-10-28
+
+| # | Finding | Status | Consequence |
+|---|---|---|---|
+| P-08 | **The cover leads with scope, and the failure ratio moves into "About this study"** | DECIDED - supersedes P-06's placement, not its content | The requester asked for the total compared, the methods and the time span in place of the ratio sentence. The band now states the model count, the three designs, the fitted specifications and the study span, every part derived from the registry. The ratio is still on the page and `tests/verify_site.py` still requires it, so the honest headline is kept without being the first thing a reader meets |
+| P-09 | **Party emblems are drawn, not copied** | DECIDED | The portrait strip carries a line-art umbrella (PDP) and broom (APC) beside the party code. Copying the official marks would raise a trademark question and, on an analysis about presidencies, read as an endorsement the project does not make; the objects are public domain and the drawing is this project's own. The full party name stays on the strip's `title`, and the emblem is `aria-hidden` so a screen reader hears the code |
+| P-10 | **Three primary pages outside the flow: Home, About and Methodology** | DECIDED | The requester asked for a nav bar and a methodology page. About ships as a declared frame - a "still to come" list rather than invented biography - because the author, funding, citation and licence fields are not decided yet. Methodology states the problem, the four strands of prior work (references checked against Crossref on 2026-10-28), and what this project does differently; it is linked from the navigation on every page |

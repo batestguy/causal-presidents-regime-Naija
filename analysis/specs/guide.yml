@@ -24,13 +24,16 @@ placeholders:
   cards: "cards in the registry"
 
 cover:
-  eyebrow: "Nigeria · 1999–present"
+  eyebrow: "Nigeria · 1999-present"
   title: "Causal Presidents"
   caption: "Presidential transitions and national outcomes in Nigeria, 1999‑present."
   instruction: "Causal models have assumptions. Study them before you read the numbers."
   rail_heading: "Five administrations"
   rail_note: "The faces are the study window, not a scorecard. No number on this site belongs to one president."
   ratio: "{estimated} of {cards} model cards carry a published number; the rest say why not."
+  models_line: "{models} models compared"
+  methods_line: "Two-way fixed effects, local projections and synthetic control"
+  span_line: "{designs} identification designs · {specifications} fitted specifications · {first_year}–{last_year}"
   portrait_credits: "Photograph credits"
   paragraphs:
     - "What can and cannot be said about Nigeria between {window_first} and {window_last}, across {administrations} administrations."
@@ -249,3 +252,103 @@ design_results:
     check_not_available: "the check cannot be run"
   outcome_unknown: "an outcome the registry does not label"
   back: "Back to the flow"
+
+# ---------------------------------------------------------------------------------------------
+# The primary navigation, and the two pages that are not part of the flow
+# ---------------------------------------------------------------------------------------------
+nav:
+  home: "Home"
+  about: "About"
+  methodology: "Methodology"
+
+about:
+  eyebrow: "About"
+  heading: "About this project"
+  intro: "Causal Presidents is a working paper in the shape of a website: what five administrations and twenty-seven years of Nigerian data can support, and what they cannot."
+  paragraphs:
+    - "The site is built from a registry of committed artifacts. Each outcome has a page carrying the comparison the data supports, the assumption it depends on, and the number — or the reason there is none. Nothing is fitted in the browser."
+    - "It is written for a reader who will check: journalists, students, policy analysts, and anyone who has been told that a president caused something. Every claim links back to the file that carries it."
+    - "The provenance rule is the base spec's. Restricted raw sources are never republished; derived aggregates, code and the model cards are."
+  todo_heading: "Still to come"
+  todo_note: "This page is deliberately a frame. The items below are not published yet, and the site says so rather than inventing them."
+  todo:
+    - "Author, affiliation and contact."
+    - "Funding and conflicts of interest."
+    - "How to cite the site and the registry vintage."
+    - "Licences for the text, the code and the portraits, in one place."
+    - "A changelog a reader can follow."
+
+methodology:
+  eyebrow: "Why these models"
+  heading: "Methodology"
+  intro: "The problem, the work this sits beside, and the specific things this project does differently. Every number on this page is generated from the registry when the page is built."
+  sections:
+    - id: problem
+      heading: "1. The problem"
+      paragraphs:
+        - "Nigeria's public argument is usually about presidencies: did this administration improve health, reduce violence, grow the economy? The question is asked of five administrations and roughly twenty-seven years of annual national data. Four to five units against 22 to 23 observations per outcome cannot identify a per-president effect; the smallest detectable effect is tens of residual standard deviations."
+        - "This project asks what can be identified instead. It treats every outcome-and-design pair as its own model, publishes the number when a design earns one, and publishes the reason when it does not. {models} models are compared across {designs} identification designs and {specifications} fitted specifications, {first_year} to {last_year}."
+      bullets:
+        - "Twelve outcomes across health, education, security and the economy."
+        - "Three designs: a state-level two-way fixed-effects panel, a national local projection, and a synthetic control."
+        - "One rule: no causal verb without a named design, its identifying assumption, and the check that could have killed it."
+    - id: prior
+      heading: "2. What exists"
+      paragraphs:
+        - "Four strands of work bear directly on this one. The project uses their methods and inherits their warnings; the references are listed at the end with DOIs, checked against Crossref on 2026-10-28."
+      works:
+        - strand: "Synthetic control"
+          body: "Comparative case studies with a weighted donor pool, from the Basque Country to California's tobacco programme, and the later statement of when the method is credible."
+          refs: "Abadie & Gardeazabal (2003); Abadie, Diamond & Hainmueller (2010); Abadie (2021)"
+        - strand: "Panel designs and local projections"
+          body: "Difference-in-differences with staggered adoption, the decomposition of two-way fixed effects under variable timing, and local projections for shock transmission."
+          refs: "Callaway & Sant'Anna (2021); Goodman-Bacon (2021); Jordà (2005)"
+        - strand: "Reporting the multiverse"
+          body: "Specification-curve analysis and the credibility agenda: fit the grid, publish the distribution, and say which specification was preferred before seeing it."
+          refs: "Simonsohn, Simmons & Nelson (2020); Athey & Imbens (2017)"
+        - strand: "Nigeria and the region"
+          body: "The resource-curse account of Nigeria's political economy, the greed-and-grievance account of civil war, and the micro evidence that democratisation reduced infant mortality in sub-Saharan Africa."
+          refs: "Sala-i-Martin & Subramanian (2003); Collier & Hoeffler (2004); Kudamatsu (2012)"
+    - id: improve
+      heading: "3. How this work improves on it"
+      items:
+        - title: "The specification is written before the number"
+          body: "Every design lives in a committed spec file with a declared estimator, sample, checks and verdict rule, and the artifact records the spec's md5. Windows and thresholds are read from those files at run time, not retyped."
+        - title: "Absence is a published output, not a gap in the table"
+          body: "Of {models} model cards, {estimated} carry a published number and {no_number} carry a reason from a closed set. A reader who opens a card cannot mistake thirty-four unexplained blanks for thirty-four null results."
+        - title: "Placebos decide, and a gate that fails is published"
+          body: "The synthetic control publishes its in-space and in-time placebos. {placebos_passing} of {placebos_total} placebo fits clear the same pre-fit threshold as the treated unit, which is why the design reports no identified effect rather than a gap."
+        - title: "The solver's own choice is on the record"
+          body: "The declared simplex problem is underdetermined with {donors} donors and a short pre-period, so the artifact publishes the solver's vertex and a unique ridge refit side by side. For one window they disagree in sign; that disagreement is the finding."
+        - title: "Data honesty is drawn, not asserted"
+          body: "Of {spine_total} outcome-months, {spine_observed} are observations. Interpolated months are drawn dashed, unobserved runs are shaded, and every test runs on the native grain a source published."
+        - title: "The whole chain is re-derived"
+          body: "Each stage has an independent verifier that recomputes its numbers rather than importing the code under test. The chain runs in CI, and the prose on this site is checked against the artifacts it quotes."
+    - id: limits
+      heading: "4. What it does not claim"
+      bullets:
+        - "No ranking of presidents, no scorecard, and no pooled tenure effect."
+        - "No party comparison: two events against two events has no sampling distribution."
+        - "No forecast: the site publishes what happened, not what will."
+        - "No monthly causal statement from an annual series."
+        - "No causal verb without a named design, its assumption and its failed-check evidence."
+    - id: checked
+      heading: "5. How it is checked"
+      paragraphs:
+        - "The registry is rebuilt from raw payloads by one chain: acquisition, parsing, quality gates, the analytical base, then the stages that fit and describe. {verifiers} verifiers re-derive the published numbers from the artifacts and, where possible, from the base."
+        - "A number displayed anywhere on the site is a field of a registry artifact. A literal coefficient in the renderer is a build failure, and a prose number that drifts from its artifact fails the same way."
+  references_heading: "References"
+  references_note: "Bibliographic details checked against Crossref on 2026-10-28. DOIs are printed as text, not links: the site makes no network request, by design."
+  references:
+    - "Abadie, A., & Gardeazabal, J. (2003). The economic costs of conflict: A case study of the Basque Country. American Economic Review, 93(1), 113–132. https://doi.org/10.1257/000282803321455188"
+    - "Abadie, A., Diamond, A., & Hainmueller, J. (2010). Synthetic control methods for comparative case studies: Estimating the effect of California's tobacco control program. Journal of the American Statistical Association, 105(490), 493–505. https://doi.org/10.1198/jasa.2009.ap08746"
+    - "Abadie, A. (2021). Using synthetic controls: Feasibility, data requirements, and methodological aspects. Journal of Economic Literature, 59(2), 391–425. https://doi.org/10.1257/jel.20191450"
+    - "Callaway, B., & Sant'Anna, P. H. C. (2021). Difference-in-differences with multiple time periods. Journal of Econometrics, 225(2), 200–230. https://doi.org/10.1016/j.jeconom.2020.12.001"
+    - "Goodman-Bacon, A. (2021). Difference-in-differences with variation in treatment timing. Journal of Econometrics, 225(2), 254–277. https://doi.org/10.1016/j.jeconom.2021.03.014"
+    - "Jordà, Ò. (2005). Estimation and inference of impulse responses by local projections. American Economic Review, 95(1), 161–182. https://doi.org/10.1257/0002828053828518"
+    - "Simonsohn, U., Simmons, J. P., & Nelson, L. D. (2020). Specification curve analysis. Nature Human Behaviour, 4(11), 1208–1214. https://doi.org/10.1038/s41562-020-0912-z"
+    - "Athey, S., & Imbens, G. W. (2017). The state of applied econometrics: Causality and policy evaluation. Journal of Economic Perspectives, 31(2), 3–32. https://doi.org/10.1257/jep.31.2.3"
+    - "Sala-i-Martin, X., & Subramanian, A. (2003). Addressing the natural resource curse: An illustration from Nigeria (NBER Working Paper No. 9804). https://doi.org/10.3386/w9804"
+    - "Collier, P., & Hoeffler, A. (2004). Greed and grievance in civil war. Oxford Economic Papers, 56(4), 563–595. https://doi.org/10.1093/oep/gpf064"
+    - "Kudamatsu, M. (2012). Has democratization reduced infant mortality in sub-Saharan Africa? Evidence from micro data. Journal of the European Economic Association, 10(6), 1294–1317. https://doi.org/10.1111/j.1542-4774.2012.01092.x"
+

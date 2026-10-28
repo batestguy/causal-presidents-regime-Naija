@@ -66,6 +66,36 @@ discriminate at all (304 of 396 placebos clear it).
   denominator), D2 (IGR), monthly CPI, security after 2024-12, DHIS2, and a real-library RAGAS run. Design C was
   the last declared design with no estimate, and it now has one — a verdict of refusal, with its placebos.
 
+**Then, same session — page 1 of the final layout, the navigation, and the methodology draft.** The requester
+asked for the cover to state scope rather than the failure ratio, a nav bar with About and a Methodology page,
+and party emblems on the portrait strip.
+
+- **The cover band now reads scope:** *36 models compared*, the three methods, and *3 identification designs ·
+  117 fitted specifications · 1999–2026*. Every part is a fill from the registry (`models`, `designs`,
+  `specifications`, `first_year`/`last_year`); `verify_site.py` fails if any drifts. The ratio is not deleted —
+  it moved into **About this study** and the verifier still requires it (P-08 supersedes P-06's placement only).
+- **Five portraits in one row**, 3 + 2 centred on tablet and 2-up on a phone with the last card centred; the
+  header, cards and footer share the 1180 px measure; the CTA sits above the fold; full white on the flag green
+  (4.6:1) replaces the 88 % alpha that measured ~3.9:1.
+- **A primary nav on every page** (`Home · About · Methodology`), with the current page marked by
+  `aria-current` and links resolved from each page's own URL — the rule that caught the 404ing figures in the
+  previous pass. **About** ships as a declared frame with a "still to come" list (author, funding, citation,
+  licences, changelog) rather than invented biography (P-10).
+- **Methodology is drafted in full**: the problem; four strands of prior work (synthetic control; staggered DiD
+  and local projections; specification curves; Nigeria/region); six paragraphs on what this project does
+  differently, each anchored to a measured fact; what it does not claim; how it is checked; eleven references.
+  The references were **checked against the Crossref API on 2026-10-28** — venue, volume, pages and DOI — which
+  is the check the design spec §18 said had to happen before a public methodology page existed. DOIs are printed
+  as text, not links, because the site makes no network request; `verify_site.py` requires every reference and
+  each derived number on the page.
+- **Party emblems are drawn, not copied**: a line-art umbrella for the PDP and broom for the APC beside the code
+  in the portrait strip. Copying the official marks would raise a trademark question and read as an endorsement
+  on an analysis about presidencies; the shapes are public-domain objects and the drawing is this project's
+  (P-09). The full party name remains on the strip's `title`, and the emblem is `aria-hidden`.
+- **The site is now 10 pages** and `verify_site.py` covers the new ones: nav on every page, the About frame, the
+  five methodology sections, every reference, and each derived number on the page.
+
+
 **This session, in one line:** **Screen 6b — the design-level results** (`site/build.py` → `/designs/`, from
 `registry/estimates`, `registry/robustness` and `registry/events`), because the three figures Stage 8 published
 were reachable from **no page at all** — and building the reader for them found two defects, one of which the
