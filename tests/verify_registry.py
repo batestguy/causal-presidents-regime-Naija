@@ -42,6 +42,7 @@ REASONS = {
     "no_specification_declared",
     "design_result_is_channel_level",
     "design_not_run",
+    "design_estimated_not_identified",
 }
 
 
@@ -209,7 +210,13 @@ def main() -> int:
             elif design == "B":
                 expect = "design_result_is_channel_level"
             elif design == "C":
-                expect = "design_not_run"
+                # Design C is run for one outcome in its own stage; a C card carries the new reason only when
+                # that artifact actually estimated a window for this outcome.
+                design_c_path = REPO_ROOT / "registry" / "design_c" / est_vintage / "design_c.json"
+                cdoc = json.loads(design_c_path.read_text(encoding="utf-8")) if design_c_path.exists() else {}
+                estimated = cdoc.get("input", {}).get("outcome") == outcome and any(
+                    w["status"] != "refused" for w in cdoc.get("windows", []))
+                expect = "design_estimated_not_identified" if estimated else "design_not_run"
             else:
                 expect = "no_specification_declared"
             if reason["code"] != expect:

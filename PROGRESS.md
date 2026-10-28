@@ -1,10 +1,70 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-10-27 (eighteenth session) · **Stage:** 9 — Stage 8g (tenure description) shipped, the
-cover's portraits, and the site deployed from Pages · **verified at vintage 2026-10-18**: `scripts/verify.sh` in
-one unbroken run (stages 0–8g, then the corpus, both evals and all twenty-two verifiers) with
-`HF_HUB_OFFLINE=1` for the cached embedding model; **`all checks passed`, 51 registry documents
-schema-validated, 9 break-test mutations (6 design-screen, 3 portrait) — all caught and restored byte-for-byte**
+**Last updated:** 2026-10-28 (nineteenth session) · **Stage:** 9 — **Design C (stage 8h) fitted and closed as
+not identified**, the gate re-frozen at v4, and the whole chain re-run · **verified at vintage 2026-10-18**:
+dbt build (165/165), every R stage, the corpus, both evals and all **twenty-three** verifiers, one step at a time
+with `HF_HUB_OFFLINE=1` and the RAG interpreter; `all checks passed`
+
+**This session, in one line:** the last declared design that had never been run — **Design C, a synthetic
+control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
+is **estimated, not identified**: four windows, rank p 0.17–0.50, and a pre-fit gate that turned out not to
+discriminate at all (304 of 396 placebos clear it).
+
+- **The spec was written before a weight was fitted** (`analysis/specs/design_c.yml`, stated in its own
+  `stamp`): the windows are Stage 5's declared ones, read from `diagnostics.yml` rather than retyped; a year
+  belongs to the administration in office on **1 July**; the estimator is the gate's own simplex QP on the
+  pre-treatment path, and `Synth`'s V search is *not* used because it returned a fit worse than the best single
+  donor on every window.
+- **The verdict rule is three conditions, fixed in advance:** pre-fit ratio ≤ 0.10, in-space rank p ≤ 0.05, and
+  every runnable in-time placebo under half the estimated gap. Nothing was added after the numbers were read.
+- **The result, and it is a refusal.** yaradua, jonathan, buhari and tinubu estimated (obasanjo refused: 0 pre
+  years inside the 1999-onward window); **none identified**. In-space p = 0.50 / 0.32 / 0.17 / 0.33; the
+  in-time placebo fails where it can run (buhari's backdated windows return gaps of 0.9–11.6 against a 9.4
+  estimate, one of them larger than the estimate). **304 of 396 placebo fits also clear the 0.10 pre-fit
+  gate**, which is the measured form of the warning Stage 5 wrote in prose: on a 99-donor pool the gate is
+  interpolation, not validation.
+- **The verifier found the estimator is underdetermined, and that is now published.** 99 donors against 8–24
+  pre-years leaves a face of equally optimal weights; the QP returns one vertex and SLSQP returns another with
+  the same pre-fit and a different post gap. The artifact therefore publishes the vertex **and** a unique
+  ridge refit beside it, plus the leave-one-donor-out range. For yaradua the two disagree in sign (+2.1 against
+  −2.6 deaths per 1,000) — the estimate belongs to the solver, and the artifact says so rather than picking one.
+- **`tests/verify_design_c.py` refits it with a different solver** (22s): the published weights reproduce every
+  path, gap and ratio; SLSQP cannot improve the declared objective; the ridge solution is recomputed and
+  matched; the rank p is arithmetic on the shipped distribution; the verdict is re-derived from the declared
+  rule; and the in-time/LOO fields are re-checked. It is in the chain.
+- **No gap reached a card, and the reason is a contract, not an oversight.** A synthetic control has no
+  sampling distribution, so the honesty layer's "no point estimate without an interval" rule keeps it off the
+  card. The `u5mr`×C card now carries **`design_estimated_not_identified`** — a fifth reason code — with the
+  gap range, the rank range and the artifact path in its detail. **2 of 36 cards still carry a number**; the
+  reason split moved 3/0 → 2/1 for the two Design C codes.
+- **`estimates.json` no longer claims Design C is `not_run`.** Stage 6 reads the stage-8h artifact and carries
+  its status, counts and per-window summary; the chain runs 8h **before** Stage 6 so the block cannot describe
+  a design that has since been fitted. `docs/estimates.md`, `limitations.md` §7, `registry.md`,
+  `robustness.md`, `design-memo.md` §4 and `app.md` were moved onto the artifact's own numbers.
+- **The design screen prints C by year, never by name** — 2007–2009, 2010–2014, 2015–2022 — with the placebo
+  p and the ridge gap beside each, and the note that a synthetic control has no interval. The surname guard
+  covers the new block like every other page.
+- **The gate had to be re-frozen, and the process was followed.** G07's reason sentence ("Design C was never
+  run") became false the moment the design was fitted. The rule was edited and **frozen at `613ccf5`** before
+  `intent_gate_eval_v4.yml` existed; the v4 set uses **new rotations** of every mechanical family (the harness
+  now reads `indices`, `design_offset` and `admin_indices` from the spec instead of hard-coding them) and
+  sixteen **new** authored questions, with the seventeen v3 authored cases as the regression block. Measured on
+  v4: intent accuracy **0.980**, out-of-scope refusal **0.947**, answerable kept **1.000**, route resolved
+  **1.000**, reason cited **1.000**; the one miss is the new probe **P04** (a country reached through its
+  currency), and the regression block is 0.941 with the v3 probe P03 still answerable — the declared KG03
+  remainder.
+- **The retrieval and answer measurements were re-run, not carried forward.** The corpus grew to **488 chunks**
+  (the new card reason and the new §7 text), recall@5 **0.944**, gold coverage **0.432**, MRR **0.718**; the
+  answer layer answers **36 of 38 (0.947)** with **10 estimates, 14 facts and 12 no-estimate readings**, and
+  needles **22 of 25 (0.880)**. One published example is now **declined** — *"what did its placebos find?"* is
+  not the corpus's vocabulary ("in-space rank p") and BM25 is lexical — so `verify_app.py` grew a branch that
+  requires the tab to reproduce a **measured decline** rather than an answer.
+- **The answer-quality measurement was re-scored against the new corpus** (15 answered questions, 30 judge
+  calls): faithfulness **0.965**, answer relevancy **0.833**, context precision **1.000**, context recall
+  **0.850**. Still the four RAGAS definitions in house, `library: false`, judge noise published as a range.
+- **The stat work still not done is now only the blocked kind:** per-capita dose axis (X-09 and a state
+  denominator), D2 (IGR), monthly CPI, security after 2024-12, DHIS2, and a real-library RAGAS run. Design C was
+  the last declared design with no estimate, and it now has one — a verdict of refusal, with its placebos.
 
 **This session, in one line:** **Screen 6b — the design-level results** (`site/build.py` → `/designs/`, from
 `registry/estimates`, `registry/robustness` and `registry/events`), because the three figures Stage 8 published
@@ -154,18 +214,19 @@ contrast**: the difference between two tenures' mean deviation from a trend fitt
   with `verify_tenure.py` recomputing every deviation from the published trend and every contrast from the two
   deviations; deployed from CI (`7cfa9a7`, `64df7f3`) and the tenure table renders on the live chart page.
 
-**Statistical work still not run, in the order it could move a number.** (None of these is a declared specification
-left unfitted — all 12 are fitted. Each is a new estimand whose input is missing.)
+**Statistical work still not run, in the order it could move a number.** (No declared specification is left
+unfitted — all 12 Stage 6 specifications and Design C are fitted. Each row below is a new estimand whose input
+is missing.)
 
 | Estimand | Blocked on | Where it is recorded |
 |---|---|---|
-| Design C synthetic control on `u5mr` | the estimator and its placebos are unbuilt; the gate passes 3 of 4 windows, and 9 outcomes cannot enter the donor panel at all | `estimates.json → designs.C` |
 | Per-capita dose axis | the population-denominator decision (**X-09**); `d1_faac_per_capita` is 0 of 12,358 rows | `robustness.json → unbuilt_axes` |
 | D2, FAAC as a share of state revenue | NBS state IGR parsed (same parser family as FAAC) | same |
 | Monthly CPI for the 2023 window | monthly NBS CPI is a parser; annual is landed | `limitations.md` §13 |
 | Monthly security after 2024-12 | the UCDP archive ends there; ACLED is not wired | same |
 | Monthly sub-national health | DHIS2 credentials were never obtained | same |
 | RAGAS with the real library | a judge model; the four definitions are implemented in house and labelled `library: false` | `answer_quality_eval.json` |
+| An identified synthetic counterfactual | a donor pool that cannot interpolate an 8-to-24-year pre-period, or a different fit window | `registry/design_c/` (measured, not pending) |
 
 
 **Previous session, in one line:** the **outcome panels** — `analysis/specs/series_figures.yml`,

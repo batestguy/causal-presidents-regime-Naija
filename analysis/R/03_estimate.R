@@ -416,6 +416,39 @@ cat(sprintf("figure: %s (%d canonical bytes)\n", basename(fig_path), canonical_b
 # ---------------------------------------------------------------------------------------------
 # Write
 # ---------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
+# Design C — read from its own artifact
+# ---------------------------------------------------------------------------------------------
+# The synthetic control is its own stage (8h) with its own spec, placebos and verifier, because it fits a
+# different object on a different table. This artifact does not re-fit it: it reads the published result and
+# carries its status, so a reader of `estimates.json` is never told a design was not run after it was.
+design_c_path <- file.path(REPO_ROOT, "registry", "design_c", vintage, "design_c.json")
+if (file.exists(design_c_path)) {
+  cdoc <- jsonlite::fromJSON(design_c_path, simplifyVector = FALSE)
+  c_estimated <- Filter(function(x) !identical(x$status, "refused"), cdoc$windows)
+  c_status <- if (any(vapply(c_estimated, function(x) identical(x$status, "identified"), logical(1)))) {
+    "identified"
+  } else if (length(c_estimated)) "estimated_not_identified" else "not_run"
+  c_block <- list(
+    id = "C", status = c_status,
+    verdict = list(
+      status = c_status,
+      rule = cdoc$spec$verdict_rule,
+      failed_checks = as.list(unique(unlist(lapply(c_estimated, function(x) x$verdict$failed_checks))))),
+    artifact = file.path("registry", "design_c", vintage, "design_c.json"),
+    counts = cdoc$counts,
+    windows = lapply(cdoc$windows, function(x) list(
+      id = x$id, status = x$status,
+      first_year = if (is.null(x$first_year)) NA else x$first_year,
+      last_year = if (is.null(x$last_year)) NA else x$last_year,
+      mean_gap = if (is.null(x$mean_gap)) NA else x$mean_gap,
+      p_value = if (is.null(x$in_space)) NA else x$in_space$p_value,
+      ridge_gap = if (is.null(x$solver_sensitivity)) NA else x$solver_sensitivity$mean_gap)))
+} else {
+  c_block <- list(id = "C", status = "not_run",
+                  why = spec$design_c$why, next_step = spec$design_c$next_step)
+}
+
 estimates <- list(
   stage = 6,
   layer = "estimation",
@@ -441,7 +474,7 @@ estimates <- list(
          checks = checks$design_a[setdiff(names(checks$design_a), "verdict")]),
     list(id = "B", status = checks$design_b$verdict$status, verdict = checks$design_b$verdict,
          checks = checks$design_b[setdiff(names(checks$design_b), "verdict")]),
-    list(id = "C", status = "not_run", why = spec$design_c$why, next_step = spec$design_c$next_step)
+    c_block
   ),
   # The figure block is the artifact's own record that the picture it ships was rendered from these rows:
   # the verifier compares the recorded byte count to the file on disk, so a stale figure fails rather than
@@ -452,7 +485,7 @@ estimates <- list(
   notes = list(
     "Every estimate is a pre-declared specification from analysis/specs/estimation.yml.",
     "Design A is reported as estimated, not identified, when its own checks say so; the number is still published with its bounds.",
-    "Design C was not run and its reason is carried rather than dropped."
+    "Design C is published in its own artifact (registry/design_c/) and this file carries its status rather than a second copy of its numbers."
   )
 )
 write_json(estimates, file.path(out_dir, "estimates.json"),
@@ -484,7 +517,8 @@ md <- c(
           checks$design_a$verdict$status),
   sprintf("| B | How much of a Brent shock reaches the states, and when? | **%s** |",
           checks$design_b$verdict$status),
-  "| C | Did the tenures move an outcome, against a synthetic counterfactual? | not run — Stage 5's donor pool fails the pre-treatment fit |",
+  sprintf("| C | Did the tenures move an outcome, against a synthetic counterfactual? | **%s** |",
+          c_block$status),
   "",
   "## Design A — state dose-response",
   "",
@@ -534,11 +568,20 @@ md <- c(
   "observations of a series the naira's two devaluations also move, and the FX channel is annual grain",
   "(the monthly NGN/USD series has no keyless source: `docs/decisions.md` C-46).",
   "",
-  "## What was not run",
+  "## Design C — the synthetic control",
   "",
-  paste0("Design C (synthetic control): ", spec$design_c$why),
-  "",
-  paste0("Next step for it: ", spec$design_c$next_step, "."),
+  if (identical(c_block$status, "not_run")) {
+    c(paste0("Design C (synthetic control): ", spec$design_c$why), "",
+      paste0("Next step for it: ", spec$design_c$next_step, "."))
+  } else {
+    c(sprintf(paste0("Design C is estimated in its own artifact (`%s`), with its own spec and verifier: %d ",
+                     "window(s) estimated, %d refused, %d identified."),
+              c_block$artifact, c_block$counts$estimated, c_block$counts$refused, c_block$counts$identified),
+      "",
+      "A synthetic control has no sampling distribution, so this stage carries no interval for it and the",
+      "number is not on a card. The verdict is a rank among placebos, and every window that failed names the",
+      "check that failed.")
+  },
   "",
   "## Honesty notes carried with these numbers",
   "",

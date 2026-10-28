@@ -107,6 +107,11 @@ not_estimated_reasons:
     it cannot be mistaken for an estimate for this outcome.
   design_not_run: >-
     The design was not run. The reason is on the index and in the estimates artifact.
+  design_estimated_not_identified: >-
+    The design was run for this outcome in its own stage and is reported as estimated but not identified. A
+    synthetic control has no sampling distribution, so there is no interval to put beside a point estimate,
+    and the design-level artifact carries the gap, its placebos and the check that failed instead of a card
+    number the honesty layer could not support.
 
 # Precedence: an outcome with no series (`outcome_series_absent`) outranks the design-level reasons,
 # because it is a statement about this card's data rather than about the design.

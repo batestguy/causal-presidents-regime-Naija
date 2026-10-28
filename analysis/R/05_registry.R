@@ -87,6 +87,11 @@ stop_if(!file.exists(rob_path), "missing %s", rob_path)
 estimates <- fromJSON(est_path, simplifyVector = FALSE)
 robustness <- fromJSON(rob_path, simplifyVector = FALSE)
 
+# Design C is its own stage with its own artifact; the card layer reads it rather than inferring from the
+# `not_run` block Stage 6 used to carry. Optional so a vintage without a Design C run still assembles.
+design_c_path <- file.path(root, "registry", "design_c", vintage, "design_c.json")
+design_c <- if (file.exists(design_c_path)) fromJSON(design_c_path, simplifyVector = FALSE) else NULL
+
 # ---- the cards, and the vintage they claim -------------------------------------------------
 card_files <- sort(list.files(cards_dir, pattern = "^[a-z0-9_]+__(A|B|C)\\.json$", full.names = TRUE))
 stop_if(!length(card_files), "no cards in %s", cards_dir)
@@ -272,12 +277,40 @@ build_block <- function(card) {
   }
 
   if (identical(design_id, "C")) {
+    # The synthetic control was fitted for one outcome, in its own stage. A card carries either the fact that
+    # the design was run for this outcome and is not identified, or the reason it was not run — never a gap
+    # dressed up as a coefficient. A synthetic control has no sampling distribution, so the honesty layer's
+    # "no point estimate without an interval" rule keeps the number off the card and on the design artifact.
+    if (!is.null(design_c) && identical(outcome_id, as.character(design_c$input$outcome))) {
+      est <- Filter(function(w) !identical(w$status, "refused"), design_c$windows)
+      if (length(est)) {
+        gaps <- vapply(est, function(w) as.numeric(w$mean_gap), numeric(1))
+        ps <- vapply(est, function(w) as.numeric(w$in_space$p_value), numeric(1))
+        return(list(
+          status = "not_estimated", model_card_ref = NA,
+          the_number_is_for_this_card = FALSE,
+          not_estimated_reason = reason("design_estimated_not_identified"),
+          published_result = sprintf("registry/design_c/%s/design_c.json", vintage),
+          note = sprintf(paste0("No estimate on this card for (%s, C). The synthetic control was fitted for ",
+                                "this outcome in stage 8h: %d of %d windows estimated, none identified. The ",
+                                "mean gap runs from %+.2f to %+.2f deaths per 1,000 live births against the ",
+                                "synthetic counterfactual, and the in-space placebo rank from p = %.2f to ",
+                                "%.2f over %d placebos. A synthetic control has no sampling distribution, so ",
+                                "there is no interval to publish and the honesty layer keeps a number without ",
+                                "one off the card. The artifact carries every gap path, the placebos and the ",
+                                "check that failed."),
+                         outcome_id, length(est), length(design_c$windows),
+                         min(gaps), max(gaps), min(ps), max(ps),
+                         as.integer(est[[1]]$in_space$n_placebos))
+        ))
+      }
+    }
     return(list(
       status = "not_estimated", model_card_ref = NA,
       the_number_is_for_this_card = FALSE,
       not_estimated_reason = reason("design_not_run"),
       published_result = "index.json#published_results.design.C",
-      note = sprintf(paste0("No estimate for (%s, C). The design was not run: %s"),
+      note = sprintf(paste0("No estimate for (%s, C). The design was not run for this outcome: %s"),
                      outcome_id,
                      if (is.null(designs[["C"]][["why"]])) "see the index." else as.character(designs[["C"]][["why"]]))
     ))
@@ -342,15 +375,19 @@ res <- list(
   B = design_result("B"),
   C = list(
     design = "C",
-    status = "not_run",
+    status = as.character(designs[["C"]][["status"]]),
     verdict = list(
       rule = as.character(designs[["C"]][["verdict"]][["rule"]] %||% NA),
-      status = as.character(designs[["C"]][["status"]]),
-      failed_checks = NA
+      status = as.character(designs[["C"]][["verdict"]][["status"]] %||% designs[["C"]][["status"]]),
+      failed_checks = if (is.null(designs[["C"]][["verdict"]][["failed_checks"]])) NA else
+        as.character(designs[["C"]][["verdict"]][["failed_checks"]])
     ),
     result_is_card_level = FALSE,
-    why = as.character(designs[["C"]][["why"]]),
-    next_step = as.character(designs[["C"]][["next_step"]]),
+    why = as.character(designs[["C"]][["why"]] %||% NA),
+    next_step = as.character(designs[["C"]][["next_step"]] %||% NA),
+    artifact = as.character(designs[["C"]][["artifact"]] %||% NA),
+    counts = if (is.null(designs[["C"]][["counts"]])) NULL else designs[["C"]][["counts"]],
+    windows = if (is.null(designs[["C"]][["windows"]])) list() else designs[["C"]][["windows"]],
     specifications = list(),
     artifacts = list(estimates = estimates_artifact_ref, robustness = NA)
   )

@@ -82,22 +82,26 @@ questions:
 
   - id: q06_design_c_status
     type: answerable
-    question: "Was the synthetic control estimated, and if not, why not?"
+    question: "Was the synthetic control estimated, and what did its placebos find?"
     gold: ["result:C", "doc:estimates#s02", "doc:design-memo#s04"]
-    must_contain: ["not_run", "3 of its 4 runnable windows"]
+    must_contain: ["estimated_not_identified", "placebos"]
     reference_answer: >-
-      Not run. The donor pool was widened to 99 candidates and the pre-fit gate now passes u5mr on 3 of its
-      4 runnable windows, so the design is no longer infeasible for want of a pool — but the estimator and
-      the in-space and in-time placebos are not built. The pass is permission to build, not a result.
+      Estimated, and not identified. The donor pool was widened to 99 candidates and the gate passes u5mr on 3
+      of its 4 runnable windows; the estimator, the in-space and in-time placebos and the leave-one-donor-out
+      sweep were then built. Four windows were estimated and none survived the declared rule: the in-space rank
+      p runs from 0.17 to 0.50, and 304 of 396 placebo fits also clear the same pre-fit gate, so the gate does
+      not discriminate on this pool.
 
   - id: q07_u5mr_synthetic_control
     type: answerable
     question: "Can you show me an estimate for under-5 mortality under the synthetic-control design?"
     gold: ["card:u5mr__C"]
-    must_contain: ["design_not_run"]
+    must_contain: ["design_estimated_not_identified"]
     reference_answer: >-
-      No. The card carries no number: the design was not run, so the reason code is `design_not_run` and the
-      design-level reason is on the index.
+      No number appears on the card. The synthetic control was run for under-5 mortality and no window
+      survived its placebos, so the card carries the reason code `design_estimated_not_identified` and points
+      at registry/design_c/ for the gaps, the placebos and the check that failed. A synthetic control has no
+      sampling distribution, so there is no interval to put on a card.
 
   # ---------------------------------------------------------------------------------------------
   # Coverage, quality and the limitations — the chunks that make refusal answerable
@@ -205,11 +209,13 @@ questions:
     type: refusal_with_reason
     question: "Can the synthetic control tell me whether Buhari's tenure caused the fall in under-5 mortality?"
     gold: ["result:C", "doc:estimates#s02"]
-    must_contain: ["not estimated here because the estimator", "still not estimated"]
+    must_contain: ["estimated_not_identified", "placebos"]
     refusal_must_cite: "result:C"
     reference_answer: >-
-      I don't have a model for that. Design C passes its pre-fit gate on u5mr but is not estimated here
-      because the estimator and its placebos are not built; the pass is permission to build, not a result.
+      I don't have a model for that. The synthetic control was run on under-5 mortality, but none of its four
+      windows survived its placebos, so the result is published as estimated_not_identified rather than as an
+      effect of a particular tenure: the in-space rank p runs from 0.17 to 0.50, and 304 of 396 placebo fits
+      clear the same pre-fit gate.
       See the Design C published result.
 
   # ---------------------------------------------------------------------------------------------

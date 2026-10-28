@@ -1,6 +1,6 @@
 # Stage 7 — robustness and the multiverse, vintage 2026-10-18
 
-Generated 2026-10-27T07:43:49+0100 by `analysis/R/04_robustness.R` from `analysis/specs/robustness.yml`. Every specification and every count is recomputed independently by `tests/verify_stage7.py`.
+Generated 2026-10-28T06:49:35+0100 by `analysis/R/04_robustness.R` from `analysis/specs/robustness.yml`. Every specification and every count is recomputed independently by `tests/verify_stage7.py`.
 
 ## What this stage is for
 
@@ -111,7 +111,7 @@ Not applicable. Rosenbaum bounds require a binary treatment or a matched sample.
 
 - **population_denominator** — `not_built`. X-09 is an unmade decision, and `state_panel.d1_faac_per_capita` is 0 of 12,358 rows populated. Every specification in this grid is the nominal dose. The elasticity with state fixed effects is invariant to a state-constant denominator (S6-06), so the *slope* is not expected to move — but that is an argument, not a fitted specification, and the grid cannot test it.
 - **state_igr_d2** — `not_acquired`. D2 is FAAC / (FAAC + internally generated revenue); the IGR half has no landed series, so the non-oil fiscal instrument that would let Design A vary within state for reasons other than the oil price does not exist yet (C-47).
-- **donor_pool** — `not_run`. Design C is `not_run`: Stage 5 found the donor pool fails pre-treatment fit on every outcome.
+- **donor_pool** — `partly_built`. Design C was fitted in stage 8h (registry/design_c/) on the one outcome the gate passes, `u5mr`: four windows estimated, one refused, none identified. The pool axis this grid could vary — donor definition, leave-one-donor-out — is reported on that artifact rather than here, because neither Design A nor Design B uses a donor pool.
 - **imputation_handling** — `fixed`. no imputed value enters either design; see the header of this file.
 - **index_anchor** — `fixed`. the designs use levels, not the indexed metric; the anchor is absorbed by the fixed effects.
 - **event_window** — `not_applicable`. neither design is an event study; the tenure design that would need one is not estimable.

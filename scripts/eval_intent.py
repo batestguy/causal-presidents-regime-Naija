@@ -77,31 +77,38 @@ def build_mechanical(family: dict, index: dict, states: list[dict], admins: list
     rows: list[dict] = []
 
     if family_id == "M1":
+        offset = int(family.get("design_offset", 0))
         for position, outcome in enumerate(outcomes):
-            design = designs[position % len(designs)]
+            design = designs[(position + offset) % len(designs)]
             rows.append({
                 "question": family["template"].format(outcome=outcome["label"], design=design["name"]),
                 "gold": f"card:{outcome['id']}__{design['id']}",
             })
     elif family_id == "M2":
-        for outcome in outcomes[:6]:
-            rows.append({"question": family["template"].format(outcome=outcome["label"]),
+        positions = family.get("indices") or list(range(6))
+        for position in positions:
+            rows.append({"question": family["template"].format(outcome=outcomes[position]["label"]),
                          "gold": family["gold"]})
     elif family_id == "M3":
-        for position in (0, 12, 24):
+        positions = family.get("indices") or [0, 12, 24]
+        for position in positions:
             rows.append({"question": family["template"].format(state=states[position]["state_name"]),
                          "gold": family["gold"]})
     elif family_id == "M4":
-        for position in (1, 5, 9):
+        positions = family.get("indices") or [1, 5, 9]
+        for position in positions:
             rows.append({"question": family["template"].format(outcome=outcomes[position]["label"]),
                          "gold": family["gold"]})
     elif family_id == "M5":
-        for position in (0, 3, 6, 9):
+        positions = family.get("indices") or [0, 3, 6, 9]
+        for position in positions:
             rows.append({"question": family["template"].format(outcome=outcomes[position]["label"]),
                          "gold": family["gold"]})
     elif family_id == "M6":
-        for position, admin in zip((2, 5, 8, 11), admins[:4]):
-            rows.append({"question": family["template"].format(admin=admin["president"],
+        positions = family.get("indices") or [2, 5, 8, 11]
+        admin_positions = family.get("admin_indices") or [0, 1, 2, 3]
+        for position, admin_position in zip(positions, admin_positions):
+            rows.append({"question": family["template"].format(admin=admins[admin_position]["president"],
                                                                outcome=outcomes[position]["label"]),
                          "gold": family["gold"]})
     else:

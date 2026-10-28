@@ -18,7 +18,7 @@ authoritative-looking and wrong. Everything below is shaped by that.
 
 ## 1. What is in it
 
-**482 chunks from 53 attributed sources**, at vintage 2026-10-18 — the registry's vintage, not the build date,
+**488 chunks from 53 attributed sources**, at vintage 2026-10-18 — the registry's vintage, not the build date,
 so an answer that quotes a card is a statement about that data vintage whenever it is read.
 
 | Family | Chunks | Parent documents |
@@ -80,9 +80,9 @@ Design C's status, coverage, quality, the event study, the tables), 2 refusals t
 
 | Metric | Embeddings | BM25 baseline | Gate |
 |---|---|---|---|
-| recall@5 | **0.944** | 0.833 | ≥ 0.90 — **met** for embeddings, not for the baseline |
-| gold coverage@5 | 0.418 | 0.383 | — |
-| MRR | 0.715 | 0.657 | — |
+| recall@5 | **0.944** | 0.778 | ≥ 0.90 — **met** for embeddings, not for the baseline |
+| gold coverage@5 | 0.432 | 0.376 | - |
+| MRR | 0.718 | 0.653 | - |
 | refusal-with-reason recall | **0.5** | 0.0 | 1.0 — **not met** |
 | out-of-scope refused | **0.25** | n/a | 1.0 — **not met** |
 | answerable kept (not refused) | 1.0 | n/a | 1.0 — met |
@@ -112,20 +112,20 @@ held-out set the rules never saw (v3), it refuses **0.947** of out-of-scope ques
 through its capital city, is published rather than tuned away (`docs/intent.md`). On this eval set, out-of-scope refusal goes
 **0.25 → 1.000** and reason-citation **0.5 → 1.000**, with answerable recall unchanged.
 
-The refusal threshold is `0.291464`, derived as 0.5 × the median answerable top-1 similarity (0.5829). It is
+The refusal threshold is `0.302695`, derived as 0.5 × the median answerable top-1 similarity (0.6054). It is
 calibrated on the eval set, so the refusal number is optimistic; that caveat travels in the artifact.
 
 ### The answer-quality measurement — the definitions, not the library
 
-`registry/rag/2026-10-18/answer_quality_eval.json` scores the 16 answered questions on the four metrics RAGAS
+`registry/rag/2026-10-18/answer_quality_eval.json` scores the 15 answered questions on the four metrics RAGAS
 defines, judged by `gemini-3.5-flash-lite` at temperature 0:
 
 | Metric | Measured | What it means here |
 |---|---|---|
-| faithfulness | **1.000** | statements in an answer that its own cited contexts support |
-| answer relevancy | **0.800** | mean cosine between the question and three questions generated from the answer |
-| context precision | **0.990** | average precision over the cited chunks a judge calls useful for the reference answer |
-| context recall | **0.863** | reference-answer claims the cited contexts can support |
+| faithfulness | **0.965** | statements in an answer that its own cited contexts support |
+| answer relevancy | **0.833** | mean cosine between the question and three questions generated from the answer |
+| context precision | **1.000** | average precision over the cited chunks a judge calls useful for the reference answer |
+| context recall | **0.850** | reference-answer claims the cited contexts can support |
 
 **This is not a `ragas` library run, and the artifact says so in its own fields.** The package is not
 installed in this repository or on this machine, and installing it would add a dependency tree to a project
@@ -136,17 +136,17 @@ RAGAS's per-item calls, because this key's free tier allows 20 requests per wind
 
 What the numbers say, read honestly:
 
-- **Faithfulness is 1.0 by construction, not by quality.** The answer is a selection of quoted corpus
-  paragraphs, so the check confirms the contract rather than judging retrieval. A perfect score here means
-  "it quotes what it cites", nothing more — and earlier runs of the same measurement gave 0.964 and 0.971,
-  so even that is measured with a judge that varies.
-- **Context recall 0.863 is the number that matters.** About a seventh of the reference answers' claims are
-  not supported by the chunks the answer actually cited: in this run `q04_oil_to_states` and
-  `q05_design_b_robust` score **0.500** each. The answer quotes the right document but not always the
-  paragraph that carries the reference's claim.
+- **Faithfulness is high by construction, not by quality.** The answer is a selection of quoted corpus
+  paragraphs, so the check confirms the contract rather than judging retrieval. 0.965 here means "it quotes
+  what it cites", nothing more — and earlier runs of the same measurement gave 0.964 and 0.971, so even that
+  is measured with a judge that varies.
+- **Context recall 0.850 is the number that matters.** About one reference claim in seven is not supported by
+  the chunks the answer actually cited: in earlier runs `q04_oil_to_states` and `q05_design_b_robust` scored
+  **0.500** each. The answer quotes the right document but not always the paragraph that carries the
+  reference's claim.
 - **The judge is noisy, and that is published too.** Five runs of the same measurement gave faithfulness
   0.964–1.000, answer relevancy 0.800–0.834, context precision 0.885–1.000 and context recall 0.801–0.863. A
-  lite judge at temperature 0 is not deterministic, and context precision scored every chunk useful in two
+  lite judge at temperature 0 is not deterministic, and context precision scored every chunk useful in some
   runs and not in the others — a weak instrument, said so here rather than averaged into respectability. The
   artifact records the values of *its* run; `tests/verify_answer_quality.py` checks that every score
   recomputes from the evidence beside it, and cannot check whether the judge was right. A stronger judge, or

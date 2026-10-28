@@ -52,7 +52,7 @@ a result. It is the boundary inside which results will be obtained at Stage 6.
 |---|---|---|---|
 | **A** — state dose-response DiD | **dropped** | dose validation: **0 of 12,358** values on the specified axis (`D1`, per capita) across 37 states — the nominal axis is present and gated | the state-population denominator decision (X-09), **and** a state-attributed outcome (the security series are the route and are credential-blocked) |
 | **B** — national VECM / ARDL | **degraded** | cointegration rank, DoF, collinearity; the base-spec Tier-3 system has no FAAC — the series exists and is gated, but has **no catalogue entry** | a metric-catalogue entry for the FAAC panel, and a decision on whether an annual-grain estimate is worth publishing |
-| **C** — synthetic control | **feasible on one outcome** (re-run 2026-10-18) | pre-treatment fit over a **99-country** pool: `u5mr` passes **3 of its 4** windows; `gdp_growth` 1 of 4 and `cpi_yoy` 0 of 4 do not pass the declared strict-majority rollup | build the estimator and its placebos on the `u5mr` windows |
+| **C** — synthetic control | **fitted, not identified** (2026-10-28) | pre-treatment fit over a **99-country** pool: `u5mr` passes **3 of its 4** windows; `gdp_growth` 1 of 4 and `cpi_yoy` 0 of 4 do not pass the declared strict-majority rollup. The fitted design then fails its placebos: rank p 0.17–0.50, and 304 of 396 placebos clear the same 0.10 gate | a donor pool that cannot interpolate an 8-to-24-year pre-period — the gate, not the estimator, is the binding constraint |
 
 All **36** (outcome × design) cards carry their own pre-check verdict: **14 fail, 9 degraded,
 12 not attempted, 1 pass.** The pass is `u5mr` under Design C, and it is permission to build that design
@@ -201,7 +201,7 @@ gate, but it belongs in the memo because it bounds what a Design B health estima
 
 ---
 
-## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened
+## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect
 
 **Re-run 2026-10-18** against a **99-country** candidate pool screened on oil dependence, region/income
 band and coverage (`ingestion/flows/pull_worldbank_donors.py`, S5-11), where the first run had 13 chosen
@@ -239,6 +239,19 @@ sharp change, and it carries its own warning:
 - **The estimator the spec names still does not beat a single donor.** `Synth::synth` returns a fit worse
   than the best single donor (`u5mr`/yaradua: 85.22 vs 3.87). Its default V search failed on this pool too.
   Recorded as a finding for Stage 6, not relied upon: the gate rests on the QP, which is a global optimum.
+
+**Built 2026-10-28, and it did not identify an effect.** The estimator and placebos now exist
+(`analysis/specs/design_c.yml`, `analysis/R/11_design_c.R`, `registry/design_c/2026-10-18/`): the gate's own
+simplex fit, in-space placebos over all 99 donors, in-time placebos backdated 3, 5 and 7 years, and a
+leave-one-donor-out sweep. Four windows were estimated and none survived the declared rule; the in-space rank
+p runs from 0.17 to 0.50, and **304 of 396 placebo fits clear the same 0.10 pre-fit threshold**, which is the
+measured version of the warning above: on this pool the gate does not discriminate.
+
+The declared problem is also underdetermined — 99 donors against 8 to 24 pre-years leaves a face of equally
+good fits — so the artifact publishes the solver's vertex *and* a unique ridge refit. For the first window they
+disagree in sign (+2.1 against −2.6 deaths per 1,000), which is the artifact saying that this particular gap
+belongs to the solver rather than to Nigeria. The fitted gap is therefore not a card number: a synthetic
+control has no sampling distribution, and the honesty layer publishes no point estimate without an interval.
 - **The API blocked part of the pool and the block is recorded.** A content-based WAF rejects some country
   combinations (`LK;LR` → 200, `LK;LR;LS` → 403 every time); the flow splits and retries, and the manifest
   carries the split depth per request (C-60). Libya, Lesotho and Sri Lanka therefore land through narrower

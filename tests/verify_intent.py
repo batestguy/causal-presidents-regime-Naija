@@ -203,9 +203,10 @@ def read_csv(path: Path) -> list[dict]:
 def rederive_questions(eval_spec: dict, index: dict, states: list[dict], admins: list[dict]) -> list[dict]:
     """Rebuild the held-out set from the spec's declared families, sources and rotations.
 
-    The rotations are re-encoded here from the spec's prose rather than parsed out of it — a
-    rotation the spec and the harness disagree about is a change to the measurement, and this file
-    fails on it.
+    The rotations come from the spec's declared `indices`, `design_offset` and `admin_indices` — the same
+    data the harness reads, re-applied here independently — so a rotation the spec and the harness disagree
+    about is a change to the measurement, and this file fails on it. A family that declares none falls back
+    to the v3 rotation, which is what the v3 set was measured on.
     """
     outcomes = index.get("outcomes") or []
     designs = index.get("designs") or []
@@ -216,32 +217,34 @@ def rederive_questions(eval_spec: dict, index: dict, states: list[dict], admins:
         template = family["template"]
         built: list[dict] = []
         if family_id == "M1":
+            offset = int(family.get("design_offset", 0))
             for position, outcome in enumerate(outcomes):
-                design = designs[position % len(designs)]
+                design = designs[(position + offset) % len(designs)]
                 built.append({
                     "question": template.format(outcome=outcome["label"], design=design["name"]),
                     "gold": f"card:{outcome['id']}__{design['id']}",
                 })
         elif family_id == "M2":
-            for outcome in outcomes[:6]:
-                built.append({"question": template.format(outcome=outcome["label"]),
+            for position in family.get("indices") or list(range(6)):
+                built.append({"question": template.format(outcome=outcomes[position]["label"]),
                               "gold": family["gold"]})
         elif family_id == "M3":
-            for position in (0, 12, 24):
+            for position in family.get("indices") or (0, 12, 24):
                 built.append({"question": template.format(state=states[position]["state_name"]),
                               "gold": family["gold"]})
         elif family_id == "M4":
-            for position in (1, 5, 9):
+            for position in family.get("indices") or (1, 5, 9):
                 built.append({"question": template.format(outcome=outcomes[position]["label"]),
                               "gold": family["gold"]})
         elif family_id == "M5":
-            for position in (0, 3, 6, 9):
+            for position in family.get("indices") or (0, 3, 6, 9):
                 built.append({"question": template.format(outcome=outcomes[position]["label"]),
                               "gold": family["gold"]})
         elif family_id == "M6":
-            for position, admin in zip((2, 5, 8, 11), admins[:4]):
+            for position, admin_position in zip(family.get("indices") or (2, 5, 8, 11),
+                                                family.get("admin_indices") or (0, 1, 2, 3)):
                 built.append({
-                    "question": template.format(admin=admin["president"],
+                    "question": template.format(admin=admins[admin_position]["president"],
                                                 outcome=outcomes[position]["label"]),
                     "gold": family["gold"],
                 })

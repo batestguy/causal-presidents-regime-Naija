@@ -84,6 +84,11 @@ $DBT build --project-dir dbt --profiles-dir dbt
 # against the CI-android base — weaker than a re-estimate, and labelled as such rather than passed off.
 # A design whose recomputed coefficient disagrees with the committed artifact still fails the step.
 if command -v Rscript >/dev/null 2>&1; then
+  # Design C runs before Stage 6 because Stage 6's estimates artifact carries its status: the synthetic control
+  # is its own stage (8h) with its own spec, placebos and verifier, and running it first means the block Stage 6
+  # writes can never describe a design that has since been fitted.
+  step "stage 8h: Design C synthetic control"
+  Rscript analysis/R/11_design_c.R
   step "stage 6: estimates"
   Rscript analysis/R/03_estimate.R
   # Stage 7 refits the whole declared grid, so it is the slower half of the R work and it is skipped on
@@ -131,6 +136,7 @@ else
   printf '\n=== stage 8e: SKIPPED — no Rscript on PATH; verify_comparisons.py will check the committed groups\n'
   printf '\n=== stage 8f: SKIPPED — no Rscript on PATH; verify_changepoints.py will refit the committed breaks\n'
   printf '\n=== stage 8g: SKIPPED — no Rscript on PATH; verify_tenure.py will check the committed deviations\n'
+  printf '\n=== stage 8h: SKIPPED — no Rscript on PATH; verify_design_c.py will refit the committed windows\n'
 fi
 
 # Stage 8c — the retrieval corpus. The text half needs only Python and PyYAML; the vectors need
@@ -180,6 +186,7 @@ $PYTHON tests/verify_series_figures.py
 $PYTHON tests/verify_comparisons.py
 $PYTHON tests/verify_changepoints.py
 $PYTHON tests/verify_tenure.py
+$PYTHON tests/verify_design_c.py
 $PYTHON tests/verify_provenance.py
 $PYTHON tests/verify_rag.py
 $PYTHON tests/verify_intent.py

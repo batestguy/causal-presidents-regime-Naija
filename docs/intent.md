@@ -10,12 +10,13 @@ This stage replaces the score with a **declared rule set applied before retrieva
 question, decides one of three intents, and — for a refusal — pins the chunk the refusal must quote. It
 computes no statistic, fits nothing and calls no model.
 
-It is on **version 3**: a rule was changed twice, each time after a measurement missed a target, and each
-change cost a new held-out set and a new freeze (§4, §5). The earlier numbers are kept in this page because
-they are the reason the rules moved, not because they still describe the gate.
+It is on **version 4**: a rule was changed three times, each time after a measurement missed a target or a
+published sentence became false, and each change cost a new held-out set and a new freeze (§4, §5). The
+earlier numbers are kept in this page because they are the reason the rules moved, not because they still
+describe the gate.
 
 - **Spec:** `analysis/specs/intent_gate.yml` — the decision procedure, nine rules, the gates, the known gaps
-- **Held-out set:** `analysis/specs/intent_gate_eval_v3.yml` — 49 questions, written **after** the v3 rules froze
+- **Held-out set:** `analysis/specs/intent_gate_eval_v4.yml` — 49 questions, written **after** the v4 rules froze
 - **Engine:** `app/intent_gate.py` (the decision), `scripts/eval_intent.py` (the measurement)
 - **Artifact:** `registry/rag/2026-10-18/intent_eval.json`
 - **Verifier:** `tests/verify_intent.py` — re-derives the questions, re-applies the rules with a second
@@ -85,17 +86,17 @@ rather than with a probability. The limitation is published rather than discover
 so a paraphrase that avoids the declared words is not detected (KG03). The alternative — a model — would
 have to be measured on data that did not train it, and there is no such data here.
 
-## 4. What was measured — version 3
+## 4. What was measured — version 4
 
 ### The held-out set — the generalisation estimate
 
-**49 questions** built from sources that do not depend on the rules: **32 mechanical** questions whose
-templates are filled from the artifacts (a card exists, so a card question is answerable; the corpus carries
-no population series, so a population question is not), **16 authored** questions written to be hard —
-answerable questions carrying a trigger word in a frame the rule must not fire on (including Nigeria's own
-record and a possession of it), and out-of-scope questions worded unlike the published set's and v2's — and
-**1 probe**. Composition: 22 answerable, 19 out of scope, 8 refusal-with-reason. 32 carry a gold chunk that
-is scored; 8 carry a needle the cited chunk must contain.
+**49 questions** built from sources that do not depend on the rules: **32 mechanical** questions filled from
+the artifacts in **rotations v3 did not use** (a card exists, so a card question is answerable; the corpus
+carries no population series, so a population question is not), **16 authored** questions written to be hard —
+answerable questions carrying a trigger word in a frame the rule must not fire on (a failed check, an interval,
+a design's *status*), and out-of-scope questions worded unlike the published set's, v2's and v3's — and **1
+probe**. Composition: 22 answerable, 19 out of scope, 8 refusal-with-reason. 32 carry a gold chunk that is
+scored; 8 carry a needle the cited chunk must contain.
 
 | Metric | Measured | Target | Verdict |
 |---|---|---|---|
@@ -106,47 +107,52 @@ is scored; 8 carry a needle the cited chunk must contain.
 | refusal reason cited | **1.000** | 1.0 | met |
 
 Per family: card, forecast, population, past year, tenure, Design C and the authored family are all exact at
-1.000. The probe family is 0.000, and it is the one miss: **P03** — *"How did Accra's economy grow between
-2010 and 2015?"* — is expected out of scope and is left answerable, because the question reaches a country
-only through its capital city and the vocabulary is country names. It is scored and labelled rather than
-excluded, so the lexical remainder has a measured cost.
+1.000. The probe family is 0.000, and it is the one miss: **P04** — *"How did the cedi perform against the
+naira in 2018?"* — is expected out of scope and is left answerable, because it reaches Ghana through its
+currency and the vocabulary is country names. It is scored and labelled rather than excluded, so the lexical
+remainder has a measured cost.
 
-### The regression block — the cases the two rule changes were made for
+### The regression block — the cases the rule changes were made for
 
-Twenty-three previously published questions are re-checked after the changes and reported **beside** the
-held-out numbers, never inside them: a question the rules were changed with in view cannot also measure the
-change. The block is the sixteen v2 authored questions, the v2 probe P02, and the six v2 checks:
+Seventeen previously published questions are re-checked after the changes and reported **beside** the held-out
+numbers, never inside them: a question the rules were changed with in view cannot also measure the change. The
+block is the sixteen v3 authored questions and the v3 probe P03.
 
-| Case | Question | Expected | Result |
-|---|---|---|---|
-| R01 | Is the population denominator for the per-capita axis built? | answerable | answerable |
-| R02 | How many inhabitants does Lagos have? | out of scope | out of scope |
-| R03 | What was the population in 1960? | out of scope | out of scope |
-| R04 | How many people live in Kano today? | out of scope | out of scope |
-| R05 | Which president had the better record? | refusal with reason | refusal with reason |
-| R06 | Does the corpus publish a forecast for inflation? | answerable | answerable |
-| P02 | How did Brazil's under-5 mortality compare with Nigeria's? | out of scope | out of scope |
+**Regression accuracy 0.941** — the one miss is P03, which is now a *seen* case: the capital-city question the
+v3 probe measured is still answerable, and moving it into the regression block does not make it refused. That
+is the KG03 remainder, unchanged and declared.
 
-**Regression accuracy 1.000** — P02 is now refused, which is the gap v3 closes, and the denominator and
-population questions the v2 exclusion sits beside are unchanged.
+### Why version 4 exists, and what it cost
 
-### Why version 3 exists, and what it cost
+The change is text-only and forced by an artifact. G07's `why` sentence read *"Design C was never run"*, which
+became false when the synthetic control was fitted in stage 8h; a refusal that printed it would have told a
+reader something untrue. No matching condition, route, threshold or ordering moved — G07 refuses the same class
+for the same reason — but the freeze is a hash of the whole file, so the change still cost a new held-out set
+and a fourth freeze, at `613ccf5`, written before the v4 questions existed. The alternative — editing the file
+and leaving the v3 set in place — is exactly what the freeze exists to prevent.
+
+### Version 3, kept on the record
+
+v3 closed KG01 the expensive way: a country named in a held-out question was the one miss, so the donor panel's
+99 members and the ISO 3166-1 vocabulary became committed artifacts, the rule was frozen at `3dcb555` before
+the v3 set existed, and the measurement on 49 new questions was intent accuracy 0.980, out-of-scope refusal
+0.947, answerable kept 1.000, reason cited 1.000, with the probe P03 left as the lexical remainder.
 
 v2 was frozen at `8b9ba3b` and measured on 49 questions. It hit every declared target on the held-out set,
 but it missed its one probe: **P02**, a question about a country, left answerable because no rule owned the
-class and no committed artifact named a country. KG01 declared that gap from the first freeze; v3 closes it.
+class and no committed artifact named a country. KG01 declared that gap from the first freeze; v3 closed it.
 
 The change was made the right way round: the donor panel and the country vocabulary were committed and the
-rule was **frozen at `3dcb555`** first, and this held-out set was written afterwards, from a new path. The
+rule was **frozen at `3dcb555`** first, and the v3 held-out set was written afterwards, from a new path. The
 cost is stated on the spec: the v2 authored questions are spent, the mechanical families survive because
-they are filled from artifacts, and the v2 questions become the regression block above rather than held-out
+they are filled from artifacts, and the v2 questions became a regression block rather than held-out
 questions a second time. The v2 set is retained at `analysis/specs/intent_gate_eval_v2.yml`, and its
 measurement stays on the record: intent accuracy 0.980, out-of-scope refusal 0.947, answerable kept 1.000,
 reason cited 1.000.
 
-`tests/verify_intent.py` enforces the order: it reads the rule spec **as of `3dcb555`**, fails if the file
-on disk differs, and fails if the v3 eval set existed at that commit. A rule changed now would require a v4
-set and a fourth freeze.
+`tests/verify_intent.py` enforces the order: it reads the rule spec **as of `613ccf5`**, fails if the file on
+disk differs, and fails if the v4 eval set existed at that commit. A rule changed now would require a v5 set
+and a fifth freeze.
 
 ### Why version 2 exists, and what it cost
 

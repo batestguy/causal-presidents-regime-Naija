@@ -21,7 +21,7 @@ they **do not line up with the cards** the way a reader would guess:
 |---|---|---|---|
 | A — state dose-response | 3 specifications | a catalogue outcome each: `fatalities`, `incidents`, `fatalities_civilians` | **2** — the catalogue holds cards for the first two; `fatalities_civilians` is a UCDP item inside the `fatalities` outcome, so it has no card |
 | B — national transmission | 9 specifications | **the national FAAC channel** (cumulative log change in state FAAC), not any outcome a card is about | **0** — on every B card, FAAC is a *mediator* node |
-| C — synthetic control | not run | Stage 5 recorded `infeasible`; nothing landed since changes the donor pool | **0** |
+| C — synthetic control | 4 windows, none identified | **the `u5mr` path against a synthetic Nigeria**, published in its own artifact with its placebos | **0** — a synthetic control has no interval, and no point estimate ships without one |
 
 So the honest registry is **2 cards carrying a number and 34 saying why they do not**. That ratio is the
 finding, not an accident of assembly, and the layer is built so it cannot be quietly improved: the Design A
@@ -51,7 +51,8 @@ A `not_estimated` card carries a reason from a **closed set**, so the absence of
 | `outcome_series_absent` | 12 | the outcome has no usable series, so no pre-check ran for this pair — a declared gap, not a null result |
 | `no_specification_declared` | 10 | Stage 5 ran a pre-check; Stage 6 declared no specification for this pair. Nothing about the estimate stage says this question was asked and answered |
 | `design_result_is_channel_level` | 9 | Design B has a published result, and it is about the channel the design rests on, not about this card's outcome |
-| `design_not_run` | 3 | Design C was not run; the reason is on the index and in the estimates artifact |
+| `design_not_run` | 2 | Design C was not run for this outcome — the gate refused it; the reason is on the index and in the estimates artifact |
+| `design_estimated_not_identified` | 1 | Design C was run for this outcome and no window survived its placebos; the gap and the placebos are in `registry/design_c/`, and no interval exists to put on a card |
 
 ## 3. The two design-level results, on the index
 
@@ -94,8 +95,9 @@ cards on disk, and `verify_registry.py` fails when a card that should carry a nu
 ## 5. What this layer does not claim
 
 - **A number on a card is not a passing design.** Two cards carry an estimate and **1 of 36** passes its
-  pre-check (and it is not one of them: the pass is `u5mr` under Design C, which has no estimate yet). The
-  card shows both.
+  pre-check — and it is not one of them: the pass is `u5mr` under Design C, whose windows were all estimated
+  and none identified. The card shows both, and the synthetic control's gap stays on its own artifact because
+  it has no interval to publish.
 - **The four Design B cards with no series are not "no effect".** `outcome_series_absent` is a statement
   about the data, not about the policy.
 - **Nothing here re-estimates anything.** `05_registry.R` fits nothing: it copies published fields and stops

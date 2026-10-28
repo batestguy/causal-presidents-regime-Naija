@@ -139,17 +139,25 @@ bound is published rather than widened until it passed (S7-04).
   carries a number.
 - **114 months is not many**, and two devaluations sit inside them.
 
-## 7. Design C is permission to build, not a result
+## 7. Design C was built, and it did not identify an effect
 
 Stage 5's earlier `infeasible` verdict was a statement about the **donor pool**. Widened from 13 to **99
-countries**, the pre-fit gate now passes `u5mr` on **3 of its 4** runnable windows, `gdp_growth` on 1 of 4
-and `cpi_yoy` on **0 of 4**, under a strict-majority rollup that is declared rather than inferred
-(S5-12). The pass carries its own warning: **a 99-donor simplex can fit almost any pre-period**, and in
-the 13-donor run a single donor beat the fitted simplex. The gate is weaker evidence now than it was then
-(C-59).
+countries**, the pre-fit gate passes `u5mr` on **3 of its 4** runnable windows, `gdp_growth` on 1 of 4 and
+`cpi_yoy` on **0 of 4**, under a strict-majority rollup that is declared rather than inferred (S5-12). The pass
+carried its own warning: **a 99-donor simplex can fit almost any pre-period**, and in the 13-donor run a single
+donor beat the fitted simplex (C-59).
 
-**No synthetic counterfactual exists for any tenure claim.** The estimator and its in-space, in-time and
-leave-one-donor-out placebos are unbuilt, so Design C is `not_run` — not "attempted and inconclusive".
+The estimator and its in-space, in-time and leave-one-donor-out placebos now exist
+(`registry/design_c/2026-10-18/`). **Four windows were estimated and none is identified.** The in-space rank p
+runs from 0.17 to 0.50; the in-time placebo fails where it can be run; and **304 of 396 placebo fits also clear
+the gate's own 0.10 threshold**, so the pre-fit gate does not discriminate on this pool. Two further limits:
+
+- **The declared problem is underdetermined.** With 99 donors and 8 to 24 pre-years, a face of weights fits the
+  pre-period equally well. The artifact publishes the solver's vertex and a unique ridge refit; for one window
+  they disagree in sign, which means that gap is a property of the solver, not of Nigeria.
+- **There is no interval.** A synthetic control's inference is a rank among placebos. The honesty layer publishes
+  no point estimate without an interval, so no gap reaches a card; the `u5mr` card names the reason and points
+  at the artifact.
 
 ## 8. Inference floors that no interval can hide
 
@@ -235,7 +243,7 @@ series.
 | The per-capita axis | A state population denominator decision (X-09) | An unmade decision, not an unavailable source |
 | D2 — FAAC share of state revenue | NBS state IGR parsed | Acquisition, same parser family as FAAC |
 | The 2023 window monthly | Monthly NBS CPI | Annual CPI landed; the monthly series is a parser |
-| Synthetic control against a tenure | The Design C estimator and placebos | Built next; the gate passes on `u5mr` only |
+| An identified synthetic counterfactual | A donor pool that is not rich enough to interpolate the pre-period, or a shorter fit window | Built and measured: no window survives its placebos, and 304 of 396 placebos clear the same pre-fit gate |
 | The last 22 months of security | GED 26.x | Publication cycle — the archive ends 2024-12 |
 | Tenure effects on health and education | Sub-national monthly outcomes | DHIS2 credentials; NEMIS/NEDI and UNESCO unreachable |
 | The naira channel separated | Monthly NGN/USD | No keyless publisher; CBN by hand |

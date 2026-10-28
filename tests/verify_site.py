@@ -310,12 +310,25 @@ def main() -> int:
         if needle not in designs_page:
             fail(failures, f"designs/: the sign-flip at {row['axis']}={row['level']} is not on the page")
 
-    # Design C: not run, and the reason travels rather than the section being empty.
+    # Design C: the synthetic control lives in its own artifact. A run design prints its windows by year and
+    # never by name; a design that did not run prints the reason instead of an empty section.
     c_row = by_design["C"]
-    if stripped(c_row.get("why") or "") not in designs_page:
-        fail(failures, "designs/: Design C's reason for not running is not on the page")
-    if stripped(c_row.get("next_step") or "") not in designs_page:
-        fail(failures, "designs/: Design C's next step is not on the page")
+    if c_row.get("status") == "not_run":
+        if stripped(c_row.get("why") or "") not in designs_page:
+            fail(failures, "designs/: Design C's reason for not running is not on the page")
+        if stripped(c_row.get("next_step") or "") not in designs_page:
+            fail(failures, "designs/: Design C's next step is not on the page")
+    else:
+        if stripped(guide["design_results"]["c_note"]) not in designs_page:
+            fail(failures, "designs/: the note that a synthetic control has no interval is not on the page")
+        for window in c_row.get("windows") or []:
+            if window.get("status") == "refused":
+                continue
+            years = f"{window['first_year']}–{window['last_year']}"
+            if years not in designs_page:
+                fail(failures, f"designs/: Design C's window {years} is not on the page")
+            if f"{window['p_value']:.2f}" not in designs_page:
+                fail(failures, f"designs/: Design C's placebo p for {years} is not on the page")
 
     # The transition study: one line per artifact verdict, its rule, and what it does not claim.
     expected_rows = []
@@ -438,7 +451,9 @@ def main() -> int:
     print(f"charts        : {len(comparisons)} comparison figures, every group labelled, every chart stamped")
     print(f"breaks        : {len(breaks)} changepoint panels, every declared break shown, every refusal explained")
     print(f"designs       : 3 figures byte-matched to their artifacts, A's number and check, the grid's support "
-          f"and flips, C's reason, {len(events['verdicts'])} transition verdicts, the rule, {len(events['not_claimed'])} "
+          f"and flips, C's "
+          f"{'reason' if by_design['C'].get('status') == 'not_run' else 'windows by year'}, "
+          f"{len(events['verdicts'])} transition verdicts, the rule, {len(events['not_claimed'])} "
           f"not-claimed statements")
     print(f"ask           : the gate's own rules, the contract and the corpus emitted; the measured limit stated")
     print("wording       : every status pill is a declared word; no count is typed into the renderer")

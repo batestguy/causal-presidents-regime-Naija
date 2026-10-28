@@ -12,12 +12,15 @@
         "verdict": { "type": "object" },
         "result_is_card_level": {
           "type": "boolean",
-          "description": "False means the published result is not about any one card's outcome (Design B: the national FAAC channel; Design C: not run)"
+          "description": "False means the published result is not about any one card's outcome (Design B: the national FAAC channel; Design C: a synthetic control whose gap has no interval to put on a card)"
         },
         "result_outcome": { "type": "string" },
         "cards_that_carry_no_number": { "type": "integer", "minimum": 0 },
-        "why": { "type": "string" },
-        "next_step": { "type": "string" },
+        "why": { "type": ["string", "null"], "description": "the reason a design was not run; null once it has been run" },
+        "next_step": { "type": ["string", "null"] },
+        "artifact": { "type": ["string", "null"], "description": "the design's own artifact, where a design that publishes more than a coefficient keeps its numbers" },
+        "counts": { "type": ["object", "null"] },
+        "windows": { "type": "array" },
         "specifications": { "type": "array" },
         "specifications_without_a_card": { "type": "array" },
         "robustness": { "type": "object" },

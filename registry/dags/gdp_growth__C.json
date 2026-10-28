@@ -201,6 +201,6 @@
       "detail": "The design was not run. The reason is on the index and in the estimates artifact."
     },
     "published_result": "index.json#published_results.design.C",
-    "note": "No estimate for (gdp_growth, C). The design was not run: The reason changed on 2026-10-18, and the change is the point. With the original 13-country pool Stage 5 recorded `infeasible`: the pre-treatment fit failed on every outcome and window. The pool has since been widened to 99 candidates screened on oil dependence, region/income band and coverage (`ingestion/flows/pull_worldbank_donors.py`), and re-running the gate (vintage 2026-10-18) passes **u5mr on 3 of its 4 runnable windows** (ratios 0.0014-0.0042 against the declared 0.10 threshold, ratio-on-differences 0.013-0.024) and fails `gdp_growth` (1 of 4) and `cpi_yoy` (0 of 4) — so the design is no longer infeasible *for want of a pool*. It is not estimated here because the estimator and its placebos are not built: `Synth`/`coresynth` still has to be fitted, and the in-space and in-time placebos Stage 5 deferred to Stage 6 have not been run. Two cautions travel with the pass and are on the artifact: a 99-donor simplex can fit any pre-period (the yaradua gdp_growth window reaches a ratio of 1.7e-06, which is interpolation rather than validation), and the gate was always declared necessary-not-sufficient. The pass is permission to build Design C, not evidence that its fit is real."
+    "note": "No estimate for (gdp_growth, C). The design was not run for this outcome: see the index."
   }
 }

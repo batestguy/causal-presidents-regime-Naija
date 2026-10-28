@@ -439,6 +439,15 @@ def build_context(root: Path) -> dict:
             "status": by_design["C"].get("status"),
             "why": by_design["C"].get("why"),
             "next_step": by_design["C"].get("next_step"),
+            "counts": by_design["C"].get("counts") or {},
+            "rows": [{
+                "years": f"{w['first_year']}–{w['last_year']}",
+                "gap": signed(w["mean_gap"]),
+                "ridge": signed(w["ridge_gap"]),
+                "p": f"{w['p_value']:.2f}",
+                "status": str(w["status"]).replace("_", " "),
+            } for w in by_design["C"].get("windows") or [] if w["status"] != "refused"],
+            "refused": [w for w in by_design["C"].get("windows") or [] if w["status"] == "refused"],
         },
         "events": {
             "rows": event_rows,
@@ -941,6 +950,28 @@ def render_designs(ctx: dict) -> str:
         f"<li>{html.escape(fill_text(copy['event_line'], row))}</li>" for row in d["events"]["rows"])
     not_claimed = "".join(f"<li>{md(claim)}</li>" for claim in d["events"]["not_claimed"])
 
+    # Design C publishes its own artifact: a synthetic control has no interval, so its gap cannot be a card
+    # number. The page prints the windows by year — never by name — and the two solvers side by side, because
+    # where they disagree the estimate is a property of the solver and saying so is the point.
+    if d["c"]["status"] == "not_run":
+        c_section = (f"<h2>{html.escape(copy['not_run_heading'])}</h2>"
+                     f"<h3>{html.escape(names['C'])}</h3>"
+                     f"<p>{md(d['c']['why'] or '')}</p>"
+                     f"<p><span class=\"tech\">{html.escape(copy['next_step'])}</span> "
+                     f"{md(d['c']['next_step'] or '')}</p>")
+    else:
+        c_rows = "".join(
+            f"<li>{html.escape(fill_text(copy['c_row'], row))}</li>" for row in d["c"]["rows"])
+        counts = d["c"]["counts"]
+        c_section = (
+            f"<h2>{html.escape(copy['c_heading'])}</h2>"
+            f"<h3>{html.escape(names['C'])}</h3>"
+            f"<p class=\"status-line\"><span class=\"tech\">{html.escape(copy['verdict_label'])}</span> "
+            f"<strong>{html.escape(d['c']['status'])}</strong></p>"
+            f"<p>{html.escape(fill_text(copy['c_intro'], counts))}</p>"
+            f"<ul class=\"tight\">{c_rows}</ul>"
+            f"<p class=\"note\">{html.escape(copy['c_note'])}</p>")
+
     body = f"""<main class="flow designs">
   <header class="flow-head">
     <p class="eyebrow"><a href="../">Causal Presidents</a> · the design-level results</p>
@@ -976,10 +1007,7 @@ def render_designs(ctx: dict) -> str:
   </section>
 
   <section class="block design-section">
-    <h2>{html.escape(copy['not_run_heading'])}</h2>
-    <h3>{html.escape(names['C'])}</h3>
-    <p>{md(d['c']['why'] or '')}</p>
-    <p><span class="tech">{html.escape(copy['next_step'])}</span> {md(d['c']['next_step'] or '')}</p>
+    {c_section}
   </section>
 
   <section class="block design-section">

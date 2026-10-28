@@ -197,10 +197,10 @@
     "model_card_ref": null,
     "the_number_is_for_this_card": false,
     "not_estimated_reason": {
-      "code": "design_not_run",
-      "detail": "The design was not run. The reason is on the index and in the estimates artifact."
+      "code": "design_estimated_not_identified",
+      "detail": "The design was run for this outcome in its own stage and is reported as estimated but not identified. A synthetic control has no sampling distribution, so there is no interval to put beside a point estimate, and the design-level artifact carries the gap, its placebos and the check that failed instead of a card number the honesty layer could not support."
     },
-    "published_result": "index.json#published_results.design.C",
-    "note": "No estimate for (u5mr, C). The design was not run: The reason changed on 2026-10-18, and the change is the point. With the original 13-country pool Stage 5 recorded `infeasible`: the pre-treatment fit failed on every outcome and window. The pool has since been widened to 99 candidates screened on oil dependence, region/income band and coverage (`ingestion/flows/pull_worldbank_donors.py`), and re-running the gate (vintage 2026-10-18) passes **u5mr on 3 of its 4 runnable windows** (ratios 0.0014-0.0042 against the declared 0.10 threshold, ratio-on-differences 0.013-0.024) and fails `gdp_growth` (1 of 4) and `cpi_yoy` (0 of 4) — so the design is no longer infeasible *for want of a pool*. It is not estimated here because the estimator and its placebos are not built: `Synth`/`coresynth` still has to be fitted, and the in-space and in-time placebos Stage 5 deferred to Stage 6 have not been run. Two cautions travel with the pass and are on the artifact: a 99-donor simplex can fit any pre-period (the yaradua gdp_growth window reaches a ratio of 1.7e-06, which is interpolation rather than validation), and the gate was always declared necessary-not-sufficient. The pass is permission to build Design C, not evidence that its fit is real."
+    "published_result": "registry/design_c/2026-10-18/design_c.json",
+    "note": "No estimate on this card for (u5mr, C). The synthetic control was fitted for this outcome in stage 8h: 4 of 5 windows estimated, none identified. The mean gap runs from -11.56 to +18.53 deaths per 1,000 live births against the synthetic counterfactual, and the in-space placebo rank from p = 0.17 to 0.50 over 99 placebos. A synthetic control has no sampling distribution, so there is no interval to publish and the honesty layer keeps a number without one off the card. The artifact carries every gap path, the placebos and the check that failed."
   }
 }

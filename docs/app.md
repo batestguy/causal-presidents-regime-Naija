@@ -50,9 +50,10 @@ the artifact so a panel that outlives its rows fails `scripts/validate_artifacts
 by a reader.
 
 **Design-level results.** Design B's number is about the **national FAAC channel**, and on all nine B cards
-FAAC is a mediator; Design C was not run. Both are published here, once, with their specifications, their
-robustness support and the declared next step. The page shows them on a separate tab precisely so they are not
-mistaken for a card's estimate — and the verifier checks that no B card ever displays B's coefficient.
+FAAC is a mediator; Design C's synthetic control published four windows and identified none. Both are published
+here, once, with their specifications, their robustness support, the placebos and the declared next step. The
+page shows them on a separate tab precisely so they are not mistaken for a card's estimate — and the verifier
+checks that no B card ever displays B's coefficient.
 
 **What this reads.** The file list, the vintage, the no-model-at-render-time rule, and the ratio below.
 
@@ -67,7 +68,8 @@ mistaken for a card's estimate — and the verifier checks that no B card ever d
 | `outcome_series_absent` | 12 |
 | `no_specification_declared` | 10 |
 | `design_result_is_channel_level` | 9 |
-| `design_not_run` | 3 |
+| `design_not_run` | 2 |
+| `design_estimated_not_identified` | 1 |
 
 That sentence is the first thing on the page, because a reader who scans one card cannot otherwise tell whether
 the project estimated two things or failed to estimate thirty-four. A card whose number is missing says why in

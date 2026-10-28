@@ -296,8 +296,23 @@ def main() -> int:
         fail(failures, f"design B: the declared rule gives '{b_expected}' and the report says '{b_status}'")
 
     c = next(d for d in report["designs"] if d["id"] == "C")
-    if c["status"] != "not_run" or not c.get("why"):
-        fail(failures, "design C: reported as anything other than not_run, or without its reason")
+    # Design C is fitted in its own stage (8h). This artifact carries its status and a pointer, never a second
+    # copy of its numbers; the check is that the two agree about whether the design was run.
+    design_c_path = REPO_ROOT / "registry" / "design_c" / report["vintage"] / "design_c.json"
+    if design_c_path.exists():
+        cdoc = json.loads(design_c_path.read_text(encoding="utf-8"))
+        estimated = [w for w in cdoc["windows"] if w["status"] != "refused"]
+        expected_c = ("identified" if any(w["status"] == "identified" for w in estimated)
+                      else "estimated_not_identified" if estimated else "not_run")
+        if c["status"] != expected_c:
+            fail(failures, f"design C: estimates.json says {c['status']!r} and the stage 8h artifact gives "
+                           f"{expected_c!r}")
+        if c.get("artifact") != f"registry/design_c/{report['vintage']}/design_c.json":
+            fail(failures, "design C: the estimate block does not point at its own artifact")
+        if (c.get("counts") or {}).get("estimated") != len(estimated):
+            fail(failures, "design C: the counts block does not match the artifact's estimated windows")
+    elif c["status"] != "not_run" or not c.get("why"):
+        fail(failures, "design C: reported as estimated with no artifact, or as not_run without a reason")
 
     print(f"\ndesign B verdict from the declared rule: {b_expected} "
           f"(peak h={peak}; significant in band {[r['horizon'] for r in significant]}; "

@@ -130,21 +130,31 @@ elasticity mixes the price channel with the exchange-rate channel, and the naira
 window. A monthly NGN/USD series would separate them; it does not exist on any keyless source
 (C-46). The confidence bounds are also wide, and 114 months is not many.
 
-### Design C — synthetic control: no longer infeasible, still not estimated
+### Design C — synthetic control: estimated, and not identified
 
-The reason changed on 2026-10-18, and the change is the point. Stage 5 first recorded `infeasible`: the
-pre-treatment fit failed on every outcome and every window against a 13-country pool, with the best single
-donor beating the fitted simplex. The pool has since been widened to **99 candidates** screened on oil
-dependence, region/income band and coverage, and the gate re-run passes **`u5mr` on 3 of its 4 runnable
-windows** (ratios 0.0014–0.0042 against the declared 0.10 threshold), leaves `gdp_growth` at 1 of 4 and
-`cpi_yoy` at 0 of 4, and still records that the estimator the spec names does not beat a single donor
-(`docs/design-memo.md` §4).
+The design moved twice. Stage 5 first recorded `infeasible`: the pre-treatment fit failed on every outcome and
+every window against a 13-country pool, with the best single donor beating the fitted simplex. The pool was
+then widened to **99 candidates** screened on oil dependence, region/income band and coverage, and the gate
+re-run passed **`u5mr` on 3 of its 4 runnable windows** (ratios 0.0014–0.0042 against the declared 0.10
+threshold). That pass was permission to build the design, not evidence that its fit was real — and the
+warning was earned.
 
-It is not estimated here for a different reason than before: the estimator and its placebos are not built.
-`Synth`/`coresynth` has to be fitted, and the in-space and in-time placebos Stage 5 deferred to Stage 6
-have not been run. The pass is **permission to build the design, not evidence that its fit is real** — a
-99-donor simplex can fit almost any pre-period, so the pre-fit gate is weaker evidence now than it was
-with 13 donors.
+The estimator and its placebos now exist (`analysis/specs/design_c.yml`, `analysis/R/11_design_c.R`,
+`registry/design_c/2026-10-18/`). **Four windows were estimated and none is identified.** The in-space rank p
+runs from 0.17 to 0.50, the in-time placebo fails in the one window long enough to run it, and the declared
+pre-fit gate turns out not to discriminate at all: **304 of the 396 placebo fits also clear the same 0.10
+threshold.** A 99-donor simplex can interpolate any 8-to-24-year pre-period, so the gate's pass says almost
+nothing about whether the fit is a counterfactual.
+
+Two numbers travel with the gaps because the declared problem is underdetermined. With 99 donors and 8 to 24
+pre-years, a face of weight vectors fits the pre-period equally well and they disagree about the post-period;
+the artifact publishes the vertex the declared solver returns **and** a unique ridge refit beside it. For the
+first window the two disagree in sign (+2.1 against −2.6 deaths per 1,000), which is the clearest statement
+the design can make about itself: that estimate belongs to the solver, not to the data.
+
+No gap is on a card, because a synthetic control has no sampling distribution and the honesty layer publishes
+no point estimate without an interval. The `u5mr` card carries `design_estimated_not_identified` and points at
+the artifact.
 
 ## 3. The answer, in one paragraph
 
@@ -152,10 +162,11 @@ with 13 donors.
 effects on national annual outcomes), one is now estimable but not identified (does federal money reduce
 local violence), and one is answerable and answered (an oil-price shock reaches Nigeria's states with an
 elasticity of roughly 0.5 at a two-to-three-month lag).** The fourth — synthetic control against a donor
-pool — cleared its pre-fit gate on one outcome once the pool was widened (2026-10-18) and now waits on an
-estimator rather than on data. **A fifth question turned out to be answerable and is answered: did
-conflict move inside each tenure?** (`docs/events.md`: two of eight event-outcome cells survive both the
-placebo and the pre-trend check.)
+pool — cleared its pre-fit gate on one outcome once the pool was widened (2026-10-18) and has now been
+fitted: four windows, no identified effect, and a placebo distribution that says the gate's pass was
+interpolation (`registry/design_c/2026-10-18/`). **A fifth question turned out to be answerable and is
+answered: did conflict move inside each tenure?** (`docs/events.md`: two of eight event-outcome cells survive
+both the placebo and the pre-trend check.)
 
 The tenure question is not "unsupported by evidence yet". It is *not answerable* from national annual
 data with four administrations, and the only route to an answer is sub-national monthly outcomes, which

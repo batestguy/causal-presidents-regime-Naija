@@ -121,8 +121,8 @@ mechanical:
     rotation: "the outcomes at positions 2, 5, 8 and 11; the first four presidents"
     gold: "result:C"
     gold_scored: true
-    needle: "not estimated here because the estimator"
-    why: "Design C was never run; the refusal must cite the published result that says so."
+    needle: "estimated_not_identified"
+    why: "Design C was run and none of its windows survived its placebos. The needle was moved on 2026-10-28 from 'not estimated here because the estimator', which the corpus can no longer hold because the artifact it quoted no longer says it: the held-out question and the gate's decision are unchanged, only the published text the refusal must cite."
 
 # ---------------------------------------------------------------------------------------------
 # Authored questions — new frames, not v2's

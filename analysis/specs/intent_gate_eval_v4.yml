@@ -1,0 +1,308 @@
+# Stage 9 — the intent gate's fourth held-out set, written after the v4 rules froze
+#
+# The v4 change is text-only and forced by an artifact: Design C was fitted in stage 8h, so G07's reason
+# sentence ("Design C was never run") became false, and a refusal that prints it would lie to a reader.
+# No matching condition, route, threshold or ordering moved — G07 refuses the same class for the same
+# reason — but the freeze is a hash of the whole file, so the change still costs a new held-out set.
+# `analysis/specs/intent_gate.yml` was committed at `613ccf5` **before this file existed**.
+#
+# This set is new in both halves:
+#
+#   * **Mechanical** — the same six templates, filled from **different rotations** of the index, the
+#     state seed and the administration seed (the generator takes `indices`, `design_offset` and
+#     `admin_indices` from this file, so the rotation is data rather than code). The expected intents are
+#     still derived from the artifacts.
+#   * **Authored** — sixteen questions in frames v3 did not use: ten answerable ones that sit close to a
+#     rule's vocabulary without being in its class (a failed-check question, an interval question, a
+#     design-status question, a donor-count question), and six refusals worded unlike v3's (a country in
+#     a comparison, a state population question, a far-future forecast, an advice request, a pre-window
+#     year, a party question about another country).
+#   * **Probe** — one question that reaches a country only through its currency. The country rule is
+#     lexical and names countries, so this measures the remainder rather than pretending it is closed.
+#   * **Regression** — the 17 v3 authored cases and its probe, reported beside the held-out metrics and
+#     never inside them, because v4 was written with them in view.
+#
+# The limitation is unchanged and still stated: the rules and the authored questions share an author, and
+# the commit order is the audit trail rather than independent authorship.
+#
+# `tests/verify_intent.py` reads the rule spec as of `authored_after`, compares it with the spec on disk,
+# and requires this file not to have existed at that commit. Editing a rule now requires a v5 set.
+
+version: 4
+spec_path: "analysis/specs/intent_gate_eval_v4.yml"
+harness: "scripts/eval_intent.py"
+gate_spec: "analysis/specs/intent_gate.yml"
+authored_after: "613ccf5"
+supersedes: "analysis/specs/intent_gate_eval_v3.yml (49 questions, measured against the v3 rules)"
+splits:
+  held_out: "mechanical + authored + probes — what the gate is scored on"
+  regression: "previously seen cases — reported beside the held-out numbers and never inside them"
+
+# ---------------------------------------------------------------------------------------------
+# Mechanical families — the same templates, new rotations
+# ---------------------------------------------------------------------------------------------
+mechanical:
+  - id: "M1"
+    family: "card"
+    intent: "answerable"
+    count: 12
+    template: "What did the published estimate find for {outcome} under {design}?"
+    sources:
+      outcome: "registry/dags/index.json#outcomes"
+      design: "registry/dags/index.json#designs"
+    design_offset: 1
+    rotation: "the outcome at position i takes the design at position (i + 1) mod 3 — v3 used i mod 3"
+    gold: "card:{dag_id}"
+    gold_scored: true
+    why: "A question about a card is answerable whether or not the card carries a number — the card says which, and why not."
+
+  - id: "M2"
+    family: "forecast"
+    intent: "out_of_scope"
+    count: 6
+    template: "What will {outcome} be in 2030?"
+    indices: [6, 7, 8, 9, 10, 11]
+    sources:
+      outcome: "registry/dags/index.json#outcomes"
+    rotation: "the last six outcomes — v3 used the first six"
+    gold: "scope:answer"
+    gold_scored: true
+    why: "A value at a year the corpus does not reach. 2030 is past the vintage, so no chunk can hold it."
+
+  - id: "M3"
+    family: "population"
+    intent: "out_of_scope"
+    count: 3
+    template: "How many people live in {state} today?"
+    indices: [3, 15, 27]
+    sources:
+      state: "dbt/seeds/raw_state.csv#state_name"
+    rotation: "the states at positions 3, 15 and 27 — v3 used 0, 12 and 24"
+    gold: "scope:answer"
+    gold_scored: true
+    why: "The corpus carries no population series. None of these mentions a denominator or a per-capita axis, so the v2 exclusion must not touch them."
+
+  - id: "M4"
+    family: "past_year"
+    intent: "out_of_scope"
+    count: 3
+    template: "What was {outcome} in 1980?"
+    indices: [2, 6, 10]
+    sources:
+      outcome: "registry/dags/index.json#outcomes"
+    rotation: "the outcomes at positions 2, 6 and 10, and a different pre-window year — v3 used 1, 5, 9 and 1960"
+    gold: "scope:answer"
+    gold_scored: true
+    why: "A value before the study window. The spine starts in 1999, so no chunk carries 1980."
+
+  - id: "M5"
+    family: "tenure"
+    intent: "refusal_with_reason"
+    count: 4
+    template: "Which administration had the better record on {outcome}?"
+    indices: [1, 4, 7, 10]
+    sources:
+      outcome: "registry/dags/index.json#outcomes"
+    rotation: "the outcomes at positions 1, 4, 7 and 10 — v3 used 0, 3, 6 and 9"
+    gold: "doc:limitations#s01"
+    gold_scored: true
+    needle: "annual observations per national outcome"
+    why: "The tenure comparison the data cannot support, citing the arithmetic that says so."
+
+  - id: "M6"
+    family: "design_c"
+    intent: "refusal_with_reason"
+    count: 4
+    template: "Can the synthetic control tell me whether {admin} caused the change in {outcome}?"
+    indices: [0, 3, 6, 9]
+    admin_indices: [1, 2, 3, 4]
+    sources:
+      outcome: "registry/dags/index.json#outcomes"
+      admin: "dbt/seeds/raw_administration.csv#president"
+    rotation: "the outcomes at positions 0, 3, 6 and 9 with the last four administrations — v3 used 2, 5, 8, 11 with the first four"
+    gold: "result:C"
+    gold_scored: true
+    needle: "estimated_not_identified"
+    why: "Design C was fitted and none of its windows survived its placebos; the refusal must cite the result that records what the design found."
+
+# ---------------------------------------------------------------------------------------------
+# Authored questions — new frames, not v3's
+# ---------------------------------------------------------------------------------------------
+authored:
+  - id: "D01"
+    intent: "answerable"
+    question: "Which check did the fatalities estimate fail?"
+    gold: "card:fatalities__A"
+    why: "The failed-check question, which is the card's own content. No rule owns it."
+
+  - id: "D02"
+    intent: "answerable"
+    question: "What does the incidents card say the design cannot rule out?"
+    gold: "card:incidents__A"
+    why: "The cannot-rule-out clause in a reader's words. Nothing in the rule set owns a design's caveat."
+
+  - id: "D03"
+    intent: "answerable"
+    question: "How many months of the state panel are observed from 2016?"
+    gold: "doc:data-dictionary#faac-state-allocation-the-fiscal-dose"
+    why: "A 'how many' about months, close enough to the population rule's vocabulary to be a false-positive test."
+
+  - id: "D04"
+    intent: "answerable"
+    question: "Which outcome passed its pre-check under Design C?"
+    gold: "card:u5mr__C"
+    why: "A design-status question with no causal verb: G07 requires the causal ask, and this asks what passed."
+
+  - id: "D05"
+    intent: "answerable"
+    question: "What interval does the published incidents estimate report?"
+    gold: "card:incidents__A"
+    why: "The answer contract's own vocabulary, on an outcome v3 did not use."
+
+  - id: "D06"
+    intent: "answerable"
+    question: "Which years does the FAAC archive start and end?"
+    gold: "doc:data-dictionary#faac-state-allocation-the-fiscal-dose"
+    why: "A window question with a year range and no value at a year, so the past-year rule must not fire."
+
+  - id: "D07"
+    intent: "answerable"
+    question: "What did the robustness curve find about the sign of Design A's coefficient?"
+    gold: "doc:robustness#s03"
+    why: "The grid's subject with a design named and no causal verb."
+
+  - id: "D08"
+    intent: "answerable"
+    question: "How many donor countries are in the synthetic-control pool?"
+    gold: "doc:design-memo#s04"
+    why: "A count about the donor pool, not a population count: G03's denominator exclusion must not reach it."
+
+  - id: "D09"
+    intent: "answerable"
+    question: "Was the synthetic control identified?"
+    gold: "card:u5mr__C"
+    why: "The design-status question in its plainest form. G07 refuses a causal ask, and this has none."
+
+  - id: "D10"
+    intent: "answerable"
+    question: "What was the fatalities coefficient under Design A?"
+    gold: "card:fatalities__A"
+    why: "The coefficient question with the outcome and design named, no causal verb."
+
+  - id: "D11"
+    intent: "out_of_scope"
+    question: "How did Uganda's growth compare with Nigeria's in 2015?"
+    gold: "scope:answer"
+    why: "A comparison naming a country the corpus holds no series for; refusing the comparison is refusing the half it cannot answer."
+
+  - id: "D12"
+    intent: "out_of_scope"
+    question: "What is the population of Kano state today?"
+    gold: "scope:answer"
+    why: "The size-of-population class worded as 'the population of', which the denominator exclusion must not rescue."
+
+  - id: "D13"
+    intent: "out_of_scope"
+    question: "Predict Nigeria's inflation in 2035."
+    gold: "scope:answer"
+    why: "A forecast ten years past the vintage, about a covered outcome — the class the similarity retriever could not refuse."
+
+  - id: "D14"
+    intent: "out_of_scope"
+    question: "What should the Central Bank do about the exchange rate?"
+    gold: "scope:answer"
+    why: "An advice request with an institution as the actor, so the actor test in G04 carries it."
+
+  - id: "D15"
+    intent: "out_of_scope"
+    question: "What was the exchange rate in 1955?"
+    gold: "scope:answer"
+    why: "A year before the spine begins, on a metric the corpus carries only inside the window."
+
+  - id: "D16"
+    intent: "out_of_scope"
+    question: "Which party governed Ghana between 2000 and 2008?"
+    gold: "scope:answer"
+    why: "A party question about another country: the country rule must fire before the tenure vocabulary can make it look answerable."
+
+# ---------------------------------------------------------------------------------------------
+# Probe — the remainder the country rule cannot reach
+# ---------------------------------------------------------------------------------------------
+probes:
+  - id: "P04"
+    intent: "out_of_scope"
+    question: "How did the cedi perform against the naira in 2018?"
+    gold: "scope:answer"
+    expected_gap: "KG03"
+    why: >-
+      A country reached through its currency, with no country named. The vocabulary is country names, so a
+      question that reaches one only through its money is outside the rule. Scored, labelled, and reported
+      as the lexical remainder it is.
+
+# ---------------------------------------------------------------------------------------------
+# Regression — the v3 authored cases and its probe, unchanged
+# ---------------------------------------------------------------------------------------------
+regression:
+  - id: "C01"
+    intent: "answerable"
+    question: "What did the robustness grid find across Design B specifications?"
+  - id: "C02"
+    intent: "answerable"
+    question: "What is the standard error on the incidents coefficient?"
+  - id: "C03"
+    intent: "answerable"
+    question: "How many months of the FAAC series are observed?"
+  - id: "C04"
+    intent: "answerable"
+    question: "Which president was in office at the start of the study window?"
+  - id: "C05"
+    intent: "answerable"
+    question: "Is the under-5 mortality series observed at state level?"
+  - id: "C06"
+    intent: "answerable"
+    question: "What does the fatal crashes outcome measure?"
+  - id: "C07"
+    intent: "answerable"
+    question: "What was Nigeria's inflation rate in 2016?"
+  - id: "C08"
+    intent: "answerable"
+    question: "Which check did the fatalities estimate fail?"
+  - id: "C09"
+    intent: "answerable"
+    question: "What interval does the published fatalities estimate report?"
+  - id: "C10"
+    intent: "answerable"
+    question: "Which years does the study window cover?"
+  - id: "C11"
+    intent: "out_of_scope"
+    question: "How large was Ghana's economy in 2012?"
+  - id: "C12"
+    intent: "out_of_scope"
+    question: "Compare Kenya's conflict deaths with Nigeria's."
+  - id: "C13"
+    intent: "out_of_scope"
+    question: "What is South Africa's unemployment rate?"
+  - id: "C14"
+    intent: "out_of_scope"
+    question: "How many people were living in Ilorin in 2019?"
+  - id: "C15"
+    intent: "out_of_scope"
+    question: "Forecast the exchange rate for next year."
+  - id: "C16"
+    intent: "out_of_scope"
+    question: "What should the states do about derivation?"
+  - id: "P03"
+    intent: "out_of_scope"
+    question: "How did Accra's economy grow between 2010 and 2015?"
+
+# ---------------------------------------------------------------------------------------------
+# Metrics — what is scored, and how
+# ---------------------------------------------------------------------------------------------
+metrics:
+  held_out: "mechanical + authored + probes only; the regression block is never inside these numbers"
+  intent_accuracy: "correct decisions over the 49 held-out questions"
+  out_of_scope_refusal: "held-out out_of_scope questions decided as out_of_scope"
+  answerable_not_refused: "held-out answerable questions decided as answerable"
+  refusal_route_resolved: "held-out refusal_with_reason questions whose route resolved to an existing chunk"
+  refusal_reason_cited: "held-out refusal_with_reason questions whose route chunk carries the expected needle"
+  regression: "the 17 seen cases, scored on intent and reported beside the held-out numbers - never inside them"

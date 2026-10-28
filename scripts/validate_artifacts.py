@@ -60,6 +60,7 @@ SCHEMA_DIR = REPO_ROOT / "registry" / "schema"
 REFERENCE_DIR = REPO_ROOT / "registry" / "reference"
 DONORS_DIR = REPO_ROOT / "registry" / "donors"
 SERIES_ROOT = REPO_ROOT / "registry" / "series"
+DESIGN_C_ROOT = REPO_ROOT / "registry" / "design_c"
 
 DATE_LABEL = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
@@ -711,6 +712,134 @@ def check_series(failures: list[str]) -> None:
           f"every figure on disk at its recorded size)")
 
 
+def check_design_c(failures: list[str]) -> None:
+    """Design C must describe the gate that authorized it, and its own arithmetic must close.
+
+    A synthetic control has no standard error, so the checks that make it an artifact rather than a picture are
+    the ones a schema cannot see: the same estimator has to reproduce the pre-fit ratio the gate published, a
+    refused window has to be one the gate refused, the mean gap has to equal the mean of its own path, and the
+    rank p has to follow from the distribution it ships.
+    """
+    newest = newest_dir(DESIGN_C_ROOT)
+    if newest is None:
+        print("design C         : none yet (registry/design_c/ is empty)")
+        return
+    path = newest / "design_c.json"
+    if not path.exists():
+        failures.append(f"registry/design_c/{newest.name}: design_c.json is missing")
+        return
+    document = json.loads(path.read_text(encoding="utf-8"))
+
+    cards_index = json.loads((CARDS_DIR / "index.json").read_text(encoding="utf-8"))
+    if document.get("vintage") != cards_index.get("vintage_date"):
+        failures.append(
+            f"registry/design_c/{newest.name}: vintage {document.get('vintage')!r} does not match the cards' "
+            f"{cards_index.get('vintage_date')!r} - a result from another vintage"
+        )
+
+    diag = newest_dir(DIAG_ROOT)
+    gate = json.loads((diag / "diagnostics.json").read_text(encoding="utf-8")) if diag else {}
+    gated = ((gate.get("prefit") or {}).get(document.get("input", {}).get("outcome") or "") or {}).get("windows") or {}
+
+    windows = document.get("windows") or []
+    counts = document.get("counts") or {}
+    if counts.get("windows") != len(windows):
+        failures.append(
+            f"registry/design_c/{newest.name}: counts.windows is {counts.get('windows')} but {len(windows)} "
+            "window(s) are published"
+        )
+
+    for w in windows:
+        wid = w.get("id")
+        status = w.get("status")
+        gate_row = gated.get(wid)
+        if not gated:
+            failures.append(f"registry/design_c/{newest.name}: the diagnostics artifact carries no pre-fit rows")
+        elif gate_row is None:
+            failures.append(f"registry/design_c/{newest.name}: window {wid!r} is not one the gate evaluated")
+        else:
+            if gate_row.get("verdict") == "not_run" and status != "refused":
+                failures.append(
+                    f"registry/design_c/{newest.name}: {wid} was not runnable at the gate "
+                    f"({gate_row.get('pre_years')} pre years) but the artifact estimates it"
+                )
+            if gate_row.get("verdict") in ("pass", "weak_fit") and status == "refused":
+                failures.append(
+                    f"registry/design_c/{newest.name}: {wid} passed the gate but the artifact refuses it"
+                )
+            if status != "refused" and gate_row.get("ratio") is not None:
+                # The estimator is the gate's own, so the pre-fit ratio must be the gate's number. A drift
+                # here means the base moved, the window moved, or the estimator is not the declared one.
+                if abs(w["pre_ratio"] - gate_row["ratio"]) > 1e-6 * max(1.0, abs(gate_row["ratio"])):
+                    failures.append(
+                        f"registry/design_c/{newest.name}: {wid} publishes a pre-fit ratio of "
+                        f"{w['pre_ratio']} and the gate recorded {gate_row['ratio']} - the same estimator "
+                        "cannot return two ratios"
+                    )
+        if status == "refused":
+            continue
+
+        path_rows = w.get("path") or []
+        gaps = [row["gap"] for row in path_rows]
+        if not gaps or abs(sum(gaps) / len(gaps) - w["mean_gap"]) > 1e-8 * max(1.0, abs(w["mean_gap"])):
+            failures.append(f"registry/design_c/{newest.name}: {wid}'s mean gap is not the mean of its path")
+        post_rmse = (sum(g * g for g in gaps) / len(gaps)) ** 0.5
+        if abs(post_rmse - w["post_rmse"]) > 1e-8 * max(1.0, post_rmse):
+            failures.append(f"registry/design_c/{newest.name}: {wid}'s post RMSPE is not its own gap path")
+        if abs(w["post_rmse"] / w["pre_rmse"] - w["post_pre_ratio"]) > 1e-8 * max(1.0, w["post_pre_ratio"]):
+            failures.append(f"registry/design_c/{newest.name}: {wid}'s post/pre ratio does not follow from its RMSPEs")
+        if abs(sum(row["weight"] for row in w.get("weights") or []) - 1.0) > 1e-6:
+            failures.append(f"registry/design_c/{newest.name}: {wid}'s published weights do not sum to one")
+        if len(w.get("weights") or []) != w.get("n_weights_published"):
+            failures.append(f"registry/design_c/{newest.name}: {wid}'s weight count disagrees with its weight list")
+
+        space = w["in_space"]
+        distribution = space["distribution"]
+        if space["n_placebos"] != len(distribution):
+            failures.append(f"registry/design_c/{newest.name}: {wid}'s placebo count disagrees with its distribution")
+        extreme = sum(1 for row in distribution if row["post_pre_ratio"] >= w["post_pre_ratio"])
+        if extreme != space["n_at_least_as_extreme"]:
+            failures.append(
+                f"registry/design_c/{newest.name}: {wid} publishes {space['n_at_least_as_extreme']} placebos at "
+                f"least as extreme and its own distribution carries {extreme}"
+            )
+        expected_p = (1 + extreme) / (1 + len(distribution))
+        if abs(expected_p - space["p_value"]) > 1e-9:
+            failures.append(f"registry/design_c/{newest.name}: {wid}'s rank p is not (1 + n_extreme) / (1 + n)")
+
+        # The verdict is the declared rule, not a label: a window may only be identified when its own
+        # fields satisfy all three conditions.
+        rule_holds = (
+            w["pre_ratio"] <= document["input"]["pre_fit_threshold"]
+            and space["p_value"] <= 0.05
+            and all(
+                row.get("status") != "estimated" or abs(row["mean_gap"]) < 0.5 * abs(w["mean_gap"])
+                for row in w["in_time"]
+            )
+        )
+        if (status == "identified") != bool(rule_holds):
+            failures.append(
+                f"registry/design_c/{newest.name}: {wid} is {status!r} but its own fields say the rule "
+                f"{'holds' if rule_holds else 'fails'}"
+            )
+
+    for key, expected in (
+        ("estimated", sum(1 for w in windows if w.get("status") != "refused")),
+        ("refused", sum(1 for w in windows if w.get("status") == "refused")),
+        ("identified", sum(1 for w in windows if w.get("status") == "identified")),
+        ("not_identified", sum(1 for w in windows if w.get("status") == "estimated_not_identified")),
+    ):
+        if counts.get(key) != expected:
+            failures.append(
+                f"registry/design_c/{newest.name}: counts.{key} is {counts.get(key)} and the windows carry {expected}"
+            )
+
+    print(
+        f"design C         : {newest.name} ({counts.get('estimated')} estimated, {counts.get('refused')} refused, "
+        f"{counts.get('identified')} identified; pre-fit ratios equal the gate's own)"
+    )
+
+
 def check_schemas(failures: list[str]) -> int:
     """Every registry JSON against its declared schema."""
     try:
@@ -759,6 +888,14 @@ def check_schemas(failures: list[str]) -> int:
     for artifact in sorted((REPO_ROOT / "registry" / "tenure").glob("*/tenure.json")):
         document = json.loads(artifact.read_text(encoding="utf-8"))
         for error in tenure_validator.iter_errors(document):
+            failures.append(f"{artifact.relative_to(REPO_ROOT)}: {error.message[:200]}")
+        validated += 1
+
+    design_c_schema = json.loads((SCHEMA_DIR / "design_c.schema.json").read_text(encoding="utf-8"))
+    design_c_validator = jsonschema.Draft202012Validator(design_c_schema)
+    for artifact in sorted(DESIGN_C_ROOT.glob("*/design_c.json")):
+        document = json.loads(artifact.read_text(encoding="utf-8"))
+        for error in design_c_validator.iter_errors(document):
             failures.append(f"{artifact.relative_to(REPO_ROOT)}: {error.message[:200]}")
         validated += 1
 
@@ -812,6 +949,7 @@ def main() -> int:
     check_events(failures, quality_vintage)
     check_stage8_registry(failures)
     check_series(failures)
+    check_design_c(failures)
     check_rag(failures, quality_vintage)
 
     validated = check_schemas(failures)

@@ -2,11 +2,11 @@
  "schema_version": "0.1.0",
  "layer": "retrieval corpus (one card per model card, plus the results, the tables and the narrative)",
  "vintage": "2026-10-18",
- "generated_at": "2026-10-27T06:44:15+00:00",
+ "generated_at": "2026-10-28T05:50:59+00:00",
  "generator": {
   "script": "scripts/build_rag_corpus.py",
   "spec": "analysis/specs/rag.yml",
-  "git_sha": "7cfa9a7"
+  "git_sha": "613ccf5"
  },
  "registry": {
   "index": "registry/dags/index.json",
@@ -17,8 +17,9 @@
    "not_estimated_by_reason": {
     "no_specification_declared": 10,
     "design_result_is_channel_level": 9,
-    "design_not_run": 3,
-    "outcome_series_absent": 12
+    "design_not_run": 2,
+    "outcome_series_absent": 12,
+    "design_estimated_not_identified": 1
    }
   }
  },
@@ -52,9 +53,9 @@
   "dim": 384,
   "normalised": true,
   "metric": "cosine",
-  "sha256": "e8cecb35d187630941c5c59648452641b46b1f6a7fd90422c9e166b0ca68ab37",
-  "bytes": 721482,
-  "n_chunk_vectors": 482,
+  "sha256": "51845d1e0ea9e6ec7322eb396edefab6a6e636b64c90524f14cd93031fedc894",
+  "bytes": 730048,
+  "n_chunk_vectors": 488,
   "n_query_vectors": 22,
   "library": {
    "sentence-transformers": "5.1.2",
@@ -103,15 +104,15 @@
   {
    "path": "docs/design-memo.md",
    "role": "methodology",
-   "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d",
-   "bytes": 21905,
+   "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b",
+   "bytes": 23279,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "docs/estimates.md",
    "role": "methodology",
-   "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09",
-   "bytes": 11604,
+   "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6",
+   "bytes": 12522,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -124,8 +125,8 @@
   {
    "path": "docs/glossary.md",
    "role": "methodology",
-   "sha256": "cb234ce846c7a04d59cfc8acad6b67db63cd9ccb56452f1f1727cee155e37d9b",
-   "bytes": 6230,
+   "sha256": "a58b166b60f6541065541ca5102711c171b0f837f916f115fd0f8d92dab39ba2",
+   "bytes": 6328,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -138,22 +139,22 @@
   {
    "path": "docs/limitations.md",
    "role": "methodology",
-   "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf",
-   "bytes": 18314,
+   "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5",
+   "bytes": 19154,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "docs/registry.md",
    "role": "methodology",
-   "sha256": "17884f93f8a73610167d63a56ff71ae286ad51ffdebd3870291ac9ada4bf2473",
-   "bytes": 7588,
+   "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb",
+   "bytes": 8088,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "docs/robustness.md",
    "role": "methodology",
-   "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1",
-   "bytes": 9713,
+   "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c",
+   "bytes": 9902,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -173,8 +174,8 @@
   {
    "path": "registry/dags/cpi_yoy__C.json",
    "role": "model_card",
-   "sha256": "1970819b39a64564f69308ece847ccf7f803297870189950b574b44980de8c32",
-   "bytes": 8479,
+   "sha256": "fcd03f0289b6572628fe6b84a5053a4d18bcd917a99b3061d663a4262c2b62ae",
+   "bytes": 7314,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -215,8 +216,8 @@
   {
    "path": "registry/dags/gdp_growth__C.json",
    "role": "model_card",
-   "sha256": "4c735a836171dcf0a3b4ecd5ba4645005d758076336e0b78304a7a9720b2618f",
-   "bytes": 8552,
+   "sha256": "b186aaf3f430c1488389e274010020d99f84424506685a490d109c73bf1d630b",
+   "bytes": 7387,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -264,8 +265,8 @@
   {
    "path": "registry/dags/index.json",
    "role": "registry_index",
-   "sha256": "9c9645b2d7486798537ef68cc8f37bb47ab7caff5a88f1018c11ede2e20a53ad",
-   "bytes": 58393,
+   "sha256": "89574e9c119b651ab78b081f1c42b8e9b08f52e3d44313ab776a4bbbc86213f3",
+   "bytes": 60077,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -390,8 +391,8 @@
   {
    "path": "registry/dags/u5mr__C.json",
    "role": "model_card",
-   "sha256": "c7fd557f54d45513f7485588ddbdced546888e2abf4abe0f115039319f0d1487",
-   "bytes": 8389,
+   "sha256": "3bc4599c91a0ade7917acb42dda40b28b27489fbeba706f4c8c5dc63b7f7181c",
+   "bytes": 7985,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -418,14 +419,14 @@
   {
    "path": "registry/estimates/2026-10-18/estimates.json",
    "role": "estimates",
-   "sha256": "2b809b4bbdf3d93293cb476afdcaf42223e4cbced064ae5222d820e9d16c81d2",
-   "bytes": 32385,
+   "sha256": "68642c3bd29c29eaed18248360e0bbe23404f83f611ef071ab4c47745612c6d7",
+   "bytes": 34211,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/events/2026-10-18/events.json",
    "role": "event_study",
-   "sha256": "e34b965bab40da80bdfa5e1a5c58b59ead71d2016115834fd2c8bfefe3ac5fd7",
+   "sha256": "cf7f1fec5bac2bd1073e3f7d7034c24857f5da55a1a67034a3f2ef01907f35f4",
    "bytes": 43558,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
@@ -438,21 +439,21 @@
   }
  ],
  "counts": {
-  "chunks": 482,
+  "chunks": 488,
   "by_doc_type": {
    "administration": 5,
-   "card_estimate": 36,
+   "card_estimate": 38,
    "coverage": 2,
    "data_dictionary": 47,
    "event_study": 13,
-   "methodology": 183,
+   "methodology": 188,
    "model_card": 179,
-   "published_result": 12,
+   "published_result": 11,
    "scope": 2,
    "shock": 3
   },
   "chars": {
-   "total": 328397,
+   "total": 334383,
    "max": 1598,
    "min": 150
   }
@@ -648,7 +649,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__C.json",
     "anchor": null,
-    "sha256": "1970819b39a64564f69308ece847ccf7f803297870189950b574b44980de8c32"
+    "sha256": "fcd03f0289b6572628fe6b84a5053a4d18bcd917a99b3061d663a4262c2b62ae"
    },
    "citation": "Card estimate — Headline inflation (y/y) under Design C — registry/dags/cpi_yoy__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -816,7 +817,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__C.json",
     "anchor": null,
-    "sha256": "4c735a836171dcf0a3b4ecd5ba4645005d758076336e0b78304a7a9720b2618f"
+    "sha256": "b186aaf3f430c1488389e274010020d99f84424506685a490d109c73bf1d630b"
    },
    "citation": "Card estimate — Real GDP growth (y/y) under Design C — registry/dags/gdp_growth__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -1483,12 +1484,12 @@
    "chunk_id": "estimate:u5mr__C",
    "doc_type": "card_estimate",
    "title": "Card estimate — Under-5 mortality rate under Design C",
-   "text": "Card estimate — Under-5 mortality rate under Design C (Synthetic control).\n\nOutcome: Under-5 mortality rate (u5mr). Unit: per 1,000 live births. Direction: down (lower is better). Frequency: annual. Coverage: partial.\n\nDesign C — Synthetic control (cross-country).\n\nIdentifying assumption: The synthetic control reproduces Nigeria's outcome path absent treatment: donor-weighted common factors (above all the global oil and commodity cycle) stand in for Nigeria's counterfactual, and no Nigeria-specific shock coincides with the treatment (the unobserved node is absent).\n\nWhat this design cannot rule out:\n- Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).\n- Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.\n- Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.\n- Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared.\n\nNo estimate for this (outcome, design) pair. Reason code: design_not_run. The design was not run. The reason is on the index and in the estimates artifact.\n\nThe check that decided: pretreatment_fit:obasanjo: not_run — needs >= 8 pre and >= 2 post years\n\nThe design-level result is published at index.json#published_results.design.C.",
+   "text": "[Card estimate — Under-5 mortality rate under Des — part 1 of 3]\n\nCard estimate — Under-5 mortality rate under Design C (Synthetic control).\n\nOutcome: Under-5 mortality rate (u5mr). Unit: per 1,000 live births. Direction: down (lower is better). Frequency: annual. Coverage: partial. Design C — Synthetic control (cross-country).\n\nIdentifying assumption: The synthetic control reproduces Nigeria's outcome path absent treatment: donor-weighted common factors (above all the global oil and commodity cycle) stand in for Nigeria's counterfactual, and no Nigeria-specific shock coincides with the treatment (the unobserved node is absent).",
    "vintage": "2026-10-18",
    "source": {
     "path": "registry/dags/u5mr__C.json",
     "anchor": null,
-    "sha256": "c7fd557f54d45513f7485588ddbdced546888e2abf4abe0f115039319f0d1487"
+    "sha256": "3bc4599c91a0ade7917acb42dda40b28b27489fbeba706f4c8c5dc63b7f7181c"
    },
    "citation": "Card estimate — Under-5 mortality rate under Design C — registry/dags/u5mr__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -1498,14 +1499,70 @@
     "design_id": "C",
     "design_name": "Synthetic control (cross-country)",
     "estimate_status": "not_estimated",
-    "reason_code": "design_not_run",
+    "reason_code": "design_estimated_not_identified",
     "precheck_status": "pass",
     "coverage_status": "partial",
     "part": 1,
-    "n_parts": 1
+    "n_parts": 3
    },
-   "chars": 1359,
-   "text_sha256": "8983d30a0f9c0684c851e222b0771d4bc7c6f553d9cb7fff3a855c02930c61ce"
+   "chars": 636,
+   "text_sha256": "d1d2d163824bef4b585b851128502b1d49779d8e3cf092bb0735bf20adc87a49"
+  },
+  {
+   "chunk_id": "estimate:u5mr__C#p2",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Under-5 mortality rate under Design C",
+   "text": "[Card estimate — Under-5 mortality rate under Des — part 2 of 3]\n\nWhat this design cannot rule out:\n- Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).\n- Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.\n- Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.\n- Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/u5mr__C.json",
+    "anchor": null,
+    "sha256": "3bc4599c91a0ade7917acb42dda40b28b27489fbeba706f4c8c5dc63b7f7181c"
+   },
+   "citation": "Card estimate — Under-5 mortality rate under Design C — registry/dags/u5mr__C.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "u5mr__C",
+    "outcome_id": "u5mr",
+    "outcome_label": "Under-5 mortality rate",
+    "design_id": "C",
+    "design_name": "Synthetic control (cross-country)",
+    "estimate_status": "not_estimated",
+    "reason_code": "design_estimated_not_identified",
+    "precheck_status": "pass",
+    "coverage_status": "partial",
+    "part": 2,
+    "n_parts": 3
+   },
+   "chars": 518,
+   "text_sha256": "ab3d4b1537046af6191d42dd335aee061429b638aee99ea0c0f040d1fd334b24"
+  },
+  {
+   "chunk_id": "estimate:u5mr__C#p3",
+   "doc_type": "card_estimate",
+   "title": "Card estimate — Under-5 mortality rate under Design C",
+   "text": "[Card estimate — Under-5 mortality rate under Des — part 3 of 3]\n\nNo estimate for this (outcome, design) pair. Reason code: design_estimated_not_identified. The design was run for this outcome in its own stage and is reported as estimated but not identified. A synthetic control has no sampling distribution, so there is no interval to put beside a point estimate, and the design-level artifact carries the gap, its placebos and the check that failed instead of a card number the honesty layer could not support.\n\nThe check that decided: pretreatment_fit:obasanjo: not_run — needs >= 8 pre and >= 2 post years\n\nThe design-level result is published at registry/design_c/2026-10-18/design_c.json.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "registry/dags/u5mr__C.json",
+    "anchor": null,
+    "sha256": "3bc4599c91a0ade7917acb42dda40b28b27489fbeba706f4c8c5dc63b7f7181c"
+   },
+   "citation": "Card estimate — Under-5 mortality rate under Design C — registry/dags/u5mr__C.json (vintage 2026-10-18)",
+   "metadata": {
+    "dag_id": "u5mr__C",
+    "outcome_id": "u5mr",
+    "outcome_label": "Under-5 mortality rate",
+    "design_id": "C",
+    "design_name": "Synthetic control (cross-country)",
+    "estimate_status": "not_estimated",
+    "reason_code": "design_estimated_not_identified",
+    "precheck_status": "pass",
+    "coverage_status": "partial",
+    "part": 3,
+    "n_parts": 3
+   },
+   "chars": 694,
+   "text_sha256": "16febc69570844de23f9cd12af84dd558a7b4b8bde8aba131aee6ca7c04c6473"
   },
   {
    "chunk_id": "estimate:unemp__A",
@@ -1621,12 +1678,12 @@
    "chunk_id": "coverage:registry",
    "doc_type": "coverage",
    "title": "Registry coverage — how many cards carry a published number",
-   "text": "The registry holds 36 model cards: 12 outcomes across 3 identification designs. 2 cards carry a published estimate and 34 carry a reason instead, from a closed set: design_not_run 3; design_result_is_channel_level 9; no_specification_declared 10; outcome_series_absent 12. A card with no number is not a null result — it names why no specification was published for that (outcome, design) pair. The design-level results (the national FAAC channel and Design C's non-run) sit on the index, once, because they are statements about the channel a design rests on rather than about any single card's outcome.",
+   "text": "The registry holds 36 model cards: 12 outcomes across 3 identification designs. 2 cards carry a published estimate and 34 carry a reason instead, from a closed set: design_estimated_not_identified 1; design_not_run 2; design_result_is_channel_level 9; no_specification_declared 10; outcome_series_absent 12. A card with no number is not a null result — it names why no specification was published for that (outcome, design) pair. The design-level results (the national FAAC channel and Design C's non-run) sit on the index, once, because they are statements about the channel a design rests on rather than about any single card's outcome.",
    "vintage": "2026-10-18",
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "registry.card_estimate_counts",
-    "sha256": "9c9645b2d7486798537ef68cc8f37bb47ab7caff5a88f1018c11ede2e20a53ad"
+    "sha256": "89574e9c119b651ab78b081f1c42b8e9b08f52e3d44313ab776a4bbbc86213f3"
    },
    "citation": "Registry coverage — how many cards carry a published number — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -1635,14 +1692,15 @@
     "not_estimated_by_reason": {
      "no_specification_declared": 10,
      "design_result_is_channel_level": 9,
-     "design_not_run": 3,
-     "outcome_series_absent": 12
+     "design_not_run": 2,
+     "outcome_series_absent": 12,
+     "design_estimated_not_identified": 1
     },
     "part": 1,
     "n_parts": 1
    },
-   "chars": 603,
-   "text_sha256": "d6e1c20945f83256ad82d930d32dfec8dd8f992a05e2b15f719b338471c46060"
+   "chars": 638,
+   "text_sha256": "82f36c839a01cd4f40a187dcfd5dca6551ea7364ead959e823ce726384e6692b"
   },
   {
    "chunk_id": "doc:data-dictionary#declared-gaps-nothing-here-is-silently-missing",
@@ -2640,7 +2698,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.buhari_2015",
-    "sha256": "e34b965bab40da80bdfa5e1a5c58b59ead71d2016115834fd2c8bfefe3ac5fd7"
+    "sha256": "cf7f1fec5bac2bd1073e3f7d7034c24857f5da55a1a67034a3f2ef01907f35f4"
    },
    "citation": "Transition event buhari_2015 — Buhari sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2666,7 +2724,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.buhari_2015",
-    "sha256": "e34b965bab40da80bdfa5e1a5c58b59ead71d2016115834fd2c8bfefe3ac5fd7"
+    "sha256": "cf7f1fec5bac2bd1073e3f7d7034c24857f5da55a1a67034a3f2ef01907f35f4"
    },
    "citation": "Transition event buhari_2015 — Buhari sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2692,7 +2750,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.buhari_2015",
-    "sha256": "e34b965bab40da80bdfa5e1a5c58b59ead71d2016115834fd2c8bfefe3ac5fd7"
+    "sha256": "cf7f1fec5bac2bd1073e3f7d7034c24857f5da55a1a67034a3f2ef01907f35f4"
    },
    "citation": "Transition event buhari_2015 — Buhari sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2718,7 +2776,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.jonathan_2010",
-    "sha256": "e34b965bab40da80bdfa5e1a5c58b59ead71d2016115834fd2c8bfefe3ac5fd7"
+    "sha256": "cf7f1fec5bac2bd1073e3f7d7034c24857f5da55a1a67034a3f2ef01907f35f4"
    },
    "citation": "Transition event jonathan_2010 — Jonathan sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2744,7 +2802,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.jonathan_2010",
-    "sha256": "e34b965bab40da80bdfa5e1a5c58b59ead71d2016115834fd2c8bfefe3ac5fd7"
+    "sha256": "cf7f1fec5bac2bd1073e3f7d7034c24857f5da55a1a67034a3f2ef01907f35f4"
    },
    "citation": "Transition event jonathan_2010 — Jonathan sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2770,7 +2828,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.jonathan_2010",
-    "sha256": "e34b965bab40da80bdfa5e1a5c58b59ead71d2016115834fd2c8bfefe3ac5fd7"
+    "sha256": "cf7f1fec5bac2bd1073e3f7d7034c24857f5da55a1a67034a3f2ef01907f35f4"
    },
    "citation": "Transition event jonathan_2010 — Jonathan sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2796,7 +2854,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "not_claimed",
-    "sha256": "e34b965bab40da80bdfa5e1a5c58b59ead71d2016115834fd2c8bfefe3ac5fd7"
+    "sha256": "cf7f1fec5bac2bd1073e3f7d7034c24857f5da55a1a67034a3f2ef01907f35f4"
    },
    "citation": "Transition event study — what it does not claim — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2817,7 +2875,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.tinubu_2023",
-    "sha256": "e34b965bab40da80bdfa5e1a5c58b59ead71d2016115834fd2c8bfefe3ac5fd7"
+    "sha256": "cf7f1fec5bac2bd1073e3f7d7034c24857f5da55a1a67034a3f2ef01907f35f4"
    },
    "citation": "Transition event tinubu_2023 — Tinubu sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2843,7 +2901,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.tinubu_2023",
-    "sha256": "e34b965bab40da80bdfa5e1a5c58b59ead71d2016115834fd2c8bfefe3ac5fd7"
+    "sha256": "cf7f1fec5bac2bd1073e3f7d7034c24857f5da55a1a67034a3f2ef01907f35f4"
    },
    "citation": "Transition event tinubu_2023 — Tinubu sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2869,7 +2927,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.tinubu_2023",
-    "sha256": "e34b965bab40da80bdfa5e1a5c58b59ead71d2016115834fd2c8bfefe3ac5fd7"
+    "sha256": "cf7f1fec5bac2bd1073e3f7d7034c24857f5da55a1a67034a3f2ef01907f35f4"
    },
    "citation": "Transition event tinubu_2023 — Tinubu sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2895,7 +2953,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.yaradua_2007",
-    "sha256": "e34b965bab40da80bdfa5e1a5c58b59ead71d2016115834fd2c8bfefe3ac5fd7"
+    "sha256": "cf7f1fec5bac2bd1073e3f7d7034c24857f5da55a1a67034a3f2ef01907f35f4"
    },
    "citation": "Transition event yaradua_2007 — Yar'Adua sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2921,7 +2979,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.yaradua_2007",
-    "sha256": "e34b965bab40da80bdfa5e1a5c58b59ead71d2016115834fd2c8bfefe3ac5fd7"
+    "sha256": "cf7f1fec5bac2bd1073e3f7d7034c24857f5da55a1a67034a3f2ef01907f35f4"
    },
    "citation": "Transition event yaradua_2007 — Yar'Adua sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -2947,7 +3005,7 @@
    "source": {
     "path": "registry/events/2026-10-18/events.json",
     "anchor": "events.yaradua_2007",
-    "sha256": "e34b965bab40da80bdfa5e1a5c58b59ead71d2016115834fd2c8bfefe3ac5fd7"
+    "sha256": "cf7f1fec5bac2bd1073e3f7d7034c24857f5da55a1a67034a3f2ef01907f35f4"
    },
    "citation": "Transition event yaradua_2007 — Yar'Adua sworn in — registry/events/2026-10-18/events.json (vintage 2026-10-18)",
    "metadata": {
@@ -3582,7 +3640,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s01",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 1. The grain the tests run on — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -3603,7 +3661,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s01",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 1. The grain the tests run on — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -3624,7 +3682,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s02",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 2. Family A — state dose-response DiD — **dropped** — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -3645,7 +3703,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s02",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 2. Family A — state dose-response DiD — **dropped** — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -3666,7 +3724,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s02",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 2. Family A — state dose-response DiD — **dropped** — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -3687,7 +3745,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s02",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 2. Family A — state dose-response DiD — **dropped** — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -3708,7 +3766,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -3729,7 +3787,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -3750,7 +3808,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -3771,7 +3829,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -3792,7 +3850,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -3813,7 +3871,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -3834,7 +3892,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -3855,7 +3913,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -3876,7 +3934,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -3897,7 +3955,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -3918,7 +3976,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -3933,212 +3991,254 @@
   {
    "chunk_id": "doc:design-memo#s04",
    "doc_type": "methodology",
-   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
-   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened\n\n[design-memo — 4. Family C — synthetic control —  — part 1 of 10]\n\n**Re-run 2026-10-18** against a **99-country** candidate pool screened on oil dependence, region/income\nband and coverage (`ingestion/flows/pull_worldbank_donors.py`, S5-11), where the first run had 13 chosen\non GDP comparability and geography. The gate is the **globally optimal** simplex fit to the\npre-treatment path (a quadratic program), so a failure is a statement about the donor pool, not an\noptimiser. `ratio` = pre-RMSPE ÷ pre-period outcome SD; the threshold is 0.10.",
+   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
+   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect\n\n[design-memo — 4. Family C — synthetic control —  — part 1 of 12]\n\n**Re-run 2026-10-18** against a **99-country** candidate pool screened on oil dependence, region/income\nband and coverage (`ingestion/flows/pull_worldbank_donors.py`, S5-11), where the first run had 13 chosen\non GDP comparability and geography. The gate is the **globally optimal** simplex fit to the\npre-treatment path (a quadratic program), so a failure is a statement about the donor pool, not an\noptimiser. `ratio` = pre-RMSPE ÷ pre-period outcome SD; the threshold is 0.10.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
-   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — docs/design-memo.md (vintage 2026-10-18)",
+   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/design-memo.md",
-    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
+    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
     "part": 1,
-    "n_parts": 10
+    "n_parts": 12
    },
-   "chars": 690,
-   "text_sha256": "20c38ccb07f6032434f647fbe0ac934466ae3b15484ada1edf81612117f662fd"
+   "chars": 733,
+   "text_sha256": "6a9dc1f15e9cb7a9f682fb93acb76f757433c9e0c1664342905dafc73880aa17"
   },
   {
    "chunk_id": "doc:design-memo#s04#p10",
    "doc_type": "methodology",
-   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
-   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened\n\n[design-memo — 4. Family C — synthetic control —  — part 10 of 10]\n\nTwo facts a build has to handle, both measured from those bytes: the archive carries\n`country_id` (the Gleditsch–Ward code), not ISO3, so joining it to the 99-country donor panel needs a\ncrosswalk — matching on names alone reaches only **70 of 99**, and the residual is naming rather than\nabsence (`Congo, Dem. Rep.` is `DR Congo (Zaire)`, `Cote d'Ivoire` is `Ivory Coast`, `Gambia, The` is\n`Gambia`) except for a handful of states with genuinely no recorded events (Cabo Verde, Brunei, Gabon),\nwhich the existing parser already treats as recorded zeros rather than gaps.",
+   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
+   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect\n\n[design-memo — 4. Family C — synthetic control —  — part 10 of 12]\n\nOutcomes not in the donor panel (`mmr`, `immun_penta3`, `skilled_birth`, `literacy_youth`,\n`primary_completion`, `ner_primary`, `fatalities`, `incidents`, `unemp`) are `not_attempted`: no\ndonor path exists to synthesise against. `fatalities` and `incidents` are in the UCDP *outcome* but not in\nthe World Bank predictor set, so a Design C for the conflict outcomes needs a donor conflict path — and,\nunlike the other gaps here, **that path needs no acquisition**.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
-   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — docs/design-memo.md (vintage 2026-10-18)",
+   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/design-memo.md",
-    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
+    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
     "part": 10,
-    "n_parts": 10
+    "n_parts": 12
    },
-   "chars": 784,
-   "text_sha256": "d9e182da6ec84c259a522e8f4e7b09936139ea3923f3fdfd435d5951f3b60a62"
+   "chars": 719,
+   "text_sha256": "999e2784104dec87f57200528128d44bd5b2f3724f815f98742931382224f1d7"
+  },
+  {
+   "chunk_id": "doc:design-memo#s04#p11",
+   "doc_type": "methodology",
+   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
+   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect\n\n[design-memo — 4. Family C — synthetic control —  — part 11 of 12]\n\nThe landed UCDP payload is the *global*\nGED 25.1 archive (**385,918 events over 124 countries, 1989–2024**, member `GEDEvent_v25_1.csv`), not a\nNigeria extract: the country filter is applied at parse time (`ingestion/parsers/ucdp_events.py`,\n`country == COUNTRY`). So what is missing is a parsing and panel-wiring step over bytes already on disk,\nnot a download — corrected 2026-10-18 by counting the landed zip while answering a data-planning\nquestion.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "docs/design-memo.md",
+    "anchor": "s04",
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
+   },
+   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-18)",
+   "metadata": {
+    "document": "docs/design-memo.md",
+    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
+    "part": 11,
+    "n_parts": 12
+   },
+   "chars": 709,
+   "text_sha256": "564f27d578f60bc35a2eca693c767fe86b073d85d567426089313f171b6edd86"
+  },
+  {
+   "chunk_id": "doc:design-memo#s04#p12",
+   "doc_type": "methodology",
+   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
+   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect\n\n[design-memo — 4. Family C — synthetic control —  — part 12 of 12]\n\nTwo facts a build has to handle, both measured from those bytes: the archive carries\n`country_id` (the Gleditsch–Ward code), not ISO3, so joining it to the 99-country donor panel needs a\ncrosswalk — matching on names alone reaches only **70 of 99**, and the residual is naming rather than\nabsence (`Congo, Dem. Rep.` is `DR Congo (Zaire)`, `Cote d'Ivoire` is `Ivory Coast`, `Gambia, The` is\n`Gambia`) except for a handful of states with genuinely no recorded events (Cabo Verde, Brunei, Gabon),\nwhich the existing parser already treats as recorded zeros rather than gaps.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "docs/design-memo.md",
+    "anchor": "s04",
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
+   },
+   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-18)",
+   "metadata": {
+    "document": "docs/design-memo.md",
+    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
+    "part": 12,
+    "n_parts": 12
+   },
+   "chars": 827,
+   "text_sha256": "99692ae5037e7f536753268ebc6c14eb97e17e96f66b4f9239a3d815ae8bcd54"
   },
   {
    "chunk_id": "doc:design-memo#s04#p2",
    "doc_type": "methodology",
-   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
-   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened\n\n[design-memo — 4. Family C — synthetic control —  — part 2 of 10]\n\n| Outcome | Window | Pre yrs | Pre-RMSPE | Pre SD | ratio | best 1 donor | ratio on diffs | Verdict |\n|---|---|---|---|---|---|---|---|---|\n| `u5mr` | yaradua | 8 | 0.026 | 15.19 | **0.0017** | 3.874 | 0.024 | **pass** |\n| `u5mr` | jonathan | 11 | 0.027 | 18.51 | **0.0014** | 3.439 | 0.018 | **pass** |\n| `u5mr` | buhari | 16 | 0.089 | 21.41 | **0.0042** | 6.313 | 0.013 | **pass** |\n| `u5mr` | tinubu | 24 | 4.250 | 21.42 | 0.198 | 9.737 | 0.064 | weak fit |\n| `gdp_growth` | yaradua | 8 | ~0 | 2.96 | **~0** | 2.958 | ~0 | **pass** |\n| `gdp_growth` | jonathan → tinubu | 11–24 | 2.06–2.80 | 2.60–3.20 | 0.29–0.51 | 2.60–3.19 |",
+   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
+   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect\n\n[design-memo — 4. Family C — synthetic control —  — part 2 of 12]\n\n| Outcome | Window | Pre yrs | Pre-RMSPE | Pre SD | ratio | best 1 donor | ratio on diffs | Verdict |\n|---|---|---|---|---|---|---|---|---|\n| `u5mr` | yaradua | 8 | 0.026 | 15.19 | **0.0017** | 3.874 | 0.024 | **pass** |\n| `u5mr` | jonathan | 11 | 0.027 | 18.51 | **0.0014** | 3.439 | 0.018 | **pass** |\n| `u5mr` | buhari | 16 | 0.089 | 21.41 | **0.0042** | 6.313 | 0.013 | **pass** |\n| `u5mr` | tinubu | 24 | 4.250 | 21.42 | 0.198 | 9.737 | 0.064 | weak fit |\n| `gdp_growth` | yaradua | 8 | ~0 | 2.96 | **~0** | 2.958 | ~0 | **pass** |\n| `gdp_growth` | jonathan → tinubu | 11–24 | 2.06–2.80 | 2.60–3.20 | 0.29–0.51 | 2.60–3.19 | 0.08–0.43 | weak fit |\n| `cpi_yoy` |",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
-   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — docs/design-memo.md (vintage 2026-10-18)",
+   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/design-memo.md",
-    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
+    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
     "part": 2,
-    "n_parts": 10
+    "n_parts": 12
    },
-   "chars": 841,
-   "text_sha256": "5587320c22229e47b827dee8b8f7e8fd1847226851577f30debf55b26204c8cd"
+   "chars": 921,
+   "text_sha256": "f06a074b4a8fd740d37ebd21eadfea253d4470abb14d781335eff43f86d23f5f"
   },
   {
    "chunk_id": "doc:design-memo#s04#p3",
    "doc_type": "methodology",
-   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
-   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened\n\n[design-memo — 4. Family C — synthetic control —  — part 3 of 10]\n\n0.08–0.43 | weak fit |\n| `cpi_yoy` | yaradua → tinubu | 8–24 | 2.94–4.90 | 3.92–5.11 | 0.56–0.74 | 3.85–6.20 | 0.52–0.71 | weak fit |\n\n**The verdict is `pass` on `u5mr` (3 of 4 windows, ratios 0.0014–0.0042 against the 0.10 threshold),\nand not a pass on `gdp_growth` (1 of 4) or `cpi_yoy` (0 of 4).** That is the honest reading of a\nsharp change, and it carries its own warning:",
+   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
+   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect\n\n[design-memo — 4. Family C — synthetic control —  — part 3 of 12]\n\nyaradua → tinubu | 8–24 | 2.94–4.90 | 3.92–5.11 | 0.56–0.74 | 3.85–6.20 | 0.52–0.71 | weak fit |\n\n**The verdict is `pass` on `u5mr` (3 of 4 windows, ratios 0.0014–0.0042 against the 0.10 threshold),\nand not a pass on `gdp_growth` (1 of 4) or `cpi_yoy` (0 of 4).** That is the honest reading of a\nsharp change, and it carries its own warning:",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
-   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — docs/design-memo.md (vintage 2026-10-18)",
+   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/design-memo.md",
-    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
+    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
     "part": 3,
-    "n_parts": 10
+    "n_parts": 12
    },
-   "chars": 590,
-   "text_sha256": "54eb25bc08dc8f97e27885a87c649a4bcd7564700603175bb7e4355323bd009f"
+   "chars": 596,
+   "text_sha256": "cae8d6ef7b49d602caa246e316ea49c85a196d93f952ebf0a836d36cda075ce5"
   },
   {
    "chunk_id": "doc:design-memo#s04#p4",
    "doc_type": "methodology",
-   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
-   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened\n\n[design-memo — 4. Family C — synthetic control —  — part 4 of 10]\n\n- **A 99-donor simplex can fit almost any pre-period.** The `gdp_growth`/yaradua window reaches a ratio of\n  1.7e-06 and `u5mr`/yaradua 0.0017, i.e. the fit is interpolation, not validation. The gate was declared\n  necessary-not-sufficient when the pool had 13 members; with 99 it is **weaker evidence than it was**,\n  and the numbers that can still fail are the ones reported beside it: the fit on **first differences**\n  (0.013–0.064 on the passing `u5mr` windows), the cross-check against the estimator the spec names, and\n  the placebos Stage 5 defers to Stage 6.",
+   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
+   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect\n\n[design-memo — 4. Family C — synthetic control —  — part 4 of 12]\n\n- **A 99-donor simplex can fit almost any pre-period.** The `gdp_growth`/yaradua window reaches a ratio of\n  1.7e-06 and `u5mr`/yaradua 0.0017, i.e. the fit is interpolation, not validation. The gate was declared\n  necessary-not-sufficient when the pool had 13 members; with 99 it is **weaker evidence than it was**,\n  and the numbers that can still fail are the ones reported beside it: the fit on **first differences**\n  (0.013–0.064 on the passing `u5mr` windows), the cross-check against the estimator the spec names, and\n  the placebos Stage 5 defers to Stage 6. The verdict below is permission to build the design, not\n  evidence that its fit is real.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
-   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — docs/design-memo.md (vintage 2026-10-18)",
+   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/design-memo.md",
-    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
+    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
     "part": 4,
-    "n_parts": 10
+    "n_parts": 12
    },
-   "chars": 779,
-   "text_sha256": "a9e89bac5ac7110b3466986292bfeb39101a0d5ca9196f51ae02f103e08613b4"
+   "chars": 912,
+   "text_sha256": "be2c2fc0148bce8689a1e03b8fd62bb04899393b19bf3a8e9108141fcd5797ca"
   },
   {
    "chunk_id": "doc:design-memo#s04#p5",
    "doc_type": "methodology",
-   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
-   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened\n\n[design-memo — 4. Family C — synthetic control —  — part 5 of 10]\n\nThe verdict below is permission to build the design, not\n  evidence that its fit is real. - **The rollup rule was undeclared until now.** The engine used \"any window passes\" and nothing said so;\n  with 13 donors nothing passed, so it never showed. With 99 it would have reported `gdp_growth: pass`\n  while three of its four windows failed.",
+   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
+   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect\n\n[design-memo — 4. Family C — synthetic control —  — part 5 of 12]\n\n- **The rollup rule was undeclared until now.** The engine used \"any window passes\" and nothing said so;\n  with 13 donors nothing passed, so it never showed. With 99 it would have reported `gdp_growth: pass`\n  while three of its four windows failed. The rule is now declared as a **strict majority of the runnable\n  windows** (`diagnostics.yml` `outcome_rollup`), the engine and the Stage 5 verifier both implement it,\n  a break-test mutates a minority-pass card to `pass` and requires the verifier to reject it, and the\n  counts (`n_windows_pass` / `n_windows_runnable`) travel on every verdict.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
-   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — docs/design-memo.md (vintage 2026-10-18)",
+   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/design-memo.md",
-    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
+    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
     "part": 5,
-    "n_parts": 10
+    "n_parts": 12
    },
-   "chars": 551,
-   "text_sha256": "fe2c8d2fd1899b419f417968fc62664ab4c4585722bce3168d0fd7cf33d23cc8"
+   "chars": 851,
+   "text_sha256": "83c693cca18c963f81e7ebeb90d9d36da64e0f751c955f152a59620091f4ff5e"
   },
   {
    "chunk_id": "doc:design-memo#s04#p6",
    "doc_type": "methodology",
-   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
-   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened\n\n[design-memo — 4. Family C — synthetic control —  — part 6 of 10]\n\nThe rule is now declared as a **strict majority of the runnable\n  windows** (`diagnostics.yml` `outcome_rollup`), the engine and the Stage 5 verifier both implement it,\n  a break-test mutates a minority-pass card to `pass` and requires the verifier to reject it, and the\n  counts (`n_windows_pass` / `n_windows_runnable`) travel on every verdict. - **The estimator the spec names still does not beat a single donor.** `Synth::synth` returns a fit worse\n  than the best single donor (`u5mr`/yaradua: 85.22 vs 3.87). Its default V search failed on this pool too.",
+   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
+   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect\n\n[design-memo — 4. Family C — synthetic control —  — part 6 of 12]\n\n- **The estimator the spec names still does not beat a single donor.** `Synth::synth` returns a fit worse\n  than the best single donor (`u5mr`/yaradua: 85.22 vs 3.87). Its default V search failed on this pool too. Recorded as a finding for Stage 6, not relied upon: the gate rests on the QP, which is a global optimum.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
-   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — docs/design-memo.md (vintage 2026-10-18)",
+   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/design-memo.md",
-    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
+    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
     "part": 6,
-    "n_parts": 10
+    "n_parts": 12
    },
-   "chars": 772,
-   "text_sha256": "9e9ed09e58bf414d043a04e2415ca151110260b20bf8f662ca939033b54133f7"
+   "chars": 573,
+   "text_sha256": "2d96490c6bf7b7f8777dc78f5f05d7803e311660ddbbbbd5b43a47511758cb7d"
   },
   {
    "chunk_id": "doc:design-memo#s04#p7",
    "doc_type": "methodology",
-   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
-   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened\n\n[design-memo — 4. Family C — synthetic control —  — part 7 of 10]\n\nRecorded as a finding for Stage 6, not relied upon: the gate rests on the QP, which is a global optimum. - **The API blocked part of the pool and the block is recorded.** A content-based WAF rejects some country\n  combinations (`LK;LR` → 200, `LK;LR;LS` → 403 every time); the flow splits and retries, and the manifest\n  carries the split depth per request (C-60). Libya, Lesotho and Sri Lanka therefore land through narrower\n  requests rather than being dropped silently.",
+   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
+   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect\n\n[design-memo — 4. Family C — synthetic control —  — part 7 of 12]\n\n**Built 2026-10-28, and it did not identify an effect.** The estimator and placebos now exist\n(`analysis/specs/design_c.yml`, `analysis/R/11_design_c.R`, `registry/design_c/2026-10-18/`): the gate's own\nsimplex fit, in-space placebos over all 99 donors, in-time placebos backdated 3, 5 and 7 years, and a\nleave-one-donor-out sweep. Four windows were estimated and none survived the declared rule; the in-space rank\np runs from 0.17 to 0.50, and **304 of 396 placebo fits clear the same 0.10 pre-fit threshold**, which is the\nmeasured version of the warning above: on this pool the gate does not discriminate.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
-   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — docs/design-memo.md (vintage 2026-10-18)",
+   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/design-memo.md",
-    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
+    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
     "part": 7,
-    "n_parts": 10
+    "n_parts": 12
    },
-   "chars": 684,
-   "text_sha256": "f0cc94f1ab5c23541c1897ebab131b981b03af38cf7ab43887ef4a9ddd89f8d5"
+   "chars": 863,
+   "text_sha256": "7a9f7cf838516b5f7627beb1b75e69ef9d58f07e693108354fb26bb151164b0d"
   },
   {
    "chunk_id": "doc:design-memo#s04#p8",
    "doc_type": "methodology",
-   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
-   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened\n\n[design-memo — 4. Family C — synthetic control —  — part 8 of 10]\n\nOutcomes not in the donor panel (`mmr`, `immun_penta3`, `skilled_birth`, `literacy_youth`,\n`primary_completion`, `ner_primary`, `fatalities`, `incidents`, `unemp`) are `not_attempted`: no\ndonor path exists to synthesise against. `fatalities` and `incidents` are in the UCDP *outcome* but not in\nthe World Bank predictor set, so a Design C for the conflict outcomes needs a donor conflict path — and,\nunlike the other gaps here, **that path needs no acquisition**.",
+   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
+   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect\n\n[design-memo — 4. Family C — synthetic control —  — part 8 of 12]\n\nThe declared problem is also underdetermined — 99 donors against 8 to 24 pre-years leaves a face of equally\ngood fits — so the artifact publishes the solver's vertex *and* a unique ridge refit. For the first window they\ndisagree in sign (+2.1 against −2.6 deaths per 1,000), which is the artifact saying that this particular gap\nbelongs to the solver rather than to Nigeria. The fitted gap is therefore not a card number: a synthetic\ncontrol has no sampling distribution, and the honesty layer publishes no point estimate without an interval.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
-   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — docs/design-memo.md (vintage 2026-10-18)",
+   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/design-memo.md",
-    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
+    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
     "part": 8,
-    "n_parts": 10
+    "n_parts": 12
    },
-   "chars": 675,
-   "text_sha256": "a868e29a5ab15a2e155e9cf01a9ff75b6dbb93ca4d3bd73303c806256bacfbc4"
+   "chars": 797,
+   "text_sha256": "e83bea68259b8f21eb277b88e4d7c220c53b815793612814d025b2f506ac348f"
   },
   {
    "chunk_id": "doc:design-memo#s04#p9",
    "doc_type": "methodology",
-   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
-   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened\n\n[design-memo — 4. Family C — synthetic control —  — part 9 of 10]\n\nThe landed UCDP payload is the *global*\nGED 25.1 archive (**385,918 events over 124 countries, 1989–2024**, member `GEDEvent_v25_1.csv`), not a\nNigeria extract: the country filter is applied at parse time (`ingestion/parsers/ucdp_events.py`,\n`country == COUNTRY`). So what is missing is a parsing and panel-wiring step over bytes already on disk,\nnot a download — corrected 2026-10-18 by counting the landed zip while answering a data-planning\nquestion.",
+   "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
+   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect\n\n[design-memo — 4. Family C — synthetic control —  — part 9 of 12]\n\n- **The API blocked part of the pool and the block is recorded.** A content-based WAF rejects some country\n  combinations (`LK;LR` → 200, `LK;LR;LS` → 403 every time); the flow splits and retries, and the manifest\n  carries the split depth per request (C-60). Libya, Lesotho and Sri Lanka therefore land through narrower\n  requests rather than being dropped silently.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
-   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — docs/design-memo.md (vintage 2026-10-18)",
+   "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/design-memo.md",
-    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened",
+    "section": "4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
     "part": 9,
-    "n_parts": 10
+    "n_parts": 12
    },
-   "chars": 665,
-   "text_sha256": "2d6e6597f2a931896f5d3fb1aa9738d0677645010b3d0b8642caef5f14520835"
+   "chars": 622,
+   "text_sha256": "90a1a3656fc890a52e6737e3737b0beb3f9aa48a79f8bf174bd76869bd3ace3a"
   },
   {
    "chunk_id": "doc:design-memo#s05",
@@ -4149,7 +4249,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s05",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 5. Shock-window visibility — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -4170,7 +4270,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s05",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 5. Shock-window visibility — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -4191,7 +4291,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s06",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 6. What was dropped, on the record — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -4212,7 +4312,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s07",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 7. What this hands to Stage 6 — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -4233,7 +4333,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s08",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — 8. How to reproduce — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -4249,12 +4349,12 @@
    "chunk_id": "doc:design-memo#the-verdict-in-one-screen",
    "doc_type": "methodology",
    "title": "design-memo — The verdict in one screen",
-   "text": "Design memo — what the data can support (Stage 5)\n\n## The verdict in one screen\n\n[design-memo — The verdict in one screen — part 1 of 2]\n\n| Design | Status | Deciding diagnostic | What it would take to revive it |\n|---|---|---|---|\n| **A** — state dose-response DiD | **dropped** | dose validation: **0 of 12,358** values on the specified axis (`D1`, per capita) across 37 states — the nominal axis is present and gated | the state-population denominator decision (X-09), **and** a state-attributed outcome (the security series are the route and are credential-blocked) |\n| **B** — national VECM / ARDL | **degraded** | cointegration rank, DoF, collinearity; the base-spec Tier-3 system has no FAAC — the series exists and is gated, but has **no catalogue entry** | a metric-catalogue entry for the FAAC panel, and a decision on whether an annual-grain estimate is worth publishing |\n| **C** — synthetic control | **feasible on",
+   "text": "Design memo — what the data can support (Stage 5)\n\n## The verdict in one screen\n\n[design-memo — The verdict in one screen — part 1 of 2]\n\n| Design | Status | Deciding diagnostic | What it would take to revive it |\n|---|---|---|---|\n| **A** — state dose-response DiD | **dropped** | dose validation: **0 of 12,358** values on the specified axis (`D1`, per capita) across 37 states — the nominal axis is present and gated | the state-population denominator decision (X-09), **and** a state-attributed outcome (the security series are the route and are credential-blocked) |\n| **B** — national VECM / ARDL | **degraded** | cointegration rank, DoF, collinearity; the base-spec Tier-3 system has no FAAC — the series exists and is gated, but has **no catalogue entry** | a metric-catalogue entry for the FAAC panel, and a decision on whether an annual-grain estimate is worth publishing |\n| **C** — synthetic control | **fitted, not",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "the-verdict-in-one-screen",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — The verdict in one screen — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -4264,18 +4364,18 @@
     "n_parts": 2
    },
    "chars": 927,
-   "text_sha256": "c1d9eb510e92802607dba9f8a4c37f07df1b2ab0b5ab92e7d509d35c9665ebf4"
+   "text_sha256": "ad3e1d77dbc2a4f1d606519d66364b02b587910fcc71948f209854995198f148"
   },
   {
    "chunk_id": "doc:design-memo#the-verdict-in-one-screen#p2",
    "doc_type": "methodology",
    "title": "design-memo — The verdict in one screen",
-   "text": "Design memo — what the data can support (Stage 5)\n\n## The verdict in one screen\n\n[design-memo — The verdict in one screen — part 2 of 2]\n\none outcome** (re-run 2026-10-18) | pre-treatment fit over a **99-country** pool: `u5mr` passes **3 of its 4** windows; `gdp_growth` 1 of 4 and `cpi_yoy` 0 of 4 do not pass the declared strict-majority rollup | build the estimator and its placebos on the `u5mr` windows |\n\nAll **36** (outcome × design) cards carry their own pre-check verdict: **14 fail, 9 degraded,\n12 not attempted, 1 pass.** The pass is `u5mr` under Design C, and it is permission to build that design\nrather than evidence its fit is real. No other card clears its gate. That is the finding.",
+   "text": "Design memo — what the data can support (Stage 5)\n\n## The verdict in one screen\n\n[design-memo — The verdict in one screen — part 2 of 2]\n\nidentified** (2026-10-28) | pre-treatment fit over a **99-country** pool: `u5mr` passes **3 of its 4** windows; `gdp_growth` 1 of 4 and `cpi_yoy` 0 of 4 do not pass the declared strict-majority rollup. The fitted design then fails its placebos: rank p 0.17–0.50, and 304 of 396 placebos clear the same 0.10 gate | a donor pool that cannot interpolate an 8-to-24-year pre-period — the gate, not the estimator, is the binding constraint |\n\nAll **36** (outcome × design) cards carry their own pre-check verdict: **14 fail, 9 degraded,\n12 not attempted, 1 pass.** The pass is `u5mr` under Design C, and it is permission to build that design\nrather than evidence its fit is real. No other card clears its gate. That is the finding.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "the-verdict-in-one-screen",
-    "sha256": "280b92046219f99605fb41d67af3bab7cb487387613e54d1169fb86e214a145d"
+    "sha256": "dc12c1dc294f8862dac3e9044b8d78d30d0d18a7c90c267153b80e8449aeca8b"
    },
    "citation": "design-memo — The verdict in one screen — docs/design-memo.md (vintage 2026-10-18)",
    "metadata": {
@@ -4284,8 +4384,8 @@
     "part": 2,
     "n_parts": 2
    },
-   "chars": 699,
-   "text_sha256": "1deae7c2b050332ce1ad1854583553455adcb69825e786fe95d5c1659d5c05b0"
+   "chars": 864,
+   "text_sha256": "a69e95dfcc8bc14f30aede0fdc416a4ce904e79a395497b5cd0eff205f6236ac"
   },
   {
    "chunk_id": "doc:estimates#s01",
@@ -4296,7 +4396,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s01",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 1. The presidential-tenure question is not answerable, and no estimator makes it so — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
@@ -4317,7 +4417,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s01",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 1. The presidential-tenure question is not answerable, and no estimator makes it so — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
@@ -4338,7 +4438,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s01",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 1. The presidential-tenure question is not answerable, and no estimator makes it so — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
@@ -4354,348 +4454,369 @@
    "chunk_id": "doc:estimates#s02",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 1 of 16]\n\nTwo series landed after Stage 5 ran its verdicts, and both are monthly:\n\n| Series | Grain | Span | Source |\n|---|---|---|---|\n| FAAC state allocation (the dose) | state × month, 36 states | 2016-12 → 2026-06 (114 months) | OAGF + NBS disbursement documents (2026-10-16) |\n| Conflict fatalities and incidents (the outcome) | state × month, 37 units | 1990-09 → 2024-12 (331 active months) | UCDP GED bulk archive (2026-10-17, C-45) |",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 1 of 17]\n\nTwo series landed after Stage 5 ran its verdicts, and both are monthly:\n\n| Series | Grain | Span | Source |\n|---|---|---|---|\n| FAAC state allocation (the dose) | state × month, 36 states | 2016-12 → 2026-06 (114 months) | OAGF + NBS disbursement documents (2026-10-16) |\n| Conflict fatalities and incidents (the outcome) | state × month, 37 units | 1990-09 → 2024-12 (331 active months) | UCDP GED bulk archive (2026-10-17, C-45) |",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 1,
-    "n_parts": 16
+    "n_parts": 17
    },
    "chars": 633,
-   "text_sha256": "d90203af6367c666f87df41f097d8228096bae6e0dd7188b172f4678bc301039"
+   "text_sha256": "dd5b18a2cb4c398dc4e03e2e3473fe06a78ac0289742de38313032c1d54658e3"
   },
   {
    "chunk_id": "doc:estimates#s02#p10",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 10 of 16]\n\n| Horizon (months) | Cumulative elasticity | SE | 95 % CI |\n|---|---|---|---|\n| 0 | −0.160 | 0.124 | [−0.402, +0.082] |\n| 1 | +0.157 | 0.128 | [−0.093, +0.408] |\n| **2** | **+0.518** | **0.166** | **[+0.192, +0.844]** |\n| **3** | **+0.470** | **0.158** | **[+0.161, +0.779]** |\n| 4 | +0.161 | 0.162 | [−0.156, +0.478] |\n| 6 | +0.231 | 0.218 | [−0.197, +0.659] |\n| 12 | +0.325 | 0.319 | [−0.300, +0.949] |",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 10 of 17]\n\n| Horizon (months) | Cumulative elasticity | SE | 95 % CI |\n|---|---|---|---|\n| 0 | −0.160 | 0.124 | [−0.402, +0.082] |\n| 1 | +0.157 | 0.128 | [−0.093, +0.408] |\n| **2** | **+0.518** | **0.166** | **[+0.192, +0.844]** |\n| **3** | **+0.470** | **0.158** | **[+0.161, +0.779]** |\n| 4 | +0.161 | 0.162 | [−0.156, +0.478] |\n| 6 | +0.231 | 0.218 | [−0.197, +0.659] |\n| 12 | +0.325 | 0.319 | [−0.300, +0.949] |",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 10,
-    "n_parts": 16
+    "n_parts": 17
    },
    "chars": 606,
-   "text_sha256": "5c61e23a64a66500ad5e4eacc8e4267a855350bc464b2b4055e2b71e102d5b0c"
+   "text_sha256": "4a02a49267ffe62ff461f52ffcc23026a2eac1d12d5847a06aa233cad1a0097d"
   },
   {
    "chunk_id": "doc:estimates#s02#p11",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 11 of 16]\n\n**A 10 % rise in Brent reaches the states as roughly a 5 % larger allocation, two to three months\nlater.** The lag is what the disbursement calendar implies rather than a curiosity: the allocation\npublished for a month is revenue accrued in an earlier one, so an immediate response would have been the\nsurprising result. The lead placebo — regressing today's allocation on a *future* oil shock — is\n+0.095 (SE 0.152), an order of magnitude smaller than the peak response at h = 2.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 11 of 17]\n\n**A 10 % rise in Brent reaches the states as roughly a 5 % larger allocation, two to three months\nlater.** The lag is what the disbursement calendar implies rather than a curiosity: the allocation\npublished for a month is revenue accrued in an earlier one, so an immediate response would have been the\nsurprising result. The lead placebo — regressing today's allocation on a *future* oil shock — is\n+0.095 (SE 0.152), an order of magnitude smaller than the peak response at h = 2.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 11,
-    "n_parts": 16
+    "n_parts": 17
    },
    "chars": 682,
-   "text_sha256": "ab75ecda3fbfec67f1953cd6718a6ec7532d4b55ab220894e5824588dff5aaf2"
+   "text_sha256": "e96f1ccd135ac57e85b5637b2841c3d8201d54547c3f3eb077bc82f203499729"
   },
   {
    "chunk_id": "doc:estimates#s02#p12",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 12 of 16]\n\nBefore h = 2 the response is zero (−0.160 at h = 0), which is the substantive claim of this design: the\noil channel reaches state budgets through an administrative lag, not a market one.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 12 of 17]\n\nBefore h = 2 the response is zero (−0.160 at h = 0), which is the substantive claim of this design: the\noil channel reaches state budgets through an administrative lag, not a market one.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 12,
-    "n_parts": 16
+    "n_parts": 17
    },
    "chars": 388,
-   "text_sha256": "3dd889249807623ead186f5b49140d64cde65e661c59ccae530f4e50a1fa3f4e"
+   "text_sha256": "0036a0a814ea9c8cf80898c2fa8a01658a4e04f5d307419a974085501f317846"
   },
   {
    "chunk_id": "doc:estimates#s02#p13",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 13 of 16]\n\n**What this does not establish:** the response is measured in naira against a dollar price, so the\nelasticity mixes the price channel with the exchange-rate channel, and the naira moved twice inside the\nwindow. A monthly NGN/USD series would separate them; it does not exist on any keyless source\n(C-46). The confidence bounds are also wide, and 114 months is not many. ### Design C — synthetic control: no longer infeasible, still not estimated",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 13 of 17]\n\n**What this does not establish:** the response is measured in naira against a dollar price, so the\nelasticity mixes the price channel with the exchange-rate channel, and the naira moved twice inside the\nwindow. A monthly NGN/USD series would separate them; it does not exist on any keyless source\n(C-46). The confidence bounds are also wide, and 114 months is not many. ### Design C — synthetic control: estimated, and not identified",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 13,
-    "n_parts": 16
+    "n_parts": 17
    },
-   "chars": 647,
-   "text_sha256": "8785cc8811e62d1d99c845580fc759a29d7b92d1e553cdb7220c2f19ac048d4f"
+   "chars": 635,
+   "text_sha256": "e9911220e01da77878fc387f8add17c84e580c59263e25b5e7b8ef3b45cdcd42"
   },
   {
    "chunk_id": "doc:estimates#s02#p14",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 14 of 16]\n\nThe reason changed on 2026-10-18, and the change is the point. Stage 5 first recorded `infeasible`: the\npre-treatment fit failed on every outcome and every window against a 13-country pool, with the best single\ndonor beating the fitted simplex.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 14 of 17]\n\nThe design moved twice. Stage 5 first recorded `infeasible`: the pre-treatment fit failed on every outcome and\nevery window against a 13-country pool, with the best single donor beating the fitted simplex. The pool was\nthen widened to **99 candidates** screened on oil dependence, region/income band and coverage, and the gate\nre-run passed **`u5mr` on 3 of its 4 runnable windows** (ratios 0.0014–0.0042 against the declared 0.10\nthreshold). That pass was permission to build the design, not evidence that its fit was real — and the\nwarning was earned.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 14,
-    "n_parts": 16
+    "n_parts": 17
    },
-   "chars": 446,
-   "text_sha256": "0bcad87b0202dbcd68afef0fa3325770fa548d5032aee43cf26788d8c9035742"
+   "chars": 755,
+   "text_sha256": "d4c75d60a090e06c48f6737968e796751648735d121f3216d2b73159ef5f8835"
   },
   {
    "chunk_id": "doc:estimates#s02#p15",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 15 of 16]\n\nThe pool has since been widened to **99 candidates** screened on oil\ndependence, region/income band and coverage, and the gate re-run passes **`u5mr` on 3 of its 4 runnable\nwindows** (ratios 0.0014–0.0042 against the declared 0.10 threshold), leaves `gdp_growth` at 1 of 4 and\n`cpi_yoy` at 0 of 4, and still records that the estimator the spec names does not beat a single donor\n(`docs/design-memo.md` §4).",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 15 of 17]\n\nThe estimator and its placebos now exist (`analysis/specs/design_c.yml`, `analysis/R/11_design_c.R`,\n`registry/design_c/2026-10-18/`). **Four windows were estimated and none is identified.** The in-space rank p\nruns from 0.17 to 0.50, the in-time placebo fails in the one window long enough to run it, and the declared\npre-fit gate turns out not to discriminate at all: **304 of the 396 placebo fits also clear the same 0.10\nthreshold.** A 99-donor simplex can interpolate any 8-to-24-year pre-period, so the gate's pass says almost\nnothing about whether the fit is a counterfactual.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 15,
-    "n_parts": 16
+    "n_parts": 17
    },
-   "chars": 608,
-   "text_sha256": "c7d77778d2333eef23a181dc939e2d17c72ae73eb050cf60e0c624eaff8b6014"
+   "chars": 785,
+   "text_sha256": "559c5ea0b064deecf05b04e1798568f0506383d27ec90f4f981b6023a33dde44"
   },
   {
    "chunk_id": "doc:estimates#s02#p16",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 16 of 16]\n\nIt is not estimated here for a different reason than before: the estimator and its placebos are not built.\n`Synth`/`coresynth` has to be fitted, and the in-space and in-time placebos Stage 5 deferred to Stage 6\nhave not been run. The pass is **permission to build the design, not evidence that its fit is real** — a\n99-donor simplex can fit almost any pre-period, so the pre-fit gate is weaker evidence now than it was\nwith 13 donors.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 16 of 17]\n\nTwo numbers travel with the gaps because the declared problem is underdetermined. With 99 donors and 8 to 24\npre-years, a face of weight vectors fits the pre-period equally well and they disagree about the post-period;\nthe artifact publishes the vertex the declared solver returns **and** a unique ridge refit beside it. For the\nfirst window the two disagree in sign (+2.1 against −2.6 deaths per 1,000), which is the clearest statement\nthe design can make about itself: that estimate belongs to the solver, not to the data.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 16,
-    "n_parts": 16
+    "n_parts": 17
    },
-   "chars": 636,
-   "text_sha256": "5796b599121fd6fde3b67633d3feb861326011d431f26b6b3c93f64ccccd4269"
+   "chars": 726,
+   "text_sha256": "b0853b46f971c0145a1d7c0b4146597daa58c524e578b9e213f0dde1cebe02e0"
+  },
+  {
+   "chunk_id": "doc:estimates#s02#p17",
+   "doc_type": "methodology",
+   "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 17 of 17]\n\nNo gap is on a card, because a synthetic control has no sampling distribution and the honesty layer publishes\nno point estimate without an interval. The `u5mr` card carries `design_estimated_not_identified` and points at\nthe artifact.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "docs/estimates.md",
+    "anchor": "s02",
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
+   },
+   "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-18)",
+   "metadata": {
+    "document": "docs/estimates.md",
+    "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
+    "part": 17,
+    "n_parts": 17
+   },
+   "chars": 436,
+   "text_sha256": "dd0f05678684a09f973504ad2c1c1dd146fa13f73e6eb538efe853336f0711d1"
   },
   {
    "chunk_id": "doc:estimates#s02#p2",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 2 of 16]\n\nTheir intersection is **3,456 state-months** (2016-12 → 2024-12), which is the first sample in this\nproject big enough to estimate anything at all. Two questions were pre-declared against it\n(`analysis/specs/estimation.yml`), each with the check that could kill it. ### Design A — does a larger federal allocation reduce conflict where it lands?\n\n**Estimated, and not identified.** The coefficient is reported with its bounds; the design fails its own\nchecks, and both are published.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 2 of 17]\n\nTheir intersection is **3,456 state-months** (2016-12 → 2024-12), which is the first sample in this\nproject big enough to estimate anything at all. Two questions were pre-declared against it\n(`analysis/specs/estimation.yml`), each with the check that could kill it. ### Design A — does a larger federal allocation reduce conflict where it lands?\n\n**Estimated, and not identified.** The coefficient is reported with its bounds; the design fails its own\nchecks, and both are published.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 2,
-    "n_parts": 16
+    "n_parts": 17
    },
    "chars": 684,
-   "text_sha256": "7cd6e4cedb7b8b660adf20e0c87aa965d6a8a4143b011bc7827bc1d11a85c903"
+   "text_sha256": "0fabaff1e43183532cde5a7777042c9320208b9d9c0b956c2ac3fb6f0f7eb9b5"
   },
   {
    "chunk_id": "doc:estimates#s02#p3",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 3 of 16]\n\n| Outcome | Elasticity | 95 % CI | n |\n|---|---|---|---|\n| fatalities | +0.479 | [−0.113, +1.072] | 3,456 |\n| incidents | +0.546 | [+0.121, +0.971] | 3,456 |\n| fatalities_civilians | +0.310 | [−0.615, +1.234] | 3,168 | Why the verdict is not \"identified\":",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 3 of 17]\n\n| Outcome | Elasticity | 95 % CI | n |\n|---|---|---|---|\n| fatalities | +0.479 | [−0.113, +1.072] | 3,456 |\n| incidents | +0.546 | [+0.121, +0.971] | 3,456 |\n| fatalities_civilians | +0.310 | [−0.615, +1.234] | 3,168 | Why the verdict is not \"identified\":",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 3,
-    "n_parts": 16
+    "n_parts": 17
    },
    "chars": 456,
-   "text_sha256": "5fc6dc006babcc42f71c6fb19d84321fb6f40ec5484e6caddb55e879e49844d0"
+   "text_sha256": "b7c64d80a758d94273dfb559578f7ffe29b798c79cca0adac5ebca6717f9ce3e"
   },
   {
    "chunk_id": "doc:estimates#s02#p4",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 4 of 16]\n\n* **A mis-timed dose is as good as the timed one.** Refitting the same estimator with each state's dose\n  series shifted by any non-zero offset from −30 to +30 months, **8 of 60 offsets return an estimate at\n  least as large** as the estimate itself (p = 0.133). The deterministic 24-month placebo returns\n  **+0.302** against the estimate's **+0.479**. * **The identifying variation is a commodity price.** What survives state and month fixed effects in the\n  dose is concentrated in the oil-producing states: residual sd **0.50 in Delta, 0.50 in Bayelsa, 0.47 in\n  Rivers** against **0.11** in Sokoto, Bauchi, Adamawa, Kaduna and Taraba.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 4 of 17]\n\n* **A mis-timed dose is as good as the timed one.** Refitting the same estimator with each state's dose\n  series shifted by any non-zero offset from −30 to +30 months, **8 of 60 offsets return an estimate at\n  least as large** as the estimate itself (p = 0.133). The deterministic 24-month placebo returns\n  **+0.302** against the estimate's **+0.479**. * **The identifying variation is a commodity price.** What survives state and month fixed effects in the\n  dose is concentrated in the oil-producing states: residual sd **0.50 in Delta, 0.50 in Bayelsa, 0.47 in\n  Rivers** against **0.11** in Sokoto, Bauchi, Adamawa, Kaduna and Taraba.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 4,
-    "n_parts": 16
+    "n_parts": 17
    },
    "chars": 840,
-   "text_sha256": "b1d6128e985e6a46dbdef5570157e04e9125cf21127514d1a085df354860a2a5"
+   "text_sha256": "def0a7dc90ee8febc59375176795b3b8562e24a016d2711ca4727ab4b95a6669"
   },
   {
    "chunk_id": "doc:estimates#s02#p5",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 5 of 16]\n\nThat is the 13 % derivation\n  share moving with the oil price and with production volumes — a national shock interacted with a fixed\n  state characteristic, which is not the as-good-as-random exposure a dose-response design assumes.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 5 of 17]\n\nThat is the 13 % derivation\n  share moving with the oil price and with production volumes — a national shock interacted with a fixed\n  state characteristic, which is not the as-good-as-random exposure a dose-response design assumes.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 5,
-    "n_parts": 16
+    "n_parts": 17
    },
    "chars": 433,
-   "text_sha256": "6b7df822285666c759e79f8f405a44ac373d4888ab70928583244ee93d5ae6d4"
+   "text_sha256": "14b6d34ae82e2d1b3893792abc009928b2f4f12c9f3b751189f5a967e6ec7ebd"
   },
   {
    "chunk_id": "doc:estimates#s02#p6",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 6 of 16]\n\nA secondary null — shuffling the dose across states within each month — returns p = 0.000, and it is\npublished *because* it was run, not as a rescue: that null destroys the cross-state mean, which the state\nfixed effects already absorb, so it is far too easy to beat. The full distribution of all 60 mis-timed\nestimates is in `estimates.json`, so a reader can check the claim rather than take it.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 6 of 17]\n\nA secondary null — shuffling the dose across states within each month — returns p = 0.000, and it is\npublished *because* it was run, not as a rescue: that null destroys the cross-state mean, which the state\nfixed effects already absorb, so it is far too easy to beat. The full distribution of all 60 mis-timed\nestimates is in `estimates.json`, so a reader can check the claim rather than take it.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 6,
-    "n_parts": 16
+    "n_parts": 17
    },
    "chars": 597,
-   "text_sha256": "524c768fe8d25e5ed784cab3f12fd6070015ff28a8d8e88c9d2f7223e3b36053"
+   "text_sha256": "d3e3c7e692d2ec6a14349ada005d3a7e9a71a112b35243faf5beddfa474ef9ed"
   },
   {
    "chunk_id": "doc:estimates#s02#p7",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 7 of 16]\n\n**The honest statement:** a state that received more federal money in a month did not visibly see less\nviolence, and this design cannot distinguish that from any other timing. The question is *asked* and\n*answered as unanswerable at this identification*, which is a different thing from \"there is no effect\". #### Stage 7 pushed on this, and the sign did not survive",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 7 of 17]\n\n**The honest statement:** a state that received more federal money in a month did not visibly see less\nviolence, and this design cannot distinguish that from any other timing. The question is *asked* and\n*answered as unanswerable at this identification*, which is a different thing from \"there is no effect\". #### Stage 7 pushed on this, and the sign did not survive",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 7,
-    "n_parts": 16
+    "n_parts": 17
    },
    "chars": 567,
-   "text_sha256": "8cf36c7fa3797349603c941b474af40dd6ece962946068f0e092f64963a4f170"
+   "text_sha256": "206ef9f562a2d958f34c2cb1d0d1fc754541cabc2585e147fc7d9ef6caffcc54"
   },
   {
    "chunk_id": "doc:estimates#s02#p8",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 8 of 16]\n\n`docs/robustness.md` refits this question 81 ways (`registry/robustness/2026-10-18/`). The result:\n**45 specifications positive, 36 negative**, and the estimate is negative in all three windows when the\ndose is lagged one month rather than contemporaneous — while the pre-registered same-month specification\nis positive. The 36 leave-one-state-out refits do *not* flip the sign (range [0.1234, 0.6254]), so the\nproblem is not one unit; it is that the dose's timing and the adjustment set each decide the direction.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 8 of 17]\n\n`docs/robustness.md` refits this question 81 ways (`registry/robustness/2026-10-18/`). The result:\n**45 specifications positive, 36 negative**, and the estimate is negative in all three windows when the\ndose is lagged one month rather than contemporaneous — while the pre-registered same-month specification\nis positive. The 36 leave-one-state-out refits do *not* flip the sign (range [0.1234, 0.6254]), so the\nproblem is not one unit; it is that the dose's timing and the adjustment set each decide the direction.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 8,
-    "n_parts": 16
+    "n_parts": 17
    },
    "chars": 715,
-   "text_sha256": "e46c50d16dff0e1b7f83d5b0b4dd3355d85fced025b5f004776cd30460d87944"
+   "text_sha256": "f0942c5d849b78d54af29ec49c9b9a6925956de2f772c52cbdd6bf53b70147c2"
   },
   {
    "chunk_id": "doc:estimates#s02#p9",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 9 of 16]\n\nA verdict of *estimated, not identified* therefore understates what Stage 6 found: the number is not a\ndirection, and the robustness grid is where that became visible. ### Design B — how much of a Brent shock reaches the states, and when?\n\n**Estimated.** This is the design that works, because the direction of causation is defensible: Nigeria\nis a price taker in a market two orders of magnitude larger than its exports, so the Brent shock can be\ntreated as exogenous to Nigerian fiscal outcomes. Local projection, cumulative response, Newey-West\n(12 lags):",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 9 of 17]\n\nA verdict of *estimated, not identified* therefore understates what Stage 6 found: the number is not a\ndirection, and the robustness grid is where that became visible. ### Design B — how much of a Brent shock reaches the states, and when?\n\n**Estimated.** This is the design that works, because the direction of causation is defensible: Nigeria\nis a price taker in a market two orders of magnitude larger than its exports, so the Brent shock can be\ntreated as exogenous to Nigerian fiscal outcomes. Local projection, cumulative response, Newey-West\n(12 lags):",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 9,
-    "n_parts": 16
+    "n_parts": 17
    },
    "chars": 759,
-   "text_sha256": "ce9e6368032eae0bc54bf1000a0ac855c6ff3453365bd844f0524c012bfc0450"
+   "text_sha256": "b91731e66240d3ddb3c347a3a7d9582247726d830ccbafab364ffc57efc4b8ab"
   },
   {
    "chunk_id": "doc:estimates#s03",
    "doc_type": "methodology",
    "title": "estimates — 3. The answer, in one paragraph",
-   "text": "What this project can actually answer\n\n## 3. The answer, in one paragraph\n\n[estimates — 3. The answer, in one paragraph — part 1 of 2]\n\n**Of the four questions this project set out to answer, one is not answerable (presidential tenure\neffects on national annual outcomes), one is now estimable but not identified (does federal money reduce\nlocal violence), and one is answerable and answered (an oil-price shock reaches Nigeria's states with an\nelasticity of roughly 0.5 at a two-to-three-month lag).** The fourth — synthetic control against a donor\npool — cleared its pre-fit gate on one outcome once the pool was widened (2026-10-18) and now waits on an\nestimator rather than on data. **A fifth question turned out to be answerable and is answered: did\nconflict move inside each tenure?** (`docs/events.md`: two of eight event-outcome cells survive both the\nplacebo and the pre-trend check.)",
+   "text": "What this project can actually answer\n\n## 3. The answer, in one paragraph\n\n[estimates — 3. The answer, in one paragraph — part 1 of 2]\n\n**Of the four questions this project set out to answer, one is not answerable (presidential tenure\neffects on national annual outcomes), one is now estimable but not identified (does federal money reduce\nlocal violence), and one is answerable and answered (an oil-price shock reaches Nigeria's states with an\nelasticity of roughly 0.5 at a two-to-three-month lag).** The fourth — synthetic control against a donor\npool — cleared its pre-fit gate on one outcome once the pool was widened (2026-10-18) and has now been\nfitted: four windows, no identified effect, and a placebo distribution that says the gate's pass was\ninterpolation (`registry/design_c/2026-10-18/`).",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s03",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 3. The answer, in one paragraph — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
@@ -4704,19 +4825,19 @@
     "part": 1,
     "n_parts": 2
    },
-   "chars": 893,
-   "text_sha256": "a9bebcf79f9636735808d012443e43ce3608070362926e6e805264d976d17d75"
+   "chars": 802,
+   "text_sha256": "4e7bf0ebf5a9d6d8eebf8915024ed07d00ff2ba738c39bb80935b0a661e0429e"
   },
   {
    "chunk_id": "doc:estimates#s03#p2",
    "doc_type": "methodology",
    "title": "estimates — 3. The answer, in one paragraph",
-   "text": "What this project can actually answer\n\n## 3. The answer, in one paragraph\n\n[estimates — 3. The answer, in one paragraph — part 2 of 2]\n\nThe tenure question is not \"unsupported by evidence yet\". It is *not answerable* from national annual\ndata with four administrations, and the only route to an answer is sub-national monthly outcomes, which\nis exactly why the FAAC dose and the UCDP outcome were worth acquiring.",
+   "text": "What this project can actually answer\n\n## 3. The answer, in one paragraph\n\n[estimates — 3. The answer, in one paragraph — part 2 of 2]\n\n**A fifth question turned out to be answerable and is\nanswered: did conflict move inside each tenure?** (`docs/events.md`: two of eight event-outcome cells survive\nboth the placebo and the pre-trend check.)\n\nThe tenure question is not \"unsupported by evidence yet\". It is *not answerable* from national annual\ndata with four administrations, and the only route to an answer is sub-national monthly outcomes, which\nis exactly why the FAAC dose and the UCDP outcome were worth acquiring.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s03",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 3. The answer, in one paragraph — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
@@ -4725,8 +4846,8 @@
     "part": 2,
     "n_parts": 2
    },
-   "chars": 413,
-   "text_sha256": "ac1534088d702b8b179e5658603237c911c24189f659e0a81efef5a8a88b616a"
+   "chars": 621,
+   "text_sha256": "1ff33f0b116828faa477b14206d46731b48ae3796bb6aba2695b2f2a4b98bd36"
   },
   {
    "chunk_id": "doc:estimates#s04",
@@ -4737,7 +4858,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s04",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 4. What would change these answers — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
@@ -4758,7 +4879,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s04",
-    "sha256": "e18c3d9ec4cd5eb4a61d89eb31c99846cef588d68b294ceadf8b57e0e9140c09"
+    "sha256": "9387cad7d828b8ade0a3f56cbc620c221fe8c7893ca04e36020eff3265f947b6"
    },
    "citation": "estimates — 4. What would change these answers — docs/estimates.md (vintage 2026-10-18)",
    "metadata": {
@@ -5236,64 +5357,85 @@
    "chunk_id": "doc:glossary#refusals",
    "doc_type": "methodology",
    "title": "glossary — Refusals",
-   "text": "Words this project uses, and what they mean\n\n## Refusals\n\n[glossary — Refusals — part 1 of 3]\n\nA refusal carries a code, and every code has a plain meaning here. The codes come in two families: `G..`\nis the intent gate's, and it names the reason the corpus may not answer the question at all; `L..` is the\nanswer layer's, and it names the reason no answer could be assembled from the passages the search found.\nThe refusal quotes the passage that says so and cites it, so a refusal is an argument with a source.",
+   "text": "Words this project uses, and what they mean\n\n## Refusals\n\n[glossary — Refusals — part 1 of 4]\n\nA refusal carries a code, and every code has a plain meaning here. The codes come in two families: `G..`\nis the intent gate's, and it names the reason the corpus may not answer the question at all; `L..` is the\nanswer layer's, and it names the reason no answer could be assembled from the passages the search found.\nThe refusal quotes the passage that says so and cites it, so a refusal is an argument with a source.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/glossary.md",
     "anchor": "refusals",
-    "sha256": "cb234ce846c7a04d59cfc8acad6b67db63cd9ccb56452f1f1727cee155e37d9b"
+    "sha256": "a58b166b60f6541065541ca5102711c171b0f837f916f115fd0f8d92dab39ba2"
    },
    "citation": "glossary — Refusals — docs/glossary.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/glossary.md",
     "section": "Refusals",
     "part": 1,
-    "n_parts": 3
+    "n_parts": 4
    },
    "chars": 511,
-   "text_sha256": "dd5454239a07ce38f04acfe0e2bdb5b83710d39ac6a8b3543176cc596bc6f399"
+   "text_sha256": "ff57277b570d8fd1306aad12666a2a5c5712fe73d5226a31cb4cb8beccc7c1ce"
   },
   {
    "chunk_id": "doc:glossary#refusals#p2",
    "doc_type": "methodology",
    "title": "glossary — Refusals",
-   "text": "Words this project uses, and what they mean\n\n## Refusals\n\n[glossary — Refusals — part 2 of 3]\n\n| Code | Plain meaning |\n|---|---|\n| **L01** | The passages the search found do not carry a complete answer in any of the three shapes — a number with the assumption that makes it mean something, a reason with that assumption, or a passage that says the thing asked about. The layer declines rather than quote something that does not answer the question. |\n| **L02** | None of the passages the search found is close enough to the question to quote: the words the question uses are not in the passage. |\n| **G02** | The question asks what will happen. This project publishes what happened, and a forecast is not a fact the corpus can carry. |\n| **G03** | The question asks for a measure the corpus does not carry — a population count, a price level, anything outside the twelve catalogue outcomes.",
+   "text": "Words this project uses, and what they mean\n\n## Refusals\n\n[glossary — Refusals — part 2 of 4]\n\n| Code | Plain meaning |\n|---|---|\n| **L01** | The passages the search found do not carry a complete answer in any of the three shapes — a number with the assumption that makes it mean something, a reason with that assumption, or a passage that says the thing asked about. The layer declines rather than quote something that does not answer the question. |\n| **L02** | None of the passages the search found is close enough to the question to quote: the words the question uses are not in the passage. |\n| **G02** | The question asks what will happen. This project publishes what happened, and a forecast is not a fact the corpus can carry. |\n| **G03** | The question asks for a measure the corpus does not carry — a population count, a price level, anything outside the twelve catalogue outcomes.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/glossary.md",
     "anchor": "refusals",
-    "sha256": "cb234ce846c7a04d59cfc8acad6b67db63cd9ccb56452f1f1727cee155e37d9b"
+    "sha256": "a58b166b60f6541065541ca5102711c171b0f837f916f115fd0f8d92dab39ba2"
    },
    "citation": "glossary — Refusals — docs/glossary.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/glossary.md",
     "section": "Refusals",
     "part": 2,
-    "n_parts": 3
+    "n_parts": 4
    },
    "chars": 891,
-   "text_sha256": "b384f83b5d8edf56bfe167fcc14ed5774704f7fe7edeca8a8523af37990f545a"
+   "text_sha256": "b77b1c7ae8210955a35c6b2b05e113ceea082e42ba05df2d27adb6f400cbe2c1"
   },
   {
    "chunk_id": "doc:glossary#refusals#p3",
    "doc_type": "methodology",
    "title": "glossary — Refusals",
-   "text": "Words this project uses, and what they mean\n\n## Refusals\n\n[glossary — Refusals — part 3 of 3]\n\n|\n| **G04** | The question asks the project to make a policy decision. The project measures what it can measure; it does not decide what should be done. |\n| **G05** | The question asks about a year the corpus does not cover, so there is nothing to quote for it. |\n| **G06** | The question asks which tenure did better, and this data cannot identify it: four to five administrations against twenty-two to twenty-three annual observations is arithmetic, not evidence. |\n| **G07** | The question asks the synthetic-control design for a causal answer, and that design was never run: its estimator and its placebos were not built. |\n| **G08** | The question asks for advice rather than for what the record says. |\n| **G09** | The question asks about a country other than Nigeria. The corpus carries Nigerian data and a donor pool it was unable to download. |",
+   "text": "Words this project uses, and what they mean\n\n## Refusals\n\n[glossary — Refusals — part 3 of 4]\n\n|\n| **G04** | The question asks the project to make a policy decision. The project measures what it can measure; it does not decide what should be done. |\n| **G05** | The question asks about a year the corpus does not cover, so there is nothing to quote for it. |\n| **G06** | The question asks which tenure did better, and this data cannot identify it: four to five administrations against twenty-two to twenty-three annual observations is arithmetic, not evidence. |\n| **G07** | The question asks the synthetic-control design for a causal answer, and that design did not identify one: it was fitted on four windows, none survived its placebos, and a synthetic control has no sampling distribution to read an interval from. |\n| **G08** | The question asks for advice rather than for what the record says.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/glossary.md",
     "anchor": "refusals",
-    "sha256": "cb234ce846c7a04d59cfc8acad6b67db63cd9ccb56452f1f1727cee155e37d9b"
+    "sha256": "a58b166b60f6541065541ca5102711c171b0f837f916f115fd0f8d92dab39ba2"
    },
    "citation": "glossary — Refusals — docs/glossary.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/glossary.md",
     "section": "Refusals",
     "part": 3,
-    "n_parts": 3
+    "n_parts": 4
    },
-   "chars": 948,
-   "text_sha256": "d12c66530a1f8f0b7692512db8e280dea0a2b56e08b9cbac24d4479dcfd292a3"
+   "chars": 899,
+   "text_sha256": "239b9a67a66bb37e59b9eb969480882c470da7600c3623e71428df3b96d53226"
+  },
+  {
+   "chunk_id": "doc:glossary#refusals#p4",
+   "doc_type": "methodology",
+   "title": "glossary — Refusals",
+   "text": "Words this project uses, and what they mean\n\n## Refusals\n\n[glossary — Refusals — part 4 of 4]\n\n|\n| **G09** | The question asks about a country other than Nigeria. The corpus carries Nigerian data and a donor pool it was unable to download. |",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "docs/glossary.md",
+    "anchor": "refusals",
+    "sha256": "a58b166b60f6541065541ca5102711c171b0f837f916f115fd0f8d92dab39ba2"
+   },
+   "citation": "glossary — Refusals — docs/glossary.md (vintage 2026-10-18)",
+   "metadata": {
+    "document": "docs/glossary.md",
+    "section": "Refusals",
+    "part": 4,
+    "n_parts": 4
+   },
+   "chars": 241,
+   "text_sha256": "80b02dc548ffed1ee8a7ccb91f1a5dbfd336b66a8bb8ef3ad8216a7c12cae095"
   },
   {
    "chunk_id": "doc:licences#open-licensing-questions-to-resolve-before-publi",
@@ -5346,7 +5488,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s01",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 1. The question this project was asked is not answerable with this data — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5367,7 +5509,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s01",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 1. The question this project was asked is not answerable with this data — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5388,7 +5530,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s01",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 1. The question this project was asked is not answerable with this data — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5409,7 +5551,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s01",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 1. The question this project was asked is not answerable with this data — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5430,7 +5572,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s02",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 2. Most of the monthly spine is not observed — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5451,7 +5593,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s02",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 2. Most of the monthly spine is not observed — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5472,7 +5614,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s03",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 3. Coverage limits, node by node — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5493,7 +5635,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s03",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 3. Coverage limits, node by node — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5514,7 +5656,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s03",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 3. Coverage limits, node by node — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5535,7 +5677,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s04",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 4. The quality gates flagged almost half the landed series — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5556,7 +5698,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s04",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 4. The quality gates flagged almost half the landed series — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5577,7 +5719,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5598,7 +5740,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5619,7 +5761,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5640,7 +5782,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5661,7 +5803,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5682,7 +5824,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s06",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 6. Design B's channel is estimated; its timing and its decomposition are not — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5703,7 +5845,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s06",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 6. Design B's channel is estimated; its timing and its decomposition are not — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5724,7 +5866,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s06",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 6. Design B's channel is estimated; its timing and its decomposition are not — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5739,44 +5881,65 @@
   {
    "chunk_id": "doc:limitations#s07",
    "doc_type": "methodology",
-   "title": "limitations — 7. Design C is permission to build, not a result",
-   "text": "What this project cannot say — the limitations, written before the findings\n\n## 7. Design C is permission to build, not a result\n\n[limitations — 7. Design C is permission to build — part 1 of 2]\n\nStage 5's earlier `infeasible` verdict was a statement about the **donor pool**. Widened from 13 to **99\ncountries**, the pre-fit gate now passes `u5mr` on **3 of its 4** runnable windows, `gdp_growth` on 1 of 4\nand `cpi_yoy` on **0 of 4**, under a strict-majority rollup that is declared rather than inferred\n(S5-12). The pass carries its own warning: **a 99-donor simplex can fit almost any pre-period**, and in\nthe 13-donor run a single donor beat the fitted simplex. The gate is weaker evidence now than it was then\n(C-59).",
+   "title": "limitations — 7. Design C was built, and it did not identify an effect",
+   "text": "What this project cannot say — the limitations, written before the findings\n\n## 7. Design C was built, and it did not identify an effect\n\n[limitations — 7. Design C was built, and it did  — part 1 of 3]\n\nStage 5's earlier `infeasible` verdict was a statement about the **donor pool**. Widened from 13 to **99\ncountries**, the pre-fit gate passes `u5mr` on **3 of its 4** runnable windows, `gdp_growth` on 1 of 4 and\n`cpi_yoy` on **0 of 4**, under a strict-majority rollup that is declared rather than inferred (S5-12). The pass\ncarried its own warning: **a 99-donor simplex can fit almost any pre-period**, and in the 13-donor run a single\ndonor beat the fitted simplex (C-59).",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s07",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
-   "citation": "limitations — 7. Design C is permission to build, not a result — docs/limitations.md (vintage 2026-10-18)",
+   "citation": "limitations — 7. Design C was built, and it did not identify an effect — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/limitations.md",
-    "section": "7. Design C is permission to build, not a result",
+    "section": "7. Design C was built, and it did not identify an effect",
     "part": 1,
-    "n_parts": 2
+    "n_parts": 3
    },
-   "chars": 723,
-   "text_sha256": "98bcb58de8f1b67d0be4254503faaaa71c051911e70b8d82f7c79fd1a40b633c"
+   "chars": 677,
+   "text_sha256": "d509ee4c9d4493c87dd1a3d6d9b13b0d23ad5fed77c9198d9e881d51bb8abba8"
   },
   {
    "chunk_id": "doc:limitations#s07#p2",
    "doc_type": "methodology",
-   "title": "limitations — 7. Design C is permission to build, not a result",
-   "text": "What this project cannot say — the limitations, written before the findings\n\n## 7. Design C is permission to build, not a result\n\n[limitations — 7. Design C is permission to build — part 2 of 2]\n\n**No synthetic counterfactual exists for any tenure claim.** The estimator and its in-space, in-time and\nleave-one-donor-out placebos are unbuilt, so Design C is `not_run` — not \"attempted and inconclusive\".",
+   "title": "limitations — 7. Design C was built, and it did not identify an effect",
+   "text": "What this project cannot say — the limitations, written before the findings\n\n## 7. Design C was built, and it did not identify an effect\n\n[limitations — 7. Design C was built, and it did  — part 2 of 3]\n\nThe estimator and its in-space, in-time and leave-one-donor-out placebos now exist\n(`registry/design_c/2026-10-18/`). **Four windows were estimated and none is identified.** The in-space rank p\nruns from 0.17 to 0.50; the in-time placebo fails where it can be run; and **304 of 396 placebo fits also clear\nthe gate's own 0.10 threshold**, so the pre-fit gate does not discriminate on this pool. Two further limits:",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s07",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
-   "citation": "limitations — 7. Design C is permission to build, not a result — docs/limitations.md (vintage 2026-10-18)",
+   "citation": "limitations — 7. Design C was built, and it did not identify an effect — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
     "document": "docs/limitations.md",
-    "section": "7. Design C is permission to build, not a result",
+    "section": "7. Design C was built, and it did not identify an effect",
     "part": 2,
-    "n_parts": 2
+    "n_parts": 3
    },
-   "chars": 403,
-   "text_sha256": "7c17505cc911a43a4e94bc4020a6176326f5df4ff4abf11ee943677696d996ae"
+   "chars": 618,
+   "text_sha256": "a5beec26fa8f971b6c469339bab96c80e2e3bd669ce22b61f437316e129581ad"
+  },
+  {
+   "chunk_id": "doc:limitations#s07#p3",
+   "doc_type": "methodology",
+   "title": "limitations — 7. Design C was built, and it did not identify an effect",
+   "text": "What this project cannot say — the limitations, written before the findings\n\n## 7. Design C was built, and it did not identify an effect\n\n[limitations — 7. Design C was built, and it did  — part 3 of 3]\n\n- **The declared problem is underdetermined.** With 99 donors and 8 to 24 pre-years, a face of weights fits the\n  pre-period equally well. The artifact publishes the solver's vertex and a unique ridge refit; for one window\n  they disagree in sign, which means that gap is a property of the solver, not of Nigeria.\n- **There is no interval.** A synthetic control's inference is a rank among placebos. The honesty layer publishes\n  no point estimate without an interval, so no gap reaches a card; the `u5mr` card names the reason and points\n  at the artifact.",
+   "vintage": "2026-10-18",
+   "source": {
+    "path": "docs/limitations.md",
+    "anchor": "s07",
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
+   },
+   "citation": "limitations — 7. Design C was built, and it did not identify an effect — docs/limitations.md (vintage 2026-10-18)",
+   "metadata": {
+    "document": "docs/limitations.md",
+    "section": "7. Design C was built, and it did not identify an effect",
+    "part": 3,
+    "n_parts": 3
+   },
+   "chars": 761,
+   "text_sha256": "dbb06556822efe662f7ce237e1da7d2d1949fb226f0aeccb980806dd4bbc5ff3"
   },
   {
    "chunk_id": "doc:limitations#s08",
@@ -5787,7 +5950,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s08",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 8. Inference floors that no interval can hide — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5808,7 +5971,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s08",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 8. Inference floors that no interval can hide — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5829,7 +5992,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s09",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 9. Robustness: the sign survives for one design and not the other — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5850,7 +6013,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s09",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 9. Robustness: the sign survives for one design and not the other — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5871,7 +6034,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s09",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 9. Robustness: the sign survives for one design and not the other — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5892,7 +6055,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s10",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 10. Measurement limits no design fixes — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5913,7 +6076,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s11",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 11. Reproduction limits — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5934,7 +6097,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s12",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 12. What is still claimed, stated narrowly — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5955,7 +6118,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s12",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 12. What is still claimed, stated narrowly — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5976,7 +6139,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s12",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 12. What is still claimed, stated narrowly — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -5992,12 +6155,12 @@
    "chunk_id": "doc:limitations#s13",
    "doc_type": "methodology",
    "title": "limitations — 13. What would change each answer",
-   "text": "What this project cannot say — the limitations, written before the findings\n\n## 13. What would change each answer\n\n[limitations — 13. What would change each answer — part 1 of 2]\n\n| To get closer to | What is missing | What blocks it |\n|---|---|---|\n| An identified dose-response | A fiscal instrument that varies within state for reasons unrelated to oil | The dose *is* oil revenue; state IGR or the VAT distribution would be a different design |\n| The per-capita axis | A state population denominator decision (X-09) | An unmade decision, not an unavailable source |\n| D2 — FAAC share of state revenue | NBS state IGR parsed | Acquisition, same parser family as FAAC |\n| The 2023 window monthly | Monthly NBS CPI | Annual CPI landed; the monthly series is a parser |\n| Synthetic control against a tenure | The Design C estimator and placebos | Built next; the gate passes on `u5mr` only |\n| The last 22 months of security |",
+   "text": "What this project cannot say — the limitations, written before the findings\n\n## 13. What would change each answer\n\n[limitations — 13. What would change each answer — part 1 of 2]\n\n| To get closer to | What is missing | What blocks it |\n|---|---|---|\n| An identified dose-response | A fiscal instrument that varies within state for reasons unrelated to oil | The dose *is* oil revenue; state IGR or the VAT distribution would be a different design |\n| The per-capita axis | A state population denominator decision (X-09) | An unmade decision, not an unavailable source |\n| D2 — FAAC share of state revenue | NBS state IGR parsed | Acquisition, same parser family as FAAC |\n| The 2023 window monthly | Monthly NBS CPI | Annual CPI landed; the monthly series is a parser |\n| An identified synthetic counterfactual | A donor pool that is not rich enough to interpolate the pre-period, or a shorter fit window | Built and measured:",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s13",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 13. What would change each answer — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -6007,18 +6170,18 @@
     "n_parts": 2
    },
    "chars": 926,
-   "text_sha256": "c8c10d6a99f42c17556d15853e45505321d80c794d34b9604af180f07a3695ba"
+   "text_sha256": "040de844f9192036901a4ffeb55d0932d2f32ef4562b7d7d8d5bd6b929630853"
   },
   {
    "chunk_id": "doc:limitations#s13#p2",
    "doc_type": "methodology",
    "title": "limitations — 13. What would change each answer",
-   "text": "What this project cannot say — the limitations, written before the findings\n\n## 13. What would change each answer\n\n[limitations — 13. What would change each answer — part 2 of 2]\n\nGED 26.x | Publication cycle — the archive ends 2024-12 |\n| Tenure effects on health and education | Sub-national monthly outcomes | DHIS2 credentials; NEMIS/NEDI and UNESCO unreachable |\n| The naira channel separated | Monthly NGN/USD | No keyless publisher; CBN by hand |",
+   "text": "What this project cannot say — the limitations, written before the findings\n\n## 13. What would change each answer\n\n[limitations — 13. What would change each answer — part 2 of 2]\n\nno window survives its placebos, and 304 of 396 placebos clear the same pre-fit gate |\n| The last 22 months of security | GED 26.x | Publication cycle — the archive ends 2024-12 |\n| Tenure effects on health and education | Sub-national monthly outcomes | DHIS2 credentials; NEMIS/NEDI and UNESCO unreachable |\n| The naira channel separated | Monthly NGN/USD | No keyless publisher; CBN by hand |",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s13",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 13. What would change each answer — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -6027,8 +6190,8 @@
     "part": 2,
     "n_parts": 2
    },
-   "chars": 453,
-   "text_sha256": "d4de162581a220141837b79bed3cf94e87def0077a9b215288a65602b7cd71ff"
+   "chars": 575,
+   "text_sha256": "0b191b38cdafcb04a7431b8a3767a237ee9c2ff9f724af8e486afcd9ccbdaa85"
   },
   {
    "chunk_id": "doc:limitations#s14",
@@ -6039,7 +6202,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s14",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 14. How this document is checked — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -6060,7 +6223,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s14",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 14. How this document is checked — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -6081,7 +6244,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s14",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 14. How this document is checked — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -6102,7 +6265,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s14",
-    "sha256": "255db65e39336816b4ddb42b2f2f89f3cd0305a79c170b50d1e0335e5b5b8daf"
+    "sha256": "62de6483c5e2063b258088cca5511bcab30f242f22dfbe56bd57bb9ec9403dd5"
    },
    "citation": "limitations — 14. How this document is checked — docs/limitations.md (vintage 2026-10-18)",
    "metadata": {
@@ -6123,7 +6286,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s01",
-    "sha256": "17884f93f8a73610167d63a56ff71ae286ad51ffdebd3870291ac9ada4bf2473"
+    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
    },
    "citation": "registry — 1. The problem this layer exists to solve — docs/registry.md (vintage 2026-10-18)",
    "metadata": {
@@ -6139,12 +6302,12 @@
    "chunk_id": "doc:registry#s01#p2",
    "doc_type": "methodology",
    "title": "registry — 1. The problem this layer exists to solve",
-   "text": "What the app reads — Stage 8, the registry\n\n## 1. The problem this layer exists to solve\n\n[registry — 1. The problem this layer exists to s — part 2 of 3]\n\n| Design | Published | About what | Cards that can carry it |\n|---|---|---|---|\n| A — state dose-response | 3 specifications | a catalogue outcome each: `fatalities`, `incidents`, `fatalities_civilians` | **2** — the catalogue holds cards for the first two; `fatalities_civilians` is a UCDP item inside the `fatalities` outcome, so it has no card |\n| B — national transmission | 9 specifications | **the national FAAC channel** (cumulative log change in state FAAC), not any outcome a card is about | **0** — on every B card, FAAC is a *mediator* node |\n| C — synthetic control | not run | Stage 5 recorded `infeasible`; nothing landed since changes the donor pool | **0** |",
+   "text": "What the app reads — Stage 8, the registry\n\n## 1. The problem this layer exists to solve\n\n[registry — 1. The problem this layer exists to s — part 2 of 3]\n\n| Design | Published | About what | Cards that can carry it |\n|---|---|---|---|\n| A — state dose-response | 3 specifications | a catalogue outcome each: `fatalities`, `incidents`, `fatalities_civilians` | **2** — the catalogue holds cards for the first two; `fatalities_civilians` is a UCDP item inside the `fatalities` outcome, so it has no card |\n| B — national transmission | 9 specifications | **the national FAAC channel** (cumulative log change in state FAAC), not any outcome a card is about | **0** — on every B card, FAAC is a *mediator* node |\n| C — synthetic control | 4 windows, none identified | **the `u5mr` path against a synthetic Nigeria**, published in its own artifact with its placebos | **0** — a synthetic control has no interval, and no point estimate ships without one |",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/registry.md",
     "anchor": "s01",
-    "sha256": "17884f93f8a73610167d63a56ff71ae286ad51ffdebd3870291ac9ada4bf2473"
+    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
    },
    "citation": "registry — 1. The problem this layer exists to solve — docs/registry.md (vintage 2026-10-18)",
    "metadata": {
@@ -6153,8 +6316,8 @@
     "part": 2,
     "n_parts": 3
    },
-   "chars": 830,
-   "text_sha256": "42265c69f5b34a3a182f25f874e8dbd8f90fdd7b2e851cb8a749d2ffaa4ad183"
+   "chars": 950,
+   "text_sha256": "0d2a831cd51d35cf49d8ee3511150267175374893cc9ba1d94a67ada5f9b1ed6"
   },
   {
    "chunk_id": "doc:registry#s01#p3",
@@ -6165,7 +6328,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s01",
-    "sha256": "17884f93f8a73610167d63a56ff71ae286ad51ffdebd3870291ac9ada4bf2473"
+    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
    },
    "citation": "registry — 1. The problem this layer exists to solve — docs/registry.md (vintage 2026-10-18)",
    "metadata": {
@@ -6186,7 +6349,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s02",
-    "sha256": "17884f93f8a73610167d63a56ff71ae286ad51ffdebd3870291ac9ada4bf2473"
+    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
    },
    "citation": "registry — 2. What a card carries, and what it refuses to — docs/registry.md (vintage 2026-10-18)",
    "metadata": {
@@ -6207,7 +6370,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s02",
-    "sha256": "17884f93f8a73610167d63a56ff71ae286ad51ffdebd3870291ac9ada4bf2473"
+    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
    },
    "citation": "registry — 2. What a card carries, and what it refuses to — docs/registry.md (vintage 2026-10-18)",
    "metadata": {
@@ -6223,12 +6386,12 @@
    "chunk_id": "doc:registry#s02#p3",
    "doc_type": "methodology",
    "title": "registry — 2. What a card carries, and what it refuses to",
-   "text": "What the app reads — Stage 8, the registry\n\n## 2. What a card carries, and what it refuses to\n\n[registry — 2. What a card carries, and what it r — part 3 of 4]\n\n- **the Stage 7 summary for the card's own axis level** — `fatalities` sits at 13 positive against 14\n  negative across the grid's 27 specifications sharing that outcome; `incidents` at 25 against 2. \"This\n  number is one cell of a grid\" is on the card rather than in a document the reader has to find.\n\nA `not_estimated` card carries a reason from a **closed set**, so the absence of an estimate is never silent:",
+   "text": "What the app reads — Stage 8, the registry\n\n## 2. What a card carries, and what it refuses to\n\n[registry — 2. What a card carries, and what it r — part 3 of 4]\n\n- **the Stage 7 summary for the card's own axis level** — `fatalities` sits at 13 positive against 14\n  negative across the grid's 27 specifications sharing that outcome; `incidents` at 25 against 2. \"This\n  number is one cell of a grid\" is on the card rather than in a document the reader has to find.\n\nA `not_estimated` card carries a reason from a **closed set**, so the absence of an estimate is never silent:\n\n| Reason | Cards | What it means |\n|---|---|---|\n| `outcome_series_absent` | 12 | the outcome has no usable series, so no pre-check ran for this pair — a declared gap, not a null result |\n| `no_specification_declared` | 10 | Stage 5 ran a pre-check; Stage 6 declared no specification for this pair.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/registry.md",
     "anchor": "s02",
-    "sha256": "17884f93f8a73610167d63a56ff71ae286ad51ffdebd3870291ac9ada4bf2473"
+    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
    },
    "citation": "registry — 2. What a card carries, and what it refuses to — docs/registry.md (vintage 2026-10-18)",
    "metadata": {
@@ -6237,19 +6400,19 @@
     "part": 3,
     "n_parts": 4
    },
-   "chars": 574,
-   "text_sha256": "66b1fd7be2840d74d1bcd610a3d6071bc027be4396bcfede560f76b6e5bf9ff1"
+   "chars": 874,
+   "text_sha256": "7c1aeda0c4dedd09369d6924bfacc8c35466515de07de5967066f74f38293ee1"
   },
   {
    "chunk_id": "doc:registry#s02#p4",
    "doc_type": "methodology",
    "title": "registry — 2. What a card carries, and what it refuses to",
-   "text": "What the app reads — Stage 8, the registry\n\n## 2. What a card carries, and what it refuses to\n\n[registry — 2. What a card carries, and what it r — part 4 of 4]\n\n| Reason | Cards | What it means |\n|---|---|---|\n| `outcome_series_absent` | 12 | the outcome has no usable series, so no pre-check ran for this pair — a declared gap, not a null result |\n| `no_specification_declared` | 10 | Stage 5 ran a pre-check; Stage 6 declared no specification for this pair. Nothing about the estimate stage says this question was asked and answered |\n| `design_result_is_channel_level` | 9 | Design B has a published result, and it is about the channel the design rests on, not about this card's outcome |\n| `design_not_run` | 3 | Design C was not run; the reason is on the index and in the estimates artifact |",
+   "text": "What the app reads — Stage 8, the registry\n\n## 2. What a card carries, and what it refuses to\n\n[registry — 2. What a card carries, and what it r — part 4 of 4]\n\nNothing about the estimate stage says this question was asked and answered |\n| `design_result_is_channel_level` | 9 | Design B has a published result, and it is about the channel the design rests on, not about this card's outcome |\n| `design_not_run` | 2 | Design C was not run for this outcome — the gate refused it; the reason is on the index and in the estimates artifact |\n| `design_estimated_not_identified` | 1 | Design C was run for this outcome and no window survived its placebos; the gap and the placebos are in `registry/design_c/`, and no interval exists to put on a card |",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/registry.md",
     "anchor": "s02",
-    "sha256": "17884f93f8a73610167d63a56ff71ae286ad51ffdebd3870291ac9ada4bf2473"
+    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
    },
    "citation": "registry — 2. What a card carries, and what it refuses to — docs/registry.md (vintage 2026-10-18)",
    "metadata": {
@@ -6258,8 +6421,8 @@
     "part": 4,
     "n_parts": 4
    },
-   "chars": 797,
-   "text_sha256": "8a87792768d0f8efd0c634b2e7e8c74bd95eece09fcb007d526a4e3f2993e271"
+   "chars": 746,
+   "text_sha256": "dedd9313c0ef484174be83f3a40937c75852941d8f98aceca608758ca3417ad4"
   },
   {
    "chunk_id": "doc:registry#s03",
@@ -6270,7 +6433,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s03",
-    "sha256": "17884f93f8a73610167d63a56ff71ae286ad51ffdebd3870291ac9ada4bf2473"
+    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
    },
    "citation": "registry — 3. The two design-level results, on the index — docs/registry.md (vintage 2026-10-18)",
    "metadata": {
@@ -6291,7 +6454,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s03",
-    "sha256": "17884f93f8a73610167d63a56ff71ae286ad51ffdebd3870291ac9ada4bf2473"
+    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
    },
    "citation": "registry — 3. The two design-level results, on the index — docs/registry.md (vintage 2026-10-18)",
    "metadata": {
@@ -6312,7 +6475,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s03",
-    "sha256": "17884f93f8a73610167d63a56ff71ae286ad51ffdebd3870291ac9ada4bf2473"
+    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
    },
    "citation": "registry — 3. The two design-level results, on the index — docs/registry.md (vintage 2026-10-18)",
    "metadata": {
@@ -6333,7 +6496,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s04",
-    "sha256": "17884f93f8a73610167d63a56ff71ae286ad51ffdebd3870291ac9ada4bf2473"
+    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
    },
    "citation": "registry — 4. Reproducing it, and the ordering trap — docs/registry.md (vintage 2026-10-18)",
    "metadata": {
@@ -6354,7 +6517,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s04",
-    "sha256": "17884f93f8a73610167d63a56ff71ae286ad51ffdebd3870291ac9ada4bf2473"
+    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
    },
    "citation": "registry — 4. Reproducing it, and the ordering trap — docs/registry.md (vintage 2026-10-18)",
    "metadata": {
@@ -6370,12 +6533,12 @@
    "chunk_id": "doc:registry#s05",
    "doc_type": "methodology",
    "title": "registry — 5. What this layer does not claim",
-   "text": "What the app reads — Stage 8, the registry\n\n## 5. What this layer does not claim\n\n[registry — 5. What this layer does not claim — part 1 of 2]\n\n- **A number on a card is not a passing design.** Two cards carry an estimate and **1 of 36** passes its\n  pre-check (and it is not one of them: the pass is `u5mr` under Design C, which has no estimate yet). The\n  card shows both. - **The four Design B cards with no series are not \"no effect\".** `outcome_series_absent` is a statement\n  about the data, not about the policy. - **Nothing here re-estimates anything.** `05_registry.R` fits nothing: it copies published fields and stops\n  if the counts change. If a number looks wrong, the fix belongs in Stage 6 or 7 and the registry is\n  re-assembled.",
+   "text": "What the app reads — Stage 8, the registry\n\n## 5. What this layer does not claim\n\n[registry — 5. What this layer does not claim — part 1 of 2]\n\n- **A number on a card is not a passing design.** Two cards carry an estimate and **1 of 36** passes its\n  pre-check — and it is not one of them: the pass is `u5mr` under Design C, whose windows were all estimated\n  and none identified. The card shows both, and the synthetic control's gap stays on its own artifact because\n  it has no interval to publish. - **The four Design B cards with no series are not \"no effect\".** `outcome_series_absent` is a statement\n  about the data, not about the policy. - **Nothing here re-estimates anything.** `05_registry.R` fits nothing: it copies published fields and stops\n  if the counts change. If a number looks wrong, the fix belongs in Stage 6 or 7 and the registry is\n  re-assembled.",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/registry.md",
     "anchor": "s05",
-    "sha256": "17884f93f8a73610167d63a56ff71ae286ad51ffdebd3870291ac9ada4bf2473"
+    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
    },
    "citation": "registry — 5. What this layer does not claim — docs/registry.md (vintage 2026-10-18)",
    "metadata": {
@@ -6384,8 +6547,8 @@
     "part": 1,
     "n_parts": 2
    },
-   "chars": 745,
-   "text_sha256": "214fb929aaafcb914776a25d17d99043d382457c35a8c71ddfdbe20412ae9adf"
+   "chars": 871,
+   "text_sha256": "61c302acec723c694ba93693a490e90ff9ab6d590e45f6f9f1d56de5d3fd8ae6"
   },
   {
    "chunk_id": "doc:registry#s05#p2",
@@ -6396,7 +6559,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s05",
-    "sha256": "17884f93f8a73610167d63a56ff71ae286ad51ffdebd3870291ac9ada4bf2473"
+    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
    },
    "citation": "registry — 5. What this layer does not claim — docs/registry.md (vintage 2026-10-18)",
    "metadata": {
@@ -6417,7 +6580,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s01",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 1. The grid — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6433,12 +6596,12 @@
    "chunk_id": "doc:robustness#s01#p2",
    "doc_type": "methodology",
    "title": "robustness — 1. The grid",
-   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 1. The grid\n\n[robustness — 1. The grid — part 2 of 3]\n\nThe design spec (§5.4) names eight axes. Four are live here; four are not, and the four dead ones are\ndeclared with their reason rather than quietly dropped: **imputation handling** (no imputed value enters\neither design — the dose is read only where `dose_status = observed`, the count series is never\ninterpolated, S6-05), **index anchor** (the designs use levels, so the anchor is a scaling constant the\nfixed effects absorb), **donor pool** (Design C was never run), and **event window** (neither design is\nan event study; the tenure design that would need one is not estimable at this sample size).",
+   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 1. The grid\n\n[robustness — 1. The grid — part 2 of 3]\n\nThe design spec (§5.4) names eight axes. Four are live here; four are not, and the dead ones are declared with\ntheir reason rather than quietly dropped: **imputation handling** (no imputed value enters either design — the\ndose is read only where `dose_status = observed`, the count series is never interpolated, S6-05), **index\nanchor** (the designs use levels, so the anchor is a scaling constant the fixed effects absorb), **donor pool**\n(Design C is fitted in stage 8h on the one outcome the gate passes, and its pool axis — including the\nleave-one-donor-out sweep — is reported on that artifact, because neither design in this grid uses a donor\npool), and **event window** (neither design is an event study; the tenure design that would need one is not\nestimable at this sample size).",
    "vintage": "2026-10-18",
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s01",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 1. The grid — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6447,8 +6610,8 @@
     "part": 2,
     "n_parts": 3
    },
-   "chars": 729,
-   "text_sha256": "d4ffce485f8be56f846a679b3cb83e1f6aa928415470c1262b1d3e91bf6aa449"
+   "chars": 914,
+   "text_sha256": "ae8ae10cfec5691d03de1dc06de7f0b0c6b58043481ff61e18767fdad2d6e0fa"
   },
   {
    "chunk_id": "doc:robustness#s01#p3",
@@ -6459,7 +6622,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s01",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 1. The grid — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6480,7 +6643,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s02",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 2. Design B is robust in sign, and the timing is its weak part — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6501,7 +6664,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s02",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 2. Design B is robust in sign, and the timing is its weak part — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6522,7 +6685,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s02",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 2. Design B is robust in sign, and the timing is its weak part — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6543,7 +6706,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s02",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 2. Design B is robust in sign, and the timing is its weak part — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6564,7 +6727,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s02",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 2. Design B is robust in sign, and the timing is its weak part — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6585,7 +6748,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s03",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 3. Design A is not robust, and that is the finding — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6606,7 +6769,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s03",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 3. Design A is not robust, and that is the finding — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6627,7 +6790,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s03",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 3. Design A is not robust, and that is the finding — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6648,7 +6811,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s03",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 3. Design A is not robust, and that is the finding — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6669,7 +6832,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s03",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 3. Design A is not robust, and that is the finding — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6690,7 +6853,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s04",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 4. What this changes about Stage 6 — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6711,7 +6874,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s04",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 4. What this changes about Stage 6 — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6732,7 +6895,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s04",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 4. What this changes about Stage 6 — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6753,7 +6916,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s05",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 5. Reproducing it — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6774,7 +6937,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s05",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 5. Reproducing it — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -6795,7 +6958,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s05",
-    "sha256": "10880447faf3c3649ab708f6f4afbed9824c57932052aea566a81bacc04364b1"
+    "sha256": "4013cc6da709d16b448a8574c89724c217c1d167f488272b695e26b9f2b0891c"
    },
    "citation": "robustness — 5. Reproducing it — docs/robustness.md (vintage 2026-10-18)",
    "metadata": {
@@ -7096,7 +7259,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__C.json",
     "anchor": null,
-    "sha256": "1970819b39a64564f69308ece847ccf7f803297870189950b574b44980de8c32"
+    "sha256": "fcd03f0289b6572628fe6b84a5053a4d18bcd917a99b3061d663a4262c2b62ae"
    },
    "citation": "Model card cpi_yoy__C — Headline inflation (y/y) under Design C — registry/dags/cpi_yoy__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -7124,7 +7287,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__C.json",
     "anchor": null,
-    "sha256": "1970819b39a64564f69308ece847ccf7f803297870189950b574b44980de8c32"
+    "sha256": "fcd03f0289b6572628fe6b84a5053a4d18bcd917a99b3061d663a4262c2b62ae"
    },
    "citation": "Model card cpi_yoy__C — Headline inflation (y/y) under Design C — registry/dags/cpi_yoy__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -7152,7 +7315,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__C.json",
     "anchor": null,
-    "sha256": "1970819b39a64564f69308ece847ccf7f803297870189950b574b44980de8c32"
+    "sha256": "fcd03f0289b6572628fe6b84a5053a4d18bcd917a99b3061d663a4262c2b62ae"
    },
    "citation": "Model card cpi_yoy__C — Headline inflation (y/y) under Design C — registry/dags/cpi_yoy__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -7180,7 +7343,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__C.json",
     "anchor": null,
-    "sha256": "1970819b39a64564f69308ece847ccf7f803297870189950b574b44980de8c32"
+    "sha256": "fcd03f0289b6572628fe6b84a5053a4d18bcd917a99b3061d663a4262c2b62ae"
    },
    "citation": "Model card cpi_yoy__C — Headline inflation (y/y) under Design C — registry/dags/cpi_yoy__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -7208,7 +7371,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__C.json",
     "anchor": null,
-    "sha256": "1970819b39a64564f69308ece847ccf7f803297870189950b574b44980de8c32"
+    "sha256": "fcd03f0289b6572628fe6b84a5053a4d18bcd917a99b3061d663a4262c2b62ae"
    },
    "citation": "Model card cpi_yoy__C — Headline inflation (y/y) under Design C — registry/dags/cpi_yoy__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -7236,7 +7399,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__C.json",
     "anchor": null,
-    "sha256": "1970819b39a64564f69308ece847ccf7f803297870189950b574b44980de8c32"
+    "sha256": "fcd03f0289b6572628fe6b84a5053a4d18bcd917a99b3061d663a4262c2b62ae"
    },
    "citation": "Model card cpi_yoy__C — Headline inflation (y/y) under Design C — registry/dags/cpi_yoy__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -8104,7 +8267,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__C.json",
     "anchor": null,
-    "sha256": "4c735a836171dcf0a3b4ecd5ba4645005d758076336e0b78304a7a9720b2618f"
+    "sha256": "b186aaf3f430c1488389e274010020d99f84424506685a490d109c73bf1d630b"
    },
    "citation": "Model card gdp_growth__C — Real GDP growth (y/y) under Design C — registry/dags/gdp_growth__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -8132,7 +8295,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__C.json",
     "anchor": null,
-    "sha256": "4c735a836171dcf0a3b4ecd5ba4645005d758076336e0b78304a7a9720b2618f"
+    "sha256": "b186aaf3f430c1488389e274010020d99f84424506685a490d109c73bf1d630b"
    },
    "citation": "Model card gdp_growth__C — Real GDP growth (y/y) under Design C — registry/dags/gdp_growth__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -8160,7 +8323,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__C.json",
     "anchor": null,
-    "sha256": "4c735a836171dcf0a3b4ecd5ba4645005d758076336e0b78304a7a9720b2618f"
+    "sha256": "b186aaf3f430c1488389e274010020d99f84424506685a490d109c73bf1d630b"
    },
    "citation": "Model card gdp_growth__C — Real GDP growth (y/y) under Design C — registry/dags/gdp_growth__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -8188,7 +8351,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__C.json",
     "anchor": null,
-    "sha256": "4c735a836171dcf0a3b4ecd5ba4645005d758076336e0b78304a7a9720b2618f"
+    "sha256": "b186aaf3f430c1488389e274010020d99f84424506685a490d109c73bf1d630b"
    },
    "citation": "Model card gdp_growth__C — Real GDP growth (y/y) under Design C — registry/dags/gdp_growth__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -8216,7 +8379,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__C.json",
     "anchor": null,
-    "sha256": "4c735a836171dcf0a3b4ecd5ba4645005d758076336e0b78304a7a9720b2618f"
+    "sha256": "b186aaf3f430c1488389e274010020d99f84424506685a490d109c73bf1d630b"
    },
    "citation": "Model card gdp_growth__C — Real GDP growth (y/y) under Design C — registry/dags/gdp_growth__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -11324,7 +11487,7 @@
    "source": {
     "path": "registry/dags/u5mr__C.json",
     "anchor": null,
-    "sha256": "c7fd557f54d45513f7485588ddbdced546888e2abf4abe0f115039319f0d1487"
+    "sha256": "3bc4599c91a0ade7917acb42dda40b28b27489fbeba706f4c8c5dc63b7f7181c"
    },
    "citation": "Model card u5mr__C — Under-5 mortality rate under Design C — registry/dags/u5mr__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -11352,7 +11515,7 @@
    "source": {
     "path": "registry/dags/u5mr__C.json",
     "anchor": null,
-    "sha256": "c7fd557f54d45513f7485588ddbdced546888e2abf4abe0f115039319f0d1487"
+    "sha256": "3bc4599c91a0ade7917acb42dda40b28b27489fbeba706f4c8c5dc63b7f7181c"
    },
    "citation": "Model card u5mr__C — Under-5 mortality rate under Design C — registry/dags/u5mr__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -11375,12 +11538,12 @@
    "chunk_id": "card:u5mr__C#p3",
    "doc_type": "model_card",
    "title": "Model card u5mr__C — Under-5 mortality rate under Design C",
-   "text": "[Model card u5mr__C — Under-5 mortality rate unde — part 3 of 4]\n\nWhat this design cannot rule out:\n- Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).\n- Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.\n- Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.\n- Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared.",
+   "text": "[Model card u5mr__C — Under-5 mortality rate unde — part 3 of 4]\n\nWhat this design cannot rule out:\n- Idiosyncratic Nigeria-only shocks inside the treatment window (Niger Delta militancy, insurgency).\n- Five treated tenures is a small treated set — the donor pool cannot always buy a credible counterfactual.\n- Sparse pre-treatment fit weakens the comparison, and the card must say so rather than ship the gap.\n- Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared.\n\nStage 5 pre-check on this (outcome, design) pair: pass.\n- pretreatment_fit:obasanjo: not_run — needs >= 8 pre and >= 2 post years\n- pretreatment_fit:tinubu: weak_fit — pre-RMSPE 4.25 vs 0.10 x pre SD 21.42 (ratio 0.198), 24 pre years, 5 donors with weight\nPre-treatment fit passes at window(s): yaradua",
    "vintage": "2026-10-18",
    "source": {
     "path": "registry/dags/u5mr__C.json",
     "anchor": null,
-    "sha256": "c7fd557f54d45513f7485588ddbdced546888e2abf4abe0f115039319f0d1487"
+    "sha256": "3bc4599c91a0ade7917acb42dda40b28b27489fbeba706f4c8c5dc63b7f7181c"
    },
    "citation": "Model card u5mr__C — Under-5 mortality rate under Design C — registry/dags/u5mr__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -11396,19 +11559,19 @@
     "part": 3,
     "n_parts": 4
    },
-   "chars": 518,
-   "text_sha256": "d02f4d410b15b4891ef30bb1e9863b43c9f806691aabfd82c7c75659a7bb99df"
+   "chars": 822,
+   "text_sha256": "601cc2161b9d71f52c1ab5838587670a41ef54fdc3a601bcf15bbf318d99e537"
   },
   {
    "chunk_id": "card:u5mr__C#p4",
    "doc_type": "model_card",
    "title": "Model card u5mr__C — Under-5 mortality rate under Design C",
-   "text": "[Model card u5mr__C — Under-5 mortality rate unde — part 4 of 4]\n\nStage 5 pre-check on this (outcome, design) pair: pass.\n- pretreatment_fit:obasanjo: not_run — needs >= 8 pre and >= 2 post years\n- pretreatment_fit:tinubu: weak_fit — pre-RMSPE 4.25 vs 0.10 x pre SD 21.42 (ratio 0.198), 24 pre years, 5 donors with weight\nPre-treatment fit passes at window(s): yaradua\n\nEstimate status: not_estimated.\nNo estimate for this (outcome, design) pair. Reason code: design_not_run. The design was not run. The reason is on the index and in the estimates artifact.\nThe design-level result is published at index.json#published_results.design.C.",
+   "text": "[Model card u5mr__C — Under-5 mortality rate unde — part 4 of 4]\n\nEstimate status: not_estimated.\nNo estimate for this (outcome, design) pair. Reason code: design_estimated_not_identified. The design was run for this outcome in its own stage and is reported as estimated but not identified. A synthetic control has no sampling distribution, so there is no interval to put beside a point estimate, and the design-level artifact carries the gap, its placebos and the check that failed instead of a card number the honesty layer could not support.\nThe design-level result is published at registry/design_c/2026-10-18/design_c.json.",
    "vintage": "2026-10-18",
    "source": {
     "path": "registry/dags/u5mr__C.json",
     "anchor": null,
-    "sha256": "c7fd557f54d45513f7485588ddbdced546888e2abf4abe0f115039319f0d1487"
+    "sha256": "3bc4599c91a0ade7917acb42dda40b28b27489fbeba706f4c8c5dc63b7f7181c"
    },
    "citation": "Model card u5mr__C — Under-5 mortality rate under Design C — registry/dags/u5mr__C.json (vintage 2026-10-18)",
    "metadata": {
@@ -11424,8 +11587,8 @@
     "part": 4,
     "n_parts": 4
    },
-   "chars": 636,
-   "text_sha256": "19758ad708d3a8b7dd6ebdda1db3ade18425a0bd88390769597014049723951c"
+   "chars": 628,
+   "text_sha256": "edabec893cad32042f0db0bbb7ea2b12a7cf7f81e5ac8ace1c817abffe0157cd"
   },
   {
    "chunk_id": "card:unemp__A",
@@ -11828,7 +11991,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.A",
-    "sha256": "9c9645b2d7486798537ef68cc8f37bb47ab7caff5a88f1018c11ede2e20a53ad"
+    "sha256": "89574e9c119b651ab78b081f1c42b8e9b08f52e3d44313ab776a4bbbc86213f3"
    },
    "citation": "Published result — Design A — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -11851,7 +12014,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.A",
-    "sha256": "9c9645b2d7486798537ef68cc8f37bb47ab7caff5a88f1018c11ede2e20a53ad"
+    "sha256": "89574e9c119b651ab78b081f1c42b8e9b08f52e3d44313ab776a4bbbc86213f3"
    },
    "citation": "Published result — Design A — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -11874,7 +12037,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.A",
-    "sha256": "9c9645b2d7486798537ef68cc8f37bb47ab7caff5a88f1018c11ede2e20a53ad"
+    "sha256": "89574e9c119b651ab78b081f1c42b8e9b08f52e3d44313ab776a4bbbc86213f3"
    },
    "citation": "Published result — Design A — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -11897,7 +12060,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "9c9645b2d7486798537ef68cc8f37bb47ab7caff5a88f1018c11ede2e20a53ad"
+    "sha256": "89574e9c119b651ab78b081f1c42b8e9b08f52e3d44313ab776a4bbbc86213f3"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -11920,7 +12083,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "9c9645b2d7486798537ef68cc8f37bb47ab7caff5a88f1018c11ede2e20a53ad"
+    "sha256": "89574e9c119b651ab78b081f1c42b8e9b08f52e3d44313ab776a4bbbc86213f3"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -11943,7 +12106,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "9c9645b2d7486798537ef68cc8f37bb47ab7caff5a88f1018c11ede2e20a53ad"
+    "sha256": "89574e9c119b651ab78b081f1c42b8e9b08f52e3d44313ab776a4bbbc86213f3"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -11966,7 +12129,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "9c9645b2d7486798537ef68cc8f37bb47ab7caff5a88f1018c11ede2e20a53ad"
+    "sha256": "89574e9c119b651ab78b081f1c42b8e9b08f52e3d44313ab776a4bbbc86213f3"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -11989,7 +12152,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "9c9645b2d7486798537ef68cc8f37bb47ab7caff5a88f1018c11ede2e20a53ad"
+    "sha256": "89574e9c119b651ab78b081f1c42b8e9b08f52e3d44313ab776a4bbbc86213f3"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -12012,7 +12175,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "9c9645b2d7486798537ef68cc8f37bb47ab7caff5a88f1018c11ede2e20a53ad"
+    "sha256": "89574e9c119b651ab78b081f1c42b8e9b08f52e3d44313ab776a4bbbc86213f3"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
@@ -12030,70 +12193,47 @@
    "chunk_id": "result:C",
    "doc_type": "published_result",
    "title": "Published result — Design C",
-   "text": "[Published result — Design C — part 1 of 3]\n\nPublished result for Design C — Synthetic control (cross-country) Estimand: treatment gap: Nigeria outcome minus synthetic Nigeria. Status: not_run. Result is card-level: false. Headline: The reason changed on 2026-10-18, and the change is the point. Why: The reason changed on 2026-10-18, and the change is the point. With the original 13-country pool Stage 5 recorded `infeasible`: the pre-treatment fit failed on every outcome and window.",
+   "text": "[Published result — Design C — part 1 of 2]\n\nPublished result for Design C — Synthetic control (cross-country) Estimand: treatment gap: Nigeria outcome minus synthetic Nigeria. Status: estimated_not_identified. Result is card-level: false. Verdict rule: A window is `identified` only if **all three** hold: (1) its pre-fit ratio is at or below 0.10, the gate's own threshold, carried rather than re-decided; (2) the in-space rank p is at or below 0.05, i.e. the treated unit's post/pre RMSPE ratio is the largest among itself and the placebos; and (3) every in-time placebo that could be run returns a mean gap smaller in absolute value than **half** the estimated gap. Otherwise the window is `estimated_not_identified` and each failed check is named. A window the gate refused is `refused` with the gate's reason and no number. Report the gap and its placebos either way. Declared 2026-10-28, before any weight was fitted.",
    "vintage": "2026-10-18",
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.C",
-    "sha256": "9c9645b2d7486798537ef68cc8f37bb47ab7caff5a88f1018c11ede2e20a53ad"
+    "sha256": "89574e9c119b651ab78b081f1c42b8e9b08f52e3d44313ab776a4bbbc86213f3"
    },
    "citation": "Published result — Design C — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
     "design_id": "C",
-    "status": "not_run",
+    "status": "estimated_not_identified",
     "result_is_card_level": false,
     "n_specifications": 0,
     "part": 1,
-    "n_parts": 3
+    "n_parts": 2
    },
-   "chars": 486,
-   "text_sha256": "d8a9fb62fe391214e767910cc8e804a4bb13d7563d578555bdef5e0a808bf840"
+   "chars": 924,
+   "text_sha256": "5f2a2f96ea46b4cb68852473be7e4081b821fc60f694fd6879891cf00dc9afcb"
   },
   {
    "chunk_id": "result:C#p2",
    "doc_type": "published_result",
    "title": "Published result — Design C",
-   "text": "[Published result — Design C — part 2 of 3]\n\nThe pool has since been widened to 99 candidates screened on oil dependence, region/income band and coverage (`ingestion/flows/pull_worldbank_donors.py`), and re-running the gate (vintage 2026-10-18) passes **u5mr on 3 of its 4 runnable windows** (ratios 0.0014-0.0042 against the declared 0.10 threshold, ratio-on-differences 0.013-0.024) and fails `gdp_growth` (1 of 4) and `cpi_yoy` (0 of 4) — so the design is no longer infeasible *for want of a pool*. It is not estimated here because the estimator and its placebos are not built: `Synth`/`coresynth` still has to be fitted, and the in-space and in-time placebos Stage 5 deferred to Stage 6 have not been run.",
+   "text": "[Published result — Design C — part 2 of 2]\n\nFailed checks: the in-space rank p is 0.5000: 49 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio, the in-space rank p is 0.3200: 31 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio, the in-space rank p is 0.1700: 16 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio, an in-time placebo returns a gap at least half the size of the estimated gap, the pre-fit ratio is 0.1984 against the declared 0.10 threshold, the in-space rank p is 0.3300: 32 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio. Artifacts: {\"estimates\": \"registry/estimates/2026-10-18/estimates.json\", \"robustness\": null}",
    "vintage": "2026-10-18",
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.C",
-    "sha256": "9c9645b2d7486798537ef68cc8f37bb47ab7caff5a88f1018c11ede2e20a53ad"
+    "sha256": "89574e9c119b651ab78b081f1c42b8e9b08f52e3d44313ab776a4bbbc86213f3"
    },
    "citation": "Published result — Design C — registry/dags/index.json (vintage 2026-10-18)",
    "metadata": {
     "design_id": "C",
-    "status": "not_run",
+    "status": "estimated_not_identified",
     "result_is_card_level": false,
     "n_specifications": 0,
     "part": 2,
-    "n_parts": 3
+    "n_parts": 2
    },
-   "chars": 709,
-   "text_sha256": "e42a0dcbdb526db84df709977eb7aa39b9274420515797bc8cf058bce26db3ff"
-  },
-  {
-   "chunk_id": "result:C#p3",
-   "doc_type": "published_result",
-   "title": "Published result — Design C",
-   "text": "[Published result — Design C — part 3 of 3]\n\nTwo cautions travel with the pass and are on the artifact: a 99-donor simplex can fit any pre-period (the yaradua gdp_growth window reaches a ratio of 1.7e-06, which is interpolation rather than validation), and the gate was always declared necessary-not-sufficient. The pass is permission to build Design C, not evidence that its fit is real. Next step: Build the Design C estimator and its placebos on the `u5mr` windows the gate now passes\nArtifacts: {\"estimates\": \"registry/estimates/2026-10-18/estimates.json\", \"robustness\": null}",
-   "vintage": "2026-10-18",
-   "source": {
-    "path": "registry/dags/index.json",
-    "anchor": "published_results.C",
-    "sha256": "9c9645b2d7486798537ef68cc8f37bb47ab7caff5a88f1018c11ede2e20a53ad"
-   },
-   "citation": "Published result — Design C — registry/dags/index.json (vintage 2026-10-18)",
-   "metadata": {
-    "design_id": "C",
-    "status": "not_run",
-    "result_is_card_level": false,
-    "n_specifications": 0,
-    "part": 3,
-    "n_parts": 3
-   },
-   "chars": 580,
-   "text_sha256": "94ba4a121a558beb1c3db6110938c5675fe036c8a0b3c5a2fac41bc4c5fcf61b"
+   "chars": 719,
+   "text_sha256": "3ab03c76ee09f910f04db59ad38bc24f29c8ff5ab864253d097cf07b3adb6fb1"
   },
   {
    "chunk_id": "scope:answer",

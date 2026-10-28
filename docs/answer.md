@@ -79,27 +79,30 @@ questions from the v3 intent set.
 
 | Set | Questions | Answered | Declined by R-04 | Refused by the gate | Answer rate |
 |---|---|---|---|---|---|
-| published | 16 | 16 | 0 | 0 | **1.000** |
-| held-out | 22 | 20 | 2 | 0 | **0.909** |
+| published | 16 | 15 | 1 | 0 | **0.938** |
+| held-out | 22 | 21 | 1 | 0 | **0.955** |
 | all | 38 | 36 | 2 | 0 | **0.947** |
 
-The 36 answers are three shapes: **8 estimates, 14 reasons and 14 facts**. Every answered response carries
-all the parts its shape requires, and **36 of 36** quote no number that is absent from their citations, in
-the contract answer or in the plain reading.
+The 36 answers are three shapes: **10 estimates, 14 facts and 12 no-estimate readings**. Every answered
+response carries all the parts its shape requires, and **36 of 36** quote no number that is absent from their
+citations, in the contract answer or in the plain reading.
 
 **The needles.** The published eval set declares, per question, the strings the answer must carry — a
-coefficient, an interval, a count. Of the **25** needles on the 16 published questions, **24** are present
-(0.960 recall), and **15** of the 16 questions carry every needle they declare (0.938 satisfaction). The one
-miss is a wording variant, not a missing fact: `q11` asks how many of the 36 cards carry a number and
-declares the needle *"two `estimated` cards"*, while the answer carries the same fact as *"2 cards carry a
-published estimate and 34 carry a reason instead"*. The published set is the only one that carries needles, so
-the held-out figures for needles are not measured and are not reported.
+coefficient, an interval, a count. Of the **25** needles on the 16 published questions, **22** are present
+(0.880 recall), and **14** of the 16 questions carry every needle they declare (0.875 satisfaction). Two
+questions account for the three misses, and both are wording rather than absent fact: `q06` is declined (below)
+and carries neither of its needles, and `q11` declares the needle *"two `estimated` cards"* while the answer
+carries the same fact as *"2 cards carry a published estimate and 34 carry a reason instead"*. The published
+set is the only one that carries needles, so the held-out figures for needles are not measured and are not
+reported.
 
-**What the two declines are.** Both are held-out questions the layer declined with `L02` — no retrieved
-passage matches the question closely enough to quote: *"What does the fatal crashes outcome measure?"* and
-*"What was Nigeria's inflation rate in 2016?"*. Neither is a crash: the corpus carries no passage about a
-fatal-crash outcome, and it carries no inflation series, so there is nothing to quote. An answer to either
-would have been a paraphrase of something else.
+**What the two declines are.** The published one is `q06` — *"Was the synthetic control estimated, and what did
+its placebos find?"* — which the layer declines with `L02`, no retrieved passage matching closely enough to
+quote: the words a reader uses for a placebo finding ("what did its placebos find") are not the words the
+artifact uses ("in-space rank p"), and BM25 is lexical. The held-out decline is an `L02` on a question whose
+subject the corpus does not carry, so there is nothing to quote. Neither is a crash: the first has the facts
+in words the retriever does not match, and the second has none to match. An answer to either would have been
+a paraphrase of something else.
 
 ### Why the rate moved, stated rather than tuned
 
@@ -203,7 +206,7 @@ refusal to carry its rule, its meaning and the passage it cites.
   a declared routing and vocabulary layer, measured on a held-out question set written after it — the same
   order the intent gate used — not an ordering change made after reading three probes.
 - **It does not generate, so it needs no judge.** Faithfulness and answer relevancy are measured separately
-  by `scripts/eval_answer_quality.py` (faithfulness 1.000, answer relevancy 0.800 — `docs/rag.md` §3), and
+  by `scripts/eval_answer_quality.py` (faithfulness 0.965, answer relevancy 0.833 — `docs/rag.md` §3), and
   that measurement is the four RAGAS definitions implemented here, not the `ragas` library. The keyless run
   above still proves something the measurement does not: the system answers without a key at all.
 

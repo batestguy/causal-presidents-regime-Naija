@@ -542,13 +542,24 @@ corpus currently summarises rather than chunks (the donor panel, the robustness 
 **STATUS: READ-ONLY APP BUILT (2026-10-21), REFUSAL GATE BUILT AND MEASURED (2026-10-22), GATE AT v3
 AND ANSWER LAYER BUILT (2026-10-22), CHAT TAB BUILT (2026-10-22), OUTCOME PANELS BUILT (2026-10-24),
 STATIC GUIDED FLOW BUILT (2026-10-25), ITS VERIFIERS BROKEN ON PURPOSE (2026-10-27), DESIGN-LEVEL RESULTS
-SCREEN BUILT AND THE FIGURE PATHS FIXED (2026-10-27).**
+SCREEN BUILT AND THE FIGURE PATHS FIXED (2026-10-27), DESIGN C FITTED AND THE GATE RE-FROZEN AT v4
+(2026-10-28).**
 `app/streamlit_app.py` + `app/registry_data.py`,
 `tests/verify_app.py`, `docs/app.md`. Outcome → design → assumption → adjustment set → cannot-rule-out →
 the published number or the reason there is none, plus one tab for the two design-level results and one for
 asking the registry a question. It reads `registry/dags/`, and for the chat tab `registry/rag/<vintage>/`,
 `analysis/specs/` and `docs/glossary.md`: no database, no network, no model, and no coefficient typed into
 the UI.
+
+**Stage 8h — Design C (2026-10-28).** The last declared design with no estimate now has one, in its own
+artifact family: `analysis/specs/design_c.yml` (declared before a weight was fitted),
+`analysis/R/11_design_c.R`, `registry/design_c/2026-10-18/`, `tests/verify_design_c.py` (refits with an
+independent solver), wired into the chain before Stage 6 so `estimates.json` carries the design's status rather
+than a stale `not_run`. **Four windows estimated, one refused, none identified**; the pre-fit gate passes 304
+of the 396 placebo fits too, so the artifact's verdict is that the gate does not discriminate on a 99-donor
+pool. Because a synthetic control has no sampling distribution, no gap reaches a card: `u5mr × C` carries the
+new reason `design_estimated_not_identified` and points at the artifact. The intent gate was re-frozen at v4
+(`613ccf5`) with a new held-out set, because G07's reason sentence had become false.
 
 **Screen 6b, the design-level results (2026-10-27).** The three figures Stage 8 published — the forest plot, the
 specification curve and the event study — existed as artifact-backed SVG files with recorded byte counts and were

@@ -2,11 +2,11 @@
  "schema_version": "0.1.0",
  "layer": "RAG evaluation set (retrieval-gated; generation metrics declared, not measured)",
  "vintage": "2026-10-18",
- "generated_at": "2026-10-27T06:44:15+00:00",
+ "generated_at": "2026-10-28T05:50:59+00:00",
  "generator": {
   "script": "scripts/build_rag_corpus.py",
   "spec": "analysis/specs/rag_eval.yml",
-  "git_sha": "7cfa9a7"
+  "git_sha": "613ccf5"
  },
  "corpus": "registry/rag/2026-10-18/corpus.json",
  "ragas": {
@@ -154,7 +154,7 @@
   {
    "id": "q06_design_c_status",
    "type": "answerable",
-   "question": "Was the synthetic control estimated, and if not, why not?",
+   "question": "Was the synthetic control estimated, and what did its placebos find?",
    "gold_refs": [
     "result:C",
     "doc:estimates#s02",
@@ -163,7 +163,6 @@
    "gold_chunks": [
     "result:C",
     "result:C#p2",
-    "result:C#p3",
     "doc:estimates#s02",
     "doc:estimates#s02#p10",
     "doc:estimates#s02#p11",
@@ -172,6 +171,7 @@
     "doc:estimates#s02#p14",
     "doc:estimates#s02#p15",
     "doc:estimates#s02#p16",
+    "doc:estimates#s02#p17",
     "doc:estimates#s02#p2",
     "doc:estimates#s02#p3",
     "doc:estimates#s02#p4",
@@ -182,6 +182,8 @@
     "doc:estimates#s02#p9",
     "doc:design-memo#s04",
     "doc:design-memo#s04#p10",
+    "doc:design-memo#s04#p11",
+    "doc:design-memo#s04#p12",
     "doc:design-memo#s04#p2",
     "doc:design-memo#s04#p3",
     "doc:design-memo#s04#p4",
@@ -192,11 +194,11 @@
     "doc:design-memo#s04#p9"
    ],
    "must_contain": [
-    "not_run",
-    "3 of its 4 runnable windows"
+    "estimated_not_identified",
+    "placebos"
    ],
    "refusal_must_cite": null,
-   "reference_answer": "Not run. The donor pool was widened to 99 candidates and the pre-fit gate now passes u5mr on 3 of its 4 runnable windows, so the design is no longer infeasible for want of a pool — but the estimator and the in-space and in-time placebos are not built. The pass is permission to build, not a result.",
+   "reference_answer": "Estimated, and not identified. The donor pool was widened to 99 candidates and the gate passes u5mr on 3 of its 4 runnable windows; the estimator, the in-space and in-time placebos and the leave-one-donor-out sweep were then built. Four windows were estimated and none survived the declared rule: the in-space rank p runs from 0.17 to 0.50, and 304 of 396 placebo fits also clear the same pre-fit gate, so the gate does not discriminate on this pool.",
    "notes": null
   },
   {
@@ -213,10 +215,10 @@
     "card:u5mr__C#p4"
    ],
    "must_contain": [
-    "design_not_run"
+    "design_estimated_not_identified"
    ],
    "refusal_must_cite": null,
-   "reference_answer": "No. The card carries no number: the design was not run, so the reason code is `design_not_run` and the design-level reason is on the index.",
+   "reference_answer": "No number appears on the card. The synthetic control was run for under-5 mortality and no window survived its placebos, so the card carries the reason code `design_estimated_not_identified` and points at registry/design_c/ for the gaps, the placebos and the check that failed. A synthetic control has no sampling distribution, so there is no interval to put on a card.",
    "notes": null
   },
   {
@@ -430,7 +432,6 @@
    "gold_chunks": [
     "result:C",
     "result:C#p2",
-    "result:C#p3",
     "doc:estimates#s02",
     "doc:estimates#s02#p10",
     "doc:estimates#s02#p11",
@@ -439,6 +440,7 @@
     "doc:estimates#s02#p14",
     "doc:estimates#s02#p15",
     "doc:estimates#s02#p16",
+    "doc:estimates#s02#p17",
     "doc:estimates#s02#p2",
     "doc:estimates#s02#p3",
     "doc:estimates#s02#p4",
@@ -449,11 +451,11 @@
     "doc:estimates#s02#p9"
    ],
    "must_contain": [
-    "not estimated here because the estimator",
-    "still not estimated"
+    "estimated_not_identified",
+    "placebos"
    ],
    "refusal_must_cite": "result:C",
-   "reference_answer": "I don't have a model for that. Design C passes its pre-fit gate on u5mr but is not estimated here because the estimator and its placebos are not built; the pass is permission to build, not a result. See the Design C published result.",
+   "reference_answer": "I don't have a model for that. The synthetic control was run on under-5 mortality, but none of its four windows survived its placebos, so the result is published as estimated_not_identified rather than as an effect of a particular tenure: the in-space rank p runs from 0.17 to 0.50, and 304 of 396 placebo fits clear the same pre-fit gate. See the Design C published result.",
    "notes": null
   },
   {

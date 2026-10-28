@@ -20,6 +20,7 @@ $PY -m streamlit run app/streamlit_app.py
 $PY tests/verify_app.py                 # renders all 36 cards and compares the page with the cards
 $PY scripts/validate_artifacts.py       # schema + cross-artifact contracts
 Rscript analysis/R/03_estimate.R        # Stage 6 estimates
+Rscript analysis/R/11_design_c.R        # Stage 8h synthetic control (run before 03: 03 carries its status)
 Rscript analysis/R/04_robustness.R      # Stage 7 grid
 Rscript analysis/R/05_registry.R        # Stage 8 registry — must run after 01_build_dags.R
 ```

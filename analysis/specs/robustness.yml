@@ -252,8 +252,12 @@ unbuilt_axes:
       non-oil fiscal instrument that would let Design A vary within state for reasons other than the oil
       price does not exist yet (C-47).
   - axis: donor_pool
-    status: not_run
-    reason: "Design C is `not_run`: Stage 5 found the donor pool fails pre-treatment fit on every outcome."
+    status: partly_built
+    reason: >-
+      Design C was fitted in stage 8h (registry/design_c/) on the one outcome the gate passes, `u5mr`:
+      four windows estimated, one refused, none identified. The pool axis this grid could vary — donor
+      definition, leave-one-donor-out — is reported on that artifact rather than here, because neither
+      Design A nor Design B uses a donor pool.
   - axis: imputation_handling
     status: fixed
     reason: "no imputed value enters either design; see the header of this file."

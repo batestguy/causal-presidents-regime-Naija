@@ -1,6 +1,6 @@
 # Stage 6 estimates — vintage 2026-10-18
 
-Generated 2026-10-27T07:43:34+0100 by `analysis/R/03_estimate.R` from `analysis/specs/estimation.yml`. Every number is recomputed independently by `tests/verify_stage6.py`.
+Generated 2026-10-28T06:49:18+0100 by `analysis/R/03_estimate.R` from `analysis/specs/estimation.yml`. Every number is recomputed independently by `tests/verify_stage6.py`.
 
 ## The answer this stage arrived at
 
@@ -13,7 +13,7 @@ stage answers two questions about it.
 |---|---|---|
 | A | Does a larger federal allocation reduce conflict fatalities in the state that receives it? | **estimated_not_identified** |
 | B | How much of a Brent shock reaches the states, and when? | **estimated** |
-| C | Did the tenures move an outcome, against a synthetic counterfactual? | not run — Stage 5's donor pool fails the pre-treatment fit |
+| C | Did the tenures move an outcome, against a synthetic counterfactual? | **estimated_not_identified** |
 
 ## Design A — state dose-response
 
@@ -60,16 +60,18 @@ be the surprising result, not a lagged one. The confidence bounds are wide — t
 observations of a series the naira's two devaluations also move, and the FX channel is annual grain
 (the monthly NGN/USD series has no keyless source: `docs/decisions.md` C-46).
 
-## What was not run
+## Design C — the synthetic control
 
-Design C (synthetic control): The reason changed on 2026-10-18, and the change is the point. With the original 13-country pool Stage 5 recorded `infeasible`: the pre-treatment fit failed on every outcome and window. The pool has since been widened to 99 candidates screened on oil dependence, region/income band and coverage (`ingestion/flows/pull_worldbank_donors.py`), and re-running the gate (vintage 2026-10-18) passes **u5mr on 3 of its 4 runnable windows** (ratios 0.0014-0.0042 against the declared 0.10 threshold, ratio-on-differences 0.013-0.024) and fails `gdp_growth` (1 of 4) and `cpi_yoy` (0 of 4) — so the design is no longer infeasible *for want of a pool*. It is not estimated here because the estimator and its placebos are not built: `Synth`/`coresynth` still has to be fitted, and the in-space and in-time placebos Stage 5 deferred to Stage 6 have not been run. Two cautions travel with the pass and are on the artifact: a 99-donor simplex can fit any pre-period (the yaradua gdp_growth window reaches a ratio of 1.7e-06, which is interpolation rather than validation), and the gate was always declared necessary-not-sufficient. The pass is permission to build Design C, not evidence that its fit is real.
+Design C is estimated in its own artifact (`registry/design_c/2026-10-18/design_c.json`), with its own spec and verifier: 4 window(s) estimated, 1 refused, 0 identified.
 
-Next step for it: Build the Design C estimator and its placebos on the `u5mr` windows the gate now passes.
+A synthetic control has no sampling distribution, so this stage carries no interval for it and the
+number is not on a card. The verdict is a rank among placebos, and every window that failed names the
+check that failed.
 
 ## Honesty notes carried with these numbers
 
 - Every estimate is a pre-declared specification from analysis/specs/estimation.yml.
 - Design A is reported as estimated, not identified, when its own checks say so; the number is still published with its bounds.
-- Design C was not run and its reason is carried rather than dropped.
+- Design C is published in its own artifact (registry/design_c/) and this file carries its status rather than a second copy of its numbers.
 - 36 clusters is few; a wild-cluster bootstrap would be the fix and is not applied (declared in the spec).
 

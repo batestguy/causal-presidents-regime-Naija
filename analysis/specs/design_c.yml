@@ -1,0 +1,160 @@
+# Stage 8h — Design C: synthetic control on under-5 mortality
+#
+# This spec was written **before any weight was fitted** (2026-10-28). It exists because Stage 5 moved
+# Design C from `infeasible` to `candidate` and handed Stage 6 an instruction rather than an estimate:
+# `estimation.yml → design_c.next_step` reads "build the Design C estimator and its placebos on the `u5mr`
+# windows the gate now passes". That is what this stage does, and the rule that turns the placebos into a
+# verdict is fixed here rather than after the numbers are known.
+#
+# What the gate measured, and what it did not
+# ---------------------------------------------------------------------------------------------
+# `registry/diagnostics/2026-10-18/diagnostics.json` passes `u5mr` on three windows (yaradua, jonathan,
+# buhari) with pre-fit ratios of 0.0014-0.0042 against a declared 0.10 threshold, and records two facts
+# beside the pass that decide how this stage must be read:
+#
+#   * the fit is produced by a **99-donor simplex**, and with 8-16 pre-treatment years and 99 weights the
+#     system is underdetermined — a pre-fit ratio near zero is interpolation, not validation. The gate was
+#     always declared necessary-not-sufficient, and the artifact says so in the words "a 99-donor simplex can
+#     fit any pre-period".
+#   * `Synth`'s own V search returns a fit **worse than the best single donor** on every window
+#     (`synth_beats_best_single_donor: false`; 85.2 against 3.9 RMSPE on yaradua). So the estimator design
+#     spec section 11 names is not the estimator that can be used here, and this stage does not pretend
+#     otherwise.
+#
+# The estimator is therefore the gate's own: the globally optimal **simplex weights on the pre-treatment
+# outcome path**, solved as a quadratic program. The gate is then the estimator's own pre-fit rather than a
+# separate screen — there is no second fit whose weights could disagree with the fit that was authorized.
+# Predictors are carried as a **balance table** (a diagnostic), not as an objective, because putting them in
+# the objective requires a V matrix and the only V available here is `Synth`'s, which fails.
+#
+# Because the pre-fit cannot discriminate, the verdict rests on the **placebos**: every donor treated in turn
+# (in space) and the treatment date moved back (in time). A design that only publishes a gap and a pre-fit
+# ratio would publish the one number this data cannot support.
+version: 1
+labelled: "2026-10-18"          # the data vintage, not the day the spec was written
+stamp: "declared 2026-10-28, before any weight was fitted"
+stage: "8h"
+engine: "analysis/R/11_design_c.R"
+verifier: "tests/verify_design_c.py"
+
+# ---------------------------------------------------------------------------------------------
+# Inputs
+# ---------------------------------------------------------------------------------------------
+input:
+  database: "data/analytics.duckdb"
+  donor_table: "main_analytics.fact_donor_panel"
+  native_table: "main_analytics.fact_observation_native"
+  admin_table: "main_analytics.dim_administration"
+  outcome: "u5mr"
+  treated_iso3: "NGA"
+  donor_panel_artifact: "registry/donors/2026-10-18/panel.json"
+  # Nigeria's own annual path comes from the native observations, never from the interpolated monthly
+  # spine: the spine is 16.2 % observed (Stage 4), and a synthetic control fitted to interpolated months
+  # would be fitted to the interpolation rule as much as to the country.
+  treated_series: "fact_observation_native, native_frequency = 'annual'"
+
+# ---------------------------------------------------------------------------------------------
+# Windows
+# ---------------------------------------------------------------------------------------------
+# The candidate windows are the ones Stage 5 already declared (`diagnostics.yml →
+# windows.candidate_treated_windows`), read from that file rather than retyped here: two copies of a
+# treatment date is how a window silently moves.
+#
+# Annual outcomes need a calendar-year rule, and it is declared rather than implied: a year belongs to the
+# administration in office on **1 July**. That gives yaradua 2007-2009, jonathan 2010-2014, buhari
+# 2015-2022 and tinubu 2023-2024; obasanjo (1999-2006) has no post year inside the study window, and the
+# gate already refuses it (0 pre years).
+windows:
+  source: "analysis/specs/diagnostics.yml"
+  key: "windows.candidate_treated_windows"
+  ids: [obasanjo, yaradua, jonathan, buhari, tinubu]
+  year_rule: "the year belongs to the administration in office on 1 July"
+  first_year: 1999            # the spine's first year, and the gate's own start
+  last_year: 2024             # the last native u5mr observation (World Bank WDI, vintage 2026-10-18)
+  require_pre_years: 8        # Stage 5's declared minimum, carried not re-decided
+  require_post_years: 2
+  pre_rule: >-
+    pre-treatment years are every year from `first_year` to the year before the window's first post year,
+    inclusive. A later window's pre-period therefore contains the earlier tenures: this design asks "what
+    happened after this transition, against a path fitted to the years before it", and it does not undo the
+    tenures already in the pre-path. That is the standard interrupted synthetic-control reading, and it is
+    why the windows are not additive.
+
+# ---------------------------------------------------------------------------------------------
+# Estimator
+# ---------------------------------------------------------------------------------------------
+estimator:
+  name: "simplex-constrained least squares on the pre-treatment outcome path (quadprog), fixed objective"
+  objective: "minimise || z1 - Z0 w ||^2 subject to w >= 0 and sum(w) = 1, over the pre-treatment years"
+  solver: "quadprog::solve.QP, global optimum"
+  ridge: "max(diag(Z0'Z0)) * 1e-8, for numerical positive-definiteness only"
+  pool: "every donor in the committed panel with a complete pre-treatment path; the weights are the pool's own screening"
+  no_v_search: >-
+    `Synth`'s V search is not used. On this pool it returned a fit worse than the best single donor on every
+    window (diagnostics 2026-10-18), so it cannot be the estimator and a second fit whose weights disagreed
+    with the gate would be a second design wearing the same name.
+  # Added 2026-10-28 after the independent verifier found that different solvers return different optimal
+  # weights: with 99 donors and 8-24 pre-years the QP is underdetermined, so `solve.QP` returns one vertex of a
+  # face of equally good fits. The ridge refit is a *diagnostic* that shows whether the gap and the rank p are a
+  # property of the data or of the vertex; it changes no verdict. A relative ridge of 1e-4 on the Gram diagonal
+  # is enough to make the solution unique without moving the fit beyond its own interpolation noise.
+  solver_sensitivity:
+    ridge_relative: 1e-4
+    why: "the declared QP has a face of optima; this refit is unique, so a second solver can reproduce it"
+  balance_predictors: [cpi_yoy, gdp_growth, oil_rents, population]
+  balance_window: >-
+    each predictor is averaged over the years in the pre-period where Nigeria and every retained donor have
+    data (at least 3 such years), and the treated mean is compared with the synthetic mean and the donor mean
+    interval. Published as a table; never used to select weights or to decide the verdict.
+
+# ---------------------------------------------------------------------------------------------
+# Placebos — the part that decides the verdict
+# ---------------------------------------------------------------------------------------------
+placebos:
+  in_space:
+    assignment: "every donor is treated in turn; its own weights are fitted from the remaining donors"
+    statistic: "post/pre RMSPE ratio, then the mean post-period gap"
+    p_rule: >-
+      p = #{placebos with ratio >= the treated unit's ratio, counting the treated unit itself} /
+      (1 + n_placebos). One-sided, and it is a rank, not a sampling distribution: with 100 units the
+      smallest attainable p is 0.01, which is stated on the artifact rather than left to be inferred.
+    reported: "the full distribution, so a reader can see where the treated ratio sits rather than trust a p"
+  in_time:
+    backdate_years: [3, 5, 7]
+    rule: >-
+      the window is moved back k years; the pseudo-post period is [start - k, start - 1] and the pseudo-pre
+      period is every year before it. A backdated window with fewer than `require_pre_years` pre years is
+      not run and says so. A credible design returns no gap in a period that had no treatment.
+    reported: "each placebo's mean gap and its ratio to the estimated gap"
+  leave_one_donor_out:
+    rule: "drop each donor in turn, refit on the same pre-period, and publish the range of the mean gap and how many fits flip its sign"
+    why: "design spec section 5.3 declares the donor-pool definition as a robustness axis; this is the sweep it names"
+
+# ---------------------------------------------------------------------------------------------
+# The verdict rule — fixed before the numbers were read
+# ---------------------------------------------------------------------------------------------
+verdict_rule: >-
+  A window is `identified` only if **all three** hold: (1) its pre-fit ratio is at or below 0.10, the gate's
+  own threshold, carried rather than re-decided; (2) the in-space rank p is at or below 0.05, i.e. the
+  treated unit's post/pre RMSPE ratio is the largest among itself and the placebos; and (3) every in-time
+  placebo that could be run returns a mean gap smaller in absolute value than **half** the estimated gap.
+  Otherwise the window is `estimated_not_identified` and each failed check is named. A window the gate
+  refused is `refused` with the gate's reason and no number. Report the gap and its placebos either way.
+  Declared 2026-10-28, before any weight was fitted.
+
+# ---------------------------------------------------------------------------------------------
+# What this artifact will never carry
+# ---------------------------------------------------------------------------------------------
+# SCM inference is a rank among placebos. There is no standard error to report, and manufacturing one by
+# bootstrapping donors would answer a question nobody asked.
+refusals:
+  - "no standard error, confidence interval or p-value other than the rank p — a synthetic control has no sampling distribution"
+  - "no significance claim from the pre-fit ratio alone; the ratio is a fit diagnostic, and with 99 donors it is interpolation"
+  - "no per-president wording: windows are keyed by tenure id, and the artifact prints no surname"
+
+not_claimed:
+  - "This is not the effect of a president. It is the gap between Nigeria's path and a weighted combination of other countries' paths after a transition."
+  - "The counterfactual is not observed. A low pre-fit ratio shows the donors can reproduce the pre-period, not that they would have reproduced the post-period without the transition."
+  - "The donor pool is countries, not Nigerian states: it cannot hold constant anything Nigeria-specific — the oil cycle, the naira, the security environment."
+  - "The windows overlap in their pre-periods and are not additive: a later window's counterfactual already contains the earlier tenures."
+  - "The pre-fit gate does not discriminate on this pool: 99 donors and 8 to 16 pre-years make the fit underdetermined, so the placebos carry the verdict."

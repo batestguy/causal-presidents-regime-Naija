@@ -21,12 +21,14 @@ not.**
 | A — state dose-response (PPML) | outcome (3) × dose lag (3) × adjustment set (3) × sample window (3) | 81 |
 | B — national transmission (local projection) | shock definition (2) × covariate set (4) × sample window (3) | 24 |
 
-The design spec (§5.4) names eight axes. Four are live here; four are not, and the four dead ones are
-declared with their reason rather than quietly dropped: **imputation handling** (no imputed value enters
-either design — the dose is read only where `dose_status = observed`, the count series is never
-interpolated, S6-05), **index anchor** (the designs use levels, so the anchor is a scaling constant the
-fixed effects absorb), **donor pool** (Design C was never run), and **event window** (neither design is
-an event study; the tenure design that would need one is not estimable at this sample size).
+The design spec (§5.4) names eight axes. Four are live here; four are not, and the dead ones are declared with
+their reason rather than quietly dropped: **imputation handling** (no imputed value enters either design — the
+dose is read only where `dose_status = observed`, the count series is never interpolated, S6-05), **index
+anchor** (the designs use levels, so the anchor is a scaling constant the fixed effects absorb), **donor pool**
+(Design C is fitted in stage 8h on the one outcome the gate passes, and its pool axis — including the
+leave-one-donor-out sweep — is reported on that artifact, because neither design in this grid uses a donor
+pool), and **event window** (neither design is an event study; the tenure design that would need one is not
+estimable at this sample size).
 
 One axis is live in principle and **unbuilt in fact**: the per-capita dose. `state_panel.d1_faac_per_capita`
 is 0 of 12,358 rows populated because the state population denominator is an unmade decision (X-09), so

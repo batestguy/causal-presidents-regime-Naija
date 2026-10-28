@@ -384,6 +384,14 @@ def main() -> int:
                     fail(failures, f"the app offers {question_id!r}, which the answer measurement does not "
                                    f"cover — an offered example must be a measured one")
                     continue
+                if measured.get("status") == "declined":
+                    # A declined example is a measured outcome too: the tab must show the same decline, not a
+                    # different one and not an answer. The measurement's own text is the contract.
+                    decline = squash(str(measured.get("text") or ""))
+                    if decline and decline not in text:
+                        fail(failures, f"the chat's answer to {question_id!r} is not the decline the "
+                                       f"measurement recorded — the tab is a second opinion on the layer")
+                    continue
                 if measured.get("status") != "answered":
                     fail(failures, f"the measurement says {question_id!r} is {measured.get('status')!r} and "
                                    f"the chat must say the same")
