@@ -12,7 +12,7 @@ need a token — verified 2026-10-17, 401 on three versions — but the **bulk a
 does not. It is also CC-BY, so the state-month outcome can be derived and published; ACLED's terms
 forbid redistributing its raw data.
 
-Nothing is transformed here. The archive is 29 MB zipped and lands whole; the Nigeria filter and the
+Nothing is transformed here. The archive is tens of MB zipped and lands whole; the Nigeria filter and the
 state-month aggregation happen in ``ingestion/parsers/ucdp_events.py``, which records the sha256 of the
 archive it read.
 
@@ -45,10 +45,10 @@ from ingestion.clients.provenance import (  # noqa: E402
     write_manifest,
 )
 from ingestion.clients.ucdp import (  # noqa: E402
-    ATTRIBUTION,
     LATEST,
     NOTE,
     UcdpError,
+    attribution,
     fetch_archive,
 )
 
@@ -155,12 +155,16 @@ def main(argv: list[str] | None = None) -> int:
         f"{coverage['nigeria_n_events_without_state']} without a state"
     )
 
+    # Per-release, not a module constant: a re-fetch of an older GED must not carry a newer version's
+    # licence string (C-78).
+    licence_attribution = attribution(args.version)
+
     entry = retrieval.manifest_entry(
         page_files=page_files,
         metric_id=METRIC_ID,
         metrics=METRICS,
         licence="CC-BY-4.0",
-        attribution=ATTRIBUTION,
+        attribution=licence_attribution,
         note=NOTE,
         n_events_nigeria=coverage["n_events_nigeria"],
     )
@@ -179,7 +183,7 @@ def main(argv: list[str] | None = None) -> int:
         failures=[],
         extra={
             "licence": "CC-BY-4.0",
-            "attribution": ATTRIBUTION,
+            "attribution": licence_attribution,
             "note": NOTE,
             "archive_version": args.version,
         },

@@ -201,6 +201,28 @@ def main(argv: list[str] | None = None) -> int:
     span = pd.period_range(min(active), max(active), freq="M")
     inactive = sorted(str(m) for m in set(span) - set(active))
     totals = {item: int(long.loc[long["item"] == item, "value"].sum()) for item in ITEMS}
+
+    # The unattributed sentence is *derived*, not typed: it carried "46 ... 632 fatalities" as a literal
+    # through the 25.1 vintage, which is the defect class C-49 names (a number in generated prose that
+    # the artifact was free to outgrow). Both halves are counted here so a new release cannot falsify it.
+    missing_state = events["adm_1"].isna()
+    unmapped_labelled = (events["state_name"] == UNATTRIBUTED) & ~missing_state
+    unattributed_note = (
+        f"events with no adm_1 ({int(missing_state.sum()):,} in this vintage, "
+        f"{int(events.loc[missing_state, 'best'].sum()):,} fatalities)"
+    )
+    if unmapped:
+        n_unmapped = int(unmapped_labelled.sum())
+        unattributed_note += (
+            f" and the unmapped label(s) {', '.join(unmapped)} "
+            f"({n_unmapped:,} {'event' if n_unmapped == 1 else 'events'}, "
+            f"{int(events.loc[unmapped_labelled, 'best'].sum()):,} fatalities)"
+        )
+    unattributed_note += (
+        " are carried as the `unattributed` scope so the national sum stays complete; the state panel "
+        "joins only the 37 units"
+    )
+
     report = {
         "vintage": vintage,
         "source_file": archive_path.relative_to(REPO_ROOT).as_posix(),
@@ -231,11 +253,7 @@ def main(argv: list[str] | None = None) -> int:
                 "a month with no Nigeria event anywhere is absent from the artifact rather than zero — "
                 "it is absence of records, not evidence of no violence, and the Stage 3 gap gate sees it"
             ),
-            "unattributed": (
-                "events with no adm_1 (46 in this vintage, 632 fatalities) and the historical Gongola "
-                "label are carried as the `unattributed` scope so the national sum stays complete; the "
-                "state panel joins only the 37 units"
-            ),
+            "unattributed": unattributed_note,
         },
     }
     OUT_REPORT.write_text(json.dumps(report, indent=2), encoding="utf-8")

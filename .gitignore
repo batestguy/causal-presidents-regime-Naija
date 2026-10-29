@@ -2,6 +2,10 @@
 # derived aggregates, never restricted raw extracts).
 data/raw/
 data/staging/
+# A landed release that is deliberately *not* adopted lives here, not under data/raw/. A vintage in the
+# raw layer is a claim that it has been parsed and gated, and `tests/verify_quality.py` fails on a landed
+# document the parsed artifact does not read - so "downloaded but unadopted" needs its own place.
+data/pending/
 
 # The analytical base is a build artifact, not source: reproducible from data/raw/ plus the
 # declared rules in analysis/specs/. Committing the DuckDB file would ship a binary that can

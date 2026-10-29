@@ -3,8 +3,9 @@
 **No credential is needed for this route, and that is the reason it exists.** The UCDP *API* answers
 401 without an `x-ucdp-access-token` header (verified 2026-10-17 against versions 25.1, 24.1 and 23.1),
 which is what the catalogue recorded as C-14. The **bulk archive** is a plain HTTPS download on the
-same host, 29 MB zipped, and it answers a GET with no credential at all. The dataset therefore stops
-being credential-blocked, and the project does not need an ACLED OAuth app for the security outcome.
+same host, tens of MB zipped (39 MB in release 26.1), and it answers a GET with no credential at all.
+The dataset therefore stops being credential-blocked, and the project does not need an ACLED OAuth app
+for the security outcome.
 
 Licence: UCDP GED is **CC-BY 4.0** — redistributable with attribution, unlike ACLED's terms (C-13).
 See `docs/licences.md`. The attribution string travels on the manifest entry.
@@ -28,17 +29,35 @@ TIMEOUT_SECONDS = 300
 # Version -> archive file name. `version` is UCDP's release label and is part of the dataset id, so a
 # new release lands as a new dataset rather than overwriting the one already parsed.
 ARCHIVES = {
+    "26.1": "ged261-csv.zip",
     "25.1": "ged251-csv.zip",
     "24.1": "ged241-csv.zip",
     "23.1": "ged231-csv.zip",
 }
 
-LATEST = "25.1"
+# 26.1 adds the 2025 calendar year (Nigeria: 7,418 -> 8,255 events, last month 2024-12 -> 2025-12)
+# and the column set is unchanged at 49, so the parser reads it without an adapter.
+#
+# **`LATEST` is the newest release UCDP publishes, not the release this project has adopted.** Adoption
+# is recorded by which raw vintage was parsed into `data/staging` and echoed in
+# `registry/quality/<vintage>/report.json -> source_vintages`. 26.1 is landed and deliberately not
+# adopted: it also revises 173 historical state-month cells inside Design A's estimation window
+# (+1.55% fatalities, +2.41% incidents), so adopting it re-fits every design on revised history and is
+# its own accountable pass. See docs/decisions.md C-77.
+LATEST = "26.1"
 
-ATTRIBUTION = (
-    "UCDP Georeferenced Event Dataset (GED) Global version 25.1, Uppsala Conflict Data Program, "
-    "Uppsala University — CC-BY 4.0. https://ucdp.uu.se/downloads/"
-)
+
+def attribution(version: str) -> str:
+    """The CC-BY attribution for *this* release.
+
+    A module constant pinned to ``LATEST`` was wrong the moment a second version could be landed: a
+    re-fetch of 24.1 would have carried "version 26.1" on its manifest, which is a licence statement
+    about the wrong file.
+    """
+    return (
+        f"UCDP Georeferenced Event Dataset (GED) Global version {version}, Uppsala Conflict Data "
+        "Program, Uppsala University — CC-BY 4.0. https://ucdp.uu.se/downloads/"
+    )
 
 NOTE = (
     "UCDP GED bulk archive, landed untransformed. The parser filters to Nigeria and aggregates to "
