@@ -179,6 +179,7 @@ $PYTHON tests/verify_stage7.py
 $PYTHON tests/verify_registry.py
 $PYTHON tests/verify_harmonisation.py
 $PYTHON tests/verify_faac.py
+$PYTHON tests/verify_nbs_cpi.py
 $PYTHON tests/verify_dags.py
 $PYTHON tests/verify_stage5.py
 $PYTHON tests/verify_events.py

@@ -2431,3 +2431,63 @@ outcome panels are now much taller on screen; that is the arithmetic of a 590 ×
 new cap.
 
 
+
+## 2026-10-29 - the NBS monthly CPI: landed, parsed, verified, and parked like 26.1
+
+The block list named monthly inflation as the one outcome the study window never had: `cpi_yoy` is annual
+(C-30), so no design can see the 2023-06 to 2023-12 subsidy window the DAGs ask about. This session built
+the acquisition and stopped exactly where adoption begins - the same boundary GED 26.1 was parked behind,
+by the user's explicit choice in both cases.
+
+**What the source turned out to be, measured before any code was written.** The elibrary's CPI listing
+(1,695 rows, parsed row-anchored because some elibrary cells are HTML comments) carries **152 CPI
+documents, 149 distinct months, 2012-03 to 2024-10** - and **nothing for 2025 or 2026 at all**. So the
+January-2025 rebasing C-27 warns about is *not in this source*: the series ends on the **November-2009
+base** and contains no definition break of its own. Better than expected - a monthly series that stops
+before the rebasing cannot silently mix two bases. The decisive property: **one workbook carries the whole
+history**. Table 1 of "CPI and Inflation Report October 2024" (`cpi_OCT2024.xlsx`, 632,073 bytes,
+sha256 `c69939116614a9b3...`) is the composite index from **1995-01 to the report's own month**, 358
+contiguous months. One download is the series; its vintage is the report's month.
+
+**The month assignment is derived, and the publisher's own labels are the check.** Column A carries years
+but stops at 2023 (leaving the report's own ten months unlabelled) and one year block carries its year
+twice - forward-filling it shifts the last ten months into 2023 (measured: the naive parse produced
+358 rows / 347 unique periods). So the periods are walked **backwards from the report's own month**,
+which the title states, and **every year cell that exists is compared against the derivation** - 30 of 358
+cells are year-labelled, all 30 agree, and any disagreement fails the parse.
+
+**The block check is a published-headline comparison.** Table 1 carries three column blocks (All Items,
+Food, All Items less Farm Produce and Energy) whose widths differ; reading Food would give a plausible
+series of the wrong thing. Staging is compared against six headline YoY figures NBS published, to
+**0.01 pp**: 22.41 (2023-05), 22.79 (2023-06), 28.92 (2023-12), 29.90 (2024-01), 34.19 (2024-06),
+33.88 (2024-10). All six reproduce.
+
+**Built:** `ingestion/clients/nbs_cpi.py` (discover by row, resolve the workbook preferring `*cpi*`
+filenames, magic-byte check because these hosts answer 200 with HTML), `ingestion/flows/pull_nbs_cpi.py`
+(vintage = today's UTC date, `--period` for an older report; 55 of the 149 listed months carry **no**
+spreadsheet at all and the client refuses them as a fact about the source), `ingestion/parsers/nbs_cpi.py`
+(the parse described above; 1,408 rows: index, 12-month average, month-on-month, year-on-year, missing
+cells absent rows not empty strings, national scope stamped), `tests/verify_nbs_cpi.py` (re-reads the
+landed bytes, re-derives months its own way, reproduces every value from the workbook, holds the six
+published headlines, and resolves a parked vintage's moved page file by name rather than full path).
+**Wired into `scripts/verify.sh`** after `verify_faac`; it **SKIPPED-with-notice** when no vintage exists
+in either root, because the weekly CI runner acquires only adopted sources and a parked release is
+deliberate (C-81).
+
+**Broken on purpose, three ways:** year-on-year read from the Food block (caught by the headline
+comparison, the case that matters), one staged value nudged (caught), wrong vintage stamped (caught).
+All files restored byte-for-byte; the verifier is green on the restored tree.
+
+**Why parked, and what adoption costs.** A dry-run of the gate with `nbs_cpi` declared produced
+**674 series, ok=359 flagged=313 empty=2** - i.e. the series gates cleanly, but declaring it makes
+`check_quality.py` publish a new quality report, `tests/verify_quality.py` fails until it does, and every
+prose doc describing quality then lags by one vintage. Adoption is one pass: the `quality.yml`
+`document_sources` entry (the exact config is in the file as a comment, line 140), a published quality
+vintage, a dbt model for the monthly outcome, and a re-run of Stages 4-8. The comment block records the
+config so that pass does not rediscover it. The release sits at **`data/pending/nbs_cpi/2026-10-29/`**
+(gitignored per C-79), and `data/raw/` stays at five sources so the chain is green: `verify_quality`,
+`verify_nbs_cpi`, `verify_provenance` all PASS on the parked state.
+
+**What this does not change.** No registry artifact moved; `cpi_yoy` is still annual everywhere it is
+published; no card, verdict or design reads the monthly series. The 2023-06 to 2023-12 subsidy window
+becomes estimable only when the adoption pass lands an outcome, not from this landing.

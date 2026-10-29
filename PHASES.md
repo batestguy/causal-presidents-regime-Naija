@@ -138,6 +138,16 @@ u5mr is mostly interpolation, so it must render as flagged segments, never smoot
 - Overwrite is forbidden. A correction creates a **new vintage**; the old one stays for revision
   detection in Stage 3.
 
+**2026-10-29 — the Parked class (C-79/C-81) now has a second member.** The NBS monthly CPI
+(`ingestion/clients/nbs_cpi.py`, `flows/pull_nbs_cpi.py`, `parsers/nbs_cpi.py`,
+`tests/verify_nbs_cpi.py`) landed, parsed (358 continuous months, 1995-01 → 2024-10, from one workbook
+whose Table 1 *is* the whole series) and verified against six published headline figures to 0.01 pp — but
+sits in `data/pending/nbs_cpi/` beside GED 26.1, because declaring it as a `document_sources` gate entry
+is the adoption step and publishes a new quality vintage that cascades into Stages 4–8. Its verifier is
+wired into `verify.sh` and **skips with a notice** when neither `data/raw/` nor `data/pending/` holds a
+vintage, so the weekly CI runner (which acquires only adopted sources) is not turned red by a deliberate
+park. The adoption config is recorded in a comment in `analysis/specs/quality.yml` (C-81).
+
 **Exit criteria.** `raw` schema populated for one complete vintage; any single value can be traced back to
 the retrieval event that produced it.
 

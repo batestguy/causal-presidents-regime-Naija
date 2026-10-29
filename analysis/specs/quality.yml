@@ -137,6 +137,25 @@ document_sources:
       having an adjudication field. The national series is the one to read: a flag there means a
       documented episode (the 2014-2015 insurgency peak, the 2020-2021 banditry escalation).
 
+# **nbs_cpi is deliberately not declared here yet.** The acquisition landed, parsed and verified on 2026-10-29
+# (see `ingestion/clients/nbs_cpi.py`, `tests/verify_nbs_cpi.py`, PROGRESS.md), but declaring it as a document
+# source is the *adoption* step: `check_quality.py` then expects a gate result for `cpi_index` and `cpi_yoy_pct`,
+# and `tests/verify_quality.py` fails until a new `registry/quality/<date>/` is published — which in turn makes
+# the newest quality report newer than the diagnostics that describe it. So adoption is one pass: the entry
+# below, a published quality vintage, a dbt model and a re-run of Stages 5-8. The config it needs, and the
+# reason it waits (C-81 in `docs/decisions.md`; `cpi_yoy` stays annual everywhere published until then):
+#
+#   nbs_cpi:
+#     staging: "data/staging/nbs_cpi_monthly.csv"
+#     parse_report: "data/staging/nbs_cpi_parse_report.json"
+#     value_items: { cpi_index: cpi_index, cpi_yoy_pct: cpi_yoy_pct }
+#     series_key: scope          # the parser stamps "national"; a future state table would add scopes
+#     value_field: value
+#     national_scope: national
+#   and, outside the document_sources block: `grains.nbs_cpi: { period: monthly, label: month }`, and
+#   `cpi_yoy_pct` added to `spike_measure.percentage_point_series` (the index stays on the relative rule).
+#   No `definition_breaks` entry is needed: the series ends 2024-10, before the January-2025 rebasing.
+
 # ---------------------------------------------------------------------------------------------
 # Gate 2 — which measure of "a spike" applies to which series
 # ---------------------------------------------------------------------------------------------
