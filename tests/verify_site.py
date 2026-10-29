@@ -126,12 +126,12 @@ def main() -> int:
         if 'class="topnav"' not in markup:
             fail(failures, f"{page}: no primary navigation")
             continue
-        for label in ("Home", "About", "Methodology"):
+        for label in ("Home", "About", "Methodology", "Ask"):
             if f">{label}</a>" not in markup:
                 fail(failures, f"{page}: the navigation does not carry {label!r}")
         depth = "" if page == "index.html" else "../"
         if (f'href="{depth}about/"' not in markup or f'href="{depth}methodology/"' not in markup
-                or f'href="{depth}technical/"' not in markup):
+                or f'href="{depth}technical/"' not in markup or f'href="{depth}ask/"' not in markup):
             fail(failures, f"{page}: the navigation's links do not resolve from this page's own URL")
 
     # ---- the About frame, which is deliberately unfinished ------------------------------------------------

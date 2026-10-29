@@ -641,12 +641,14 @@ registry vintage stamped on every page — and remains open for the Streamlit ap
 
 **Queued for the next static pass (2026-10-28, not built):**
 
-1. **Put Ask in the primary navigation.** `/ask/` is the flow's sixth step and is reachable only by walking the
-   flow or from the Ask footer; it should be one click from Home, About, Methodology and Technical, because a
-   reader who arrives on a bookmarked page should be able to search the registry from there. The change is
-   `guide.yml → nav.ask` plus one entry in the loop in `site/build.py::page()`, and `tests/verify_site.py` gains
-   the link to its per-page nav check. Five links plus the wordmark no longer fit one line at 420 px; the
-   handoff is to let the links wrap under the wordmark, not to shrink the wordmark further.
+1. ✅ **Ask in the primary navigation — built 2026-10-29.** `/ask/` was the flow's sixth step and reachable only
+   by walking the flow or from the Ask footer; it is now one click from every page, so a reader who arrives on a
+   bookmarked page can search the registry from there. The change was `guide.yml → nav.ask`, one entry in the loop
+   in `site/build.py::page()`, `aria-current` on `/ask/`, and the link added to the per-page nav check in
+   `tests/verify_site.py`. **The predicted wrap rule turned out to be unnecessary:** measured in a browser at 320,
+   375 and 420 px, the existing `@media (max-width: 719px) .topnav { flex-wrap: wrap }` already puts the five links
+   on their own line under the wordmark, with no horizontal overflow on any of the 11 pages — so the wordmark was
+   not shrunk, as the handoff required, and no CSS changed.
 2. **Bigger charts, with the presidents over them.** The chart screen's comparison and changepoint panels are
    drawn at the 960 px measure while `/designs/` and `/technical/` use 1240; the chart should take the wide
    measure and a taller cap. The portraits (`site/assets/presidents/<slug>.jpg`, already licensed and in the

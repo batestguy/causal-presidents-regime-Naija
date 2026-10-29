@@ -2375,4 +2375,23 @@ VAT numbers are a query run against the base, **not** a specification that went 
 gate or `harmonisation.yml` — it is strong enough to say "do not buy IGR hoping for identification" and
 not strong enough to rewrite `unbuilt_axes`.
 
+**Then, same session — P9 item 1, Ask in the primary navigation.** The queued change was three lines in
+three files: `nav.ask` in `guide.yml`, one entry in the loop in `site/build.py::page()`, and the Ask label
+plus its `href` added to the per-page check in `tests/verify_site.py`. `/ask/` also gained
+`nav_active="ask"` so the page marks its own link, which it did not before because it was not a nav
+destination. `verify_site.py` rebuilds and passes: 11 pages, every nav label and every resolved link.
+
+**The predicted CSS work was not needed, and that is the finding rather than a shortcut.** The handoff said
+five links plus the wordmark would not fit one line at 420 px and that the fix was to let the links wrap
+*under* the wordmark. Measured in Chromium against a locally served build at **320, 375, 420, 480, 719, 720
+and 1024 px**: at 320/375/420 the existing `@media (max-width: 719px) .topnav { flex-wrap: wrap }` already
+drops the list to its own line (list top 41 px, wordmark bottom 32 px), the five links stay on **one** row
+within it (list width 266 px, right edge 284 px against a 320 px viewport), and
+`document.scrollWidth` equals `clientWidth` on **all 11 pages**, so nothing overflows. The wordmark keeps
+its existing size in every case. No CSS was written. `aria-current="page"` was confirmed on exactly Home,
+About, Methodology, Technical and Ask, and correctly on none of the five flow screens.
+
+**Still queued from P9:** the chart's wide measure and the portraits as period markers, with the composition
+decision (one row of five above the panel versus a watermark per band) still open.
+
 

@@ -254,13 +254,15 @@ design_results:
   back: "Back to the flow"
 
 # ---------------------------------------------------------------------------------------------
-# The primary navigation, and the two pages that are not part of the flow
+# The primary navigation. Home, About, Methodology and Technical sit outside the flow; Ask is its sixth
+# step, carried in the nav so a reader who lands on a bookmarked page can search the registry from there.
 # ---------------------------------------------------------------------------------------------
 nav:
   home: "Home"
   about: "About"
   methodology: "Methodology"
   technical: "Technical"
+  ask: "Ask"
 
 about:
   eyebrow: "About"

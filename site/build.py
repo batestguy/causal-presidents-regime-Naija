@@ -612,7 +612,7 @@ def page(title: str, depth: int, body: str, data: dict | None = None, wide: bool
         payload = ('<script id="page-data" type="application/json">'
                    + json.dumps(data, ensure_ascii=False) + "</script>")
     nav_items = []
-    for key in ("home", "about", "methodology", "technical"):
+    for key in ("home", "about", "methodology", "technical", "ask"):
         href = home if key == "home" else f"{prefix}{key}/"
         current = ' aria-current="page"' if nav_active == key else ""
         nav_items.append(f'<li><a href="{href}"{current}>{html.escape(NAV_LABELS.get(key, key.title()))}</a></li>')
@@ -1053,7 +1053,7 @@ def render_ask(ctx: dict) -> str:
   <p class="vintage">Registry vintage {ctx['vintage']}</p>
 </main>
 <script type="module" src="../assets/ask.mjs"></script>"""
-    return page("Ask the corpus", 1, body)
+    return page("Ask the corpus", 1, body, nav_active="ask")
 
 
 # ------------------------------------------------------------------------------------------------------------

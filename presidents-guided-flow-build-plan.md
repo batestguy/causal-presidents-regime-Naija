@@ -146,19 +146,24 @@ corpus), the Model card and What-this-reads halves of the "go deeper" screens ar
 plot's right-hand labels are clipped at the SVG's own edge — an artifact layout question for `03_estimate.R`, not
 for this page.
 
-### P9 — Ask in the navigation, and charts with the presidents over them (next)
+### P9 — Ask in the navigation, and charts with the presidents over them (first two delivered 2026-10-29)
 
 Two changes the requester queued on 2026-10-28. Both are site-only: no artifact, count or verdict moves.
 
 | Deliverable | Gate |
 |---|---|
-| `guide.yml → nav.ask` and one more entry in `site/build.py::page()` | `tests/verify_site.py` checks the Ask link on all 11 pages, with the same per-page href resolution as the other four |
-| `/ask/` stays a flow step and becomes a nav destination | the nav does not break the step rail or the selection carried in the URL; the answer layer still loads only on its own page |
+| ✅ `guide.yml → nav.ask` and one more entry in `site/build.py::page()` (2026-10-29) | `tests/verify_site.py` checks the Ask link on all 11 pages, with the same per-page href resolution as the other four |
+| ✅ `/ask/` stays a flow step and became a nav destination (2026-10-29) | the nav does not break the step rail or the selection carried in the URL; the answer layer still loads only on its own page |
 | the chart screen takes the wide measure (1240 px) and a taller cap | figures are scaled in CSS, so the artifact byte counts recorded by R do not move; the comparison and changepoint panels stay readable at 420 px |
 | portraits over each chart as **period markers** aligned to the tenure bands | `alt=""` and `aria-hidden` on the portrait, no name and no verdict word; the surname scan gets an explicit, named exception for the block rather than a loosened pattern |
 | portrait reuse respects the licence record | the files come from `site/assets/presidents/` via the manifest; the credit list is repeated on `/chart/` or linked to the cover footer, and `docs/licences.md` is not edited |
 
-**Open before coding:** the composition. One row of five portraits above the panel, aligned to the tenure bands
+**Delivered 2026-10-29 — the nav half.** The two nav rows above are built. The predicted wrap rule was not
+needed: measured in Chromium at 320, 375, 420, 480, 719, 720 and 1024 px, the existing
+`@media (max-width: 719px) .topnav { flex-wrap: wrap }` already drops the five links onto their own line under
+the wordmark (list top 41 px against a wordmark bottom of 32 px), `document.scrollWidth` equals `clientWidth` on
+all 11 pages, and every page that owns a nav item marks it `aria-current="page"` — Home, About, Methodology,
+Technical and Ask; the five flow screens correctly mark none. **Open before coding:** the composition. One row of five portraits above the panel, aligned to the tenure bands
 (recommended — it reads as a time axis and cannot be mistaken for a result), or one portrait per band as a faint
 watermark behind the line. The first is cheaper to verify: the row has an explicit order, the watermark does not.
 The portraits apply to the time-axis panels — the comparison charts and the changepoint panels — and not to the
