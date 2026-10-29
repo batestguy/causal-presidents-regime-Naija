@@ -77,6 +77,8 @@ grains:
   fred: { period: daily, label: day }
   faac: { period: monthly, label: month }
   ucdp: { period: monthly, label: month }
+  # The whole CPI series is monthly, from 1995-01 to 2024-10 (C-81). Introduced with its source entry.
+  nbs_cpi: { period: monthly, label: month }
 
 # ---------------------------------------------------------------------------------------------
 # Document sources — gated from their parsed artifact, not from the payload
@@ -137,27 +139,44 @@ document_sources:
       having an adjudication field. The national series is the one to read: a flag there means a
       documented episode (the 2014-2015 insurgency peak, the 2020-2021 banditry escalation).
 
-# **nbs_cpi is deliberately not declared here yet.** The acquisition landed, parsed and verified on 2026-10-29
-# (see `ingestion/clients/nbs_cpi.py`, `tests/verify_nbs_cpi.py`, PROGRESS.md), but declaring it as a document
-# source is the *adoption* step: `check_quality.py` then expects a gate result for `cpi_index` and `cpi_yoy_pct`,
-# and `tests/verify_quality.py` fails until a new `registry/quality/<date>/` is published — which in turn makes
-# the newest quality report newer than the diagnostics that describe it. So adoption is one pass: the entry
-# below, a published quality vintage, a dbt model and a re-run of Stages 5-8. The config it needs, and the
-# reason it waits (C-81 in `docs/decisions.md`; `cpi_yoy` stays annual everywhere published until then):
-#
-#   nbs_cpi:
-#     staging: "data/staging/nbs_cpi_monthly.csv"
-#     parse_report: "data/staging/nbs_cpi_parse_report.json"
-#     value_items: { cpi_index: cpi_index, cpi_yoy_pct: cpi_yoy_pct }
-#     series_key: scope          # the parser stamps "national"; a future state table would add scopes
-#     value_field: value
-#     national_scope: national
-#   and, outside the document_sources block: `grains.nbs_cpi: { period: monthly, label: month }`, and
-#   `cpi_yoy_pct` added to `spike_measure.percentage_point_series` (the index stays on the relative rule).
-#   No `definition_breaks` entry is needed: the series ends 2024-10, before the January-2025 rebasing.
+  nbs_cpi:
+    # **Adopted 2026-10-29 (C-81).** Landed, parsed and verified *before* it was declared: the acquisition
+    # (`ingestion/clients/nbs_cpi.py`, `ingestion/parsers/nbs_cpi.py`, `tests/verify_nbs_cpi.py`) landed on
+    # 2026-10-29 and stayed parked until this declaration published the gate result that adopts it. A
+    # single workbook carries the whole series — Table 1 of "CPI and Inflation Report October 2024" is the
+    # composite index from 1995-01 to the report's own month — so its raw vintage is that report's month
+    # and its series ends there: **2024-10**. That ends *before* the January-2025 rebasing C-27 records,
+    # so the series is on the November-2009 base throughout and needs no definition-break entry — the
+    # boundary the earlier decision wanted protected from a silently mixed base is protected by the
+    # source's own edge, and a future report that rewrites the history lands as a new vintage (X-07).
+    staging: "data/staging/nbs_cpi_monthly.csv"
+    parse_report: "data/staging/nbs_cpi_parse_report.json"
+    # Four measures in one long table; two are gated here. `cpi_12m_avg` and `cpi_mom_pct` are published
+    # in staging but not gated — the index level and its month-on-month move are inputs to a design that
+    # has not been declared, and gating a series nobody reads advertises a claim about it that nothing
+    # makes. When a design declares them, they are added here, not treated as already gated.
+    value_items:
+      cpi_index: cpi_index
+      cpi_yoy_pct: cpi_yoy_pct
+    # The series is national — the composite index; NBS's state CPI tables are a different publication.
+    # `series_key: scope` with `national_scope: national` gives one scope, matching the parser's stamped
+    # scope column, and the gate reads it the way UCDP's national aggregate is read.
+    series_key: scope
+    value_field: value
+    national_scope: national
+    why: >-
+      The monthly inflation outcome the study window never had: `cpi_yoy` (World Bank/annual, C-30) gives
+      one point per year, which cannot see the 2023-06 -> 2023-12 subsidy-removal window the DAGs ask
+      about, while this series has every month from 1995-01. It is gated before any design reads it —
+      adoption into the gate precedes adoption into a specification — and until a design declares it, its
+      gate result is exactly that: a measured series with a published status, not an outcome.
+    spike_note: >-
+      `cpi_yoy_pct` is already in the percentage-point rule below, and `cpi_index` stays on the relative
+      rule because it is a level: a *change* series flagged by a relative rule waves through the real
+      events and flags ordinary months, and a level flagged by the points rule does the reverse.
 
 # ---------------------------------------------------------------------------------------------
-# Gate 2 — which measure of "a spike" applies to which series
+# Gate 4 — document sources (above), and which measure of "a spike" applies to which series
 # ---------------------------------------------------------------------------------------------
 # Found by running the gate, not by reasoning ahead: with a single 50%-relative rule applied to all
 # 88 series, 52 came back flagged, and the flags were artefacts. Ecuador's GDP growth tripped 18
@@ -180,6 +199,11 @@ spike_measure:
   percentage_point_series:
     # outcomes, unit "%" per outcomes.yml
     - cpi_yoy
+    # the monthly NBS CPI year-on-year series (C-81): already a percentage change, so the relative
+    # rule would flag ordinary acceleration (2% -> 3% is a 50% move) exactly like Senegal's annual
+    # series did. `cpi_index` stays on the default relative rule — it is a level, which is what the
+    # relative rule is for.
+    - cpi_yoy_pct
     - gdp_growth
     - unemp
     - literacy_youth

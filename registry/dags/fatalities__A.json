@@ -1,11 +1,11 @@
 {
   "dag_id": "fatalities__A",
   "schema_version": "0.3.0",
-  "vintage_date": "2026-10-18",
-  "generated_at": "2026-10-18T12:37:07+0100",
+  "vintage_date": "2026-10-29",
+  "generated_at": "2026-10-29T06:39:35+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "1295af7"
+    "git_sha": "533c2aa"
   },
   "outcome": {
     "id": "fatalities",
@@ -194,18 +194,18 @@
     "blocker": "specified_dose_axis_absent:D1",
     "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
     "coverage_status": "ok",
-    "vintage": "2026-10-18",
-    "source": "registry/diagnostics/2026-10-18/diagnostics.json"
+    "vintage": "2026-10-29",
+    "source": "registry/diagnostics/2026-10-29/diagnostics.json"
   },
   "assets": {
     "svg": "registry/dags/fatalities__A.svg"
   },
   "estimate": {
     "status": "estimated",
-    "model_card_ref": "registry/estimates/2026-10-18/estimates.json#specification[1]",
+    "model_card_ref": "registry/estimates/2026-10-29/estimates.json#specification[1]",
     "the_number_is_for_this_card": true,
     "specification": {
-      "artifact": "registry/estimates/2026-10-18/estimates.json",
+      "artifact": "registry/estimates/2026-10-29/estimates.json",
       "spec_index": 1,
       "design": "A",
       "outcome": "fatalities",
@@ -228,12 +228,12 @@
       "rule": "Reported as `identified` only if the lead-shift p-value is below 0.05 **and** the 24-month placebo estimate is smaller in magnitude than the estimated coefficient. Otherwise `estimated_not_identified`, with the failed check named. Fixed before the numbers were read.",
       "failed_checks": "the lead-shift p-value is 0.133: 8 of 60 mis-timed doses return an estimate at least as large as the estimate itself",
       "checked_at": {
-        "artifact": "registry/estimates/2026-10-18/estimates.json",
+        "artifact": "registry/estimates/2026-10-29/estimates.json",
         "design": "A"
       }
     },
     "robustness": {
-      "artifact": "registry/robustness/2026-10-18/robustness.json",
+      "artifact": "registry/robustness/2026-10-29/robustness.json",
       "axis": "outcome",
       "preferred_specification": "A|fatalities|lag0|state_month_fe|full",
       "this_specification_is_the_preferred_one": true,

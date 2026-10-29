@@ -31,7 +31,7 @@
 # (in space) and the treatment date moved back (in time). A design that only publishes a gap and a pre-fit
 # ratio would publish the one number this data cannot support.
 version: 1
-labelled: "2026-10-18"          # the data vintage, not the day the spec was written
+labelled: "2026-10-29"          # the data vintage, not the day the spec was written
 stamp: "declared 2026-10-28, before any weight was fitted"
 stage: "8h"
 engine: "analysis/R/11_design_c.R"

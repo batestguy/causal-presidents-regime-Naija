@@ -1,0 +1,438 @@
+{
+  "schema_version": "0.1.0",
+  "stage": "9-prep",
+  "layer": "outcome series, drawn from the analytical base",
+  "vintage": "2026-10-29",
+  "generated_at": "2026-10-29T06:41:00+0100",
+  "generator": {
+    "script": "analysis/R/07_series_figures.R",
+    "git_sha": "533c2aa"
+  },
+  "spec": {
+    "path": "analysis/specs/series_figures.yml",
+    "md5": "126df6bd4ac78e9ab2859b580a18bfe7",
+    "version": 1
+  },
+  "verifier": "tests/verify_series_figures.py",
+  "input": {
+    "database": "data/analytics.duckdb",
+    "fact_table": "main_analytics.fact_metric",
+    "native_table": "main_analytics.fact_observation_native",
+    "metric_dimension": "main_analytics.dim_metric",
+    "definition_break_table": "main_analytics.dim_definition_break",
+    "outcomes_spec": "analysis/specs/outcomes.yml",
+    "outcomes_spec_md5": "03eb498e0bc746a027a5fb1268597cb9"
+  },
+  "window": {
+    "first": "1999-01",
+    "last": "2026-10"
+  },
+  "counts": {
+    "outcomes": 12,
+    "drawable": 12,
+    "flagged": 8,
+    "with_definition_break": 3,
+    "spine_rows": {
+      "observed": 764,
+      "interpolated": 1826,
+      "unobserved": 1418
+    }
+  },
+  "marks": {
+    "observed": "solid point at the anchor month, joined only to an adjacent observed month",
+    "interpolated": "dotted grey segment — a month the monthly spine filled between two observations",
+    "unobserved": "nothing drawn; a run of this many months or more is shaded and labelled",
+    "min_shaded_run_months": 3
+  },
+  "outcomes": [
+    {
+      "id": "u5mr",
+      "label": "Under-5 mortality rate",
+      "short": "Under-5 mortality",
+      "domain": "health",
+      "unit": "per 1,000 live births",
+      "direction": "down",
+      "source": "NDHS / UN IGME",
+      "native_frequency": "annual",
+      "quality_status": "ok",
+      "drawable": true,
+      "window": {
+        "first": "1999-01",
+        "last": "2026-10"
+      },
+      "observations": {
+        "observed": 26,
+        "interpolated": 275,
+        "unobserved": 33
+      },
+      "native_in_window": 26,
+      "first_observed": "1999-07",
+      "last_observed": "2024-07",
+      "definition_breaks": [],
+      "caption": "26 observations in the window (1999-07 to 2024-07); 275 months interpolated by the monthly spine; 33 months with no observation. Native frequency annual; Stage 3 status ok. The series stops at 2024-07, so the remainder of the window carries no observation.",
+      "figure": {
+        "path": "registry/series/2026-10-29/figures/u5mr.svg",
+        "bytes": 51961
+      }
+    },
+    {
+      "id": "mmr",
+      "label": "Maternal mortality ratio",
+      "short": "Maternal mortality",
+      "domain": "health",
+      "unit": "per 100,000 births",
+      "direction": "down",
+      "source": "World Bank SH.STA.MMRT (UN MMEIG estimates)",
+      "native_frequency": "annual",
+      "quality_status": "ok",
+      "drawable": true,
+      "window": {
+        "first": "1999-01",
+        "last": "2026-10"
+      },
+      "observations": {
+        "observed": 25,
+        "interpolated": 264,
+        "unobserved": 45
+      },
+      "native_in_window": 25,
+      "first_observed": "1999-07",
+      "last_observed": "2023-07",
+      "definition_breaks": [],
+      "caption": "25 observations in the window (1999-07 to 2023-07); 264 months interpolated by the monthly spine; 45 months with no observation. Native frequency annual; Stage 3 status ok. The series stops at 2023-07, so the remainder of the window carries no observation.",
+      "figure": {
+        "path": "registry/series/2026-10-29/figures/mmr.svg",
+        "bytes": 50122
+      }
+    },
+    {
+      "id": "immun_penta3",
+      "label": "Penta3 immunisation coverage",
+      "short": "Penta3 coverage",
+      "domain": "health",
+      "unit": "% surviving infants",
+      "direction": "up",
+      "source": "World Bank SH.IMM.IDPT (DPT3, WHO/UNICEF WUENIC)",
+      "native_frequency": "annual",
+      "quality_status": "flagged",
+      "drawable": true,
+      "window": {
+        "first": "1999-01",
+        "last": "2026-10"
+      },
+      "observations": {
+        "observed": 26,
+        "interpolated": 275,
+        "unobserved": 33
+      },
+      "native_in_window": 26,
+      "first_observed": "1999-07",
+      "last_observed": "2024-07",
+      "definition_breaks": [],
+      "caption": "26 observations in the window (1999-07 to 2024-07); 275 months interpolated by the monthly spine; 33 months with no observation. Native frequency annual; Stage 3 status flagged. The series stops at 2024-07, so the remainder of the window carries no observation.",
+      "figure": {
+        "path": "registry/series/2026-10-29/figures/immun_penta3.svg",
+        "bytes": 52306
+      }
+    },
+    {
+      "id": "skilled_birth",
+      "label": "Skilled birth attendance",
+      "short": "Skilled birth attendance",
+      "domain": "health",
+      "unit": "% of births",
+      "direction": "up",
+      "source": "World Bank SH.STA.BRTC.ZS (survey-based)",
+      "native_frequency": "annual",
+      "quality_status": "flagged",
+      "drawable": true,
+      "window": {
+        "first": "1999-01",
+        "last": "2026-10"
+      },
+      "observations": {
+        "observed": 8,
+        "interpolated": 11,
+        "unobserved": 315
+      },
+      "native_in_window": 8,
+      "first_observed": "1999-07",
+      "last_observed": "2022-07",
+      "definition_breaks": [],
+      "caption": "8 observations in the window (1999-07 to 2022-07); 11 months interpolated by the monthly spine; 315 months with no observation. Native frequency annual; Stage 3 status flagged. The series stops at 2022-07, so the remainder of the window carries no observation.",
+      "figure": {
+        "path": "registry/series/2026-10-29/figures/skilled_birth.svg",
+        "bytes": 13082
+      }
+    },
+    {
+      "id": "literacy_youth",
+      "label": "Youth literacy (15-24)",
+      "short": "Youth literacy",
+      "domain": "education",
+      "unit": "%",
+      "direction": "up",
+      "source": "NBS / UNESCO UIS",
+      "native_frequency": "annual",
+      "quality_status": "flagged",
+      "drawable": true,
+      "window": {
+        "first": "1999-01",
+        "last": "2026-10"
+      },
+      "observations": {
+        "observed": 7,
+        "interpolated": 0,
+        "unobserved": 327
+      },
+      "native_in_window": 7,
+      "first_observed": "2003-07",
+      "last_observed": "2024-07",
+      "definition_breaks": [],
+      "caption": "7 observations in the window (2003-07 to 2024-07); 0 months interpolated by the monthly spine; 327 months with no observation. Native frequency annual; Stage 3 status flagged. The series stops at 2024-07, so the remainder of the window carries no observation.",
+      "figure": {
+        "path": "registry/series/2026-10-29/figures/literacy_youth.svg",
+        "bytes": 11308
+      }
+    },
+    {
+      "id": "primary_completion",
+      "label": "Primary completion rate",
+      "short": "Primary completion",
+      "domain": "education",
+      "unit": "%",
+      "direction": "up",
+      "source": "NEMIS / World Bank",
+      "native_frequency": "annual",
+      "quality_status": "flagged",
+      "drawable": true,
+      "window": {
+        "first": "1999-01",
+        "last": "2026-10"
+      },
+      "observations": {
+        "observed": 8,
+        "interpolated": 66,
+        "unobserved": 260
+      },
+      "native_in_window": 8,
+      "first_observed": "2000-07",
+      "last_observed": "2010-07",
+      "definition_breaks": [],
+      "caption": "8 observations in the window (2000-07 to 2010-07); 66 months interpolated by the monthly spine; 260 months with no observation. Native frequency annual; Stage 3 status flagged. The series stops at 2010-07, so the remainder of the window carries no observation.",
+      "figure": {
+        "path": "registry/series/2026-10-29/figures/primary_completion.svg",
+        "bytes": 19490
+      }
+    },
+    {
+      "id": "ner_primary",
+      "label": "Net enrolment rate, primary",
+      "short": "Net enrolment (primary)",
+      "domain": "education",
+      "unit": "%",
+      "direction": "up",
+      "source": "NEMIS",
+      "native_frequency": "annual",
+      "quality_status": "flagged",
+      "drawable": true,
+      "window": {
+        "first": "1999-01",
+        "last": "2026-10"
+      },
+      "observations": {
+        "observed": 9,
+        "interpolated": 77,
+        "unobserved": 248
+      },
+      "native_in_window": 9,
+      "first_observed": "1999-07",
+      "last_observed": "2010-07",
+      "definition_breaks": [],
+      "caption": "9 observations in the window (1999-07 to 2010-07); 77 months interpolated by the monthly spine; 248 months with no observation. Native frequency annual; Stage 3 status flagged. The series stops at 2010-07, so the remainder of the window carries no observation.",
+      "figure": {
+        "path": "registry/series/2026-10-29/figures/ner_primary.svg",
+        "bytes": 21486
+      }
+    },
+    {
+      "id": "fatalities",
+      "label": "Reported security fatalities",
+      "short": "Security fatalities",
+      "domain": "security",
+      "unit": "count",
+      "direction": "down",
+      "source": "UCDP GED (bulk archive, keyless)",
+      "native_frequency": "monthly",
+      "quality_status": "flagged",
+      "drawable": true,
+      "window": {
+        "first": "1999-01",
+        "last": "2026-10"
+      },
+      "observations": {
+        "observed": 287,
+        "interpolated": 0,
+        "unobserved": 47
+      },
+      "native_in_window": 287,
+      "first_observed": "1999-01",
+      "last_observed": "2024-12",
+      "definition_breaks": [],
+      "caption": "287 observations in the window (1999-01 to 2024-12); 0 months interpolated by the monthly spine; 47 months with no observation. Native frequency monthly; Stage 3 status flagged. The series stops at 2024-12, so the remainder of the window carries no observation.",
+      "figure": {
+        "path": "registry/series/2026-10-29/figures/fatalities.svg",
+        "bytes": 81294
+      }
+    },
+    {
+      "id": "incidents",
+      "label": "Reported security incidents",
+      "short": "Security incidents",
+      "domain": "security",
+      "unit": "count",
+      "direction": "down",
+      "source": "UCDP GED (event count)",
+      "native_frequency": "monthly",
+      "quality_status": "flagged",
+      "drawable": true,
+      "window": {
+        "first": "1999-01",
+        "last": "2026-10"
+      },
+      "observations": {
+        "observed": 287,
+        "interpolated": 0,
+        "unobserved": 47
+      },
+      "native_in_window": 287,
+      "first_observed": "1999-01",
+      "last_observed": "2024-12",
+      "definition_breaks": [],
+      "caption": "287 observations in the window (1999-01 to 2024-12); 0 months interpolated by the monthly spine; 47 months with no observation. Native frequency monthly; Stage 3 status flagged. The series stops at 2024-12, so the remainder of the window carries no observation.",
+      "figure": {
+        "path": "registry/series/2026-10-29/figures/incidents.svg",
+        "bytes": 81034
+      }
+    },
+    {
+      "id": "gdp_growth",
+      "label": "Real GDP growth (y/y)",
+      "short": "GDP growth (y/y)",
+      "domain": "economy",
+      "unit": "%",
+      "direction": "up",
+      "source": "NBS / World Bank",
+      "native_frequency": "annual",
+      "quality_status": "ok",
+      "drawable": true,
+      "window": {
+        "first": "1999-01",
+        "last": "2026-10"
+      },
+      "observations": {
+        "observed": 27,
+        "interpolated": 286,
+        "unobserved": 21
+      },
+      "native_in_window": 27,
+      "first_observed": "1999-07",
+      "last_observed": "2025-07",
+      "definition_breaks": [
+        {
+          "date": "2014-04",
+          "name": "GDP rebasing",
+          "note": "Nigeria rebased GDP to a 2010 base year, roughly doubling measured nominal GDP and shifting the level of the series. Level comparisons across April 2014 are not meaningful."
+        }
+      ],
+      "caption": "27 observations in the window (1999-07 to 2025-07); 286 months interpolated by the monthly spine; 21 months with no observation. Native frequency annual; Stage 3 status ok. Definition break annotated: GDP rebasing. The series stops at 2025-07, so the remainder of the window carries no observation.",
+      "figure": {
+        "path": "registry/series/2026-10-29/figures/gdp_growth.svg",
+        "bytes": 54271
+      }
+    },
+    {
+      "id": "cpi_yoy",
+      "label": "Headline inflation (y/y)",
+      "short": "Inflation (y/y)",
+      "domain": "economy",
+      "unit": "%",
+      "direction": "down",
+      "source": "NBS / World Bank",
+      "native_frequency": "annual",
+      "quality_status": "flagged",
+      "drawable": true,
+      "window": {
+        "first": "1999-01",
+        "last": "2026-10"
+      },
+      "observations": {
+        "observed": 27,
+        "interpolated": 286,
+        "unobserved": 21
+      },
+      "native_in_window": 27,
+      "first_observed": "1999-07",
+      "last_observed": "2025-07",
+      "definition_breaks": [
+        {
+          "date": "2025-01",
+          "name": "CPI rebasing (2024 base year)",
+          "note": "The NBS rebased the Consumer Price Index in January 2025 — the first rebasing since 2009 — on a new 2024 base year with an updated basket. Headline inflation fell from 34.80% in December 2024 to 24.48% in January 2025, largely because of the rebasing rather than a change in prices (Reuters, 2025-02-18; NBS release). The World Bank's annual averages inherit this: 33.24% for 2024 against 23.01% for 2025. Comparison across January 2025 mixes disinflation with a measurement change and must be annotated, not smoothed."
+        }
+      ],
+      "caption": "27 observations in the window (1999-07 to 2025-07); 286 months interpolated by the monthly spine; 21 months with no observation. Native frequency annual; Stage 3 status flagged. Definition break annotated: CPI rebasing (2024 base year). The series stops at 2025-07, so the remainder of the window carries no observation.",
+      "figure": {
+        "path": "registry/series/2026-10-29/figures/cpi_yoy.svg",
+        "bytes": 54774
+      }
+    },
+    {
+      "id": "unemp",
+      "label": "Unemployment rate",
+      "short": "Unemployment rate",
+      "domain": "economy",
+      "unit": "%",
+      "direction": "down",
+      "source": "World Bank SL.UEM.TOTL.ZS (ILO modelled)",
+      "native_frequency": "annual",
+      "quality_status": "ok",
+      "drawable": true,
+      "window": {
+        "first": "1999-01",
+        "last": "2026-10"
+      },
+      "observations": {
+        "observed": 27,
+        "interpolated": 286,
+        "unobserved": 21
+      },
+      "native_in_window": 27,
+      "first_observed": "1999-07",
+      "last_observed": "2025-07",
+      "definition_breaks": [
+        {
+          "date": "2014-01",
+          "name": "Labour-force methodology change",
+          "note": "NBS moved to the ILO-aligned definition, lifting measured unemployment substantially. The series is not comparable across this date."
+        },
+        {
+          "date": "2023-03",
+          "name": "Methodology revision",
+          "note": "NBS revised the definition again; the level steps down."
+        }
+      ],
+      "caption": "27 observations in the window (1999-07 to 2025-07); 286 months interpolated by the monthly spine; 21 months with no observation. Native frequency annual; Stage 3 status ok. Definition breaks annotated: Labour-force methodology change; Methodology revision. The series stops at 2025-07, so the remainder of the window carries no observation.",
+      "figure": {
+        "path": "registry/series/2026-10-29/figures/unemp.svg",
+        "bytes": 55217
+      }
+    }
+  ],
+  "notes": [
+    "One panel per outcome in analysis/specs/outcomes.yml, keyed on the outcome id, which is the metric id in the base.",
+    "An observed month is a dot; an interpolated month is a dotted segment (the imputation rule made visible); a month with no observation is nothing, and a run of them is shaded and labelled.",
+    "Counts, span, Stage 3 status and definition breaks are read from the base; the engine computes no statistic.",
+    "Each figure's byte count is recorded here and compared to the file; a figure one dbt run behind its rows fails rather than being noticed by a reader."
+  ]
+}

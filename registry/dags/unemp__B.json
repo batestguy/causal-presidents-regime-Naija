@@ -1,11 +1,11 @@
 {
   "dag_id": "unemp__B",
   "schema_version": "0.3.0",
-  "vintage_date": "2026-10-18",
-  "generated_at": "2026-10-18T12:37:07+0100",
+  "vintage_date": "2026-10-29",
+  "generated_at": "2026-10-29T06:39:35+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "1295af7"
+    "git_sha": "533c2aa"
   },
   "outcome": {
     "id": "unemp",
@@ -244,8 +244,8 @@
     "blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly",
     "note": "Runs, but not as base spec section 9 specifies; the deviations are listed above.",
     "coverage_status": "partial",
-    "vintage": "2026-10-18",
-    "source": "registry/diagnostics/2026-10-18/diagnostics.json"
+    "vintage": "2026-10-29",
+    "source": "registry/diagnostics/2026-10-29/diagnostics.json"
   },
   "assets": {
     "svg": "registry/dags/unemp__B.svg"

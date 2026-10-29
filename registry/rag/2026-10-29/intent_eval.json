@@ -1,0 +1,1954 @@
+{
+ "schema_version": 2,
+ "layer": "Stage 9 — the pre-retrieval intent gate",
+ "vintage": "2026-10-29",
+ "generated_at": "2026-10-29T05:44:35+00:00",
+ "generator": {
+  "script": "scripts/eval_intent.py",
+  "spec": "analysis/specs/intent_gate.yml",
+  "eval_spec": "analysis/specs/intent_gate_eval_v4.yml",
+  "git_sha": "533c2aa8489b78c85446d3a9585bdb0d29ca6058"
+ },
+ "specs": {
+  "gate": {
+   "path": "analysis/specs/intent_gate.yml",
+   "sha256": "f89b39cc7e0476b436f6c1ffe3b01777c9114421125f213d449708922c95a3b3",
+   "frozen_at": "613ccf5"
+  },
+  "eval": {
+   "path": "analysis/specs/intent_gate_eval_v4.yml",
+   "sha256": "b7c26dc331567049abca9e12b9f831672d9b9ddc6ab8dac3897f85a575722d21",
+   "frozen_at": null
+  }
+ },
+ "corpus": {
+  "path": "registry/rag/2026-10-29/corpus.json",
+  "sha256": "2563407cfdffe42fb420de28af9f4826451cafa6f8b4416ba90f3339fc18878f",
+  "chunks": 488,
+  "vintage": "2026-10-29"
+ },
+ "rules": [
+  {
+   "id": "G01",
+   "priority": 10,
+   "intent": "answerable",
+   "implements": "the scope clause 'why a question cannot be answered' — the corpus answers questions *about* its own limits"
+  },
+  {
+   "id": "G02",
+   "priority": 20,
+   "intent": "out_of_scope",
+   "implements": "the scope clause 'It cannot answer forecast questions'"
+  },
+  {
+   "id": "G03",
+   "priority": 30,
+   "intent": "out_of_scope",
+   "implements": "the scope clause 'the 12 catalogue outcomes …' — a question about a measure the corpus does not carry"
+  },
+  {
+   "id": "G04",
+   "priority": 40,
+   "intent": "out_of_scope",
+   "implements": "the scope clause 'the corpus can answer questions about …' — a request for a recommendation is not a request for an estimate"
+  },
+  {
+   "id": "G08",
+   "priority": 45,
+   "intent": "out_of_scope",
+   "implements": "the scope clause 'the corpus can answer questions about …' — a request for a recommendation is not a request for an estimate"
+  },
+  {
+   "id": "G05",
+   "priority": 50,
+   "intent": "out_of_scope",
+   "implements": "the scope clause 'It cannot answer forecast questions' — a value at a year the corpus does not cover"
+  },
+  {
+   "id": "G09",
+   "priority": 55,
+   "intent": "out_of_scope",
+   "implements": "the scope clause 'questions about countries outside the donor panel'"
+  },
+  {
+   "id": "G06",
+   "priority": 60,
+   "intent": "refusal_with_reason",
+   "implements": "the scope clause 'why a question cannot be answered' — the tenure comparison the data cannot support"
+  },
+  {
+   "id": "G07",
+   "priority": 70,
+   "intent": "refusal_with_reason",
+   "implements": "the scope clause 'anything requiring an estimate the design did not identify'"
+  }
+ ],
+ "held_out": {
+  "what_this_is": "the questions the rules were frozen before; the rules are not tuned on it",
+  "counts": {
+   "answerable": 22,
+   "out_of_scope": 19,
+   "refusal_with_reason": 8,
+   "n_scored_golds": 32,
+   "n_needle_checks": 8
+  },
+  "metrics": {
+   "n_questions": 49,
+   "intent_accuracy": 0.979592,
+   "out_of_scope_refusal": 0.947368,
+   "answerable_not_refused": 1.0,
+   "refusal_route_resolved": 1.0,
+   "refusal_reason_cited": 1.0,
+   "route_matches_gold": 0.625
+  },
+  "gates": {
+   "intent_accuracy": {
+    "target": 0.9,
+    "measured": 0.979592,
+    "met": true
+   },
+   "out_of_scope_refusal": {
+    "target": 0.9,
+    "measured": 0.947368,
+    "met": true
+   },
+   "answerable_not_refused": {
+    "target": 1.0,
+    "measured": 1.0,
+    "met": true
+   },
+   "refusal_route_resolved": {
+    "target": 1.0,
+    "measured": 1.0,
+    "met": true
+   },
+   "refusal_reason_cited": {
+    "target": 1.0,
+    "measured": 1.0,
+    "met": true
+   }
+  },
+  "per_family": [
+   {
+    "family": "authored",
+    "n": 16,
+    "intent_accuracy": 1.0,
+    "misses": []
+   },
+   {
+    "family": "card",
+    "n": 12,
+    "intent_accuracy": 1.0,
+    "misses": []
+   },
+   {
+    "family": "design_c",
+    "n": 4,
+    "intent_accuracy": 1.0,
+    "misses": []
+   },
+   {
+    "family": "forecast",
+    "n": 6,
+    "intent_accuracy": 1.0,
+    "misses": []
+   },
+   {
+    "family": "past_year",
+    "n": 3,
+    "intent_accuracy": 1.0,
+    "misses": []
+   },
+   {
+    "family": "population",
+    "n": 3,
+    "intent_accuracy": 1.0,
+    "misses": []
+   },
+   {
+    "family": "probe",
+    "n": 1,
+    "intent_accuracy": 0.0,
+    "misses": [
+     "P04"
+    ]
+   },
+   {
+    "family": "tenure",
+    "n": 4,
+    "intent_accuracy": 1.0,
+    "misses": []
+   }
+  ],
+  "questions": [
+   {
+    "id": "M1_01",
+    "family": "card",
+    "question": "What did the published estimate find for Under-5 mortality rate under National VECM / ARDL time series?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:u5mr__B",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": false
+   },
+   {
+    "id": "M1_02",
+    "family": "card",
+    "question": "What did the published estimate find for Maternal mortality ratio under Synthetic control (cross-country)?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:mmr__C",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": false
+   },
+   {
+    "id": "M1_03",
+    "family": "card",
+    "question": "What did the published estimate find for Penta3 immunisation coverage under State dose-response DiD?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:immun_penta3__A",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": false
+   },
+   {
+    "id": "M1_04",
+    "family": "card",
+    "question": "What did the published estimate find for Skilled birth attendance under National VECM / ARDL time series?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:skilled_birth__B",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": false
+   },
+   {
+    "id": "M1_05",
+    "family": "card",
+    "question": "What did the published estimate find for Youth literacy (15-24) under Synthetic control (cross-country)?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:literacy_youth__C",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": false
+   },
+   {
+    "id": "M1_06",
+    "family": "card",
+    "question": "What did the published estimate find for Primary completion rate under State dose-response DiD?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:primary_completion__A",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": false
+   },
+   {
+    "id": "M1_07",
+    "family": "card",
+    "question": "What did the published estimate find for Net enrolment rate, primary under National VECM / ARDL time series?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:ner_primary__B",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": false
+   },
+   {
+    "id": "M1_08",
+    "family": "card",
+    "question": "What did the published estimate find for Reported security fatalities under Synthetic control (cross-country)?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:fatalities__C",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": false
+   },
+   {
+    "id": "M1_09",
+    "family": "card",
+    "question": "What did the published estimate find for Reported security incidents under State dose-response DiD?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:incidents__A",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": false
+   },
+   {
+    "id": "M1_10",
+    "family": "card",
+    "question": "What did the published estimate find for Real GDP growth (y/y) under National VECM / ARDL time series?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:gdp_growth__B",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": false
+   },
+   {
+    "id": "M1_11",
+    "family": "card",
+    "question": "What did the published estimate find for Headline inflation (y/y) under Synthetic control (cross-country)?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:cpi_yoy__C",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": false
+   },
+   {
+    "id": "M1_12",
+    "family": "card",
+    "question": "What did the published estimate find for Unemployment rate under State dose-response DiD?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:unemp__A",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": false
+   },
+   {
+    "id": "M2_01",
+    "family": "forecast",
+    "question": "What will Net enrolment rate, primary be in 2030?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G05",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "A forecast is a value at a time the data does not reach, and the corpus reaches from 1999 to the vintage.",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true
+   },
+   {
+    "id": "M2_02",
+    "family": "forecast",
+    "question": "What will Reported security fatalities be in 2030?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G05",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "A forecast is a value at a time the data does not reach, and the corpus reaches from 1999 to the vintage.",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true
+   },
+   {
+    "id": "M2_03",
+    "family": "forecast",
+    "question": "What will Reported security incidents be in 2030?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G05",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "A forecast is a value at a time the data does not reach, and the corpus reaches from 1999 to the vintage.",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true
+   },
+   {
+    "id": "M2_04",
+    "family": "forecast",
+    "question": "What will Real GDP growth (y/y) be in 2030?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G05",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "A forecast is a value at a time the data does not reach, and the corpus reaches from 1999 to the vintage.",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true
+   },
+   {
+    "id": "M2_05",
+    "family": "forecast",
+    "question": "What will Headline inflation (y/y) be in 2030?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G05",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "A forecast is a value at a time the data does not reach, and the corpus reaches from 1999 to the vintage.",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true
+   },
+   {
+    "id": "M2_06",
+    "family": "forecast",
+    "question": "What will Unemployment rate be in 2030?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G05",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "A forecast is a value at a time the data does not reach, and the corpus reaches from 1999 to the vintage.",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true
+   },
+   {
+    "id": "M3_01",
+    "family": "population",
+    "question": "How many people live in Anambra today?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G03",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "The corpus carries a closed inventory: the 12 catalogue outcomes, the three designs, the published results, the coverage and quality artifacts, the administration and shock tables, and the limitations.",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true
+   },
+   {
+    "id": "M3_02",
+    "family": "population",
+    "question": "How many people live in Gombe today?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G03",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "The corpus carries a closed inventory: the 12 catalogue outcomes, the three designs, the published results, the coverage and quality artifacts, the administration and shock tables, and the limitations.",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true
+   },
+   {
+    "id": "M3_03",
+    "family": "population",
+    "question": "How many people live in Ogun today?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G03",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "The corpus carries a closed inventory: the 12 catalogue outcomes, the three designs, the published results, the coverage and quality artifacts, the administration and shock tables, and the limitations.",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true
+   },
+   {
+    "id": "M4_01",
+    "family": "past_year",
+    "question": "What was Penta3 immunisation coverage in 1980?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G05",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "A forecast is a value at a time the data does not reach, and the corpus reaches from 1999 to the vintage.",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true
+   },
+   {
+    "id": "M4_02",
+    "family": "past_year",
+    "question": "What was Net enrolment rate, primary in 1980?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G05",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "A forecast is a value at a time the data does not reach, and the corpus reaches from 1999 to the vintage.",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true
+   },
+   {
+    "id": "M4_03",
+    "family": "past_year",
+    "question": "What was Headline inflation (y/y) in 1980?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G05",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "A forecast is a value at a time the data does not reach, and the corpus reaches from 1999 to the vintage.",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true
+   },
+   {
+    "id": "M5_01",
+    "family": "tenure",
+    "question": "Which administration had the better record on Maternal mortality ratio?",
+    "expected_intent": "refusal_with_reason",
+    "intent": "refusal_with_reason",
+    "rule_id": "G06",
+    "route": "doc:limitations#s01",
+    "route_status": "pinned",
+    "reason": "docs/limitations.md §1 is the arithmetic: four to five administrations and one annual observation per national outcome means the tenure question is an arithmetic problem, not a null result.",
+    "expected_gap": null,
+    "gold": "doc:limitations#s01",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true,
+    "needle": "annual observations per national outcome",
+    "needle_found": true
+   },
+   {
+    "id": "M5_02",
+    "family": "tenure",
+    "question": "Which administration had the better record on Youth literacy (15-24)?",
+    "expected_intent": "refusal_with_reason",
+    "intent": "refusal_with_reason",
+    "rule_id": "G06",
+    "route": "doc:limitations#s01",
+    "route_status": "pinned",
+    "reason": "docs/limitations.md §1 is the arithmetic: four to five administrations and one annual observation per national outcome means the tenure question is an arithmetic problem, not a null result.",
+    "expected_gap": null,
+    "gold": "doc:limitations#s01",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true,
+    "needle": "annual observations per national outcome",
+    "needle_found": true
+   },
+   {
+    "id": "M5_03",
+    "family": "tenure",
+    "question": "Which administration had the better record on Reported security fatalities?",
+    "expected_intent": "refusal_with_reason",
+    "intent": "refusal_with_reason",
+    "rule_id": "G06",
+    "route": "doc:limitations#s01",
+    "route_status": "pinned",
+    "reason": "docs/limitations.md §1 is the arithmetic: four to five administrations and one annual observation per national outcome means the tenure question is an arithmetic problem, not a null result.",
+    "expected_gap": null,
+    "gold": "doc:limitations#s01",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true,
+    "needle": "annual observations per national outcome",
+    "needle_found": true
+   },
+   {
+    "id": "M5_04",
+    "family": "tenure",
+    "question": "Which administration had the better record on Headline inflation (y/y)?",
+    "expected_intent": "refusal_with_reason",
+    "intent": "refusal_with_reason",
+    "rule_id": "G06",
+    "route": "doc:limitations#s01",
+    "route_status": "pinned",
+    "reason": "docs/limitations.md §1 is the arithmetic: four to five administrations and one annual observation per national outcome means the tenure question is an arithmetic problem, not a null result.",
+    "expected_gap": null,
+    "gold": "doc:limitations#s01",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true,
+    "needle": "annual observations per national outcome",
+    "needle_found": true
+   },
+   {
+    "id": "M6_01",
+    "family": "design_c",
+    "question": "Can the synthetic control tell me whether Umaru Musa Yar'Adua caused the change in Under-5 mortality rate?",
+    "expected_intent": "refusal_with_reason",
+    "intent": "refusal_with_reason",
+    "rule_id": "G07",
+    "route": "result:C",
+    "route_status": "pinned",
+    "reason": "Design C was fitted in stage 8h (registry/design_c/2026-10-18/): four windows estimated, one refused by the declared minimum, and none identified — the in-space rank p runs 0.17 to 0.50 and the pre-fit gate does not discriminate on this pool.",
+    "expected_gap": null,
+    "gold": "result:C",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true,
+    "needle": "estimated_not_identified",
+    "needle_found": true
+   },
+   {
+    "id": "M6_02",
+    "family": "design_c",
+    "question": "Can the synthetic control tell me whether Goodluck Jonathan caused the change in Skilled birth attendance?",
+    "expected_intent": "refusal_with_reason",
+    "intent": "refusal_with_reason",
+    "rule_id": "G07",
+    "route": "result:C",
+    "route_status": "pinned",
+    "reason": "Design C was fitted in stage 8h (registry/design_c/2026-10-18/): four windows estimated, one refused by the declared minimum, and none identified — the in-space rank p runs 0.17 to 0.50 and the pre-fit gate does not discriminate on this pool.",
+    "expected_gap": null,
+    "gold": "result:C",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true,
+    "needle": "estimated_not_identified",
+    "needle_found": true
+   },
+   {
+    "id": "M6_03",
+    "family": "design_c",
+    "question": "Can the synthetic control tell me whether Muhammadu Buhari caused the change in Net enrolment rate, primary?",
+    "expected_intent": "refusal_with_reason",
+    "intent": "refusal_with_reason",
+    "rule_id": "G07",
+    "route": "result:C",
+    "route_status": "pinned",
+    "reason": "Design C was fitted in stage 8h (registry/design_c/2026-10-18/): four windows estimated, one refused by the declared minimum, and none identified — the in-space rank p runs 0.17 to 0.50 and the pre-fit gate does not discriminate on this pool.",
+    "expected_gap": null,
+    "gold": "result:C",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true,
+    "needle": "estimated_not_identified",
+    "needle_found": true
+   },
+   {
+    "id": "M6_04",
+    "family": "design_c",
+    "question": "Can the synthetic control tell me whether Bola Ahmed Tinubu caused the change in Real GDP growth (y/y)?",
+    "expected_intent": "refusal_with_reason",
+    "intent": "refusal_with_reason",
+    "rule_id": "G07",
+    "route": "result:C",
+    "route_status": "pinned",
+    "reason": "Design C was fitted in stage 8h (registry/design_c/2026-10-18/): four windows estimated, one refused by the declared minimum, and none identified — the in-space rank p runs 0.17 to 0.50 and the pre-fit gate does not discriminate on this pool.",
+    "expected_gap": null,
+    "gold": "result:C",
+    "gold_scored": true,
+    "correct": true,
+    "route_matches_gold": true,
+    "needle": "estimated_not_identified",
+    "needle_found": true
+   },
+   {
+    "id": "D01",
+    "family": "authored",
+    "question": "Which check did the fatalities estimate fail?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:fatalities__A",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "D02",
+    "family": "authored",
+    "question": "What does the incidents card say the design cannot rule out?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:incidents__A",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "D03",
+    "family": "authored",
+    "question": "How many months of the state panel are observed from 2016?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "doc:data-dictionary#faac-state-allocation-the-fiscal-dose",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "D04",
+    "family": "authored",
+    "question": "Which outcome passed its pre-check under Design C?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:u5mr__C",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "D05",
+    "family": "authored",
+    "question": "What interval does the published incidents estimate report?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:incidents__A",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "D06",
+    "family": "authored",
+    "question": "Which years does the FAAC archive start and end?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "doc:data-dictionary#faac-state-allocation-the-fiscal-dose",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "D07",
+    "family": "authored",
+    "question": "What did the robustness curve find about the sign of Design A's coefficient?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "doc:robustness#s03",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "D08",
+    "family": "authored",
+    "question": "How many donor countries are in the synthetic-control pool?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "doc:design-memo#s04",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "D09",
+    "family": "authored",
+    "question": "Was the synthetic control identified?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:u5mr__C",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "D10",
+    "family": "authored",
+    "question": "What was the fatalities coefficient under Design A?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": null,
+    "gold": "card:fatalities__A",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "D11",
+    "family": "authored",
+    "question": "How did Uganda's growth compare with Nigeria's in 2015?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G09",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "The corpus carries Nigeria: 37 states, the federal series, the administration and shock tables.",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "D12",
+    "family": "authored",
+    "question": "What is the population of Kano state today?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G03",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "The corpus carries a closed inventory: the 12 catalogue outcomes, the three designs, the published results, the coverage and quality artifacts, the administration and shock tables, and the limitations.",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "D13",
+    "family": "authored",
+    "question": "Predict Nigeria's inflation in 2035.",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G02",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "The project holds historical series and published estimates; it makes no forecasts, and no chunk supports one (analysis/specs/rag.yml#answer_contract.scope).",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "D14",
+    "family": "authored",
+    "question": "What should the Central Bank do about the exchange rate?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G04",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "The project publishes estimates with intervals and assumptions; it publishes no recommendation (docs/limitations.md §12 states what is still claimed, narrowly).",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "D15",
+    "family": "authored",
+    "question": "What was the exchange rate in 1955?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G05",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "A forecast is a value at a time the data does not reach, and the corpus reaches from 1999 to the vintage.",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "D16",
+    "family": "authored",
+    "question": "Which party governed Ghana between 2000 and 2008?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G09",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "reason": "The corpus carries Nigeria: 37 states, the federal series, the administration and shock tables.",
+    "expected_gap": null,
+    "gold": "scope:answer",
+    "gold_scored": false,
+    "correct": true
+   },
+   {
+    "id": "P04",
+    "family": "probe",
+    "question": "How did the cedi perform against the naira in 2018?",
+    "expected_intent": "out_of_scope",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "reason": "no rule matched, and the default is answerable",
+    "expected_gap": "KG03",
+    "gold": "scope:answer",
+    "gold_scored": false,
+    "correct": false
+   }
+  ]
+ },
+ "regression": {
+  "what_this_is": "previously seen questions, checked after the change that they motivated; not a held-out measurement",
+  "counts": {
+   "n": 17
+  },
+  "accuracy": 0.941176,
+  "misses": [
+   "P03"
+  ],
+  "questions": [
+   {
+    "id": "C01",
+    "question": "What did the robustness grid find across Design B specifications?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "correct": true
+   },
+   {
+    "id": "C02",
+    "question": "What is the standard error on the incidents coefficient?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "correct": true
+   },
+   {
+    "id": "C03",
+    "question": "How many months of the FAAC series are observed?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "correct": true
+   },
+   {
+    "id": "C04",
+    "question": "Which president was in office at the start of the study window?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "correct": true
+   },
+   {
+    "id": "C05",
+    "question": "Is the under-5 mortality series observed at state level?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "correct": true
+   },
+   {
+    "id": "C06",
+    "question": "What does the fatal crashes outcome measure?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "correct": true
+   },
+   {
+    "id": "C07",
+    "question": "What was Nigeria's inflation rate in 2016?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "correct": true
+   },
+   {
+    "id": "C08",
+    "question": "Which check did the fatalities estimate fail?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "correct": true
+   },
+   {
+    "id": "C09",
+    "question": "What interval does the published fatalities estimate report?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "correct": true
+   },
+   {
+    "id": "C10",
+    "question": "Which years does the study window cover?",
+    "expected_intent": "answerable",
+    "intent": "answerable",
+    "rule_id": null,
+    "correct": true
+   },
+   {
+    "id": "C11",
+    "question": "How large was Ghana's economy in 2012?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G09",
+    "correct": true
+   },
+   {
+    "id": "C12",
+    "question": "Compare Kenya's conflict deaths with Nigeria's.",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G09",
+    "correct": true
+   },
+   {
+    "id": "C13",
+    "question": "What is South Africa's unemployment rate?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G09",
+    "correct": true
+   },
+   {
+    "id": "C14",
+    "question": "How many people were living in Ilorin in 2019?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G03",
+    "correct": true
+   },
+   {
+    "id": "C15",
+    "question": "Forecast the exchange rate for next year.",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G02",
+    "correct": true
+   },
+   {
+    "id": "C16",
+    "question": "What should the states do about derivation?",
+    "expected_intent": "out_of_scope",
+    "intent": "out_of_scope",
+    "rule_id": "G04",
+    "correct": true
+   },
+   {
+    "id": "P03",
+    "question": "How did Accra's economy grow between 2010 and 2015?",
+    "expected_intent": "out_of_scope",
+    "intent": "answerable",
+    "rule_id": null,
+    "correct": false
+   }
+  ]
+ },
+ "published_set": {
+  "what_this_is": "the 22 published questions, measured under the gate; the set the rules were written against, so not a generalisation estimate",
+  "path": "registry/rag/2026-10-29/eval_set.json",
+  "counts": {
+   "answerable": 16,
+   "out_of_scope": 4,
+   "refusal_with_reason": 2
+  },
+  "metrics": {
+   "n_questions": 22,
+   "out_of_scope_refusal": 1.0,
+   "answerable_not_refused": 1.0,
+   "answerable_recall_at_5": 1.0,
+   "refusal_route_matches_citation": 1.0,
+   "refusal_reason_cited": 1.0,
+   "retrieval": "measured: cosine over the committed vectors, k = 5",
+   "scope_chunks": [
+    "scope:answer",
+    "scope:answer#p2"
+   ]
+  },
+  "gates": {
+   "out_of_scope_refusal": {
+    "target": 0.9,
+    "measured": 1.0,
+    "met": true
+   },
+   "answerable_not_refused": {
+    "target": 1.0,
+    "measured": 1.0,
+    "met": true
+   },
+   "refusal_reason_cited": {
+    "target": 1.0,
+    "measured": 1.0,
+    "met": true
+   }
+  },
+  "questions": [
+   {
+    "id": "q01_fatalities_elasticity",
+    "type": "answerable",
+    "question": "What did the published estimate find for the effect of FAAC allocations on reported fatalities?",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "expected_refusal_cite": null,
+    "route_matches_cite": true,
+    "carries_a_needle": false,
+    "first_gold_rank": 3,
+    "retrieved": [
+     {
+      "chunk_id": "estimate:fatalities__A",
+      "score": 0.629271
+     },
+     {
+      "chunk_id": "card:fatalities__B#p6",
+      "score": 0.614327
+     },
+     {
+      "chunk_id": "card:fatalities__A#p6",
+      "score": 0.59542
+     },
+     {
+      "chunk_id": "result:A",
+      "score": 0.578616
+     },
+     {
+      "chunk_id": "estimate:incidents__A",
+      "score": 0.567862
+     }
+    ]
+   },
+   {
+    "id": "q02_fatalities_identified",
+    "type": "answerable",
+    "question": "Is the fatality estimate identified, and which check decided that?",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "expected_refusal_cite": null,
+    "route_matches_cite": true,
+    "carries_a_needle": false,
+    "first_gold_rank": 1,
+    "retrieved": [
+     {
+      "chunk_id": "card:fatalities__A#p6",
+      "score": 0.63179
+     },
+     {
+      "chunk_id": "card:fatalities__B#p6",
+      "score": 0.570857
+     },
+     {
+      "chunk_id": "card:fatalities__C#p6",
+      "score": 0.545805
+     },
+     {
+      "chunk_id": "doc:events#s05#p6",
+      "score": 0.529658
+     },
+     {
+      "chunk_id": "estimate:fatalities__A",
+      "score": 0.528608
+     }
+    ]
+   },
+   {
+    "id": "q03_incidents_interval",
+    "type": "answerable",
+    "question": "What is the point estimate and 95 % interval for the effect on the number of reported incidents?",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "expected_refusal_cite": null,
+    "route_matches_cite": true,
+    "carries_a_needle": false,
+    "first_gold_rank": 3,
+    "retrieved": [
+     {
+      "chunk_id": "result:A#p2",
+      "score": 0.544234
+     },
+     {
+      "chunk_id": "doc:limitations#s05",
+      "score": 0.500362
+     },
+     {
+      "chunk_id": "card:incidents__A#p5",
+      "score": 0.46974
+     },
+     {
+      "chunk_id": "card:incidents__B",
+      "score": 0.447234
+     },
+     {
+      "chunk_id": "estimate:incidents__A",
+      "score": 0.443252
+     }
+    ]
+   },
+   {
+    "id": "q04_oil_to_states",
+    "type": "answerable",
+    "question": "How much of a Brent crude oil shock reaches state governments, and after how long?",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "expected_refusal_cite": null,
+    "route_matches_cite": true,
+    "carries_a_needle": false,
+    "first_gold_rank": 1,
+    "retrieved": [
+     {
+      "chunk_id": "result:B",
+      "score": 0.679299
+     },
+     {
+      "chunk_id": "doc:estimates#s02#p5",
+      "score": 0.579535
+     },
+     {
+      "chunk_id": "doc:estimates#s02#p11",
+      "score": 0.577401
+     },
+     {
+      "chunk_id": "doc:estimates#s02#p12",
+      "score": 0.511707
+     },
+     {
+      "chunk_id": "doc:estimates#s02#p9",
+      "score": 0.499064
+     }
+    ]
+   },
+   {
+    "id": "q05_design_b_robust",
+    "type": "answerable",
+    "question": "Did Design B's result survive the robustness grid?",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "expected_refusal_cite": null,
+    "route_matches_cite": true,
+    "carries_a_needle": false,
+    "first_gold_rank": 2,
+    "retrieved": [
+     {
+      "chunk_id": "doc:robustness#s01#p2",
+      "score": 0.60539
+     },
+     {
+      "chunk_id": "doc:robustness#s02",
+      "score": 0.603855
+     },
+     {
+      "chunk_id": "doc:robustness#s05#p2",
+      "score": 0.589645
+     },
+     {
+      "chunk_id": "doc:robustness#s01",
+      "score": 0.588936
+     },
+     {
+      "chunk_id": "doc:robustness#s02#p2",
+      "score": 0.560298
+     }
+    ]
+   },
+   {
+    "id": "q06_design_c_status",
+    "type": "answerable",
+    "question": "Was the synthetic control estimated, and what did its placebos find?",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "expected_refusal_cite": null,
+    "route_matches_cite": true,
+    "carries_a_needle": false,
+    "first_gold_rank": 1,
+    "retrieved": [
+     {
+      "chunk_id": "doc:design-memo#s04#p7",
+      "score": 0.525915
+     },
+     {
+      "chunk_id": "doc:limitations#s07#p3",
+      "score": 0.49229
+     },
+     {
+      "chunk_id": "doc:design-memo#s04#p6",
+      "score": 0.468237
+     },
+     {
+      "chunk_id": "card:skilled_birth__C#p2",
+      "score": 0.454009
+     },
+     {
+      "chunk_id": "doc:design-memo#s04#p8",
+      "score": 0.45108
+     }
+    ]
+   },
+   {
+    "id": "q07_u5mr_synthetic_control",
+    "type": "answerable",
+    "question": "Can you show me an estimate for under-5 mortality under the synthetic-control design?",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "expected_refusal_cite": null,
+    "route_matches_cite": true,
+    "carries_a_needle": false,
+    "first_gold_rank": 2,
+    "retrieved": [
+     {
+      "chunk_id": "estimate:u5mr__C",
+      "score": 0.650138
+     },
+     {
+      "chunk_id": "card:u5mr__C#p4",
+      "score": 0.52054
+     },
+     {
+      "chunk_id": "doc:limitations#s05",
+      "score": 0.504076
+     },
+     {
+      "chunk_id": "card:u5mr__C",
+      "score": 0.502659
+     },
+     {
+      "chunk_id": "estimate:u5mr__C#p3",
+      "score": 0.502213
+     }
+    ]
+   },
+   {
+    "id": "q08_observed_share",
+    "type": "answerable",
+    "question": "How much of the monthly data series is actually observed rather than interpolated?",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "expected_refusal_cite": null,
+    "route_matches_cite": true,
+    "carries_a_needle": false,
+    "first_gold_rank": 1,
+    "retrieved": [
+     {
+      "chunk_id": "doc:limitations#s02",
+      "score": 0.582929
+     },
+     {
+      "chunk_id": "doc:limitations#s02#p2",
+      "score": 0.542148
+     },
+     {
+      "chunk_id": "doc:data-dictionary#imputation-and-how-to-tell-it-apart-from-data#p2",
+      "score": 0.455133
+     },
+     {
+      "chunk_id": "doc:data-dictionary#fact-metric-the-base-table#p6",
+      "score": 0.426748
+     },
+     {
+      "chunk_id": "doc:data-dictionary#imputation-and-how-to-tell-it-apart-from-data#p3",
+      "score": 0.385218
+     }
+    ]
+   },
+   {
+    "id": "q09_tenure_comparison",
+    "type": "answerable",
+    "question": "Why can't you tell me whether PDP or APC tenures did better?",
+    "intent": "answerable",
+    "rule_id": "G01",
+    "route": null,
+    "route_status": "not_applicable",
+    "expected_refusal_cite": null,
+    "route_matches_cite": true,
+    "carries_a_needle": false,
+    "first_gold_rank": 4,
+    "retrieved": [
+     {
+      "chunk_id": "doc:estimates#s01",
+      "score": 0.67342
+     },
+     {
+      "chunk_id": "doc:events#s02#p2",
+      "score": 0.519287
+     },
+     {
+      "chunk_id": "admin:1",
+      "score": 0.506725
+     },
+     {
+      "chunk_id": "doc:limitations#s01",
+      "score": 0.501304
+     },
+     {
+      "chunk_id": "doc:estimates#s01#p3",
+      "score": 0.493171
+     }
+    ]
+   },
+   {
+    "id": "q10_flagged_series",
+    "type": "answerable",
+    "question": "How many of the landed series did the quality gates flag?",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "expected_refusal_cite": null,
+    "route_matches_cite": true,
+    "carries_a_needle": false,
+    "first_gold_rank": 1,
+    "retrieved": [
+     {
+      "chunk_id": "doc:limitations#s04",
+      "score": 0.680469
+     },
+     {
+      "chunk_id": "doc:limitations#s04#p2",
+      "score": 0.578137
+     },
+     {
+      "chunk_id": "coverage:quality",
+      "score": 0.549217
+     },
+     {
+      "chunk_id": "doc:estimates#s02",
+      "score": 0.370966
+     },
+     {
+      "chunk_id": "doc:estimates#s03",
+      "score": 0.367957
+     }
+    ]
+   },
+   {
+    "id": "q11_cards_with_numbers",
+    "type": "answerable",
+    "question": "How many of the 36 model cards carry a published number?",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "expected_refusal_cite": null,
+    "route_matches_cite": true,
+    "carries_a_needle": false,
+    "first_gold_rank": 1,
+    "retrieved": [
+     {
+      "chunk_id": "coverage:registry",
+      "score": 0.607551
+     },
+     {
+      "chunk_id": "card:u5mr__B#p5",
+      "score": 0.531075
+     },
+     {
+      "chunk_id": "doc:registry#s03",
+      "score": 0.526666
+     },
+     {
+      "chunk_id": "card:mmr__B#p5",
+      "score": 0.52292
+     },
+     {
+      "chunk_id": "card:fatalities__B#p6",
+      "score": 0.519563
+     }
+    ]
+   },
+   {
+    "id": "q12_interpolation_visible",
+    "type": "answerable",
+    "question": "How can I tell an interpolated value from an observed one in the app?",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "expected_refusal_cite": null,
+    "route_matches_cite": true,
+    "carries_a_needle": false,
+    "first_gold_rank": 2,
+    "retrieved": [
+     {
+      "chunk_id": "doc:limitations#s02",
+      "score": 0.369389
+     },
+     {
+      "chunk_id": "doc:data-dictionary#imputation-and-how-to-tell-it-apart-from-data#p3",
+      "score": 0.315858
+     },
+     {
+      "chunk_id": "doc:design-memo#s01",
+      "score": 0.278391
+     },
+     {
+      "chunk_id": "card:immun_penta3__A#p4",
+      "score": 0.267001
+     },
+     {
+      "chunk_id": "card:cpi_yoy__A#p4",
+      "score": 0.264768
+     }
+    ]
+   },
+   {
+    "id": "q13_buhari_fatalities",
+    "type": "answerable",
+    "question": "Did fatalities change after Buhari was sworn in in 2015, and can that shift be interpreted?",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "expected_refusal_cite": null,
+    "route_matches_cite": true,
+    "carries_a_needle": false,
+    "first_gold_rank": 1,
+    "retrieved": [
+     {
+      "chunk_id": "event:buhari_2015#p2",
+      "score": 0.560025
+     },
+     {
+      "chunk_id": "event:buhari_2015",
+      "score": 0.517717
+     },
+     {
+      "chunk_id": "event:tinubu_2023#p2",
+      "score": 0.459664
+     },
+     {
+      "chunk_id": "doc:events#s05#p7",
+      "score": 0.446118
+     },
+     {
+      "chunk_id": "event:buhari_2015#p3",
+      "score": 0.444294
+     }
+    ]
+   },
+   {
+    "id": "q14_covid_shock_band",
+    "type": "answerable",
+    "question": "Which period does the COVID-19 shock band cover?",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "expected_refusal_cite": null,
+    "route_matches_cite": true,
+    "carries_a_needle": false,
+    "first_gold_rank": 1,
+    "retrieved": [
+     {
+      "chunk_id": "shock:2",
+      "score": 0.553453
+     },
+     {
+      "chunk_id": "shock:3",
+      "score": 0.530085
+     },
+     {
+      "chunk_id": "shock:1",
+      "score": 0.475457
+     },
+     {
+      "chunk_id": "doc:design-memo#s05",
+      "score": 0.417317
+     },
+     {
+      "chunk_id": "result:B#p6",
+      "score": 0.408871
+     }
+    ]
+   },
+   {
+    "id": "q15_president_2012",
+    "type": "answerable",
+    "question": "Who was president in 2012, and for which party?",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "expected_refusal_cite": null,
+    "route_matches_cite": true,
+    "carries_a_needle": false,
+    "first_gold_rank": 1,
+    "retrieved": [
+     {
+      "chunk_id": "admin:3",
+      "score": 0.365423
+     },
+     {
+      "chunk_id": "admin:4",
+      "score": 0.34129
+     },
+     {
+      "chunk_id": "admin:2",
+      "score": 0.333475
+     },
+     {
+      "chunk_id": "doc:estimates#s01#p2",
+      "score": 0.319129
+     },
+     {
+      "chunk_id": "admin:1",
+      "score": 0.290056
+     }
+    ]
+   },
+   {
+    "id": "q16_u5mr_unit",
+    "type": "answerable",
+    "question": "What unit is under-5 mortality measured in, and which direction is better?",
+    "intent": "answerable",
+    "rule_id": null,
+    "route": null,
+    "route_status": "not_applicable",
+    "expected_refusal_cite": null,
+    "route_matches_cite": true,
+    "carries_a_needle": false,
+    "first_gold_rank": 2,
+    "retrieved": [
+     {
+      "chunk_id": "card:u5mr__B",
+      "score": 0.553066
+     },
+     {
+      "chunk_id": "card:u5mr__A",
+      "score": 0.550313
+     },
+     {
+      "chunk_id": "card:u5mr__C",
+      "score": 0.549548
+     },
+     {
+      "chunk_id": "card:mmr__B",
+      "score": 0.465582
+     },
+     {
+      "chunk_id": "card:mmr__A",
+      "score": 0.457721
+     }
+    ]
+   },
+   {
+    "id": "r01_which_president_better",
+    "type": "refusal_with_reason",
+    "question": "Which president had the better record on child mortality?",
+    "intent": "refusal_with_reason",
+    "rule_id": "G06",
+    "route": "doc:limitations#s01",
+    "route_status": "pinned",
+    "expected_refusal_cite": "doc:limitations#s01",
+    "route_matches_cite": true,
+    "carries_a_needle": true,
+    "first_gold_rank": 1,
+    "retrieved": [
+     {
+      "chunk_id": "doc:estimates#s01#p3",
+      "score": 0.395753
+     },
+     {
+      "chunk_id": "doc:estimates#s01",
+      "score": 0.35019
+     },
+     {
+      "chunk_id": "doc:estimates#s01#p2",
+      "score": 0.346811
+     },
+     {
+      "chunk_id": "doc:events#s05#p7",
+      "score": 0.339916
+     },
+     {
+      "chunk_id": "doc:events#s05#p6",
+      "score": 0.318283
+     }
+    ]
+   },
+   {
+    "id": "r02_synthetic_control_tenure",
+    "type": "refusal_with_reason",
+    "question": "Can the synthetic control tell me whether Buhari's tenure caused the fall in under-5 mortality?",
+    "intent": "refusal_with_reason",
+    "rule_id": "G07",
+    "route": "result:C",
+    "route_status": "pinned",
+    "expected_refusal_cite": "result:C",
+    "route_matches_cite": true,
+    "carries_a_needle": true,
+    "first_gold_rank": null,
+    "retrieved": [
+     {
+      "chunk_id": "doc:estimates#s01#p3",
+      "score": 0.614196
+     },
+     {
+      "chunk_id": "event:buhari_2015#p3",
+      "score": 0.515089
+     },
+     {
+      "chunk_id": "doc:estimates#s03#p2",
+      "score": 0.50044
+     },
+     {
+      "chunk_id": "estimate:u5mr__C#p2",
+      "score": 0.48995
+     },
+     {
+      "chunk_id": "doc:estimates#s01",
+      "score": 0.488057
+     }
+    ]
+   },
+   {
+    "id": "o01_inflation_forecast",
+    "type": "out_of_scope",
+    "question": "What will inflation be in 2030?",
+    "intent": "out_of_scope",
+    "rule_id": "G05",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "expected_refusal_cite": null,
+    "route_matches_cite": false,
+    "carries_a_needle": false,
+    "first_gold_rank": null,
+    "retrieved": [
+     {
+      "chunk_id": "card:cpi_yoy__B#p3",
+      "score": 0.403889
+     },
+     {
+      "chunk_id": "card:cpi_yoy__B",
+      "score": 0.393074
+     },
+     {
+      "chunk_id": "doc:estimates#s04#p2",
+      "score": 0.38183
+     },
+     {
+      "chunk_id": "card:cpi_yoy__A",
+      "score": 0.375944
+     },
+     {
+      "chunk_id": "card:cpi_yoy__C",
+      "score": 0.372851
+     }
+    ]
+   },
+   {
+    "id": "o02_population_1960",
+    "type": "out_of_scope",
+    "question": "What was Nigeria's population in 1960?",
+    "intent": "out_of_scope",
+    "rule_id": "G03",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "expected_refusal_cite": null,
+    "route_matches_cite": false,
+    "carries_a_needle": false,
+    "first_gold_rank": null,
+    "retrieved": [
+     {
+      "chunk_id": "estimate:u5mr__C",
+      "score": 0.355153
+     },
+     {
+      "chunk_id": "doc:glossary#refusals#p4",
+      "score": 0.329623
+     },
+     {
+      "chunk_id": "estimate:u5mr__C#p2",
+      "score": 0.324319
+     },
+     {
+      "chunk_id": "card:gdp_growth__C#p2",
+      "score": 0.322868
+     },
+     {
+      "chunk_id": "doc:data-dictionary#fact-donor-panel-and-state-panel",
+      "score": 0.322801
+     }
+    ]
+   },
+   {
+    "id": "o03_kano_population",
+    "type": "out_of_scope",
+    "question": "How many people live in Kano today?",
+    "intent": "out_of_scope",
+    "rule_id": "G03",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "expected_refusal_cite": null,
+    "route_matches_cite": false,
+    "carries_a_needle": false,
+    "first_gold_rank": null,
+    "retrieved": [
+     {
+      "chunk_id": "doc:data-dictionary#ucdp-state-month-the-security-outcome#p3",
+      "score": 0.234301
+     },
+     {
+      "chunk_id": "doc:data-dictionary#fact-donor-panel-and-state-panel",
+      "score": 0.22905
+     },
+     {
+      "chunk_id": "doc:limitations#s13#p2",
+      "score": 0.210172
+     },
+     {
+      "chunk_id": "card:fatalities__A#p6",
+      "score": 0.207266
+     },
+     {
+      "chunk_id": "estimate:u5mr__C",
+      "score": 0.199848
+     }
+    ]
+   },
+   {
+    "id": "o04_normative_allocation",
+    "type": "out_of_scope",
+    "question": "Should the federal government increase the FAAC allocation to the states?",
+    "intent": "out_of_scope",
+    "rule_id": "G04",
+    "route": "scope:answer",
+    "route_status": "pinned",
+    "expected_refusal_cite": null,
+    "route_matches_cite": false,
+    "carries_a_needle": false,
+    "first_gold_rank": null,
+    "retrieved": [
+     {
+      "chunk_id": "doc:data-dictionary#faac-state-allocation-the-fiscal-dose",
+      "score": 0.422085
+     },
+     {
+      "chunk_id": "doc:estimates#s02#p2",
+      "score": 0.420875
+     },
+     {
+      "chunk_id": "card:primary_completion__B#p3",
+      "score": 0.40263
+     },
+     {
+      "chunk_id": "card:ner_primary__B#p3",
+      "score": 0.393962
+     },
+     {
+      "chunk_id": "doc:data-dictionary#faac-national-monthly#p2",
+      "score": 0.391698
+     }
+    ]
+   }
+  ]
+ },
+ "known_gaps": [
+  {
+   "id": "KG01",
+   "scope_clause": "'questions about countries outside the donor panel'",
+   "status": "closed",
+   "why": "The donor panel's 99 members are now a committed registry artifact (`registry/donors/<vintage>/panel.json`) and the country names are a second one (`registry/reference/countries.json`), so the class is decided from files every clone has. G09 refuses a question naming any country other than Nigeria, which covers the clause's class and the panel members it does not literally name."
+  },
+  {
+   "id": "KG02",
+   "scope_clause": "the whole of the answer contract's post-check",
+   "status": "not_built",
+   "why": "The gate decides an intent and a citation. It does not assemble an answer, so it cannot check an answer for an interval, an identifying assumption and a citation (R-04). That check belongs to the answer layer, which is not built."
+  },
+  {
+   "id": "KG03",
+   "scope_clause": "the rules are lexical",
+   "status": "accepted",
+   "why": "The gate matches literal patterns, so a paraphrase that avoids the declared words is not detected. The alternative — a classifier trained on the eval set — would score better on the eval set and mean less, and the project's rule is that a number must not be tuned into existence."
+  },
+  {
+   "id": "KG04",
+   "scope_clause": "'It cannot answer forecast questions'",
+   "status": "accepted",
+   "why": "G05 refuses a value at a year outside the window, and G02 refuses a question that forecasts in words. A question that asks for a value in a year the window covers but the outcome series does not (2025-2026) is left answerable, because the study window is open and the registry's own state in those years is answerable. The answer layer refuses it when no chunk answers it."
+  }
+ ]
+}

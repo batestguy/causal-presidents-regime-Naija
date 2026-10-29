@@ -282,6 +282,27 @@ models:
         tests:
           - not_null
 
+  - name: nbs_cpi_national_monthly
+    description: >
+      National monthly CPI, wide: the composite index, its 12-month average, and the two published
+      changes, 1995-01 to 2024-10. Gated and built like the FAAC national series; not on the metric
+      spine, because the catalogued `cpi_yoy` is an annual series and choosing between two inflation
+      references is an outcome decision, not a modelling convenience.
+    columns:
+      - name: period_month
+        tests:
+          - unique
+          - not_null
+      - name: n_items
+        tests:
+          - not_null
+      - name: cpi_index
+        tests:
+          - not_null
+      # no not_null on `cpi_yoy_pct`: the change measures begin one and twelve months after the level
+      # (1996-01 and 1995-12 respectively), so their earlier months are legitimately NULL — absence
+      # because the publisher needs a prior month to compute a change, not a data defect.
+
   - name: fact_observation_native
     description: Native-grain observations with the anchor month each series' alignment rule assigns.
     columns:

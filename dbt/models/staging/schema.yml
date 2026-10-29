@@ -11,7 +11,7 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values: ["worldbank", "worldbank_donors", "fred", "faac", "ucdp"]
+                values: ["worldbank", "worldbank_donors", "fred", "faac", "ucdp", "nbs_cpi"]
       - name: metric_id
         tests:
           - not_null
@@ -149,6 +149,34 @@ models:
           - accepted_values:
               arguments:
                 values: ["fatalities", "incidents", "fatalities_civilians"]
+      - name: value
+        tests:
+          - not_null
+      - name: source_sha256
+        tests:
+          - not_null
+
+  - name: stg_nbs_cpi_monthly
+    description: >
+      NBS monthly CPI observations, long by item (index / 12-month average / month-on-month /
+      year-on-year), national scope only — the composite "All Items" block of the report workbook.
+      The series ends 2024-10 with the publisher's listing; months after that are absent, not null.
+    columns:
+      - name: scope
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["national"]
+      - name: period_month
+        tests:
+          - not_null
+      - name: item
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["cpi_index", "cpi_12m_avg", "cpi_mom_pct", "cpi_yoy_pct"]
       - name: value
         tests:
           - not_null

@@ -20,7 +20,7 @@
 # `reference_answer` is not used by the offline harness (there is no generation step yet, and no LLM key).
 # It is carried so the RAGAS half can be wired the day a key exists: question, contexts, answer, ground_truth.
 version: 1
-labelled: "2026-10-18"
+labelled: "2026-10-29"
 spec_path: "analysis/specs/rag_eval.yml"
 corpus_spec: "analysis/specs/rag.yml"
 

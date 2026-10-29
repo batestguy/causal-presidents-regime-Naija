@@ -33,7 +33,7 @@
 #     size as the estimate itself. The design is therefore reported as *estimated, not identified* —
 #     a measured verdict rather than a caveat, and the reason both designs are run together.
 version: 1
-labelled: "2026-10-18"
+labelled: "2026-10-29"
 spec_path: "analysis/specs/estimation.yml"
 engine: "analysis/R/03_estimate.R"
 verifier: "tests/verify_stage6.py"

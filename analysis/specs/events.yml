@@ -20,7 +20,7 @@
 #
 # ---------------------------------------------------------------------------------------------
 version: 1
-labelled: "2026-10-18"
+labelled: "2026-10-29"
 spec_path: "analysis/specs/events.yml"
 engine: "analysis/R/06_events.R"
 verifier: "tests/verify_events.py"

@@ -1,0 +1,409 @@
+{
+  "schema_version": "0.1.0",
+  "stage": "9-prep",
+  "layer": "declared breaks in each outcome series — description, never attribution",
+  "vintage": "2026-10-29",
+  "generated_at": "2026-10-29T06:41:28+0100",
+  "generator": {
+    "script": "analysis/R/09_changepoints.R",
+    "git_sha": "533c2aa"
+  },
+  "spec": {
+    "path": "analysis/specs/changepoints.yml",
+    "md5": "b321b8a8992810cb8138c715e0a887b5",
+    "version": 1
+  },
+  "verifier": "tests/verify_changepoints.py",
+  "input": {
+    "database": "data/analytics.duckdb",
+    "native_table": "main_analytics.fact_observation_native",
+    "metric_dimension": "main_analytics.dim_metric",
+    "definition_break_table": "main_analytics.dim_definition_break",
+    "administrations_source": "registry/reference/administrations.json"
+  },
+  "counts": {
+    "outcomes_considered": 12,
+    "outcomes_searched": 8,
+    "outcomes_fixed_date": 0,
+    "outcomes_refused": 4,
+    "breaks_estimated": 10,
+    "known_breaks_passed": 4
+  },
+  "rules": {
+    "method": "Bai–Perron break search (strucchange::breakpoints) on a mean-only model of the native observations, with the number of breaks chosen by BIC against the no-break model",
+    "package": "strucchange",
+    "criterion": "BIC, compared with the no-break model; the smallest BIC wins, and no break wins ties",
+    "input_rule": "native observations only (`fact_observation_native`, anchored at anchor_month); the interpolated monthly spine is never fitted, because a filled month is a rule and not a record",
+    "min_native_search": 20,
+    "min_native_fixed_date": 0,
+    "max_breaks": {
+      "monthly": 2,
+      "annual": 1,
+      "annual_short": 0
+    },
+    "definition_break_rule": "a declared definition break inside the span is always published as `known_definition_break`; an estimated break within ±1 native period of one is relabelled as measurement and the two are not listed twice",
+    "attribution_rule": "no break is described as an effect of a president, party or tenure; `coincides_with_inauguration` records timing only and is null unless the break falls within ±2 months of a swearing-in",
+    "forbidden_fields": ["p_value", "standard_error", "ci_low", "ci_high", "date_ci_low", "date_ci_high", "t_stat", "RSS_p_value", "verdict"]
+  },
+  "outcomes": [
+    {
+      "id": "u5mr",
+      "label": "Under-5 mortality rate",
+      "short": "Under-5 mortality",
+      "native_frequency": "annual",
+      "regime": "annual",
+      "native_in_window": 26,
+      "span": {
+        "first": "1999-07",
+        "last": "2024-07"
+      },
+      "status": "search",
+      "method_detail": "Bai-Perron mean model, 0-1 breaks, BIC over 2m+1 parameters, 1 selected",
+      "breaks": [
+        {
+          "month": "2006-07",
+          "kind": "estimated",
+          "label": "the series changes here",
+          "statement": "Under-5 mortality changes level around 2006-07. This is a description of the series, not an effect of an administration.",
+          "coincides_with_inauguration": null
+        }
+      ],
+      "plain_caption": "Under-5 mortality: 26 native observations; 1 marked month (2006-07).",
+      "figure": {
+        "path": "registry/changepoints/2026-10-29/figures/u5mr.svg",
+        "bytes": 9335
+      },
+      "refused": null
+    },
+    {
+      "id": "mmr",
+      "label": "Maternal mortality ratio",
+      "short": "Maternal mortality",
+      "native_frequency": "annual",
+      "regime": "annual",
+      "native_in_window": 25,
+      "span": {
+        "first": "1999-07",
+        "last": "2023-07"
+      },
+      "status": "search",
+      "method_detail": "Bai-Perron mean model, 0-1 breaks, BIC over 2m+1 parameters, 1 selected",
+      "breaks": [
+        {
+          "month": "2020-07",
+          "kind": "estimated",
+          "label": "the series changes here",
+          "statement": "Maternal mortality changes level around 2020-07. This is a description of the series, not an effect of an administration.",
+          "coincides_with_inauguration": null
+        }
+      ],
+      "plain_caption": "Maternal mortality: 25 native observations; 1 marked month (2020-07).",
+      "figure": {
+        "path": "registry/changepoints/2026-10-29/figures/mmr.svg",
+        "bytes": 9723
+      },
+      "refused": null
+    },
+    {
+      "id": "immun_penta3",
+      "label": "Penta3 immunisation coverage",
+      "short": "Penta3 coverage",
+      "native_frequency": "annual",
+      "regime": "annual",
+      "native_in_window": 26,
+      "span": {
+        "first": "1999-07",
+        "last": "2024-07"
+      },
+      "status": "search",
+      "method_detail": "Bai-Perron mean model, 0-1 breaks, BIC over 2m+1 parameters, 1 selected",
+      "breaks": [
+        {
+          "month": "2008-07",
+          "kind": "estimated",
+          "label": "the series changes here",
+          "statement": "Penta3 coverage changes level around 2008-07. This is a description of the series, not an effect of an administration.",
+          "coincides_with_inauguration": null
+        }
+      ],
+      "plain_caption": "Penta3 coverage: 26 native observations; 1 marked month (2008-07).",
+      "figure": {
+        "path": "registry/changepoints/2026-10-29/figures/immun_penta3.svg",
+        "bytes": 9314
+      },
+      "refused": null
+    },
+    {
+      "id": "skilled_birth",
+      "label": "Skilled birth attendance",
+      "short": "Skilled birth attendance",
+      "native_frequency": "annual",
+      "regime": "annual_short",
+      "native_in_window": 8,
+      "span": {
+        "first": "1999-07",
+        "last": "2022-07"
+      },
+      "status": "refused",
+      "method_detail": "no fit: 8 native observations, minimum 20",
+      "breaks": [],
+      "plain_caption": "Skilled birth attendance: 8 native observations in the window. Too few to say when the series changes, and the stage does not fit a date it was told to find.",
+      "figure": null,
+      "refused": {
+        "reason": "too_few_native_observations",
+        "detail": "8 native observations in the window; this stage fits nothing below 20, and a segmented fit at a chosen date would be a drawing rather than a description"
+      }
+    },
+    {
+      "id": "literacy_youth",
+      "label": "Youth literacy (15-24)",
+      "short": "Youth literacy",
+      "native_frequency": "annual",
+      "regime": "annual_short",
+      "native_in_window": 7,
+      "span": {
+        "first": "2003-07",
+        "last": "2024-07"
+      },
+      "status": "refused",
+      "method_detail": "no fit: 7 native observations, minimum 20",
+      "breaks": [],
+      "plain_caption": "Youth literacy: 7 native observations in the window. Too few to say when the series changes, and the stage does not fit a date it was told to find.",
+      "figure": null,
+      "refused": {
+        "reason": "too_few_native_observations",
+        "detail": "7 native observations in the window; this stage fits nothing below 20, and a segmented fit at a chosen date would be a drawing rather than a description"
+      }
+    },
+    {
+      "id": "primary_completion",
+      "label": "Primary completion rate",
+      "short": "Primary completion",
+      "native_frequency": "annual",
+      "regime": "annual_short",
+      "native_in_window": 8,
+      "span": {
+        "first": "2000-07",
+        "last": "2010-07"
+      },
+      "status": "refused",
+      "method_detail": "no fit: 8 native observations, minimum 20",
+      "breaks": [],
+      "plain_caption": "Primary completion: 8 native observations in the window. Too few to say when the series changes, and the stage does not fit a date it was told to find.",
+      "figure": null,
+      "refused": {
+        "reason": "too_few_native_observations",
+        "detail": "8 native observations in the window; this stage fits nothing below 20, and a segmented fit at a chosen date would be a drawing rather than a description"
+      }
+    },
+    {
+      "id": "ner_primary",
+      "label": "Net enrolment rate, primary",
+      "short": "Net enrolment (primary)",
+      "native_frequency": "annual",
+      "regime": "annual_short",
+      "native_in_window": 9,
+      "span": {
+        "first": "1999-07",
+        "last": "2010-07"
+      },
+      "status": "refused",
+      "method_detail": "no fit: 9 native observations, minimum 20",
+      "breaks": [],
+      "plain_caption": "Net enrolment (primary): 9 native observations in the window. Too few to say when the series changes, and the stage does not fit a date it was told to find.",
+      "figure": null,
+      "refused": {
+        "reason": "too_few_native_observations",
+        "detail": "9 native observations in the window; this stage fits nothing below 20, and a segmented fit at a chosen date would be a drawing rather than a description"
+      }
+    },
+    {
+      "id": "fatalities",
+      "label": "Reported security fatalities",
+      "short": "Security fatalities",
+      "native_frequency": "monthly",
+      "regime": "monthly",
+      "native_in_window": 287,
+      "span": {
+        "first": "1999-01",
+        "last": "2024-12"
+      },
+      "status": "search",
+      "method_detail": "Bai-Perron mean model, 0-2 breaks, BIC over 2m+1 parameters, 2 selected",
+      "breaks": [
+        {
+          "month": "2013-03",
+          "kind": "estimated",
+          "label": "the series changes here",
+          "statement": "Security fatalities changes level around 2013-03. This is a description of the series, not an effect of an administration.",
+          "coincides_with_inauguration": null
+        },
+        {
+          "month": "2016-10",
+          "kind": "estimated",
+          "label": "the series changes here",
+          "statement": "Security fatalities changes level around 2016-10. This is a description of the series, not an effect of an administration.",
+          "coincides_with_inauguration": null
+        }
+      ],
+      "plain_caption": "Security fatalities: 287 native observations; 2 marked months (2013-03, 2016-10).",
+      "figure": {
+        "path": "registry/changepoints/2026-10-29/figures/fatalities.svg",
+        "bytes": 41298
+      },
+      "refused": null
+    },
+    {
+      "id": "incidents",
+      "label": "Reported security incidents",
+      "short": "Security incidents",
+      "native_frequency": "monthly",
+      "regime": "monthly",
+      "native_in_window": 287,
+      "span": {
+        "first": "1999-01",
+        "last": "2024-12"
+      },
+      "status": "search",
+      "method_detail": "Bai-Perron mean model, 0-2 breaks, BIC over 2m+1 parameters, 2 selected",
+      "breaks": [
+        {
+          "month": "2010-10",
+          "kind": "estimated",
+          "label": "the series changes here",
+          "statement": "Security incidents changes level around 2010-10. This is a description of the series, not an effect of an administration.",
+          "coincides_with_inauguration": null
+        },
+        {
+          "month": "2014-05",
+          "kind": "estimated",
+          "label": "the series changes here",
+          "statement": "Security incidents changes level around 2014-05. This is a description of the series, not an effect of an administration.",
+          "coincides_with_inauguration": null
+        }
+      ],
+      "plain_caption": "Security incidents: 287 native observations; 2 marked months (2010-10, 2014-05).",
+      "figure": {
+        "path": "registry/changepoints/2026-10-29/figures/incidents.svg",
+        "bytes": 40989
+      },
+      "refused": null
+    },
+    {
+      "id": "gdp_growth",
+      "label": "Real GDP growth (y/y)",
+      "short": "GDP growth (y/y)",
+      "native_frequency": "annual",
+      "regime": "annual",
+      "native_in_window": 27,
+      "span": {
+        "first": "1999-07",
+        "last": "2025-07"
+      },
+      "status": "search",
+      "method_detail": "Bai-Perron mean model, 0-1 breaks, BIC over 2m+1 parameters, 1 selected",
+      "breaks": [
+        {
+          "month": "2014-04",
+          "kind": "known_definition_break",
+          "label": "GDP rebasing",
+          "statement": "The series is measured differently from 2014-04 (GDP rebasing).",
+          "coincides_with_inauguration": null
+        },
+        {
+          "month": "2015-07",
+          "kind": "estimated",
+          "label": "the series changes here",
+          "statement": "GDP growth (y/y) changes level around 2015-07. This is a description of the series, not an effect of an administration.",
+          "coincides_with_inauguration": "buhari"
+        }
+      ],
+      "plain_caption": "GDP growth (y/y): 27 native observations; 2 marked months (2014-04, 2015-07).",
+      "figure": {
+        "path": "registry/changepoints/2026-10-29/figures/gdp_growth.svg",
+        "bytes": 9963
+      },
+      "refused": null
+    },
+    {
+      "id": "cpi_yoy",
+      "label": "Headline inflation (y/y)",
+      "short": "Inflation (y/y)",
+      "native_frequency": "annual",
+      "regime": "annual",
+      "native_in_window": 27,
+      "span": {
+        "first": "1999-07",
+        "last": "2025-07"
+      },
+      "status": "search",
+      "method_detail": "Bai-Perron mean model, 0-1 breaks, BIC over 2m+1 parameters, 1 selected",
+      "breaks": [
+        {
+          "month": "2022-07",
+          "kind": "estimated",
+          "label": "the series changes here",
+          "statement": "Inflation (y/y) changes level around 2022-07. This is a description of the series, not an effect of an administration.",
+          "coincides_with_inauguration": null
+        },
+        {
+          "month": "2025-01",
+          "kind": "known_definition_break",
+          "label": "CPI rebasing (2024 base year)",
+          "statement": "The series is measured differently from 2025-01 (CPI rebasing (2024 base year)).",
+          "coincides_with_inauguration": null
+        }
+      ],
+      "plain_caption": "Inflation (y/y): 27 native observations; 2 marked months (2022-07, 2025-01).",
+      "figure": {
+        "path": "registry/changepoints/2026-10-29/figures/cpi_yoy.svg",
+        "bytes": 10457
+      },
+      "refused": null
+    },
+    {
+      "id": "unemp",
+      "label": "Unemployment rate",
+      "short": "Unemployment rate",
+      "native_frequency": "annual",
+      "regime": "annual",
+      "native_in_window": 27,
+      "span": {
+        "first": "1999-07",
+        "last": "2025-07"
+      },
+      "status": "search",
+      "method_detail": "Bai-Perron mean model, 0-1 breaks, BIC over 2m+1 parameters, 1 selected",
+      "breaks": [
+        {
+          "month": "2014-01",
+          "kind": "known_definition_break",
+          "label": "Labour-force methodology change",
+          "statement": "The series is measured differently from 2014-01 (Labour-force methodology change).",
+          "coincides_with_inauguration": null
+        },
+        {
+          "month": "2022-07",
+          "kind": "estimated",
+          "label": "the series changes here",
+          "statement": "Unemployment rate changes level around 2022-07. This is a description of the series, not an effect of an administration.",
+          "coincides_with_inauguration": null
+        },
+        {
+          "month": "2023-03",
+          "kind": "known_definition_break",
+          "label": "Methodology revision",
+          "statement": "The series is measured differently from 2023-03 (Methodology revision).",
+          "coincides_with_inauguration": null
+        }
+      ],
+      "plain_caption": "Unemployment rate: 27 native observations; 3 marked months (2014-01, 2022-07, 2023-03).",
+      "figure": {
+        "path": "registry/changepoints/2026-10-29/figures/unemp.svg",
+        "bytes": 10566
+      },
+      "refused": null
+    }
+  ],
+  "notes": ["description only: a break is a statement about a series, never about a presidency", "native observations only; the interpolated spine is never fitted", "a break near a handover records timing; it is not evidence that the handover caused it"]
+}

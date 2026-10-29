@@ -2491,3 +2491,64 @@ config so that pass does not rediscover it. The release sits at **`data/pending/
 **What this does not change.** No registry artifact moved; `cpi_yoy` is still annual everywhere it is
 published; no card, verdict or design reads the monthly series. The 2023-06 to 2023-12 subsidy window
 becomes estimable only when the adoption pass lands an outcome, not from this landing.
+
+## 2026-10-29 (same session) - the CPI adoption: the pass C-81 waited for
+
+The parked acquisition was adopted the way "adopted" means in this repo, and the thing to report about it
+is what did **not** move.
+
+**The declaration.** `quality.yml` gained the `nbs_cpi` `document_sources` entry (two gated measures:
+`cpi_index` on the relative spike rule, `cpi_yoy_pct` on the **percentage-point** rule - the relative rule
+on a change series flags ordinary acceleration, which is exactly what the Gate-2 history says it did to
+Senegal's annual inflation), plus `grains.nbs_cpi` and the percentage_point_series entry.
+`check_quality.py` published **`registry/quality/2026-10-29/`: 674 series, `ok=359 flagged=313 empty=2`** -
+the two new rows are both `ok`, with complete study-window coverage 1999-01 -> 2024-10, zero gap runs and
+zero spikes. `docs/limitations.md`'s derived gate sentence moved with it (672 -> 674, 357 -> 359).
+
+**The vintage moved everywhere, because the report did.** The discipline is contracts, not conventions:
+`scripts/validate_artifacts.py` fails when any Stage 5-8 artifact's vintage lags the newest quality
+report (C-44). So eight specs' `labelled:` fields moved 2026-10-18 -> 2026-10-29 (estimation, robustness,
+registry, events, design_c, series_figures, rag, rag_eval), and the whole chain re-ran in the declared
+order - 02_diagnostics, 01_build_dags, 11_design_c, 03_estimate, 04_robustness, 05_registry, then the
+descriptive stages 06-10, then the RAG corpus rebuild with embeddings (`HF_HUB_OFFLINE=1`, the run's
+documented way), `eval_rag`, `eval_intent`, `eval_answer`, `eval_answer_quality`.
+**163 of the 165 dbt-model-side tests became 178/178** with the new `stg_nbs_cpi_monthly` (long) and
+`nbs_cpi_national_monthly` (wide, `n_items` on every row) models; `stg_raw_manifest`'s accepted-values
+test gained `nbs_cpi`.
+
+**The result, measured not assumed: the registry re-stamped and nothing else.** The new artifacts were
+compared field-by-field against their 2026-10-18 ancestors with `vintage`/`generated_at`/`git_sha`
+excluded: **estimates, robustness, events, diagnostics and design_c are identical.** The 37 DAG cards
+move only in their `generator.git_sha`; every estimate block, verdict, reason and count is byte-equal.
+The two "changes" a reader might find are encoding illusions - a comparison script's console decoding
+made old em-dashes look like U+FFFD, checked: both files hold U+2014. No card carries a new number; the
+verdicts are the same refusals; still **2 of 36 cards carry a number** (estimates artifact says so).
+
+**One real defect caught by a verifier, fixed the honest way.** The first R re-runs (before the vintage
+labels moved in their specs) **overwrote three 2026-10-18 vintages' `generated_at` fields in place** -
+six files, two lines each, no content change but still an edit to a published history. The old dirs were
+restored from git byte-for-byte (`git checkout --`), because X-07 applies to the registry too: a
+superseded vintage is kept, never rewritten, and a re-labelled run belongs in a new directory - which is
+where the specs' `labelled:` field now sends it.
+
+**A prose drift the chain caught, kept.** `tests/verify_answer_quality.py` failed on `docs/rag.md`
+quoting the previous RAGAS run's numbers (context recall 0.850 -> **0.792**, faithfulness 0.965 ->
+**0.956**, relevancy 0.833 -> **0.806**, precision 1.000 -> **0.978**). The doc now quotes this run's
+four values and the judge-noise range was re-derived across all six runs (0.956-1.000 and
+0.792-0.863 at the new ends) rather than overridden - the sentence's own claim is that the judge varies.
+
+**Full green:** `validate_artifacts.py` (63 schema documents, every newest-family vintage 2026-10-29) and
+**all 24 verifiers** PASS, one per step, including `verify_nbs_cpi` which now sees its vintage in
+`data/raw/` (the C-79 boundary crossed deliberately, not drifted: `data/pending/nbs_cpi` is empty,
+`data/pending/ucdp` still holds 26.1). `verify_stage7` refits the committed grid against the fresh base;
+`verify_design_c` refits the windows with a different solver; `verify_rag` recomputes the retrieval
+numbers from the stored vectors.
+
+**What changed for a reader: nothing visible.** The site and app render the same 36 cards with the same
+reasons; `cpi_yoy` remains the catalogued inflation reference (the monthly series sits beside it in the
+base, honestly labelled in its model comments, unspined until a design declares which reference it
+reads). What changed on disk is the provenance: the estimator's history now extends to October 2024
+monthly, and the next design that wants the subsidy window starts from the evidence rather than from a
+conversation about it.
+
+**Committed in two commits** (the parked acquisition `533c2aa`, then this adoption), pushed to origin.

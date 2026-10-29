@@ -75,9 +75,11 @@ CBN by hand.
 
 ## 4. The quality gates flagged almost half the landed series
 
-**672 series** are gated: **357 `ok`, 313 `flagged`, 2 `empty`**. `flagged` does not mean unusable — it
+**674 series** are gated: **359 `ok`, 313 `flagged`, 2 `empty`**. `flagged` does not mean unusable — it
 means a rule fired and the reason travels with the series into the base and the registry. The two empty
-series are Eritrea's and Somalia's CPI in the donor panel, which the source has no data for.
+series are Eritrea's and Somalia's CPI in the donor panel, which the source has no data for. (The two
+series added on 2026-10-29 are the NBS monthly CPI's index and year-on-year change, both `ok`:
+`registry/quality/2026-10-29/`.)
 
 - **8 definition breaks** are annotated rather than removed: GDP rebasing (2014), the unemployment
   methodology change, the January-2025 CPI rebasing (C-27), and the FX regime breaks among them.

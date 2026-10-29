@@ -28,7 +28,7 @@
 #
 # ---------------------------------------------------------------------------------------------
 version: 2
-labelled: "2026-10-18"
+labelled: "2026-10-29"
 spec_path: "analysis/specs/rag.yml"
 engine: "scripts/build_rag_corpus.py"
 verifier: "tests/verify_rag.py"
