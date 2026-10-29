@@ -228,18 +228,22 @@ Methodology).
   variables, the model table and the equations with every symbol defined. Methodology keeps the argument and is
   short; its reference material lives here (P-11).
 
-### Next revision (queued 2026-10-28; the first item built 2026-10-29)
+### Next revision (queued 2026-10-28; both items built 2026-10-29)
 
 - ✅ **Ask joined the primary navigation (2026-10-29).** Every bookmarked page can search the registry; the step
   screen stays and the nav carries five links. **No wrap rule was needed:** measured in a browser at 320, 375 and
   420 px, the existing `@media (max-width: 719px) .topnav { flex-wrap: wrap }` already drops the list under the
   wordmark on its own line (`ul.top` 41 px against a wordmark bottom of 32 px), with no horizontal overflow on any
   of the 11 pages. The wordmark is untouched at its existing size.
-- **Charts take the wide measure, with the presidents over them.** `/chart/` moves to 1240 px and a taller cap,
-  and the licensed portraits sit over each panel **as period markers aligned to the tenure bands** — decorative
-  (`alt=""`, `aria-hidden`), no name and no verdict word, with an explicit exception in the surname scan. The
-  open decision is one row of five above the panel (recommended) versus a watermark per band. Time-axis panels
-  only: the forest plot and the specification curve have no time axis and take no portraits.
+- ✅ **Charts took the wide measure, with the presidents over them (2026-10-29).** `/chart/` is 1240 px and the
+  licensed portraits sit over each panel **as period markers aligned to the tenure bands** — decorative
+  (`alt=""`, `aria-hidden`, no text at all), so the surname scan needs no exception; a portrait that carries alt
+  text is caught by its own assertion. The composition is one row of five above the panel: it reads as a time
+  axis and cannot be mistaken for a result. The row's positions are read out of the figure (the bands' own rects
+  divided by the viewBox width), so the site never recomputes the spans R draws, and `verify_site.py` compares
+  every portrait against the bands re-derived independently. `/designs/` takes none: the forest plot and the
+  specification curve have no time axis. Time-axis panels only, and the credits are repeated on `/chart/` from
+  the licence manifest rather than linked.
 
 
 ---

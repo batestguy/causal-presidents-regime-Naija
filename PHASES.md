@@ -649,16 +649,16 @@ registry vintage stamped on every page — and remains open for the Streamlit ap
    375 and 420 px, the existing `@media (max-width: 719px) .topnav { flex-wrap: wrap }` already puts the five links
    on their own line under the wordmark, with no horizontal overflow on any of the 11 pages — so the wordmark was
    not shrunk, as the handoff required, and no CSS changed.
-2. **Bigger charts, with the presidents over them.** The chart screen's comparison and changepoint panels are
-   drawn at the 960 px measure while `/designs/` and `/technical/` use 1240; the chart should take the wide
-   measure and a taller cap. The portraits (`site/assets/presidents/<slug>.jpg`, already licensed and in the
-   manifest) should appear **over each graph as period markers aligned to the tenure bands** — the bands are
-   already drawn in R from the administration spans, so the portraits label the axis, not the series. The
-   guardrail that makes this safe: a portrait is `aria-hidden` with empty `alt`, carries no name and no verdict
-   word, and the surname scan in `tests/verify_site.py` must be told about the block explicitly rather than
-   loosened. If the portraits carry attribution text on `/chart/`, the credit list is repeated there or linked
-   to the cover's. The first decision to take is the composition: one row of five above the panel (recommended,
-   because it reads as a time axis) or one portrait per band as a faint watermark.
+2. ✅ **Bigger charts, with the presidents over them — built 2026-10-29.** `/chart/` takes the 1240 px measure
+   and the licensed portraits sit in **one row of five above each panel** (the composition decided before coding:
+   it reads as a time axis and has an order to verify). The row is placed from the administration bands **read out
+   of each published SVG** — the two shading fills are parsed back and converted to percentages of the figure's
+   own viewBox, so nothing recomputes the spans R draws. The guardrail holds and is checked rather than exempted:
+   every portrait is `alt=""` inside an `aria-hidden` strip with no name, no title and no text, the count is 20
+   strips for 12 comparison + 8 changepoint panels, each portrait's position is compared against the bands
+   re-derived independently, and the credits are repeated on `/chart/` from the licence manifest. The forest plot
+   and the specification curve take none. Four break-tests were added to `.probe/break_guided_flow.py` and all
+   four are caught. Same caveat as item 1: no artifact, count or verdict moved.
 
 **Work**
 

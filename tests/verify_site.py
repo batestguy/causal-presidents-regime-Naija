@@ -317,6 +317,78 @@ def main() -> int:
         if guide["changepoint"]["note"] not in block:
             fail(failures, f"chart/{oid}: the 'a break is not evidence' note is missing")
 
+    # ---- the portrait strip over the time-axis panels ---------------------------------------------------
+    # Five faces over each panel, placed at the administration bands the figure itself drew. This is the one
+    # place in the build where a photograph sits beside an outcome, and it is permitted only because the strip
+    # says nothing: no text, no name, no title, empty alt, and aria-hidden. All five are asserted here rather
+    # than exempted in the surname scan above, so that scan keeps its full strength and this block earns its
+    # place instead of being waved through.
+    chart_page = read(DIST / "chart" / "index.html")
+    if 'class="wide-page"' not in chart_page:
+        fail(failures, "chart/: the page is not on the wide measure")
+
+    def bands_of(svg: Path) -> list[tuple[float, float]]:
+        """The administration bands as percentages of the figure's own width, re-derived from the SVG."""
+        text = read(svg)
+        view = re.search(r"viewBox='0 0 ([\d.]+) ", text)
+        if not view:
+            return []
+        width = float(view.group(1))
+        shaded = []
+        for rect in re.findall(r"<rect[^>]*>", text):
+            fill = re.search(r"fill: (#[0-9A-Fa-f]{6})", rect) or re.search(r"fill='(#[0-9A-Fa-f]{6})'", rect)
+            if not fill or fill.group(1).lower() not in ("#eef6f0", "#e3efe6"):
+                continue
+            x, y, w = (re.search(rf"{k}='([\d.]+)'", rect) for k in ("x", "y", "width"))
+            if x and y and w:
+                shaded.append((float(y.group(1)), float(x.group(1)), float(w.group(1))))
+        if not shaded:
+            return []
+        top = min(row[0] for row in shaded)
+        return [((x / width) * 100, (w / width) * 100) for _y, x, w in sorted(shaded) if _y == top]
+
+    expected_strips = sum(1 for r in comparisons.values() if r.get("figure")) + \
+        sum(1 for r in breaks.values() if r.get("figure"))
+    strips_found = 0
+    for oid in comparisons:
+        block = chart_blocks.get(oid, "")
+        figures = []
+        if comparisons[oid].get("figure"):
+            figures.append(REPO_ROOT / comparisons[oid]["figure"]["path"])
+        if breaks.get(oid, {}).get("figure"):
+            figures.append(REPO_ROOT / breaks[oid]["figure"]["path"])
+        strips = re.findall(r'<ol class="tenure-strip".*?</ol>', block, flags=re.S)
+        strips_found += len(strips)
+        if len(strips) != len(figures):
+            fail(failures, f"chart/{oid}: {len(strips)} portrait strip(s) for {len(figures)} time-axis figure(s)")
+        for strip, svg in zip(strips, figures):
+            if 'aria-hidden="true"' not in strip:
+                fail(failures, f"chart/{oid}: the portrait strip is not aria-hidden")
+            alts = re.findall(r"<img[^>]*alt=\"([^\"]*)\"", strip)
+            if not alts:
+                fail(failures, f"chart/{oid}: the portrait strip carries no portrait")
+            if any(alts):
+                fail(failures, f"chart/{oid}: a portrait in the strip has alt text {alts[0]!r} - it is "
+                               f"decorative and must be empty")
+            if "title=" in strip:
+                fail(failures, f"chart/{oid}: a portrait in the strip carries a title")
+            if re.sub(r"<[^>]+>", "", strip).strip():
+                fail(failures, f"chart/{oid}: the portrait strip carries text - a face may not be named "
+                               f"beside an outcome")
+            cells = [(float(a), float(b)) for a, b in
+                     re.findall(r'<li style="left:([\d.]+)%;width:([\d.]+)%">', strip)]
+            bands = bands_of(svg)
+            if len(cells) != len(bands):
+                fail(failures, f"chart/{oid}: {len(cells)} portrait(s) for {len(bands)} administration "
+                               f"band(s) in {svg.name}")
+                continue
+            for i, ((left, width), (band_left, band_width)) in enumerate(zip(cells, bands)):
+                if abs(left - band_left) > 0.01 or abs(width - band_width) > 0.01:
+                    fail(failures, f"chart/{oid}: portrait {i + 1} sits at {left:.2f}% +{width:.2f}% against "
+                                   f"the band at {band_left:.2f}% +{band_width:.2f}%")
+    if strips_found != expected_strips:
+        fail(failures, f"chart/: {strips_found} portrait strip(s) for {expected_strips} time-axis figure(s)")
+
     # ---- the Ask screen runs the second answer implementation over JSON the build emits ----------------
     ask = flow["ask/index.html"]
     answers = json.loads(read(REPO_ROOT / "registry" / "rag" / index["vintage_date"] / "answer_eval.json"))

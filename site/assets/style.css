@@ -410,6 +410,17 @@ details.alt summary { display: flex; gap: .5rem; align-items: center; }
 .chart-figure { margin: 1rem 0 .4rem; }
 img.chart { width: 100%; height: auto; background: #fff; border: 1px solid var(--rule); border-radius: 8px; }
 .chart-figure figcaption { font-size: .78rem; color: var(--ink-faint); margin-top: .5rem; }
+
+/* The portrait strip over a time-axis panel. Decorative by construction: empty alt, aria-hidden, and no text
+   at all - asserted in tests/verify_site.py, which is what lets faces sit beside an outcome in the first place.
+   Each cell is placed at the band's own coordinates inside the figure's SVG (read back by build.py), and the
+   strip shares the figure's left edge and width, so the percentages map 1:1 onto the drawing. Hidden on a
+   phone, where the cells would be slivers and the panel's own labels are already unreadable. */
+.tenure-strip { position: relative; height: 64px; margin: 0 0 .45rem; padding: 0; list-style: none; }
+.tenure-strip li { position: absolute; top: 0; height: 64px; }
+.tenure-strip img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 38%;
+  border: 1px solid var(--rule); border-radius: 4px; background: #fff; }
+@media (max-width: 719px) { .tenure-strip { display: none; } }
 .group-list[hidden] { display: none; }
 
 /* ---------------------------------------------------------------- design-level results */

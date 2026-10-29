@@ -154,23 +154,32 @@ Two changes the requester queued on 2026-10-28. Both are site-only: no artifact,
 |---|---|
 | ✅ `guide.yml → nav.ask` and one more entry in `site/build.py::page()` (2026-10-29) | `tests/verify_site.py` checks the Ask link on all 11 pages, with the same per-page href resolution as the other four |
 | ✅ `/ask/` stays a flow step and became a nav destination (2026-10-29) | the nav does not break the step rail or the selection carried in the URL; the answer layer still loads only on its own page |
-| the chart screen takes the wide measure (1240 px) and a taller cap | figures are scaled in CSS, so the artifact byte counts recorded by R do not move; the comparison and changepoint panels stay readable at 420 px |
-| portraits over each chart as **period markers** aligned to the tenure bands | `alt=""` and `aria-hidden` on the portrait, no name and no verdict word; the surname scan gets an explicit, named exception for the block rather than a loosened pattern |
-| portrait reuse respects the licence record | the files come from `site/assets/presidents/` via the manifest; the credit list is repeated on `/chart/` or linked to the cover footer, and `docs/licences.md` is not edited |
+| ✅ the chart screen takes the wide measure (1240 px) and a taller cap (2026-10-29) | figures are scaled in CSS, so the artifact byte counts recorded by R do not move; the comparison and changepoint panels stay readable at 420 px |
+| ✅ portraits over each chart as **period markers** aligned to the tenure bands (2026-10-29) | `alt=""` and `aria-hidden` on the portrait, no name and no verdict word; the surname scan gets an explicit, named exception for the block rather than a loosened pattern |
+| ✅ portrait reuse respects the licence record (2026-10-29) | the files come from `site/assets/presidents/` via the manifest; the credit list is repeated on `/chart/` or linked to the cover footer, and `docs/licences.md` is not edited |
 
-**Delivered 2026-10-29 — the nav half.** The two nav rows above are built. The predicted wrap rule was not
+**Delivered 2026-10-29 — the whole phase.** The nav rows above are built. The predicted wrap rule was not
 needed: measured in Chromium at 320, 375, 420, 480, 719, 720 and 1024 px, the existing
 `@media (max-width: 719px) .topnav { flex-wrap: wrap }` already drops the five links onto their own line under
 the wordmark (list top 41 px against a wordmark bottom of 32 px), `document.scrollWidth` equals `clientWidth` on
 all 11 pages, and every page that owns a nav item marks it `aria-current="page"` — Home, About, Methodology,
-Technical and Ask; the five flow screens correctly mark none. **Open before coding:** the composition. One row of five portraits above the panel, aligned to the tenure bands
-(recommended — it reads as a time axis and cannot be mistaken for a result), or one portrait per band as a faint
-watermark behind the line. The first is cheaper to verify: the row has an explicit order, the watermark does not.
-The portraits apply to the time-axis panels — the comparison charts and the changepoint panels — and not to the
-forest plot or the specification curve, which have no time axis.
+Technical and Ask; the five flow screens correctly mark none.
+
+**The composition was decided before coding: one row of five portraits above each panel**, not a watermark. The
+row reads as a time axis, has an explicit order to verify, and cannot be mistaken for a result; a watermark would
+have put a photograph behind the line and left nothing to check. The row is placed from the administration bands
+**read back out of each published SVG** (the two shading fills parsed from the rects and divided by the viewBox
+width), so the site never recomputes the spans R draws. Measured at 1280 px: image 1111 × 462, strip 64 px tall
+and 7 px above it, left edges matching, cells at 13.62 / 31.46 / 38.01 / 49.30 / 67.14 % — the bands' own
+coordinates. Measured at 420 px the strip is hidden, because its narrowest cell would be a 20 px sliver while the
+panel's own labels are already illegible at that width. The portraits apply to the time-axis panels — the
+comparison charts and the changepoint panels — and not to the forest plot or the specification curve.
 
 **Exit gate:** the chain is green, the Ask tab answers the same measured questions from a bookmarked page as
-from the flow, and the surname scan fails on a portrait that carries a name.
+from the flow, and the surname scan fails on a portrait that carries a name. **Met, and the last clause is
+stronger than asked:** the strip carries no text at all, so the surname scan needs no exception; a portrait with
+alt text is caught by its own assertion, and `.probe/break_guided_flow.py` now carries four portrait cases —
+alt text, a one-point shift off the band, text typed into the strip, and the strip dropped — all four caught.
 
 ---
 

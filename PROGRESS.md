@@ -2394,4 +2394,40 @@ About, Methodology, Technical and Ask, and correctly on none of the five flow sc
 **Still queued from P9:** the chart's wide measure and the portraits as period markers, with the composition
 decision (one row of five above the panel versus a watermark per band) still open.
 
+**Then, same session — P9 item 2, the chart goes wide and the presidents go over it.** The composition was the
+open decision and it was taken before coding: **one row of five above each panel**, chosen because it reads as a
+time axis, has an explicit order to verify, and cannot be mistaken for a result — a watermark would have put a
+photograph behind the line and left nothing to check. `/chart/` now takes the 1240 px measure through the same
+`wide=True` flag `/technical/` uses.
+
+**The alignment is read out of the figure, not recomputed.** `site/build.py::band_geometry` parses the two
+shading fills (`#eef6f0` / `#e3efe6`) back out of each published SVG, takes the top panel's rects, and converts
+them to percentages of the figure's own viewBox width — so a portrait sits at the band's own left edge and spans
+the band's own width, and there is no second computation of the administration spans to drift from R's. Measured
+in the browser at 1280 px: the image is **1111 × 462** against the old ~880 × 366, the strip is **64 px** tall and
+7 px above it, its left edge matches the image's, and its cells land at **13.62 / 31.46 / 38.01 / 49.30 / 67.14 %**
+— which are the bands' own coordinates (80.43/590.40, 185.76/590.40, …). The changepoint panels align against
+their own geometry (14.74 % …), which differs from the comparison panels' because that figure has no legend and a
+wider plot box.
+
+**The guardrail is asserted, not exempted.** The strip is `aria-hidden="true"`, every `<img>` has `alt=""`, there
+is no `title`, and the block carries **no text of any kind** — which is why the surname scan needs no exception
+and keeps its full strength. `tests/verify_site.py` checks all four properties, the strip count against the
+time-axis figures (20 strips for 12 comparison + 8 changepoint panels), and every portrait's position against
+the bands **re-derived independently** from the same SVG. The credits list is repeated on `/chart/` in a
+`<details>` built from the licence manifest — five rows, the same five the cover carries — because a credit that
+exists only on another URL is not a credit beside the image. `/designs/` is untouched: the forest plot and the
+specification curve have no time axis and take no portraits.
+
+**Broken on purpose, four ways** (added to `.probe/break_guided_flow.py`, which is now 17 cases): a portrait with
+alt text instead of an empty alt, a portrait shifted one point off its band, text typed into the strip, and the
+strip dropped from every panel. **All four caught**, each by its own sentence rather than by a crash; all files
+restored byte-for-byte and the verifiers green afterwards. The probe's record is **16 mutations caught, 1
+measured to change nothing**.
+
+**What this does not change.** No artifact, count, verdict or SVG moved — the 20 figures are scaled in CSS, so the
+byte counts R recorded are exactly the ones the site still serves (`verify_site` byte-matches them). The 12
+outcome panels are now much taller on screen; that is the arithmetic of a 590 × 374 pt drawing at 1240 px, not a
+new cap.
+
 

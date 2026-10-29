@@ -972,6 +972,77 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
 </section>"""
 
 
+# ---- the portrait strip: five faces over the bands R drew --------------------------------------------------
+#
+# The portraits are *decorative here and the guardrail is what makes that true*: empty `alt`, `aria-hidden` on
+# the strip, no name, no title, no verdict word, and no text of any kind. They label a time axis the figure
+# already labels in words, so a screen reader loses nothing by skipping them. `tests/verify_site.py` asserts
+# all four of those properties rather than trusting this comment.
+_BAND_FILLS = ("#eef6f0", "#e3efe6")
+
+
+def band_geometry(svg_path: Path) -> list[dict]:
+    """Each administration band's left edge and width, as a fraction of the figure's own width.
+
+    The bands are drawn by R from the base's half-open administration spans and clipped to the panel's window
+    (`analysis/R/08_comparisons.R::tenure_bands`). Re-deriving them here from dates would be a second
+    computation of the same fact, and the two would eventually disagree about where a band starts. So the
+    shaded rects are read back out of the published SVG — the top panel's, which is the party-by-tenure panel
+    that spans the whole window — and those coordinates are the same space the `<img>` is scaled into.
+    """
+    text = svg_path.read_text(encoding="utf-8")
+    view = re.search(r"viewBox='0 0 ([\d.]+) ", text)
+    if not view:
+        raise SystemExit(f"{svg_path}: no viewBox — the strip cannot be aligned to it")
+    width = float(view.group(1))
+    shaded = []
+    for rect in re.findall(r"<rect[^>]*>", text):
+        fill = re.search(r"fill: (#[0-9A-Fa-f]{6})", rect) or re.search(r"fill='(#[0-9A-Fa-f]{6})'", rect)
+        if not fill or fill.group(1).lower() not in _BAND_FILLS:
+            continue
+        x = re.search(r"x='([\d.]+)'", rect)
+        y = re.search(r"y='([\d.]+)'", rect)
+        w = re.search(r"width='([\d.]+)'", rect)
+        if x and y and w:
+            shaded.append((float(y.group(1)), float(x.group(1)), float(w.group(1))))
+    if not shaded:
+        raise SystemExit(
+            f"{svg_path}: no administration bands found. Every time-axis figure draws them from "
+            f"{' / '.join(_BAND_FILLS)}; if R changed its shades, the strip must be re-pointed rather than "
+            f"silently dropped."
+        )
+    top = min(entry[0] for entry in shaded)
+    bands = sorted((x, w) for y, x, w in shaded if y == top)
+    return [{"left": x / width, "width": w / width} for x, w in bands]
+
+
+def tenure_strip(ctx: dict, svg_path: Path, prefix: str) -> str:
+    """The row of portraits above one panel, one portrait per band, placed at the band's own coordinates."""
+    bands = band_geometry(svg_path)
+    admins = ctx["administrations"]
+    if len(bands) != len(admins):
+        raise SystemExit(
+            f"{svg_path.name}: {len(bands)} administration band(s) in the figure against "
+            f"{len(admins)} in the tenure seed — the strip cannot be paired without guessing"
+        )
+    cells = []
+    for band, admin in zip(bands, admins):
+        row = ctx["portraits"].get(admin["slug"])
+        if not row:
+            # No licence row means no photograph. The cover shows a labelled empty frame; the strip has no
+            # room for a label, so the slot stays empty rather than borrowing a face the manifest does not cover.
+            continue
+        left = band["left"] * 100
+        width = band["width"] * 100
+        cells.append(
+            f'<li style="left:{left:.2f}%;width:{width:.2f}%">'
+            f'<img src="{prefix}assets/presidents/{admin["slug"]}.jpg" alt=""></li>'
+        )
+    if not cells:
+        return ""
+    return f'<ol class="tenure-strip" aria-hidden="true" data-bands="{len(bands)}">{"".join(cells)}</ol>'
+
+
 def render_chart(ctx: dict) -> str:
     guide = ctx["guide"]
     groupings = guide["groupings"]
@@ -1002,18 +1073,31 @@ def render_chart(ctx: dict) -> str:
         inner = f"""
   <p class="chosen">{html.escape(chart['caption'] or '')}</p>
   <figure class="chart-figure">
+    {tenure_strip(ctx, REPO_ROOT / "registry" / "comparisons" / ctx["vintage"] / "figures" / f"{outcome['id']}.svg", "../")}
     <img class="chart" src="../{chart['figure']}" alt="Outcome series grouped for {html.escape(outcome['label'])}">
     <figcaption>{html.escape(guide['chart']['stamp'])}. {html.escape(guide['results']['stamp_note'])}</figcaption>
   </figure>
   <h3>{html.escape(guide['results']['groups_heading'])}</h3>
   {''.join(lists)}
-  {render_breaks(outcome, guide)}{render_tenure(outcome, ctx, guide)}"""
+  {render_breaks(outcome, ctx, guide)}{render_tenure(outcome, ctx, guide)}"""
         blocks.append(outcome_shell(outcome, inner))
+
+    # The licence record travels with the faces. The cover carries the full list; the chart repeats it because
+    # these are the same five photographs on a second page, and a credit that only exists on another URL is not
+    # a credit beside the image.
+    supplied = ctx["portraits"]
+    credits = ""
+    if supplied:
+        items = "".join(f"<li>{html.escape(row['attribution_text'])}</li>" for row in supplied.values())
+        credits = (f'<details class="about credits"><summary>'
+                   f'{html.escape(guide["cover"]["portrait_credits"])}</summary>'
+                   f'<ul class="credit-list">{items}</ul></details>')
 
     return flow_page(ctx, "chart", "The comparison, drawn", guide["labels"]["chart_heading"],
                      "Two ways to look at the same outcome: by who was in power, and — where the outcome is "
-                     "measured state by state — by how much money a state received.", None, "".join(blocks),
-                     back="estimates", forward="ask", extra_head=extra_head)
+                     "measured state by state — by how much money a state received.", None,
+                     "".join(blocks) + credits,
+                     back="estimates", forward="ask", extra_head=extra_head, wide=True)
 
 
 # ------------------------------------------------------------------------------------------------------------
@@ -1162,7 +1246,7 @@ def render_designs(ctx: dict) -> str:
     return page("The design-level results", 1, body)
 
 
-def render_breaks(outcome: dict, guide: dict) -> str:
+def render_breaks(outcome: dict, ctx: dict, guide: dict) -> str:
     """The changepoint half of the chart screen: when the series changes, and the rule that it is not a cause."""
     copy = guide["changepoint"]
     brk = outcome.get("breaks")
@@ -1180,6 +1264,7 @@ def render_breaks(outcome: dict, guide: dict) -> str:
     return f"""<section class="breaks">
   {head}
   <figure class="chart-figure">
+    {tenure_strip(ctx, REPO_ROOT / "registry" / "changepoints" / ctx["vintage"] / "figures" / f"{outcome['id']}.svg", "../")}
     <img class="chart" src="../{brk['figure']}" alt="Outcome series with its declared breaks for {html.escape(outcome['label'])}">
     <figcaption>{html.escape(guide['chart']['stamp'])}. {html.escape(copy['note'])}</figcaption>
   </figure>
