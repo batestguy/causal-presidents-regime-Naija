@@ -45,7 +45,7 @@ from ingestion.clients.provenance import (  # noqa: E402
     write_manifest,
 )
 from ingestion.clients.ucdp import (  # noqa: E402
-    LATEST,
+    ADOPTED,
     NOTE,
     UcdpError,
     attribution,
@@ -68,7 +68,11 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         help="vintage label (default: today's UTC date). A correction must use a new label — the raw "
              "layer is immutable (X-07).",
     )
-    parser.add_argument("--version", default=LATEST, help=f"GED release (default: {LATEST})")
+    parser.add_argument(
+        "--version",
+        default=ADOPTED,
+        help=f"GED release (default: {ADOPTED}, the adopted release; 26.1 is available and not adopted)",
+    )
     return parser.parse_args(argv)
 
 

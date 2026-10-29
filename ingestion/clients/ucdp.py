@@ -38,19 +38,24 @@ ARCHIVES = {
 # 26.1 adds the 2025 calendar year (Nigeria: 7,418 -> 8,255 events, last month 2024-12 -> 2025-12)
 # and the column set is unchanged at 49, so the parser reads it without an adapter.
 #
-# **`LATEST` is the newest release UCDP publishes, not the release this project has adopted.** Adoption
-# is recorded by which raw vintage was parsed into `data/staging` and echoed in
-# `registry/quality/<vintage>/report.json -> source_vintages`. 26.1 is landed and deliberately not
-# adopted: it also revises 173 historical state-month cells inside Design A's estimation window
-# (+1.55% fatalities, +2.41% incidents), so adopting it re-fits every design on revised history and is
-# its own accountable pass. See docs/decisions.md C-77.
-LATEST = "26.1"
+# **`ADOPTED` is the release this project's chain lands by default, and it is deliberately not the
+# newest one.** 26.1 is in `ARCHIVES` and can be fetched by name, but it is not adopted: it revises 173
+# historical state-month cells inside Design A's estimation window (+1.55% fatalities, +2.41%
+# incidents), so adopting it re-fits every design on revised history and is its own accountable pass.
+# See docs/decisions.md C-77. Keeping the *default* on the adopted release also matters operationally:
+# `scripts/verify.sh` calls `pull_ucdp.py` with no arguments in the weekly `data` job, and a default of
+# "newest" would have made that job adopt 26.1 against a registry that describes 25.1.
+#
+# Adoption is still recorded by which raw vintage was parsed into `data/staging` and echoed in
+# `registry/quality/<vintage>/report.json -> source_vintages`; this constant only decides what a bare
+# run fetches. Moving it to "26.1" is the first step of the adoption pass, not a side effect of it.
+ADOPTED = "25.1"
 
 
 def attribution(version: str) -> str:
     """The CC-BY attribution for *this* release.
 
-    A module constant pinned to ``LATEST`` was wrong the moment a second version could be landed: a
+    A module constant pinned to one release was wrong the moment a second version could be landed: a
     re-fetch of 24.1 would have carried "version 26.1" on its manifest, which is a licence statement
     about the wrong file.
     """
@@ -70,14 +75,14 @@ class UcdpError(RuntimeError):
     """Raised when the bulk archive cannot be discovered or does not look like the archive."""
 
 
-def archive_url(version: str = LATEST) -> str:
+def archive_url(version: str = ADOPTED) -> str:
     if version not in ARCHIVES:
         raise UcdpError(f"unknown GED version {version!r}; known: {sorted(ARCHIVES)}")
     return f"{BASE_URL}/{ARCHIVES[version]}"
 
 
 def fetch_archive(
-    version: str = LATEST, session: requests.Session | None = None
+    version: str = ADOPTED, session: requests.Session | None = None
 ) -> tuple[Retrieval, bytes]:
     """Download the bulk archive. Returns ``(retrieval, payload)``.
 
