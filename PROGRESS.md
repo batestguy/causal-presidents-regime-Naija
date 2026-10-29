@@ -2558,3 +2558,13 @@ sequential plan at `presidents-completion-plan.md` - Phase A GED 26.1 adoption, 
 Design B decision, Phase C close-or-record every not-estimated reason, Phase D optional RAGAS library run,
 Phase E delivery polish, Phase F freeze - with named exit checks per phase, and the standing rule that a
 phase does not begin until the previous one is measured green. PHASES.md carries the pointer at its top.
+
+**The plan is now enforced, not stated (2026-10-29, `fd0b7ea`).** `presidents-completion-state.yml` holds
+one status per phase, and `scripts/check_phase_gate.py` - wired into `verify.sh` and the CI static job -
+fails the whole chain if the state skips ahead: two phases in progress, a phase any earlier phase is not
+`done` beneath, work behind the frontier, a done phase without a named check + date, a future-dated
+evidence line, or a phase list that drifted from the plan. Five break-tests written against it were all
+caught (skip-ahead, done-without-evidence, double-frontier, future evidence, drift), and the legal
+transition (A done with evidence -> B in_progress) is not falsely blocked. A gate that has never been
+red is broken: this one has been red five ways on purpose. Moving to the next phase means editing the
+state file only after the previous phase's exit criteria are observed green.
