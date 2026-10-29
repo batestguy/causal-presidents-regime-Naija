@@ -1,0 +1,39 @@
+﻿# The phase gate's state - the single place the completion plan's progress is recorded.
+#
+# The plan (`presidents-completion-plan.md`) states the order the project's remaining work happens in.
+# This file states where the project stands in it, and `scripts/check_phase_gate.py` checks that the
+# standing complies with the order. Editing the plan's prose alone is not compliance: a phase move
+# happens by editing the statuses *here*, and the gate fails the whole chain if the move skips ahead.
+#
+# `status` is one of: `not_started` | `in_progress` | `done`.
+#   - at most one phase may be `in_progress`;
+#   - every phase before it (and before each done phase) must be `done`;
+#   - every phase after it must be `not_started`;
+#   - a `done` phase must carry evidence: one entry per exit check, each naming the check that ran and
+#     the date it ran on (`scripts/check_phase_gate.py` enforces the shape).
+plan: presidents-completion-plan.md
+phases:
+  - id: A
+    title: adopt GED 26.1 (the data revision pass)
+    status: not_started
+    evidence: []
+  - id: B
+    title: the monthly inflation outcome in Design B (the subsidy estimand)
+    status: not_started
+    evidence: []
+  - id: C
+    title: close or permanently record every not-estimated reason
+    status: not_started
+    evidence: []
+  - id: D
+    title: optional RAGAS library run on Colab
+    status: not_started
+    evidence: []
+  - id: E
+    title: delivery polish
+    status: not_started
+    evidence: []
+  - id: F
+    title: completion freeze
+    status: not_started
+    evidence: []

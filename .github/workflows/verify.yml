@@ -47,6 +47,8 @@ jobs:
           ingestion/quality/*.py tests/*.py scripts/*.py app/*.py
       - name: artifact contracts
         run: python scripts/validate_artifacts.py
+      - name: phase gate (completion plan ordering)
+        run: python scripts/check_phase_gate.py
       - name: lint
         run: ruff check . || true # recorded, not gating: the repo carries pre-existing noqa conventions
       # The site is a second renderer over the same artifacts, and the browser's answer layer is a second

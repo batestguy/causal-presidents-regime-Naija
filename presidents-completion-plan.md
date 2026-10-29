@@ -11,6 +11,13 @@ reading (C-42, C-44, C-49, C-52).
 
 **Status markers:** `[ ]` not started · `[~]` in progress · `[x]` done, with the evidence noted.
 
+> **This plan is enforced, not just stated.** The checkboxes below are prose; the *record* is
+> `presidents-completion-state.yml`, and `scripts/check_phase_gate.py` fails the whole chain (verify.sh's
+> static step and CI's static job) if the state skips ahead: two phases in progress, a phase started
+> before the one before it closed, a phase marked done without a named check + date, or a phase list
+> that drifted from the plan. Moving to the next phase means editing the state file only after the
+> previous phase's exit criteria are observed green - the gate catches everything else.
+
 ---
 
 ## Phase A — adopt GED 26.1 (the data revision pass)

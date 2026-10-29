@@ -42,6 +42,12 @@ $PYTHON -m py_compile ingestion/clients/*.py ingestion/flows/*.py ingestion/pars
 step "static: artifacts and contracts"
 $PYTHON scripts/validate_artifacts.py
 
+# The phase gate: `presidents-completion-plan.md` claims the remaining work happens in a fixed order, so
+# the order is a property of the repo and is checked here with the repo's data-free checks. A state file
+# whose phases skip ahead (two in_progress, a done phase without named evidence, a phase started before
+# the one before it closed) turns the chain red in the same way a stale registry vintage does.
+$PYTHON scripts/check_phase_gate.py
+
 # The raw layer is immutable (X-07): a correction creates a new vintage, never an overwrite. So the
 # acquisition steps run only when nothing is landed — a fresh clone or a CI runner.
 if [ -z "$(ls -A data/raw/worldbank 2>/dev/null || true)" ]; then
