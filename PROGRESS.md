@@ -2552,3 +2552,9 @@ monthly, and the next design that wants the subsidy window starts from the evide
 conversation about it.
 
 **Committed in two commits** (the parked acquisition `533c2aa`, then this adoption), pushed to origin.
+
+**Handoff pointer (2026-10-29, added at the end of the session):** the remaining work is now a gated,
+sequential plan at `presidents-completion-plan.md` - Phase A GED 26.1 adoption, Phase B the monthly-CPI
+Design B decision, Phase C close-or-record every not-estimated reason, Phase D optional RAGAS library run,
+Phase E delivery polish, Phase F freeze - with named exit checks per phase, and the standing rule that a
+phase does not begin until the previous one is measured green. PHASES.md carries the pointer at its top.

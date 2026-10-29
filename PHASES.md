@@ -1,8 +1,13 @@
 # causal-presidents — Phase Plan: Data Collection → Analysis
 
-**Scope of this document.** Stages 0–9: from an empty repo to a defensible set of analysis products, and the
-app that renders them. The interactive app is Stage 9, downstream, and **consumes Stage 8 output only** — it
+**Scope of this document.** Stages 0-9: from an empty repo to a defensible set of analysis products, and the
+app that renders them. The interactive app is Stage 9, downstream, and **consumes Stage 8 output only** - it
 never touches R, a database or a model.
+
+> **What remains, in gated order:** `presidents-completion-plan.md` (written 2026-10-29) is the sequential,
+> exit-gated plan for finishing the project: Phase A GED 26.1 adoption → Phase B the monthly-CPI Design B
+> decision → Phase C close-or-record every card reason → Phase D optional RAGAS library run → Phase E
+> delivery polish → Phase F freeze. Phases do not begin until the previous one's named checks are green.
 Companions: `nigeria-causal-inference-spec.md` (design decisions), `#CausalPresidents.txt` (base spec),
 `knowledge.md` (environment).
 
