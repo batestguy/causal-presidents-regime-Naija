@@ -2568,3 +2568,34 @@ caught (skip-ahead, done-without-evidence, double-frontier, future evidence, dri
 transition (A done with evidence -> B in_progress) is not falsely blocked. A gate that has never been
 red is broken: this one has been red five ways on purpose. Moving to the next phase means editing the
 state file only after the previous phase's exit criteria are observed green.
+
+## Next session starts here (written 2026-10-29, end of session)
+
+**Everything above is committed and pushed; `main` == `origin/main` at `4e86721`. The tree is clean.
+The remaining work is gated by `scripts/check_phase_gate.py` (wired into `verify.sh` + CI static), state
+in `presidents-completion-state.yml`: all six phases `not_started`. Phase A is the only phase that may
+move to `in_progress`.**
+
+**Do this first next time - Phase A, in this order (details + checkboxes: `presidents-completion-plan.md`
+Phase A, A1-A6):**
+
+1. `analysis/specs/estimation.yml` BEFORE anything runs: line 91 still says "UCDP ends 2024-12 (GED
+   25.1)" and line 92 carries the 3,456 sample count - both must be re-derived from the 26.1 parse and
+   rewritten. Also move `labelled:` (line 36) and the seven other stage specs from 2026-10-29 to the new
+   date at the same time, so the re-run does not need a second vintage move mid-pass.
+2. `ingestion/clients/ucdp.py` line 52: `ADOPTED = "25.1"` -> `"26.1"`; move
+   `data/pending/ucdp/2026-10-29/` into `data/raw/ucdp/` (the C-79 boundary, same move the CPI made).
+3. Reparse (`ingestion/parsers/ucdp_events.py`), regate, `dbt build`, R chain in declared order, RAG
+   rebuild (`HF_HUB_OFFLINE=1`), the four evals, then `validate_artifacts` + all 24 verifiers.
+4. Field-by-field compare new artifacts against the 2026-10-29 family (the diff-script pattern in the
+   2026-10-29 sections above). Expect movement: 26.1 revises 173 of 175 in-window cells. Whatever moves,
+   report **as a data revision the source published** - decisions C-82 + `docs/limitations.md`, never as
+   a better or new finding.
+5. Only after the observed green: set Phase A `done` in `presidents-completion-state.yml` with
+   `validate_artifacts.py PASS` + `all 24 verifiers PASS` + today's date as evidence, and Phase B
+   `in_progress`. The gate re-checks on the next run; hand-editing the plan's checkboxes alone is not
+   compliance.
+
+**Standing reminders for any session:** the ds-general interpreter for Python, R 4.5.2 for the stages,
+the drlca-rag env only for the corpus rebuild; measure in a served browser before writing CSS (file://
+is blocked); commit + push after each unit; `data/raw/` is never edited, superseded vintages are kept.
