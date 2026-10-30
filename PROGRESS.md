@@ -1,6 +1,6 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-10-30 (twenty-first session) — this session's record is the last section of this file · **Stage:** 9, and the **completion plan's Phase A is closed**: GED 26.1 adopted in its own accountable pass, every Design A number moved and **no verdict moved** · **verified at vintage 2026-10-30**: `dbt build` (178/178), every R stage, the corpus, all four evals and **all twenty-three** verifiers, plus `validate_artifacts` and the phase gate; `all checks passed` equivalent, one step at a time with `HF_HUB_OFFLINE=1` and the RAG interpreter
+**Last updated:** 2026-10-30 (twenty-first session) — this session's record is the last section of this file · **Stage:** 9, and the **completion plan's Phases A and B are closed**: GED 26.1 adopted in its own accountable pass (every Design A number moved, **no verdict moved**), and Design B's monthly-CPI outcome fitted (**a null at every horizon**), with the grid at 129 specifications · **verified at vintage 2026-10-30**: `dbt build` (178/178), every R stage, the corpus, all four evals and **all twenty-three** verifiers, plus `validate_artifacts` and the phase gate; `all checks passed` equivalent, one step at a time with `HF_HUB_OFFLINE=1` and the RAG interpreter
 
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
@@ -2817,44 +2817,56 @@ frontier.
 
 ## Next session starts here (written 2026-10-30, end of session)
 
-**Phase A is done and the gate accepts the move: `[x] Phase A`, `[~] Phase B`, `frontier: B`.** Everything
-above is committed; `data/pending/` is empty; the registry's newest vintage is **2026-10-30** in every
-family, and the 2026-10-29 family is intact as the 25.1 record.
+**Phases A and B are closed and the gate accepts the move: `[x] A`, `[x] B`, `[~] C`, `frontier: C`.**
+Everything above is committed and pushed; `data/pending/` is empty; every registry family's newest vintage is
+**2026-10-30** (the 2026-10-29 family is intact as the 25.1 record). The chain is green: **23/23 verifiers**,
+`validate_artifacts` (74 documents, the C-44 invariant), the phase gate, and CI + the Pages deploy on
+`cdc8bef`.
 
-**Phase B is "the monthly inflation outcome in Design B (the subsidy estimand)", and its first move is a
-declaration, not a fit** (`presidents-completion-plan.md` Phase B, B1–B4):
+**Phase C — "close or permanently record every not-estimated reason" — is 24 of the 36 cards.** The other 12
+are already final: 2 carry a number, 9 are `design_result_is_channel_level`, 1 is Design C's
+`design_estimated_not_identified`. The order below is cheapest-first, so the cheap closures land before the
+acquisition work can block them.
 
-1. **B1 — decided, recorded as C-85; the declaration and the engine change are the first unit.** Design B
-   gains `nbs_cpi_national_monthly.cpi_index` as a **second outcome family** (same `log_cumulative_change`
-   transform, so a coefficient is "the cumulative log change in the price level h months after a 1 % Brent
-   shock"), with `cpi_yoy` (annual) kept as the cross-check and `cpi_mom_pct` rejected (a different
-   weighting from log differences of the level). The series is 2016-12 → **2024-10**, native monthly, so
-   the 2023-06 → 2023-12 subsidy window is inside it and 2024-11 onward is absent, not interpolated. The
-   robustness grid takes the outcome as a **fourth axis for Design B** (24 → 48 cells; total 105 → **129**),
-   decided in C-85 so that the CPI rows are never published without the grid that could move them. The
-   engine work that follows: `03_estimate.R`'s Design B block reads `$outcome` singular and must loop over
-   a declared list (per-outcome national frame, per-outcome peak/placebo/verdict, distinct
-   `coefficient_name`); `04_robustness.R`'s B grid gains the outcome axis; `05_registry.R` and the site's
-   "105 specifications" move with it; `tests/verify_stage6.py`/`verify_stage7.py` re-derive the new rows;
-   and `02_diagnostics.R` must test the monthly series at native grain before any of it is fitted.
-2. **B2 — DONE (C-86).** `log(cpi_index)` is I(1) (inconclusive at the second step, carried
-   conservatively); against `log(oil)` the Johansen rank is 2 under `const` and 0 under `trend`, and the
-   declared conservative-min rule gives **rank 0 → no cointegration → short-run pass-through**, which is
-   the branch the design claims. The first pass tested the raw level and read a rank of 2 of 2; both were
-   artefacts and are corrected, with C-85's span fixed.
-3. **B3 — DONE (C-87).** `03_estimate.R` loops the declared families, `04_robustness.R` takes the outcome
-   as a fourth axis (105 → 129 cells), `05_registry.R` and the site's technical page follow. The fiscal
-   family reproduces **bit-for-bit** (0.00e+00); the price-level family is a **null at every horizon**
-   (coefficients −0.0143 … +0.0043, every interval crossing zero) and its verdict is
-   `estimated_null_at_the_declared_band` — the peak is at h=0, not in the declared band. Stage 7: 36 of 48
-   positive, 24 of 129 in the near-zero band, one flip level, spread published per family.
-4. **B4 — DONE.** All 23 verifiers PASS, `validate_artifacts` PASS (74 documents, the C-44 invariant
-   included), the corpus re-built (492 chunks) and all four evals re-measured. **Phase B is closed; Phase C
-   is the frontier** and its first move is C1: the 10 cards whose reason is `no_specification_declared` —
-   declare the specification or record the refusal, pair by pair, with nothing left "open".
+1. **C4 first (30 minutes).** `variables_still_missing` in `registry/dags/index.json` still names FAAC and
+   primary-completion as missing while both are landed. Trim it to the genuinely outstanding pieces (D1's
+   state population denominator, X-09) and write the audit down; `verify_dags.py`'s G-11 check must stay green.
+2. **C1 — the 10 `no_specification_declared` cards.** For each (outcome, design) pair: declare the
+   specification in the stage spec, or record the refusal with its reason. Nothing is left "open". The pairs
+   are on each card's `estimate.reason` and counted in `index.json → registry.card_estimate_counts`. Expect
+   one spec unit plus one chain run.
+3. **C2 — the 2 `design_not_run` cards (`cpi_yoy__C`, `gdp_growth__C`).** Design C is specified for `u5mr`
+   only. Extend `analysis/specs/design_c.yml`'s donor fields (World Bank country-year GDP is already
+   adopted) and re-run `11_design_c.R` + `verify_design_c.py`, or record the refusal. A spec change to C
+   re-runs the placebos: that is the exit, and it is the most compute-bound unit in the phase.
+4. **C3 — the 12 `outcome_series_absent` cards.** Three sub-tracks, cheapest first: (i) cross-country
+   **security** outcomes for Design C are likely cheap — UCDP's bulk archive is keyless and a client of the
+   `ucdp.py` family (a *donor* panel, not a new Nigeria series) would unlock the conflict outcomes for C;
+   (ii) the World Bank outcomes for missing B/C donor panels are a second WDI dataset id plus parser wiring
+   on an already-adopted source; (iii) education (NEMIS/UIS) stays **permanently refused on the record** —
+   C-11/C-12 measured both dead, and only a verified new source reopens it. Acquisitions follow the standing
+   pattern: land → parse → verify → declare in the gate → adopt in one accountable pass (C-79/C-81/C-84),
+   never silently.
+5. **C5 — exit.** Every card's reason re-published with its final state; `verify_dags.py`'s G-11 PASS; the
+   same battery as A6/B4. Then six evidence entries in `presidents-completion-state.yml` and `D
+   in_progress`.
+
+**Two decisions cost or save a day, and both should be taken before the work rather than after:** do C3(i)
+and C3(ii) run as acquisitions, or are they recorded as planned fixes with their source named? And does C2
+extend Design C or record a refusal? The plan allows either — a recorded refusal is a legitimate exit as long
+as it names the source and what would reopen it.
 
 **Standing reminders for any session:** the ds-general interpreter for Python, R 4.5.2 for the stages, the
 drlca-rag env only for the corpus rebuild (`HF_HUB_OFFLINE=1`); `GOOGLE_API_KEY` is in the **environment**,
 not `.env`, and the answer-quality measurement needs it; every spec's `upstream:` path must name its own
 `labelled` vintage (C-83); measure in a served browser before writing CSS (file:// is blocked); commit +
 push after each unit; `data/raw/` is never edited, superseded vintages are kept.
+
+**And four mechanical rules this session earned:** the outcome map for a design lives **once**, in
+`estimation.yml`, and `robustness.yml` reads it through `upstream.estimation_spec` (C-87); an `upstream:`
+path must name its own `labelled` vintage or the check answers a question about an older artifact (C-83);
+editing any **corpus source** (`docs/*.md` except `rag.md`, and the registry artifacts) requires
+`scripts/build_rag_corpus.py --embed` and the four evals, and the answer-quality script **caches per
+question** — delete its artifact before re-judging after a corpus change, or it will re-attribute stale
+scores to a new corpus hash (found the hard way); and a declaration-only pass regenerates the family of the
+data vintage it describes **in place** (C-88), which is only honest when the diff is proven additive.
