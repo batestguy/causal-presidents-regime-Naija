@@ -87,6 +87,33 @@ unit_root:
     only make the reported rank smaller) and the outcome's card records the inconclusiveness.
 
 # ---------------------------------------------------------------------------------------------
+# Additional native series the catalogue cannot see
+# ---------------------------------------------------------------------------------------------
+# The loop above walks `dim_metric`, and the NBS monthly CPI is deliberately not there:
+# `harmonisation.yml` keeps it as its own wide table rather than as spine rows, because it is a
+# monthly-native series inside an annual spine. Design B's second outcome family (C-85) needs its
+# integration order at native grain *before* any estimate exists, so it is declared here by name
+# rather than left invisible to a catalogue it is not part of.
+additional_series:
+  - id: cpi_index_monthly
+    label: "NBS CPI, all items (monthly native, logged)"
+    table: nbs_cpi_national_monthly
+    column: cpi_index
+    # **The log, because that is the series Design B transforms.** Testing the raw index answers a
+    # question the design never asks: the index level is a monotone accelerating series and reads as
+    # I(2) on the raw scale, while `log_cumulative_change` is a fixed-span difference of the *log*.
+    # Declared here rather than left to a reader to notice, because the first version of this entry
+    # did test the raw column and the verdict it produced was about the wrong object (C-86).
+    transform: log
+    native_frequency: monthly
+    why: >-
+      C-85's outcome for Design B's inflation family: the published All Items index, **1995-01 ->
+      2024-10** (358 months, the workbook's whole history), of which **310** fall inside the
+      diagnostics' declared 1999-01 study floor. Tested at its own monthly grain for the reason
+      `grain.forbidden` states — on the spine it would test the interpolator — and it is the series
+      whose 2023-06 -> 2023-12 window the design exists to look at.
+
+# ---------------------------------------------------------------------------------------------
 # Cointegration — base spec section 9: the estimator follows the test, not preference
 # ---------------------------------------------------------------------------------------------
 cointegration:
@@ -125,6 +152,32 @@ cointegration:
     system reads as stationary. Calling that "cointegrated" would dress a stationary system up as a
     long-run relationship; a VAR in levels is the honest reading and the card says so.
   on_insufficient_observations: not_run
+  # C-85's outcome against the shock, at native monthly grain. The same estimator and the same
+  # declared rank rule as the annual system; what differs is the grain, the system, and K, which is
+  # declared rather than inherited because 95 monthly observations tolerate a longer lag order than
+  # 26 annual ones. **The rank is not what chooses Design B's estimator** — a local projection is
+  # not a VECM — it is published because B2 requires the cointegration question to be asked at the
+  # outcome's own grain before an estimate uses it.
+  monthly_system:
+    outcome: cpi_index
+    shock: oil
+    transform: [log, log]
+    K: 2
+    # **Both deterministic-term conventions, and the conservative rank between them.** On two trending
+    # I(1) series the unrestricted-constant form can attribute the trend to the level relationship and
+    # over-reject; the unrestricted-trend form cannot. `const` alone returned rank 2 of 2 here — a
+    # "stationary system" containing two series that the unit-root battery calls I(1) — which is the
+    # signature of the mis-specification rather than a finding. The declared rule is the same one the
+    # annual block applies to a trace/eigen disagreement: take the smaller rank and publish both.
+    ecdet_conventions: [const, trend]
+    rank_rule: conservative_min
+    spec_types: [trace, eigen]
+    min_observations: 20
+    why: >-
+      A rank of 0 says the price level and Brent do not share a long-run path, which makes a
+      cumulative-response local projection a statement about short-run pass-through only; a positive
+      rank says they do, and the projection reads as a deviation from that path. Either way the
+      answer is published beside the estimate rather than discovered by a reader afterwards.
 
 # ---------------------------------------------------------------------------------------------
 # Shock-window visibility — PHASES.md: "confirm the 2016, 2020 and 2023 windows are visible in the

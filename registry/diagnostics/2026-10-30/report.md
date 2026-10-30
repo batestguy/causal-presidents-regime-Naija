@@ -9,6 +9,11 @@ Every number here is a pre-check computed before any estimate exists. Independen
 All tests run on **native observations**, never on the monthly spine: 16.4% of spine rows are
 observed, and a unit-root test on interpolated data tests the interpolator.
 
+## Design B's second outcome — the monthly price level (C-85)
+
+`cpi_index_monthly`: **310** native monthly observations, 1999-01-01 -> 2024-10-01; integration order **1** (inconclusive).
+Cointegration against log Brent at the same grain: **310** months, rank **0** (no_cointegration_ardl_fallback).
+
 ## Design verdicts
 
 | Design | Status | Deciding diagnostic |
@@ -64,6 +69,7 @@ State panel: 12358 rows = 37 states x 334 months. Dose status per row: 8,218 `de
 | unemp | 27 | fail_to_reject | fail_to_reject | fail_to_reject | I(1)* |
 | oil (monthly native) | 334 | fail_to_reject | reject_null | fail_to_reject | I(1) |
 | oil (annual mean) | 28 | fail_to_reject | fail_to_reject | fail_to_reject | I(1)* |
+| cpi_index_monthly | 310 | fail_to_reject | reject_null | fail_to_reject | I(1)* |
 
 `*` = the three tests did not agree; the series is carried as I(1) (the conservative branch).
 

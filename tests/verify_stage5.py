@@ -457,6 +457,124 @@ def deciding_margin(co) -> float:
     return float((cv[0] - stat[0]) / cv[0])
 
 
+def check_monthly_system(con, diag, failures, warnings):
+    """B2's monthly CPI pre-test: the inputs recomputed, and the rank rule re-derived.
+
+    The unit-root block is engine-published (no verifier recomputes ADF/KPSS/PP — see C-86), so what
+    is checked here is what can be checked without re-implementing urca: the series' observations,
+    the complete-month sample, the conservative-rank rule, the engine's own scan of its own
+    published rows, the rank->estimator mapping, and — for the convention that is comparable — an
+    independent Johansen in numpy.
+    """
+    import yaml  # local, like the spec echo: the verifier runs without it where it is not needed
+
+    spec = yaml.safe_load(SPEC_PATH.read_text(encoding="utf-8"))
+    declared = {s["id"]: s for s in (spec.get("additional_series") or [])}
+    entry = (diag.get("series") or {}).get("cpi_index_monthly")
+    if entry is None:
+        failures.append("series: `cpi_index_monthly` is not published, but B2 declares it")
+        return
+    if "cpi_index_monthly" not in declared:
+        failures.append("series: `cpi_index_monthly` is published but not declared in diagnostics.yml")
+        return
+    d = declared["cpi_index_monthly"]
+    table, column, transform = d["table"], d["column"], d.get("transform", "level")
+    df = con.execute(
+        f"""select period_month, {column} as value from main_analytics.{table}
+            where {column} is not null and period_month >= date '1999-01-01' order by 1""").fetchdf()
+    n_expected = len(df)
+    first_expected = str(df["period_month"].min())[:10] if n_expected else None
+    last_expected = str(df["period_month"].max())[:10] if n_expected else None
+    if entry.get("n_observations") != n_expected:
+        failures.append(f"series cpi_index_monthly: n_observations {entry.get('n_observations')} != "
+                        f"{n_expected} recomputed from {table}")
+    if entry.get("transform") != transform:
+        failures.append(f"series cpi_index_monthly: the artifact tests transform {entry.get('transform')!r} "
+                        f"but the spec declares {transform!r} — a verdict about the wrong object (C-86)")
+    if str(entry.get("first_month"))[:10] != first_expected:
+        failures.append(f"series cpi_index_monthly: first_month {entry.get('first_month')} != {first_expected}")
+    if str(entry.get("last_month"))[:10] != last_expected:
+        failures.append(f"series cpi_index_monthly: last_month {entry.get('last_month')} != {last_expected}")
+
+    mc = diag.get("cointegration_monthly")
+    if not mc:
+        failures.append("cointegration_monthly: absent, but B2's monthly system is declared")
+        return
+    joined = con.execute(
+        f"""select c.period_month, c.{column} as outcome, o.value as shock
+            from main_analytics.{table} c
+            join main_analytics.fact_observation_native o
+              on o.metric_id = 'oil' and o.native_frequency = 'monthly'
+             and o.anchor_month = c.period_month
+            where c.{column} is not null and o.value is not null
+              and c.period_month >= date '1999-01-01' order by 1""").fetchdf()
+    if mc.get("n_observations") != len(joined):
+        failures.append(f"cointegration_monthly: n_observations {mc.get('n_observations')} != "
+                        f"{len(joined)} complete months recomputed")
+    rank_by = mc.get("rank_by_convention") or {}
+    conventions = [c for c in (spec.get("cointegration", {}).get("monthly_system", {}).get("ecdet_conventions") or [])]
+    if sorted(rank_by) != sorted(conventions):
+        failures.append(f"cointegration_monthly: rank_by_convention keys {sorted(rank_by)} != declared "
+                        f"conventions {sorted(conventions)}")
+    if not rank_by:
+        failures.append("cointegration_monthly: no rank published by convention")
+        return
+    conservative = min(rank_by.values())
+    if mc.get("rank") != conservative:
+        failures.append(f"cointegration_monthly: rank {mc.get('rank')} is not the declared conservative "
+                        f"min {conservative} of {rank_by}")
+    if mc.get("chosen_convention") not in rank_by:
+        failures.append(f"cointegration_monthly: chosen_convention {mc.get('chosen_convention')!r} is not "
+                        "one of the published conventions")
+    elif rank_by[mc["chosen_convention"]] != conservative:
+        failures.append("cointegration_monthly: the conventions published are not the one the "
+                        "conservative rank was read from")
+    # the engine must have scanned its own published rows to the rank it published for that convention
+    def scan(stats, cvals):
+        r = 0
+        for s, cv in zip(stats, cvals):
+            if s > cv:
+                r += 1
+            else:
+                break
+        return r
+
+    trace = [row["teststat"] for row in mc.get("trace") or []]
+    trace_cv = [row["cval"] for row in mc.get("trace") or []]
+    eigen = [row["teststat"] for row in mc.get("eigen") or []]
+    eigen_cv = [row["cval"] for row in mc.get("eigen") or []]
+    if scan(trace, trace_cv) != mc.get("rank_trace"):
+        failures.append(f"cointegration_monthly: {mc.get('chosen_convention')} rank_trace "
+                        f"{mc.get('rank_trace')} != its own scan {scan(trace, trace_cv)}")
+    if scan(eigen, eigen_cv) != mc.get("rank_eigen"):
+        failures.append(f"cointegration_monthly: {mc.get('chosen_convention')} rank_eigen "
+                        f"{mc.get('rank_eigen')} != its own scan {scan(eigen, eigen_cv)}")
+    n_sys = len(trace)
+    expect = "ardl_bounds" if mc["rank"] == 0 else ("var_in_levels" if mc["rank"] >= n_sys else "vecm")
+    if mc.get("recommended_estimator") != expect:
+        failures.append(f"cointegration_monthly: estimator {mc.get('recommended_estimator')} != {expect} "
+                        f"for rank {mc['rank']}")
+    # an independent Johansen, comparable only under the unrestricted-constant convention
+    if "const" in rank_by:
+        Y = np.column_stack([np.log(joined["outcome"].values), np.log(joined["shock"].values)]).astype(float)
+        Y = Y[~np.isnan(Y).any(axis=1)]
+        ind_trace, ind_eig = johansen(Y, K=int(mc.get("K", 2)))
+        const_rows = (mc.get("by_convention") or {}).get("const") or {}
+        ctrace = [row["cval"] for row in const_rows.get("trace") or []]
+        ceigen = [row["cval"] for row in const_rows.get("eigen") or []]
+        rank_ind = min(scan(list(ind_trace), ctrace), scan(list(ind_eig), ceigen))
+        gap = float(np.max(np.abs(np.array(ind_trace) - np.array([r["teststat"] for r in const_rows["trace"]]))
+                           / np.array([r["teststat"] for r in const_rows["trace"]])))
+        if rank_ind != rank_by["const"]:
+            warnings.append(f"cointegration_monthly: independent rank {rank_ind} (const) != engine "
+                            f"{rank_by['const']}; statistic gap {gap:.1%} (deterministic-term convention)")
+        print(f"  monthly system   : {mc.get('n_observations')} months, rank {mc['rank']} "
+              f"({mc.get('rank_by_convention')}); independent const rank {rank_ind}, gap {gap:.1%}")
+    else:
+        print(f"  monthly system   : {mc.get('n_observations')} months, rank {mc['rank']} "
+              f"({mc.get('rank_by_convention')})")
+
+
 def check_prefit(con, diag, failures):
     """Re-solve the Family C pre-treatment fit window by window."""
     import yaml
@@ -734,6 +852,7 @@ def main() -> int:
         check_shock_visibility(con, diag, failures)
         check_dose(con, diag, failures)
         check_cointegration(con, diag, failures, warnings)
+        check_monthly_system(con, diag, failures, warnings)
         check_prefit(con, diag, failures)
         check_mde(con, diag, failures)
     finally:

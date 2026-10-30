@@ -2724,6 +2724,48 @@ and — worth recording because it is what makes this loop finite — **`docs/ra
 corpus source** (`rag.yml` says so at the point where the narrative sources are listed), so the page that
 quotes the measurement does not re-fingerprint the corpus it describes.
 
+**Then, same session — Phase B2: the monthly CPI pre-test, and the two corrections it needed.** The
+declaration (C-85) was turned into a pre-test before any estimator was touched, which is the whole point of
+B2. `diagnostics.yml` gained `additional_series` (the monthly CPI, named because `dim_metric` cannot see a
+table `harmonisation.yml` keeps unspined) and `cointegration.monthly_system`; `02_diagnostics.R` grew a
+one-series loop in the shape of its oil block and a monthly Johansen beside the annual one; and
+`tests/verify_stage5.py` grew `check_monthly_system`.
+
+**The first run answered a question nobody asked.** It tested the **raw index level**, whose ADF/PP/KPSS
+agree at the level *and* at the raw first difference, so the engine published **I(2), decisive** — and the
+Johansen step, run only under the annual system's `ecdet = "const"`, returned **rank 2 of 2**, a "stationary
+system" containing two series the battery calls I(1). Both were artefacts of testing the wrong object: the
+design transforms **logs and fixed-span differences**, never the raw level, and an unrestricted constant on
+two trending I(1) series can attribute the deterministic trend to the level relation and over-reject.
+
+**Corrected, the answers are clean and they support the design.** `log(cpi_index)`, 310 months (1999-01 →
+2024-10), is **I(1), inconclusive at the second step** (level: ADF 2.57 and PP 2.78 fail to reject, KPSS
+5.17 rejects; first difference: ADF −10.04 and PP −13.48 reject, KPSS 0.686 still rejects) and is carried as
+I(1) under the declared conservative branch. Against `log(oil)` the rank is **2 under `const` and 0 under
+`trend`** (r=0 statistics 90.08 and 22.56 against 19.96 and 25.32); both conventions are now published and
+the rule is **conservative-min**, the one the annual block already applies to a trace/eigen disagreement.
+**Rank 0 → no cointegration → `ardl_bounds`**: the price level shares no long-run path with Brent once a
+trend is allowed, so a cumulative-response local projection is a statement about **short-run pass-through**,
+which is what the design claims to be. The independent numpy Johansen agrees with the rank-0 reading under
+its own convention while urca's constant form gives 2 — a 75.7 % statistic gap, published as a warning
+rather than passed.
+
+**Two things were recorded rather than smoothed.** C-85's span was wrong — "2016-12 → 2024-10, 95 months"
+was the FAAC window misapplied to a series that starts in 1995; it is **1995-01 → 2024-10, 358 months, 310
+inside the study floor** — and is corrected in place with the correction named. And a pre-existing gap is
+now on the record: **no verifier recomputed the integration-order block** before this pass. The new verifier
+checks everything about the series that does not require re-implementing urca (observations, first/last
+month, declared transform, complete-month sample, conservative-rank rule, the engine's own scan, the
+rank→estimator mapping); the ADF/KPSS/PP verdicts for all 25 series remain engine-published, because a
+second-library verifier that fails at the margin on a library convention is worse than the gap it documents
+(C-86).
+
+**Where B3 starts.** The pre-test says the declared outcome is usable *as short-run pass-through*, so the
+next unit is the estimator: `03_estimate.R`'s Design B block reads `design_b$outcome` singular and must loop
+a declared outcome list with a per-outcome frame, peak band, lead placebo and verdict; `04_robustness.R`'s B
+grid takes the outcome as its fourth axis (24 → 48 cells, total 105 → 129); `05_registry.R`, the site's
+"105 specifications" and the specification curve move with it.
+
 ## Next session starts here (written 2026-10-30, end of session)
 
 **Phase A is done and the gate accepts the move: `[x] Phase A`, `[~] Phase B`, `frontier: B`.** Everything
@@ -2746,10 +2788,11 @@ declaration, not a fit** (`presidents-completion-plan.md` Phase B, B1–B4):
    `coefficient_name`); `04_robustness.R`'s B grid gains the outcome axis; `05_registry.R` and the site's
    "105 specifications" move with it; `tests/verify_stage6.py`/`verify_stage7.py` re-derive the new rows;
    and `02_diagnostics.R` must test the monthly series at native grain before any of it is fitted.
-2. **B2 — Stage 5 first.** `02_diagnostics.R` must pass (or fail, on record) the integration/cointegration
-   checks at the series' native grain before an estimate exists. The series is monthly-native to **2024-10**
-   — the elibrary listing ends there — so the 2023-06 → 2023-12 subsidy window is inside it, which is the
-   whole point.
+2. **B2 — DONE (C-86).** `log(cpi_index)` is I(1) (inconclusive at the second step, carried
+   conservatively); against `log(oil)` the Johansen rank is 2 under `const` and 0 under `trend`, and the
+   declared conservative-min rule gives **rank 0 → no cointegration → short-run pass-through**, which is
+   the branch the design claims. The first pass tested the raw level and read a rank of 2 of 2; both were
+   artefacts and are corrected, with C-85's span fixed.
 3. **B3 — fit and publish.** Stage 6/7 re-run at a **new** vintage label; the question the card must answer
    is whether that window is estimable at monthly grain, and a declared refusal with its reason is a
    publishable answer.

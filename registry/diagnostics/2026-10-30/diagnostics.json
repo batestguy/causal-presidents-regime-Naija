@@ -3,10 +3,10 @@
   "stage": 5,
   "layer": "pre-analysis diagnostics and design validation",
   "vintage": "2026-10-30",
-  "generated_at": "2026-10-30T12:14:42+0100",
+  "generated_at": "2026-10-30T15:04:55+0100",
   "generator": {
     "script": "analysis/R/02_diagnostics.R",
-    "git_sha": "51803ea",
+    "git_sha": "0d431e9",
     "r_version": "R version 4.5.2 (2025-10-31 ucrt)"
   },
   "spec": "analysis/specs/diagnostics.yml",
@@ -1487,6 +1487,87 @@
           "note": null
         }
       }
+    },
+    "cpi_index_monthly": {
+      "metric_id": "cpi_index_monthly",
+      "series_label": "cpi_index_monthly",
+      "label": "NBS CPI, all items (monthly native, logged)",
+      "native_frequency": "monthly",
+      "n_observations": 310,
+      "first_year": 1999,
+      "last_year": 2024,
+      "order_of_integration": 1,
+      "decisive": false,
+      "note": "the three tests did not agree at the level or at the first difference; carried as I(1) (the conservative branch in diagnostics.yml)",
+      "tests": {
+        "adf_drift": {
+          "kind": "adf_drift",
+          "n": 310,
+          "teststat": 2.570996,
+          "cval": -2.87,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_trend": {
+          "kind": "adf_trend",
+          "n": 310,
+          "teststat": 1.02088,
+          "cval": -3.42,
+          "lags": 4,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "kpss": {
+          "kind": "kpss",
+          "n": 310,
+          "teststat": 5.167859,
+          "cval": 0.463,
+          "lags": 5,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp": {
+          "kind": "pp",
+          "n": 310,
+          "teststat": 2.774837,
+          "cval": -2.871048,
+          "lags": 5,
+          "verdict": "fail_to_reject",
+          "note": null
+        },
+        "adf_diff": {
+          "kind": "adf_drift",
+          "n": 309,
+          "teststat": -10.040883,
+          "cval": -2.87,
+          "lags": 4,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "kpss_diff": {
+          "kind": "kpss",
+          "n": 309,
+          "teststat": 0.685621,
+          "cval": 0.463,
+          "lags": 5,
+          "verdict": "reject_null",
+          "note": null
+        },
+        "pp_diff": {
+          "kind": "pp",
+          "n": 309,
+          "teststat": -13.483922,
+          "cval": -2.871078,
+          "lags": 5,
+          "verdict": "reject_null",
+          "note": null
+        }
+      },
+      "declared_by": "diagnostics.yml additional_series",
+      "transform": "log",
+      "first_month": "1999-01-01",
+      "last_month": "2024-10-01"
     }
   },
   "cointegration": {
@@ -1874,6 +1955,127 @@
       "rank_borderline": false,
       "recommended_estimator": "vecm"
     }
+  },
+  "cointegration_monthly": {
+    "outcome_id": "cpi_index",
+    "verdict": "no_cointegration_ardl_fallback",
+    "system": ["log(cpi_index)", "log(oil)"],
+    "K": 2,
+    "ecdet": "trend",
+    "n_observations": 310,
+    "first_month": "1999-01-01",
+    "last_month": "2024-10-01",
+    "note": null,
+    "by_convention": {
+      "const": {
+        "ecdet": "const",
+        "rank_trace": 2,
+        "rank_eigen": 2,
+        "rank": 2,
+        "trace": [
+          {
+            "r": 0,
+            "teststat": 90.075769,
+            "cval": 19.96,
+            "exceeds": true
+          },
+          {
+            "r": 1,
+            "teststat": 13.122508,
+            "cval": 9.24,
+            "exceeds": true
+          }
+        ],
+        "eigen": [
+          {
+            "r": 0,
+            "teststat": 76.953261,
+            "cval": 15.67,
+            "exceeds": true
+          },
+          {
+            "r": 1,
+            "teststat": 13.122508,
+            "cval": 9.24,
+            "exceeds": true
+          }
+        ]
+      },
+      "trend": {
+        "ecdet": "trend",
+        "rank_trace": 0,
+        "rank_eigen": 0,
+        "rank": 0,
+        "trace": [
+          {
+            "r": 0,
+            "teststat": 22.56277,
+            "cval": 25.32,
+            "exceeds": false
+          },
+          {
+            "r": 1,
+            "teststat": 9.428357,
+            "cval": 12.25,
+            "exceeds": false
+          }
+        ],
+        "eigen": [
+          {
+            "r": 0,
+            "teststat": 13.134412,
+            "cval": 18.96,
+            "exceeds": false
+          },
+          {
+            "r": 1,
+            "teststat": 9.428357,
+            "cval": 12.25,
+            "exceeds": false
+          }
+        ]
+      }
+    },
+    "rank_by_convention": {
+      "const": 2,
+      "trend": 0
+    },
+    "rank": 0,
+    "rank_rule": "conservative_min across the declared deterministic-term conventions",
+    "conventions_disagree": true,
+    "chosen_convention": "trend",
+    "trace": [
+      {
+        "r": 0,
+        "teststat": 22.56277,
+        "cval": 25.32,
+        "exceeds": false
+      },
+      {
+        "r": 1,
+        "teststat": 9.428357,
+        "cval": 12.25,
+        "exceeds": false
+      }
+    ],
+    "eigen": [
+      {
+        "r": 0,
+        "teststat": 13.134412,
+        "cval": 18.96,
+        "exceeds": false
+      },
+      {
+        "r": 1,
+        "teststat": 9.428357,
+        "cval": 12.25,
+        "exceeds": false
+      }
+    ],
+    "rank_trace": 0,
+    "rank_eigen": 0,
+    "disagreement": false,
+    "recommended_estimator": "ardl_bounds"
   },
   "shock_visibility": {
     "1": {
@@ -3848,7 +4050,7 @@
       "gates": {
         "integration_order": {
           "passed": null,
-          "detail": "24 series tested at native grain"
+          "detail": "25 series tested at native grain"
         },
         "cointegration_rank": {
           "passed": null,

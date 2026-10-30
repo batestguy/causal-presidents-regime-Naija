@@ -377,6 +377,78 @@ if (nrow(oil_a) >= min_obs_unit_root) {
   series_diag[["oil_annual"]] <- e
 }
 
+# ------------------------------------------------------------------------------------------
+# 1b. additional native series declared by name (C-85)
+# ------------------------------------------------------------------------------------------
+# The catalogue loop skips anything `dim_metric` does not carry, and the NBS monthly CPI is
+# deliberately outside it (harmonisation.yml keeps it unspined). A series a design *uses* still has
+# to be diagnosed before the design is fitted, so `diagnostics.yml → additional_series` names it and
+# the same three-test battery runs on it at its own grain.
+additional <- spec_get(c("additional_series"), list())
+for (s in additional) {
+  id <- as.character(s$id)
+  table_name <- as.character(s$table)
+  column_name <- as.character(s$column)
+  # Table and column come from the spec, so they are checked against the base's own catalogue before
+  # being interpolated into SQL: a typo should fail here as a named error, not as a parse error three
+  # lines later.
+  present <- q(sprintf(
+    "select count(*) as n from information_schema.columns
+     where table_schema = 'main_analytics' and table_name = '%s' and column_name = '%s'",
+    table_name, column_name))$n[[1]]
+  if (present == 0) {
+    stop(sprintf("additional_series %s: %s.%s does not exist in the base", id, table_name, column_name))
+  }
+  add_df <- q(sprintf(
+    "select period_month as anchor_month, %s as value from main_analytics.%s
+     where %s is not null and period_month >= date '1999-01-01' order by 1",
+    column_name, table_name, column_name))
+  series_transform <- as.character(s$transform %||% "level")
+  if (identical(series_transform, "log")) {
+    if (any(add_df$value <= 0)) {
+      stop(sprintf("additional_series %s: declared transform 'log' but the series carries non-positive values",
+                   id))
+    }
+    add_df$value <- log(add_df$value)
+  }
+  entry <- list(
+    metric_id = id, series_label = id, label = as.character(s$label),
+    native_frequency = as.character(s$native_frequency),
+    n_observations = nrow(add_df),
+    first_year = if (nrow(add_df)) as.integer(format(min(add_df$anchor_month), "%Y")) else NA,
+    last_year = if (nrow(add_df)) as.integer(format(max(add_df$anchor_month), "%Y")) else NA,
+    order_of_integration = NA, decisive = NA, note = NA_character_, tests = list(),
+    declared_by = "diagnostics.yml additional_series",
+    transform = series_transform,
+    first_month = if (nrow(add_df)) as.character(min(add_df$anchor_month)) else NA_character_,
+    last_month = if (nrow(add_df)) as.character(max(add_df$anchor_month)) else NA_character_
+  )
+  if (nrow(add_df) < min_obs_unit_root) {
+    entry$note <- sprintf("only %d native observations in the window (minimum %d) — not tested",
+                          nrow(add_df), min_obs_unit_root)
+  } else {
+    xs <- as.numeric(add_df$value)
+    entry$tests <- list(
+      adf_drift = unit_root_test("adf_drift", xs, alpha, ur_max_lags),
+      adf_trend = unit_root_test("adf_trend", xs, alpha, ur_max_lags),
+      kpss = unit_root_test("kpss", xs, alpha, ur_max_lags),
+      pp = unit_root_test("pp", xs, alpha, ur_max_lags),
+      adf_diff = unit_root_test("adf_drift", diff(xs), alpha, ur_max_lags),
+      kpss_diff = unit_root_test("kpss", diff(xs), alpha, ur_max_lags),
+      pp_diff = unit_root_test("pp", diff(xs), alpha, ur_max_lags)
+    )
+    cls <- classify_order(entry$tests)
+    entry$order_of_integration <- cls$order
+    entry$decisive <- isTRUE(cls$decisive)
+    entry$note <- if (isTRUE(cls$decisive)) NA_character_ else cls$note
+  }
+  series_diag[[id]] <- entry
+  cat(sprintf("  %-22s %s -> order %s (%s)\n", id, entry$native_frequency,
+              ifelse(is.na(entry$order_of_integration), "not tested",
+                     as.character(entry$order_of_integration)),
+              ifelse(isTRUE(entry$decisive), "decisive", "inconclusive")))
+}
+
 cat(sprintf("1. integration order  — %d series tested at native grain, %d inconclusive\n",
             sum(vapply(series_diag, function(s) !is.null(s$order_of_integration) &&
                          !is.na(s$order_of_integration), logical(1))),
@@ -498,8 +570,109 @@ cat(sprintf("2. cointegration     — %d outcomes tested, %d with no cointegrati
                        logical(1)))))
 
 # ------------------------------------------------------------------------------------------
-# 3. shock-window visibility
+# 2b. the monthly system C-85 declares — the price level against the shock
 # ------------------------------------------------------------------------------------------
+# Same estimator, same rank rule, same conservative branches as the annual system above; what differs
+# is the grain and the system. Published as its own key (`cointegration_monthly`) rather than appended
+# to `cointegration`, because that object is keyed by *annual outcome* and every consumer of it —
+# including the verifier — reconstructs an annual {Y, log(oil), fx} system from the key.
+monthly_spec <- spec_get(c("cointegration", "monthly_system"), NULL)
+cointegration_monthly <- NULL
+if (!is.null(monthly_spec)) {
+  mo <- q("
+    select c.period_month, c.cpi_index as outcome_value, o.value as shock_value
+    from main_analytics.nbs_cpi_national_monthly c
+    join main_analytics.fact_observation_native o
+      on o.metric_id = 'oil' and o.native_frequency = 'monthly' and o.anchor_month = c.period_month
+    where c.cpi_index is not null and o.value is not null
+      and c.period_month >= date '1999-01-01'
+    order by 1")
+  K_m <- as.integer(monthly_spec$K %||% 2)
+  min_m <- as.integer(monthly_spec$min_observations %||% 20)
+  cm <- list(
+    outcome_id = as.character(monthly_spec$outcome), verdict = "not_run",
+    system = c("log(cpi_index)", "log(oil)"), K = K_m, ecdet = "const",
+    n_observations = nrow(mo),
+    first_month = if (nrow(mo)) as.character(min(mo$period_month)) else NA_character_,
+    last_month = if (nrow(mo)) as.character(max(mo$period_month)) else NA_character_,
+    note = NA_character_
+  )
+  if (nrow(mo) < min_m) {
+    cm$note <- sprintf("%d complete months across {log(cpi_index), log(oil)} (minimum %d)",
+                       nrow(mo), min_m)
+  } else {
+    sys_m <- data.frame(outcome = log(mo$outcome_value), shock = log(mo$shock_value))
+    conventions <- as.character(unlist(monthly_spec$ecdet_conventions %||% list("const")))
+    by_convention <- list()
+    rank_by <- list()
+    for (ecc in conventions) {
+      res <- tryCatch({
+        jo_m <- urca::ca.jo(as.matrix(sys_m), type = "trace", ecdet = ecc, K = K_m)
+        jo_m_eig <- urca::ca.jo(as.matrix(sys_m), type = "eigen", ecdet = ecc, K = K_m)
+        cval_col_m <- sprintf("%.0fpct", coint_alpha * 100)
+        n_rm <- length(as.numeric(jo_m@teststat))
+        # urca orders r = K-1 .. 0; reverse to the r = 0 .. K-1 order the declared rule is written in.
+        tr_m <- as.numeric(jo_m@teststat)[n_rm:1]
+        trc_m <- as.numeric(jo_m@cval[, cval_col_m])[n_rm:1]
+        eg_m <- as.numeric(jo_m_eig@teststat)[n_rm:1]
+        egc_m <- as.numeric(jo_m_eig@cval[, cval_col_m])[n_rm:1]
+        scan_m <- function(stat, cval) {
+          r <- 0L
+          for (j in seq_along(stat)) { if (stat[[j]] > cval[[j]]) r <- r + 1L else break }
+          r
+        }
+        rt <- scan_m(tr_m, trc_m)
+        re <- scan_m(eg_m, egc_m)
+        list(
+          ecdet = ecc, rank_trace = rt, rank_eigen = re, rank = min(rt, re),
+          trace = lapply(seq_len(n_rm), function(r) list(
+            r = r - 1L, teststat = round_or_na(tr_m[[r]]), cval = round_or_na(trc_m[[r]]),
+            exceeds = tr_m[[r]] > trc_m[[r]])),
+          eigen = lapply(seq_len(n_rm), function(r) list(
+            r = r - 1L, teststat = round_or_na(eg_m[[r]]), cval = round_or_na(egc_m[[r]]),
+            exceeds = eg_m[[r]] > egc_m[[r]]))
+        )
+      }, error = function(e) list(ecdet = ecc, rank = NULL, note = conditionMessage(e)))
+      by_convention[[ecc]] <- res
+      if (!is.null(res$rank)) rank_by[[ecc]] <- as.integer(res$rank)
+    }
+    cm$by_convention <- by_convention
+    cm$rank_by_convention <- rank_by
+    if (!length(rank_by)) {
+      cm$note <- "no deterministic-term convention produced a rank"
+    } else {
+      # The declared rule: the smaller rank wins, and both are published. Same conservatism the annual
+      # block applies when trace and eigen disagree, applied to the convention instead.
+      cm$rank <- min(unlist(rank_by))
+      cm$rank_rule <- "conservative_min across the declared deterministic-term conventions"
+      cm$conventions_disagree <- length(unique(unlist(rank_by))) > 1L
+      # The published rows are those of the convention the conservative rank was read from, so the
+      # statistics beside the rank are the ones it was taken from.
+      chosen <- names(rank_by)[[which.min(unlist(rank_by))]]
+      cm$chosen_convention <- chosen
+      cm$ecdet <- chosen
+      cm$trace <- by_convention[[chosen]]$trace
+      cm$eigen <- by_convention[[chosen]]$eigen
+      cm$rank_trace <- by_convention[[chosen]]$rank_trace
+      cm$rank_eigen <- by_convention[[chosen]]$rank_eigen
+      cm$disagreement <- cm$rank_trace != cm$rank_eigen
+      cm$recommended_estimator <- if (cm$rank == 0) "ardl_bounds"
+        else if (cm$rank >= ncol(sys_m)) "var_in_levels" else "vecm"
+      cm$verdict <- if (cm$rank == 0) "no_cointegration_ardl_fallback"
+        else if (cm$rank >= ncol(sys_m)) "stationary_system_var_in_levels"
+        else "cointegrated_vecm"
+    }
+  }
+  cointegration_monthly <- cm
+  cat(sprintf("2b. cointegration    — %s vs log(oil), %d months, rank %s (%s) | %s\n",
+              monthly_spec$outcome, cm$n_observations,
+              ifelse(is.null(cm$rank), "not run", as.character(cm$rank)),
+              ifelse(is.null(cm$verdict), "not_run", cm$verdict),
+              paste(sprintf("%s=%s", names(cm$rank_by_convention %||% list()),
+                            unlist(cm$rank_by_convention %||% list())), collapse = ", ")))
+}
+
+
 min_in_band <- spec_get(c("shock_visibility", "min_observed_in_band"), 3)
 min_frac <- spec_get(c("shock_visibility", "min_observed_fraction"), 0.25)
 
@@ -1332,6 +1505,7 @@ diagnostics <- list(
     reason = spec_get(c("grain", "forbidden_reason"))),
   series = series_diag,
   cointegration = cointegration,
+  cointegration_monthly = cointegration_monthly,
   shock_visibility = shock_visibility,
   dose = dose,
   prefit = prefit,
@@ -1360,6 +1534,24 @@ writeLines(jsonlite::toJSON(diagnostics, auto_unbox = TRUE, pretty = TRUE, null 
 # the human-readable page
 # ------------------------------------------------------------------------------------------
 fmt <- function(x, d = 3) if (is.null(x) || length(x) != 1 || is.na(x)) "—" else format(round(as.numeric(x), d), trim = TRUE)
+monthly_entry <- series_diag[["cpi_index_monthly"]]
+monthly_md <- if (is.null(monthly_entry)) character(0) else c(
+  "## Design B's second outcome — the monthly price level (C-85)",
+  "",
+  sprintf("`%s`: **%d** native monthly observations, %s -> %s; integration order **%s** (%s).",
+          monthly_entry$metric_id, monthly_entry$n_observations,
+          monthly_entry$first_month %||% "?", monthly_entry$last_month %||% "?",
+          ifelse(is.na(monthly_entry$order_of_integration), "not tested",
+                 as.character(monthly_entry$order_of_integration)),
+          ifelse(isTRUE(monthly_entry$decisive), "decisive", "inconclusive")),
+  if (!is.null(cointegration_monthly)) c(
+    sprintf("Cointegration against log Brent at the same grain: **%d** months, rank **%s** (%s).",
+            cointegration_monthly$n_observations,
+            ifelse(is.null(cointegration_monthly$rank), "not run",
+                   as.character(cointegration_monthly$rank)),
+            cointegration_monthly$verdict %||% "not_run")) else "Cointegration against log Brent: not run.",
+  "")
+
 md <- c(
   sprintf("# Stage 5 pre-analysis diagnostics — vintage %s", vintage),
   "",
@@ -1373,6 +1565,7 @@ md <- c(
           spine_share * 100),
   "observed, and a unit-root test on interpolated data tests the interpolator.",
   "",
+  monthly_md,
   "## Design verdicts",
   "",
   "| Design | Status | Deciding diagnostic |",

@@ -56,7 +56,7 @@ Phase A first because B's sample would otherwise be re-fit on the revised securi
   retained as the annual cross-check reference? The base already carries
   `nbs_cpi_national_monthly` unspined; the catalogue entry (`raw_metric_catalogue`) plus the estimation
   spec entry are the declaration, not code changes.
-- [ ] **B2. Stage 5 re-run on the new pair** (`02_diagnostics.R`): the monthly series must pass (or fail,
+- [x] **B2. Stage 5 re-run on the new pair** (`02_diagnostics.R`): the monthly series must pass (or fail,
   on record) integration/cointegration checks at its native grain before any estimate exists.
 - [ ] **B3. Fit and publish.** Stage 6/7 re-run; the card answers whether the 2023-06→2023-12
   subsidy-removal window is estimable — either a declared refusal with its reason from the closed set, or
