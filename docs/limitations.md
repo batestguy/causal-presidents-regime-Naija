@@ -59,7 +59,7 @@ therefore a picture of the interpolation rule in most cells, which is why the ba
 | Node | What landed | What it cannot carry | Where it is recorded |
 |---|---|---|---|
 | FAAC state allocation (the dose) | 2016-12 → 2026-06, 36 states, 174 documents | Nothing before 2016-12: the PDP era is a declared gap. `dose_status` is `observed` on **4,104** of 12,358 state-months, `declared_gap` on **8,218**, `not_covered` on 36 | `state_panel`; C-39…C-43 |
-| D1 — FAAC **per capita** | **0 of 12,358** rows | The axis Family A's estimand is written on. X-09 (the population denominator) is an unmade decision | S5-10, S6-06, X-09 |
+| D1 — FAAC **per capita** | **0 of 12,358** rows | The per-capita *form* of Family A's estimand: the fitted elasticity is nominal, because state fixed effects absorb `-log(population)` (S6-06), while the **level** claim — "a state with more people gets more money" — still needs the series. X-09 (the population denominator) is an unmade decision | S5-10, S6-06, X-09 |
 | D2 — FAAC share of state revenue | **0 rows** | The NBS state-IGR half is not parsed | diagnostics `dose` block |
 | UCDP GED (security outcome) | state × month, 1990-09 → 2025-12 (GED 26.1) | The 10 months after 2025-12; a reported-events archive, not a census | C-45, C-82 |
 | ACLED | not wired | Richer event data, but OAuth registration, a 12-month embargo and no redistribution | Stage 1 register |

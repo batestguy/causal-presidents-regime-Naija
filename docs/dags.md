@@ -46,7 +46,7 @@ Nodes are shared across designs where the concept is shared, so the graphs are c
 | `inherit` | Inherited state conditions at baseline | A |
 | `statefe`, `timefe` | State and time fixed effects | A |
 | `donor` | Donor-funded programmes (health and education outcomes only) | A, B |
-| `dose` | Policy exposure intensity — D1, FAAC per capita | A (exposure) |
+| `dose` | Policy exposure intensity — nominal FAAC allocation (the D1 per-capita form needs the population denominator, X-09) | A (exposure) |
 | `lagY` | Lagged outcome (persistence) | B |
 | `trend` | Linear and quadratic time trend | B |
 | `admin` | Administration (party × tenure) | B (exposure) |
@@ -137,11 +137,14 @@ machine-checkable rather than asserted. The generator refuses to emit a card wit
 | `u_st`, `u_t`, `u_ng` | the node the estimate assumes absent | unobserved |
 | `oil` | FRED `DCOILBRENTEU` via `ingestion/flows/pull_fred.py` | **acquired** (10,275 daily obs, 1987→2026) |
 | `common` | derived from the donor-panel paths and the Brent cycle | derived |
-| `dose`, `faac` | NBS FAAC disbursement reports | **gap** — needs a PDF parser |
+| `dose` | NBS FAAC disbursement reports, per state-month, via `ingestion/flows/pull_faac.py` | **acquired** — the nominal dose, 36 states, 2016-12 → 2026-06 (C-89). The D1 per-capita form is a normalisation, not a source: it needs a state population denominator, an unmade decision (X-09), and the fixed-effects elasticity does not require it (`estimation.yml` → `design_a.exposure`) |
+| `faac` | the same series, national | **acquired** — 114 national months, 2016-12 → 2026-06 (C-89) |
 
 `index.json` carries `variables_still_missing`: every node with no usable source across the whole
-registry. `tests/verify_dags.py` **recomputes that list from the cards** and fails if the index
-disagrees, so the gap list cannot drift from the graphs it summarises.
+registry. It is **three nodes, all education** — `ner_primary`, `primary_completion` and
+`literacy_youth` — because no open series carries them into the APC era (C-11, C-12). `tests/verify_dags.py`
+**recomputes that list from the cards** and fails if the index disagrees, so the gap list cannot drift from
+the graphs it summarises.
 
 ### One acquired node is not a clean control
 
@@ -160,30 +163,32 @@ gates record *whether that thing is fit to hold fixed* (decisions C-28).
 
 ### Still missing, by root cause
 
-**Five variables, two root causes** — the oil group closed on 2026-10-11 and the security group on
-2026-10-17:
+**Three variables, one root cause** — the oil group closed on 2026-10-11, the security group on
+2026-10-17 and the fiscal dose on 2026-10-30 (C-89):
 
 | Root cause | Variables | What it needs |
 |---|---|---|
-| **Fiscal dose** | `dose` (D1), `faac` | ~~An NBS FAAC PDF/HTML parser, plus a decided state population denominator~~ — **the parser is done (2026-10-16) and the series is Stage 3 gated (2026-10-17)**; what is left is the state population denominator (X-09), on which the per-capita form of `dose` rests |
-| **Education outcomes** | primary completion, net enrolment, youth literacy | No open source reaches 2015+. UNESCO UIS 404s, NEMIS times out |
+| **Education outcomes** | `ner_primary`, `primary_completion`, `literacy_youth` | No open source carries them into the APC era: UNESCO UIS 404s on every path (C-11), NEMIS times out (C-12), and the World Bank education series stop in 2010 — `primary_completion` has **8** observations (2000–2010), `ner_primary` **9** (1999–2010) and `literacy_youth` **8** across 1991–2024, too sparse to test |
+| ~~**Fiscal dose**~~ | ~~`dose` (A), `faac` (B)~~ | ✅ **Closed 2026-10-30 (C-89)** — the nominal FAAC series landed 2026-10-16 (174 documents, 114 months × 36 states), is Stage 3 gated (S4-13…S4-19, C-39…C-43) and carries Stage 6 estimates on both designs |
 | **Security outcomes** | fatalities, incidents | ✅ **Closed 2026-10-17** — UCDP GED, landed from its **keyless bulk archive** (the API's token was never the only route, C-45); state-attributed on the panel, national on the spine |
 | ~~**Oil price**~~ | ~~`oil` (designs A, B), `common` (design C)~~ | ✅ **Closed** — free FRED key registered, Brent landed (C-23, C-24) |
 
-Closing the oil group took **design C to zero unsourced nodes**. With the security outcome also closed,
-designs A and B are each down to one unsourced node — the per-capita FAAC dose — and that one is now a
-*decision* (X-09) rather than a source, which is what Stage 6's log specification works around for the
-elasticity (S6-06).
+Closing the oil group took **design C to zero unsourced nodes**. With the security outcome and now the
+fiscal dose also closed, **no design has an unsourced exposure, confounder or mediator left** — every
+variable in this list is an *outcome*, on the three education cards alone.
 
-> **The two rows above `dose`/`faac` are not stale, and the reason is worth keeping.** `dose` and `faac`
-> still carry `source_status: gap` because `analysis/specs/dag_designs.yml` says so and the cards are
-> generated from it. The FAAC series itself exists — 174 documents, 114 months × 36 states, populated on
-> the panel, gated by Stage 3 (S4-13…S4-19, C-39…C-43) and now carrying an estimate on the *nominal* axis
-> (S6-06). What is missing is the per-capita form the `dose` node is specified as, and that waits on X-09.
-> So `gap` is under-specified rather than wrong, and it is left alone rather than hand-edited:
-> `tests/verify_dags.py` recomputes the gap list from the cards and would fail against an edited page.
-> The security outcomes, by contrast, have left this list — their `coverage_status` changed in
-> `outcomes.yml` because the data changed (C-45), and the cards were regenerated from it.
+> **Why the dose left this list on 2026-10-30, and why that is not a hand-edit.** The status lives in
+> `analysis/specs/dag_designs.yml`, and it changed *there*; the cards and the index were regenerated from
+> it by `01_build_dags.R` and `05_registry.R`. `dose` and `faac` are declared `acquired` because the
+> series **every fitted specification uses** exists and is gated. What is *not* claimed is the per-capita
+> form: that is a normalisation rather than a source, it needs a state population denominator (X-09), and
+> `estimation.yml` → `design_a.exposure` records why the fixed-effects elasticity does not require it —
+> `-log(population)` is a state-level constant the fixed effect absorbs. The per-capita **axis** stays
+> unbuilt and is recorded in `robustness.yml` → `unbuilt_axes`, so what moved is a node's status, not the
+> limitation. Reading `gap` here had stopped being merely under-specified: it told a reader that the
+> design with a published pass-through estimate had no exposure at all.
+> The security outcomes, by contrast, left this list earlier — their `coverage_status` changed in
+> `outcomes.yml` because the data changed (C-45).
 
 ### Acquired since the last vintage
 

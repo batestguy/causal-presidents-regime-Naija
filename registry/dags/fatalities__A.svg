@@ -79,8 +79,7 @@
 <circle cx='360.00' cy='407.12' r='23.83' style='stroke-width: 0.71; fill: #000000;' />
 <text x='681.84' y='263.38' text-anchor='middle' style='font-size: 6.54px; font-weight: bold;fill: #FFFFFF; font-family: "Arial";' textLength='25.75px' lengthAdjust='spacingAndGlyphs'>Security</text>
 <text x='681.84' y='272.80' text-anchor='middle' style='font-size: 6.54px; font-weight: bold;fill: #FFFFFF; font-family: "Arial";' textLength='26.45px' lengthAdjust='spacingAndGlyphs'>fatalities</text>
-<text x='360.00' y='210.36' text-anchor='middle' style='font-size: 6.54px; font-weight: bold;fill: #FFFFFF; font-family: "Arial";' textLength='46.77px' lengthAdjust='spacingAndGlyphs'>Exposure dose</text>
-<text x='360.00' y='219.78' text-anchor='middle' style='font-size: 6.54px; font-weight: bold;fill: #FFFFFF; font-family: "Arial";' textLength='12.69px' lengthAdjust='spacingAndGlyphs'>(D1)</text>
+<text x='360.00' y='215.07' text-anchor='middle' style='font-size: 6.54px; font-weight: bold;fill: #FFFFFF; font-family: "Arial";' textLength='46.77px' lengthAdjust='spacingAndGlyphs'>Exposure dose</text>
 <text x='38.16' y='157.34' text-anchor='middle' style='font-size: 6.54px; font-weight: bold;fill: #FFFFFF; font-family: "Arial";' textLength='27.55px' lengthAdjust='spacingAndGlyphs'>Inherited</text>
 <text x='38.16' y='166.77' text-anchor='middle' style='font-size: 6.54px; font-weight: bold;fill: #FFFFFF; font-family: "Arial";' textLength='32.97px' lengthAdjust='spacingAndGlyphs'>conditions</text>
 <text x='38.16' y='56.02' text-anchor='middle' style='font-size: 6.54px; font-weight: bold;fill: #FFFFFF; font-family: "Arial";' textLength='29.36px' lengthAdjust='spacingAndGlyphs'>Oil shock</text>
@@ -91,7 +90,7 @@
 <text x='360.00' y='418.89' text-anchor='middle' style='font-size: 6.54px; font-weight: bold;fill: #FFFFFF; font-family: "Arial";' textLength='55.45px' lengthAdjust='spacingAndGlyphs'>(assumed absent)</text>
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHw0NjguMDA=)'>
-<text x='5.98' y='28.24' style='font-size: 8.50px;fill: #4D4D4D; font-family: "Arial";' textLength='376.56px' lengthAdjust='spacingAndGlyphs'>Unit: state-month (36 states + FCT)  |  Exposure: Exposure dose (D1)  |  Outcome: Security fatalities</text>
+<text x='5.98' y='28.24' style='font-size: 8.50px;fill: #4D4D4D; font-family: "Arial";' textLength='357.67px' lengthAdjust='spacingAndGlyphs'>Unit: state-month (36 states + FCT)  |  Exposure: Exposure dose  |  Outcome: Security fatalities</text>
 <text x='5.98' y='13.85' style='font-size: 11.00px; font-weight: bold; font-family: "Arial";' textLength='335.31px' lengthAdjust='spacingAndGlyphs'>Reported security fatalities - Design A: State dose-response DiD</text>
 <text x='5.98' y='436.15' style='font-size: 7.50px;fill: #4D4D4D; font-family: "Arial";' textLength='379.33px' lengthAdjust='spacingAndGlyphs'>The exposure is the administration. Node(s) labelled '(assumed absent)' are unobserved and are assumed absent.</text>
 <text x='5.98' y='444.25' style='font-size: 7.50px;fill: #4D4D4D; font-family: "Arial";' textLength='172.11px' lengthAdjust='spacingAndGlyphs'>Backdoor adjustment set: inherit, oil, statefe, timefe.</text>

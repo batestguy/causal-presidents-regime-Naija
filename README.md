@@ -215,12 +215,16 @@ health and education outcome, so those designs partially condition on a debt res
 recorded on the cards and carried to Stage 5 rather than quietly used as a clean control.
 
 **What is still missing is listed, not hidden.** `registry/dags/index.json` carries
-`variables_still_missing`: every variable a design needs that has no usable source yet — currently **5,
-in two groups** (the per-capita FAAC dose, which is a *decision* rather than a source, and the education
-outcomes, which no open series covers past 2010). Three groups have closed, one at a time: the oil price
-(2026-10-11), the FAAC fiscal dose (2026-10-16) and the security outcomes (2026-10-17) — the last because
-UCDP's bulk archive is keyless even though its API is not. The verifier recomputes that list from the
-graphs, so it cannot drift from what it summarises.
+`variables_still_missing`: every variable a design needs that has no usable source yet — currently **3,
+all education** (`ner_primary` and `primary_completion`, whose World Bank series stop in 2010, and
+`literacy_youth`, which has 8 observations across 1991–2024 and none dense enough to test). Four groups
+have closed, one at a time: the oil price (2026-10-11), the FAAC fiscal dose (2026-10-16), the security
+outcomes (2026-10-17) — the last because UCDP's bulk archive is keyless even though its API is not — and
+the dose's **per-capita normalisation** (2026-10-30, C-89): the fixed-effects elasticity does not need the
+population denominator (`estimation.yml` → `design_a.exposure`), so the node is acquired while the
+per-capita *axis* stays unbuilt and is recorded in `robustness.yml` → `unbuilt_axes`, not inferred from a
+missing level. The verifier recomputes the gap list from the graphs, so it cannot drift from what it
+summarises.
 
 **And Stage 5 asked whether any of it is estimable yet — the answer was no, on the record, and re-running
 it after each delivery has kept that answer honest.** Every one of the 36 (outcome × design)cards carries a pre-check verdict and **exactly one passes** — `u5mr` under Design C: the state dose is absent on the per-capita axis the estimand is

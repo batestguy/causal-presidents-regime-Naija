@@ -2,11 +2,11 @@
  "schema_version": "0.1.0",
  "layer": "retrieval corpus (one card per model card, plus the results, the tables and the narrative)",
  "vintage": "2026-10-30",
- "generated_at": "2026-10-30T15:03:02+00:00",
+ "generated_at": "2026-10-30T22:44:54+00:00",
  "generator": {
   "script": "scripts/build_rag_corpus.py",
   "spec": "analysis/specs/rag.yml",
-  "git_sha": "7e630a0"
+  "git_sha": "a7519ee"
  },
  "registry": {
   "index": "registry/dags/index.json",
@@ -53,9 +53,9 @@
   "dim": 384,
   "normalised": true,
   "metric": "cosine",
-  "sha256": "2eb94d44cc557745961dbab5157529b73c61c98ce9d93a9866a0b00e70eb3832",
-  "bytes": 735860,
-  "n_chunk_vectors": 492,
+  "sha256": "2f3fc9cc95a2a0ec85056ca460680feb50d068134043e8128e82bcad716005b6",
+  "bytes": 737300,
+  "n_chunk_vectors": 493,
   "n_query_vectors": 22,
   "library": {
    "sentence-transformers": "5.1.2",
@@ -90,8 +90,8 @@
   {
    "path": "docs/dags.md",
    "role": "methodology",
-   "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b",
-   "bytes": 17825,
+   "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520",
+   "bytes": 18929,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -139,8 +139,8 @@
   {
    "path": "docs/limitations.md",
    "role": "methodology",
-   "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278",
-   "bytes": 19981,
+   "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517",
+   "bytes": 20181,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -160,259 +160,259 @@
   {
    "path": "registry/dags/cpi_yoy__A.json",
    "role": "model_card",
-   "sha256": "292823097974c1e23c6d4acb1ead847ecfc23b01484612ac0a3670832dd8404f",
-   "bytes": 7275,
+   "sha256": "46d3861c055891dccfe3b47b4ee3084ac13ca5c5cf358b896059b6b47827720a",
+   "bytes": 7556,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/cpi_yoy__B.json",
    "role": "model_card",
-   "sha256": "9f31314367ab52575928bc0f459ee1bd4a4e3c246ca66b1a96bcd7c8ec898409",
-   "bytes": 9125,
+   "sha256": "4e914ab255c9f742b07306aae4b05325170baa7107ee7290d30ee1c37d6cade2",
+   "bytes": 9207,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/cpi_yoy__C.json",
    "role": "model_card",
-   "sha256": "c6a4b593f98c1c9368d74bb462b672b3fc2a07cec518e5dd3541410a2d07c875",
+   "sha256": "20118de7793144417ac727cdb748ca7c41999bfc204623242f0c095bf1a91d5a",
    "bytes": 7314,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/fatalities__A.json",
    "role": "model_card",
-   "sha256": "541b42b95fcad6529961784c171f1c4858b79de5032583cfb74087fa56a52172",
-   "bytes": 10414,
+   "sha256": "6cf58592d38a8fba990cd8fc312ca3cf0002b7e4a53385884a4018ab710b35ab",
+   "bytes": 10695,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/fatalities__B.json",
    "role": "model_card",
-   "sha256": "814e3a9d8397bb1141f18c57f6c92f05ee7672ce5c2e4941cdd22c093c1971a4",
-   "bytes": 9681,
+   "sha256": "8d3c2cce85294a2c34d88a57a278d6e84cc9fefd17ddf09561edfc0c7d6e8e5d",
+   "bytes": 9763,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/fatalities__C.json",
    "role": "model_card",
-   "sha256": "b684e0d7bd77d47bb5be5ca6acd9bf4bc232b4ce2833d7b132f8522d41207d06",
+   "sha256": "887dc7ba875b7d24bbad86aa47e66ce8f90fac7bc9c423090374d0ec78ae5fd7",
    "bytes": 7338,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/gdp_growth__A.json",
    "role": "model_card",
-   "sha256": "b7fb5a375d31b4942c56a7a22914fc5d8a09cdbb4704ec21f8a8b05277893f61",
-   "bytes": 7346,
+   "sha256": "714126dd044aa2e5a151f667a8c03a7174d031ea47ec64d27d237d217b3fafa0",
+   "bytes": 7627,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/gdp_growth__B.json",
    "role": "model_card",
-   "sha256": "f603e087b109886d4d46b0a8031f1b7f8a5e07002f9089792ccf78717d3d1339",
-   "bytes": 9190,
+   "sha256": "990e3157e513b467f54e0f1bcc4b9bb550d3a021457397d52e70161737c73bac",
+   "bytes": 9272,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/gdp_growth__C.json",
    "role": "model_card",
-   "sha256": "671d2a2fd14efbe1e2443d1926718737e53c11a0380541d0e5b1ae510c69ba8f",
+   "sha256": "994ea8077dd236adc920e85b7c1a72da671af0cd6f0ff8f2534fb9cc3d22504e",
    "bytes": 7387,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/immun_penta3__A.json",
    "role": "model_card",
-   "sha256": "c43168e72f656bac9227737f6396f48f258a544461b9deceace1b9f1d68c6d02",
-   "bytes": 8145,
+   "sha256": "703ab6ae12fa0fe5f676f717a2c25806e85f93c0b38a702e29675bd2c6a3bf04",
+   "bytes": 8426,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/immun_penta3__B.json",
    "role": "model_card",
-   "sha256": "1725180098d611f3359408b75c0468cbcbc72c4545fbe178f4fd904704811ab3",
-   "bytes": 9861,
+   "sha256": "708da408e99edb70f544a276aff8e5bfda65bdcbc2c4eea9169d1ccbaab86530",
+   "bytes": 9943,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/immun_penta3__C.json",
    "role": "model_card",
-   "sha256": "3c1f171cb77f0955e587302e3ea767e9eb3b902741eadb599c271303d0f7647f",
+   "sha256": "c3044e466d5a0f97fbf5b48686c1978381f8c9f75416f4824adb0636e36fc693",
    "bytes": 7035,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/incidents__A.json",
    "role": "model_card",
-   "sha256": "e81842377ef10025f9579015c67dc3e8ea2874fd4c29778545052e62e743a4eb",
-   "bytes": 9925,
+   "sha256": "86a68524e8d74c2c8730f0ad8dadd3c1b1d6e580541299e3f449fdf668e6d473",
+   "bytes": 10206,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/incidents__B.json",
    "role": "model_card",
-   "sha256": "d526e785d1d6c9826527b08df59d2da07fa83fff27ff766dc49d21ceafa4f32b",
-   "bytes": 9191,
+   "sha256": "b0218a23d36b2f7f63b92d21edb78553e99b8177f008f47af602614bae87c312",
+   "bytes": 9273,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/incidents__C.json",
    "role": "model_card",
-   "sha256": "bef2ae39b10a7ffc9e1370ef6890f8437545ed6841ff5d405b63876729976415",
+   "sha256": "2d6860d99cf7719c844cc66e94cda4867012b91fbf54b403687e47ce5b0cf735",
    "bytes": 6846,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/index.json",
    "role": "registry_index",
-   "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f",
-   "bytes": 67863,
+   "sha256": "d776a7de345ae2455a66228a893a34c3d247ced74d8d25c1463e31985025bacd",
+   "bytes": 67687,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/literacy_youth__A.json",
    "role": "model_card",
-   "sha256": "6acbc243754ead3bac2ac0410fc7d82a27974b9e7ea284ecccda96e5f7a91f8e",
-   "bytes": 7968,
+   "sha256": "0c3002e51ca8d7f27130e90c6ca6fb3cd4a62f21dde8430ad9970cb4ca5c2613",
+   "bytes": 8249,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/literacy_youth__B.json",
    "role": "model_card",
-   "sha256": "3f677a091905d9b37be03555be85dfaa6c67cd07d6fcf0a63775cd382f4c7910",
-   "bytes": 9197,
+   "sha256": "8654a03d71d822d090b12d9c7b869c893cb9936dc6f2fef3e4b3f0677e75d586",
+   "bytes": 9279,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/literacy_youth__C.json",
    "role": "model_card",
-   "sha256": "492d54dcf9ecec00e1705bf8bf355afc3d1aae757dc69b197f476ef7150bda99",
+   "sha256": "33d752d0bc270247491f7b5bd6d312a11c96fb72c9d6ec137b30d30bf074acf2",
    "bytes": 6862,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/mmr__A.json",
    "role": "model_card",
-   "sha256": "f662d23c623b7a5cae8f828cf2f5dfd4bb32651e8e632f22adf6c2696277db96",
-   "bytes": 7989,
+   "sha256": "ba1f205ba9efc49e36656c1e805c8cca5ae17255afff529254da02ba1c9b4ca4",
+   "bytes": 8270,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/mmr__B.json",
    "role": "model_card",
-   "sha256": "47944d9cc3496d11f159855ee888aa9f39f9be39e4e731c3d75688cb1a3aba66",
-   "bytes": 9864,
+   "sha256": "4b847a01a86fe9e5b00a86000986a6d6b91fedaff2103533edea4ddb2d62be33",
+   "bytes": 9946,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/mmr__C.json",
    "role": "model_card",
-   "sha256": "c86c66d62e006f0b58c3a0f6bf67f97088b2232aaf2d065a05dc5e677c3335b0",
+   "sha256": "7de9e93c92130ce2752e5f9d22796aeb9602b62162cd33a8d3361fcd5efa102c",
    "bytes": 6861,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/ner_primary__A.json",
    "role": "model_card",
-   "sha256": "9e462c2776e8ee3a5ddeec08ad70b9c11be07282e613f751f0993849065cdc89",
-   "bytes": 7810,
+   "sha256": "4ecc82c07d24de47c0c6b73b9b6ca7dcd2ea5b1d59b30860b239656774d46fb3",
+   "bytes": 8091,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/ner_primary__B.json",
    "role": "model_card",
-   "sha256": "a7747d1d57e22c379a8bbb91e0a66ff4025103b5e982d1f7cffff69945bb7ed7",
-   "bytes": 9039,
+   "sha256": "f6cd2e1d1bac0ac8da569aab4e290ddefc2a39a5ce2670d92f120ffaae4b448a",
+   "bytes": 9121,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/ner_primary__C.json",
    "role": "model_card",
-   "sha256": "67c87f894e680ffd9eab10641acb4c5d02703a8a47d9c708d18a697818440c79",
+   "sha256": "fc9ba3066a175496c5081d9c567158394d63d874a7d255f4a68f4fc191be0bef",
    "bytes": 6698,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/primary_completion__A.json",
    "role": "model_card",
-   "sha256": "a6f6ca4edabb9e720e6fa1abf902110269ce22023b606b8f1d48466721c01be7",
-   "bytes": 7928,
+   "sha256": "cf893d06d318fb3440f4324f0adac2fea418fe3adca0848fde3803ae8117af02",
+   "bytes": 8209,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/primary_completion__B.json",
    "role": "model_card",
-   "sha256": "665770828c6e974505d78a1ce5723a765aae620c6fde325ef43fce63eb24b73f",
-   "bytes": 9157,
+   "sha256": "45c52270dbcccd575c4aaf3940fab7757539b071c4ab4e85d15fed10636213c0",
+   "bytes": 9239,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/primary_completion__C.json",
    "role": "model_card",
-   "sha256": "782b5aa9c3a2b1f506603139d9fdb15628cbb136c0ba8247530b013ea8430228",
+   "sha256": "a09f6c031a8e5f4fa498959a1a23cbd8fa10e2de2db8c12305ce4fd1addfd00e",
    "bytes": 6830,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/skilled_birth__A.json",
    "role": "model_card",
-   "sha256": "44d3822b1e59a450af181e6cb0e98f4dc34445c2d18dc2812ee41b552f1126fd",
-   "bytes": 8081,
+   "sha256": "2d7a15cbc715faacc30a4e000aae57bcd1fc435ee7c1da7cb148c8b982508685",
+   "bytes": 8362,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/skilled_birth__B.json",
    "role": "model_card",
-   "sha256": "2537826feb0a07bc7fb85eb8c9ec56975411eeb5181c2f3ff418e4680001cb52",
-   "bytes": 9746,
+   "sha256": "0d126f1d1fc1404769f3b87f730a5a260b7630c0f49d2d3f435656f290853be7",
+   "bytes": 9828,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/skilled_birth__C.json",
    "role": "model_card",
-   "sha256": "4444daf3dff34d84c813b910db64402ab451ff0bba006168665bdeaae554c42b",
+   "sha256": "60cc72d027e8df6384d4af01df7d848965b18f422649774506a28fcd48ced278",
    "bytes": 6973,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/u5mr__A.json",
    "role": "model_card",
-   "sha256": "83d4578c8bd85c7ca6aee48ffd7918a0435ea582c870a2647dae3975c62dc78b",
-   "bytes": 7888,
+   "sha256": "79457c029610dba5d458a99b9b548eb4515d88b487fb0b399c4a2cfc01dbf1f4",
+   "bytes": 8169,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/u5mr__B.json",
    "role": "model_card",
-   "sha256": "e8330488b435b7a72091357602ca98de9e0c0026e38bda598ca238a7558a72de",
-   "bytes": 9685,
+   "sha256": "484d1b4402ce5547be434c355c6fe34b45cfc499d591dd583addc3387aa8d8eb",
+   "bytes": 9767,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/u5mr__C.json",
    "role": "model_card",
-   "sha256": "912caeab710bcd03344297bbb20d63d206a491ba5e87e9ab562c3851c83c0365",
+   "sha256": "d755c00141e45a7105a849a1c374ffbe65320239f7059d1cbad4d6776838a497",
    "bytes": 7985,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/unemp__A.json",
    "role": "model_card",
-   "sha256": "7cce20d64de83df6126730609b205c5db3fef318e5dcb6b44103ec52373a68a1",
-   "bytes": 7537,
+   "sha256": "67cb84f90f32b3ab8b72608f805ec14ada1cbff5318c6534c8b8c01a284102d0",
+   "bytes": 7818,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/unemp__B.json",
    "role": "model_card",
-   "sha256": "10c7dfadd05742bcaecb818f696ce3219c92b7d9e241a7c54839c3613aa0de2d",
-   "bytes": 9387,
+   "sha256": "b3aa609bb1921d067082c03cacc51cab7dac29e408131357737fe3f9a4b99dde",
+   "bytes": 9469,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "registry/dags/unemp__C.json",
    "role": "model_card",
-   "sha256": "2b6ad2d5f5620f4f3122d0e59e06fe4de4fa2c300e198f3c985ac56c1a9cf12d",
+   "sha256": "94082945fb93671ff0ed9664275a14a7d04ab18a93a71a20a5348c60b798915f",
    "bytes": 6924,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
@@ -439,21 +439,21 @@
   }
  ],
  "counts": {
-  "chunks": 492,
+  "chunks": 493,
   "by_doc_type": {
    "administration": 5,
    "card_estimate": 38,
    "coverage": 2,
    "data_dictionary": 47,
    "event_study": 12,
-   "methodology": 191,
+   "methodology": 192,
    "model_card": 178,
    "published_result": 14,
    "scope": 2,
    "shock": 3
   },
   "chars": {
-   "total": 342405,
+   "total": 343874,
    "max": 1598,
    "min": 156
   }
@@ -593,7 +593,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__A.json",
     "anchor": null,
-    "sha256": "292823097974c1e23c6d4acb1ead847ecfc23b01484612ac0a3670832dd8404f"
+    "sha256": "46d3861c055891dccfe3b47b4ee3084ac13ca5c5cf358b896059b6b47827720a"
    },
    "citation": "Card estimate — Headline inflation (y/y) under Design A — registry/dags/cpi_yoy__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -621,7 +621,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__B.json",
     "anchor": null,
-    "sha256": "9f31314367ab52575928bc0f459ee1bd4a4e3c246ca66b1a96bcd7c8ec898409"
+    "sha256": "4e914ab255c9f742b07306aae4b05325170baa7107ee7290d30ee1c37d6cade2"
    },
    "citation": "Card estimate — Headline inflation (y/y) under Design B — registry/dags/cpi_yoy__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -649,7 +649,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__C.json",
     "anchor": null,
-    "sha256": "c6a4b593f98c1c9368d74bb462b672b3fc2a07cec518e5dd3541410a2d07c875"
+    "sha256": "20118de7793144417ac727cdb748ca7c41999bfc204623242f0c095bf1a91d5a"
    },
    "citation": "Card estimate — Headline inflation (y/y) under Design C — registry/dags/cpi_yoy__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -677,7 +677,7 @@
    "source": {
     "path": "registry/dags/fatalities__A.json",
     "anchor": null,
-    "sha256": "541b42b95fcad6529961784c171f1c4858b79de5032583cfb74087fa56a52172"
+    "sha256": "6cf58592d38a8fba990cd8fc312ca3cf0002b7e4a53385884a4018ab710b35ab"
    },
    "citation": "Card estimate — Reported security fatalities under Design A — registry/dags/fatalities__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -705,7 +705,7 @@
    "source": {
     "path": "registry/dags/fatalities__B.json",
     "anchor": null,
-    "sha256": "814e3a9d8397bb1141f18c57f6c92f05ee7672ce5c2e4941cdd22c093c1971a4"
+    "sha256": "8d3c2cce85294a2c34d88a57a278d6e84cc9fefd17ddf09561edfc0c7d6e8e5d"
    },
    "citation": "Card estimate — Reported security fatalities under Design B — registry/dags/fatalities__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -733,7 +733,7 @@
    "source": {
     "path": "registry/dags/fatalities__C.json",
     "anchor": null,
-    "sha256": "b684e0d7bd77d47bb5be5ca6acd9bf4bc232b4ce2833d7b132f8522d41207d06"
+    "sha256": "887dc7ba875b7d24bbad86aa47e66ce8f90fac7bc9c423090374d0ec78ae5fd7"
    },
    "citation": "Card estimate — Reported security fatalities under Design C — registry/dags/fatalities__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -761,7 +761,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__A.json",
     "anchor": null,
-    "sha256": "b7fb5a375d31b4942c56a7a22914fc5d8a09cdbb4704ec21f8a8b05277893f61"
+    "sha256": "714126dd044aa2e5a151f667a8c03a7174d031ea47ec64d27d237d217b3fafa0"
    },
    "citation": "Card estimate — Real GDP growth (y/y) under Design A — registry/dags/gdp_growth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -789,7 +789,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__B.json",
     "anchor": null,
-    "sha256": "f603e087b109886d4d46b0a8031f1b7f8a5e07002f9089792ccf78717d3d1339"
+    "sha256": "990e3157e513b467f54e0f1bcc4b9bb550d3a021457397d52e70161737c73bac"
    },
    "citation": "Card estimate — Real GDP growth (y/y) under Design B — registry/dags/gdp_growth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -817,7 +817,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__C.json",
     "anchor": null,
-    "sha256": "671d2a2fd14efbe1e2443d1926718737e53c11a0380541d0e5b1ae510c69ba8f"
+    "sha256": "994ea8077dd236adc920e85b7c1a72da671af0cd6f0ff8f2534fb9cc3d22504e"
    },
    "citation": "Card estimate — Real GDP growth (y/y) under Design C — registry/dags/gdp_growth__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -845,7 +845,7 @@
    "source": {
     "path": "registry/dags/immun_penta3__A.json",
     "anchor": null,
-    "sha256": "c43168e72f656bac9227737f6396f48f258a544461b9deceace1b9f1d68c6d02"
+    "sha256": "703ab6ae12fa0fe5f676f717a2c25806e85f93c0b38a702e29675bd2c6a3bf04"
    },
    "citation": "Card estimate — Penta3 immunisation coverage under Design A — registry/dags/immun_penta3__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -873,7 +873,7 @@
    "source": {
     "path": "registry/dags/immun_penta3__B.json",
     "anchor": null,
-    "sha256": "1725180098d611f3359408b75c0468cbcbc72c4545fbe178f4fd904704811ab3"
+    "sha256": "708da408e99edb70f544a276aff8e5bfda65bdcbc2c4eea9169d1ccbaab86530"
    },
    "citation": "Card estimate — Penta3 immunisation coverage under Design B — registry/dags/immun_penta3__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -901,7 +901,7 @@
    "source": {
     "path": "registry/dags/immun_penta3__C.json",
     "anchor": null,
-    "sha256": "3c1f171cb77f0955e587302e3ea767e9eb3b902741eadb599c271303d0f7647f"
+    "sha256": "c3044e466d5a0f97fbf5b48686c1978381f8c9f75416f4824adb0636e36fc693"
    },
    "citation": "Card estimate — Penta3 immunisation coverage under Design C — registry/dags/immun_penta3__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -929,7 +929,7 @@
    "source": {
     "path": "registry/dags/incidents__A.json",
     "anchor": null,
-    "sha256": "e81842377ef10025f9579015c67dc3e8ea2874fd4c29778545052e62e743a4eb"
+    "sha256": "86a68524e8d74c2c8730f0ad8dadd3c1b1d6e580541299e3f449fdf668e6d473"
    },
    "citation": "Card estimate — Reported security incidents under Design A — registry/dags/incidents__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -957,7 +957,7 @@
    "source": {
     "path": "registry/dags/incidents__B.json",
     "anchor": null,
-    "sha256": "d526e785d1d6c9826527b08df59d2da07fa83fff27ff766dc49d21ceafa4f32b"
+    "sha256": "b0218a23d36b2f7f63b92d21edb78553e99b8177f008f47af602614bae87c312"
    },
    "citation": "Card estimate — Reported security incidents under Design B — registry/dags/incidents__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -985,7 +985,7 @@
    "source": {
     "path": "registry/dags/incidents__C.json",
     "anchor": null,
-    "sha256": "bef2ae39b10a7ffc9e1370ef6890f8437545ed6841ff5d405b63876729976415"
+    "sha256": "2d6860d99cf7719c844cc66e94cda4867012b91fbf54b403687e47ce5b0cf735"
    },
    "citation": "Card estimate — Reported security incidents under Design C — registry/dags/incidents__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -1013,7 +1013,7 @@
    "source": {
     "path": "registry/dags/literacy_youth__A.json",
     "anchor": null,
-    "sha256": "6acbc243754ead3bac2ac0410fc7d82a27974b9e7ea284ecccda96e5f7a91f8e"
+    "sha256": "0c3002e51ca8d7f27130e90c6ca6fb3cd4a62f21dde8430ad9970cb4ca5c2613"
    },
    "citation": "Card estimate — Youth literacy (15-24) under Design A — registry/dags/literacy_youth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -1041,7 +1041,7 @@
    "source": {
     "path": "registry/dags/literacy_youth__B.json",
     "anchor": null,
-    "sha256": "3f677a091905d9b37be03555be85dfaa6c67cd07d6fcf0a63775cd382f4c7910"
+    "sha256": "8654a03d71d822d090b12d9c7b869c893cb9936dc6f2fef3e4b3f0677e75d586"
    },
    "citation": "Card estimate — Youth literacy (15-24) under Design B — registry/dags/literacy_youth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -1069,7 +1069,7 @@
    "source": {
     "path": "registry/dags/literacy_youth__C.json",
     "anchor": null,
-    "sha256": "492d54dcf9ecec00e1705bf8bf355afc3d1aae757dc69b197f476ef7150bda99"
+    "sha256": "33d752d0bc270247491f7b5bd6d312a11c96fb72c9d6ec137b30d30bf074acf2"
    },
    "citation": "Card estimate — Youth literacy (15-24) under Design C — registry/dags/literacy_youth__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -1097,7 +1097,7 @@
    "source": {
     "path": "registry/dags/mmr__A.json",
     "anchor": null,
-    "sha256": "f662d23c623b7a5cae8f828cf2f5dfd4bb32651e8e632f22adf6c2696277db96"
+    "sha256": "ba1f205ba9efc49e36656c1e805c8cca5ae17255afff529254da02ba1c9b4ca4"
    },
    "citation": "Card estimate — Maternal mortality ratio under Design A — registry/dags/mmr__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -1125,7 +1125,7 @@
    "source": {
     "path": "registry/dags/mmr__B.json",
     "anchor": null,
-    "sha256": "47944d9cc3496d11f159855ee888aa9f39f9be39e4e731c3d75688cb1a3aba66"
+    "sha256": "4b847a01a86fe9e5b00a86000986a6d6b91fedaff2103533edea4ddb2d62be33"
    },
    "citation": "Card estimate — Maternal mortality ratio under Design B — registry/dags/mmr__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -1153,7 +1153,7 @@
    "source": {
     "path": "registry/dags/mmr__C.json",
     "anchor": null,
-    "sha256": "c86c66d62e006f0b58c3a0f6bf67f97088b2232aaf2d065a05dc5e677c3335b0"
+    "sha256": "7de9e93c92130ce2752e5f9d22796aeb9602b62162cd33a8d3361fcd5efa102c"
    },
    "citation": "Card estimate — Maternal mortality ratio under Design C — registry/dags/mmr__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -1181,7 +1181,7 @@
    "source": {
     "path": "registry/dags/ner_primary__A.json",
     "anchor": null,
-    "sha256": "9e462c2776e8ee3a5ddeec08ad70b9c11be07282e613f751f0993849065cdc89"
+    "sha256": "4ecc82c07d24de47c0c6b73b9b6ca7dcd2ea5b1d59b30860b239656774d46fb3"
    },
    "citation": "Card estimate — Net enrolment rate, primary under Design A — registry/dags/ner_primary__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -1209,7 +1209,7 @@
    "source": {
     "path": "registry/dags/ner_primary__B.json",
     "anchor": null,
-    "sha256": "a7747d1d57e22c379a8bbb91e0a66ff4025103b5e982d1f7cffff69945bb7ed7"
+    "sha256": "f6cd2e1d1bac0ac8da569aab4e290ddefc2a39a5ce2670d92f120ffaae4b448a"
    },
    "citation": "Card estimate — Net enrolment rate, primary under Design B — registry/dags/ner_primary__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -1237,7 +1237,7 @@
    "source": {
     "path": "registry/dags/ner_primary__C.json",
     "anchor": null,
-    "sha256": "67c87f894e680ffd9eab10641acb4c5d02703a8a47d9c708d18a697818440c79"
+    "sha256": "fc9ba3066a175496c5081d9c567158394d63d874a7d255f4a68f4fc191be0bef"
    },
    "citation": "Card estimate — Net enrolment rate, primary under Design C — registry/dags/ner_primary__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -1265,7 +1265,7 @@
    "source": {
     "path": "registry/dags/primary_completion__A.json",
     "anchor": null,
-    "sha256": "a6f6ca4edabb9e720e6fa1abf902110269ce22023b606b8f1d48466721c01be7"
+    "sha256": "cf893d06d318fb3440f4324f0adac2fea418fe3adca0848fde3803ae8117af02"
    },
    "citation": "Card estimate — Primary completion rate under Design A — registry/dags/primary_completion__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -1293,7 +1293,7 @@
    "source": {
     "path": "registry/dags/primary_completion__B.json",
     "anchor": null,
-    "sha256": "665770828c6e974505d78a1ce5723a765aae620c6fde325ef43fce63eb24b73f"
+    "sha256": "45c52270dbcccd575c4aaf3940fab7757539b071c4ab4e85d15fed10636213c0"
    },
    "citation": "Card estimate — Primary completion rate under Design B — registry/dags/primary_completion__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -1321,7 +1321,7 @@
    "source": {
     "path": "registry/dags/primary_completion__C.json",
     "anchor": null,
-    "sha256": "782b5aa9c3a2b1f506603139d9fdb15628cbb136c0ba8247530b013ea8430228"
+    "sha256": "a09f6c031a8e5f4fa498959a1a23cbd8fa10e2de2db8c12305ce4fd1addfd00e"
    },
    "citation": "Card estimate — Primary completion rate under Design C — registry/dags/primary_completion__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -1349,7 +1349,7 @@
    "source": {
     "path": "registry/dags/skilled_birth__A.json",
     "anchor": null,
-    "sha256": "44d3822b1e59a450af181e6cb0e98f4dc34445c2d18dc2812ee41b552f1126fd"
+    "sha256": "2d7a15cbc715faacc30a4e000aae57bcd1fc435ee7c1da7cb148c8b982508685"
    },
    "citation": "Card estimate — Skilled birth attendance under Design A — registry/dags/skilled_birth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -1377,7 +1377,7 @@
    "source": {
     "path": "registry/dags/skilled_birth__B.json",
     "anchor": null,
-    "sha256": "2537826feb0a07bc7fb85eb8c9ec56975411eeb5181c2f3ff418e4680001cb52"
+    "sha256": "0d126f1d1fc1404769f3b87f730a5a260b7630c0f49d2d3f435656f290853be7"
    },
    "citation": "Card estimate — Skilled birth attendance under Design B — registry/dags/skilled_birth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -1405,7 +1405,7 @@
    "source": {
     "path": "registry/dags/skilled_birth__C.json",
     "anchor": null,
-    "sha256": "4444daf3dff34d84c813b910db64402ab451ff0bba006168665bdeaae554c42b"
+    "sha256": "60cc72d027e8df6384d4af01df7d848965b18f422649774506a28fcd48ced278"
    },
    "citation": "Card estimate — Skilled birth attendance under Design C — registry/dags/skilled_birth__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -1433,7 +1433,7 @@
    "source": {
     "path": "registry/dags/u5mr__A.json",
     "anchor": null,
-    "sha256": "83d4578c8bd85c7ca6aee48ffd7918a0435ea582c870a2647dae3975c62dc78b"
+    "sha256": "79457c029610dba5d458a99b9b548eb4515d88b487fb0b399c4a2cfc01dbf1f4"
    },
    "citation": "Card estimate — Under-5 mortality rate under Design A — registry/dags/u5mr__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -1461,7 +1461,7 @@
    "source": {
     "path": "registry/dags/u5mr__B.json",
     "anchor": null,
-    "sha256": "e8330488b435b7a72091357602ca98de9e0c0026e38bda598ca238a7558a72de"
+    "sha256": "484d1b4402ce5547be434c355c6fe34b45cfc499d591dd583addc3387aa8d8eb"
    },
    "citation": "Card estimate — Under-5 mortality rate under Design B — registry/dags/u5mr__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -1489,7 +1489,7 @@
    "source": {
     "path": "registry/dags/u5mr__C.json",
     "anchor": null,
-    "sha256": "912caeab710bcd03344297bbb20d63d206a491ba5e87e9ab562c3851c83c0365"
+    "sha256": "d755c00141e45a7105a849a1c374ffbe65320239f7059d1cbad4d6776838a497"
    },
    "citation": "Card estimate — Under-5 mortality rate under Design C — registry/dags/u5mr__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -1517,7 +1517,7 @@
    "source": {
     "path": "registry/dags/u5mr__C.json",
     "anchor": null,
-    "sha256": "912caeab710bcd03344297bbb20d63d206a491ba5e87e9ab562c3851c83c0365"
+    "sha256": "d755c00141e45a7105a849a1c374ffbe65320239f7059d1cbad4d6776838a497"
    },
    "citation": "Card estimate — Under-5 mortality rate under Design C — registry/dags/u5mr__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -1545,7 +1545,7 @@
    "source": {
     "path": "registry/dags/u5mr__C.json",
     "anchor": null,
-    "sha256": "912caeab710bcd03344297bbb20d63d206a491ba5e87e9ab562c3851c83c0365"
+    "sha256": "d755c00141e45a7105a849a1c374ffbe65320239f7059d1cbad4d6776838a497"
    },
    "citation": "Card estimate — Under-5 mortality rate under Design C — registry/dags/u5mr__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -1573,7 +1573,7 @@
    "source": {
     "path": "registry/dags/unemp__A.json",
     "anchor": null,
-    "sha256": "7cce20d64de83df6126730609b205c5db3fef318e5dcb6b44103ec52373a68a1"
+    "sha256": "67cb84f90f32b3ab8b72608f805ec14ada1cbff5318c6534c8b8c01a284102d0"
    },
    "citation": "Card estimate — Unemployment rate under Design A — registry/dags/unemp__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -1601,7 +1601,7 @@
    "source": {
     "path": "registry/dags/unemp__B.json",
     "anchor": null,
-    "sha256": "10c7dfadd05742bcaecb818f696ce3219c92b7d9e241a7c54839c3613aa0de2d"
+    "sha256": "b3aa609bb1921d067082c03cacc51cab7dac29e408131357737fe3f9a4b99dde"
    },
    "citation": "Card estimate — Unemployment rate under Design B — registry/dags/unemp__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -1629,7 +1629,7 @@
    "source": {
     "path": "registry/dags/unemp__C.json",
     "anchor": null,
-    "sha256": "2b6ad2d5f5620f4f3122d0e59e06fe4de4fa2c300e198f3c985ac56c1a9cf12d"
+    "sha256": "94082945fb93671ff0ed9664275a14a7d04ab18a93a71a20a5348c60b798915f"
    },
    "citation": "Card estimate — Unemployment rate under Design C — registry/dags/unemp__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -1683,7 +1683,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "registry.card_estimate_counts",
-    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+    "sha256": "d776a7de345ae2455a66228a893a34c3d247ced74d8d25c1463e31985025bacd"
    },
    "citation": "Registry coverage — how many cards carry a published number — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -3005,7 +3005,7 @@
    "source": {
     "path": "docs/dags.md",
     "anchor": "artefacts",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Artefacts — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
@@ -3026,7 +3026,7 @@
    "source": {
     "path": "docs/dags.md",
     "anchor": "artefacts",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Artefacts — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
@@ -3047,7 +3047,7 @@
    "source": {
     "path": "docs/dags.md",
     "anchor": "artefacts",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Artefacts — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
@@ -3068,7 +3068,7 @@
    "source": {
     "path": "docs/dags.md",
     "anchor": "artefacts",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Artefacts — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
@@ -3089,7 +3089,7 @@
    "source": {
     "path": "docs/dags.md",
     "anchor": "coverage-is-not-the-same-as-identifiability",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Coverage is not the same as identifiability — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
@@ -3105,274 +3105,295 @@
    "chunk_id": "doc:dags#every-variable-and-where-it-comes-from",
    "doc_type": "methodology",
    "title": "dags — Every variable, and where it comes from",
-   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 1 of 13]\n\nEach node on each card carries a `source` and a `source_status`, so Stage 1's exit criterion —\n*every variable required by a design maps to a named source, or is recorded as a declared gap* — is\nmachine-checkable rather than asserted. The generator refuses to emit a card with an unsourced node.",
+   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 1 of 14]\n\nEach node on each card carries a `source` and a `source_status`, so Stage 1's exit criterion —\n*every variable required by a design maps to a named source, or is recorded as a declared gap* — is\nmachine-checkable rather than asserted. The generator refuses to emit a card with an unsourced node.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/dags.md",
     "anchor": "every-variable-and-where-it-comes-from",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Every variable, and where it comes from — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/dags.md",
     "section": "Every variable, and where it comes from",
     "part": 1,
-    "n_parts": 13
+    "n_parts": 14
    },
    "chars": 489,
-   "text_sha256": "b9965867ae64d5e91cc27a090a902f202b4f39f1e7f28bbecb2a6035c5f2914c"
+   "text_sha256": "9c703642c325c44c127380354a66ead19e6d3eed4303390dd682fa6524f17907"
   },
   {
    "chunk_id": "doc:dags#every-variable-and-where-it-comes-from#p10",
    "doc_type": "methodology",
    "title": "dags — Every variable, and where it comes from",
-   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 10 of 13]\n\n> The security outcomes, by contrast, have left this list — their `coverage_status` changed in\n> `outcomes.yml` because the data changed (C-45), and the cards were regenerated from it. ### Acquired since the last vintage",
+   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 10 of 14]\n\n> **Why the dose left this list on 2026-10-30, and why that is not a hand-edit.** The status lives in\n> `analysis/specs/dag_designs.yml`, and it changed *there*; the cards and the index were regenerated from\n> it by `01_build_dags.R` and `05_registry.R`. `dose` and `faac` are declared `acquired` because the\n> series **every fitted specification uses** exists and is gated. What is *not* claimed is the per-capita\n> form: that is a normalisation rather than a source, it needs a state population denominator (X-09), and\n> `estimation.yml` → `design_a.exposure` records why the fixed-effects elasticity does not require it —\n> `-log(population)` is a state-level constant the fixed effect absorbs.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/dags.md",
     "anchor": "every-variable-and-where-it-comes-from",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Every variable, and where it comes from — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/dags.md",
     "section": "Every variable, and where it comes from",
     "part": 10,
-    "n_parts": 13
+    "n_parts": 14
    },
-   "chars": 415,
-   "text_sha256": "13da03de24bbad6046cd9fd29908364692a93d62765084c700eb5d16fa29398d"
+   "chars": 892,
+   "text_sha256": "e60aab23840a4f94493a3e2de1f70aa470d894cbd935ebd2c1a0d9a49272be36"
   },
   {
    "chunk_id": "doc:dags#every-variable-and-where-it-comes-from#p11",
    "doc_type": "methodology",
    "title": "dags — Every variable, and where it comes from",
-   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 11 of 13]\n\nProbing closed seven of the gaps (see `ingestion/flows/probe_missing_variables.py` and decisions\nC-17…C-20). Best of the batch: `donor` had **no source at all** but is now landed, and the entire\nDesign C donor pool is in hand — all 13 candidate countries carry all 5 screening predictors to\n2015, except Venezuela's oil-rents series. *(That was the pool as landed on 2026-10-11; it was widened\nto 99 candidates on 2026-10-18 — the inventory table above is the current one.)*",
+   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 11 of 14]\n\nThe per-capita **axis** stays\n> unbuilt and is recorded in `robustness.yml` → `unbuilt_axes`, so what moved is a node's status, not the\n> limitation. Reading `gap` here had stopped being merely under-specified: it told a reader that the\n> design with a published pass-through estimate had no exposure at all. > The security outcomes, by contrast, left this list earlier — their `coverage_status` changed in\n> `outcomes.yml` because the data changed (C-45). ### Acquired since the last vintage",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/dags.md",
     "anchor": "every-variable-and-where-it-comes-from",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Every variable, and where it comes from — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/dags.md",
     "section": "Every variable, and where it comes from",
     "part": 11,
-    "n_parts": 13
+    "n_parts": 14
    },
-   "chars": 669,
-   "text_sha256": "1ef6eaa8b22e8ffa91fee4b63bd3e68f83673bc529d2e026fa84b2225346b6d0"
+   "chars": 687,
+   "text_sha256": "1244ff3da0d964073e1376701e39450db0b2c3711ad9dd19e2a1f8d1a3333a2d"
   },
   {
    "chunk_id": "doc:dags#every-variable-and-where-it-comes-from#p12",
    "doc_type": "methodology",
    "title": "dags — Every variable, and where it comes from",
-   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 12 of 13]\n\nThe eighth closed by **registration rather than probing**: the oil price had no keyless route at all\n(C-20), so a free FRED key was obtained and Brent crude is now landed as a daily series through\n`ingestion/flows/pull_fred.py` (C-23). `probe_missing_variables.py` now exercises that *keyed* path\nfirst and falls back to the keyless-substitute test only when no key is present.\n\n```bash\nconda run -p \"C:/Users/TOSHIBA/ds-general\" python ingestion/flows/probe_missing_variables.py",
+   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 12 of 14]\n\nProbing closed seven of the gaps (see `ingestion/flows/probe_missing_variables.py` and decisions\nC-17…C-20). Best of the batch: `donor` had **no source at all** but is now landed, and the entire\nDesign C donor pool is in hand — all 13 candidate countries carry all 5 screening predictors to\n2015, except Venezuela's oil-rents series. *(That was the pool as landed on 2026-10-11; it was widened\nto 99 candidates on 2026-10-18 — the inventory table above is the current one.)*",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/dags.md",
     "anchor": "every-variable-and-where-it-comes-from",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Every variable, and where it comes from — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/dags.md",
     "section": "Every variable, and where it comes from",
     "part": 12,
-    "n_parts": 13
+    "n_parts": 14
    },
-   "chars": 674,
-   "text_sha256": "d91775faf0672f3c3f760d4f98c4896bbeaec15205934ebc7e25c9e538b603db"
+   "chars": 669,
+   "text_sha256": "7a10de6f301f232869212adc7a05d946d1fd04d3cbe55bce1b9f62062e03af11"
   },
   {
    "chunk_id": "doc:dags#every-variable-and-where-it-comes-from#p13",
    "doc_type": "methodology",
    "title": "dags — Every variable, and where it comes from",
-   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 13 of 13]\n\nconda run -p \"C:/Users/TOSHIBA/ds-general\" python ingestion/flows/pull_worldbank.py\nconda run -p \"C:/Users/TOSHIBA/ds-general\" python ingestion/flows/pull_worldbank_donors.py\nconda run -p \"C:/Users/TOSHIBA/ds-general\" python ingestion/flows/pull_fred.py\nconda run -p \"C:/Users/TOSHIBA/ds-general\" python tests/verify_provenance.py\n```",
+   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 13 of 14]\n\nThe eighth closed by **registration rather than probing**: the oil price had no keyless route at all\n(C-20), so a free FRED key was obtained and Brent crude is now landed as a daily series through\n`ingestion/flows/pull_fred.py` (C-23). `probe_missing_variables.py` now exercises that *keyed* path\nfirst and falls back to the keyless-substitute test only when no key is present.\n\n```bash\nconda run -p \"C:/Users/TOSHIBA/ds-general\" python ingestion/flows/probe_missing_variables.py",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/dags.md",
     "anchor": "every-variable-and-where-it-comes-from",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Every variable, and where it comes from — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/dags.md",
     "section": "Every variable, and where it comes from",
     "part": 13,
-    "n_parts": 13
+    "n_parts": 14
+   },
+   "chars": 674,
+   "text_sha256": "07cc069db3654703af01d4c225ea3db2dec8e87fec76d4cd05c67890836b6124"
+  },
+  {
+   "chunk_id": "doc:dags#every-variable-and-where-it-comes-from#p14",
+   "doc_type": "methodology",
+   "title": "dags — Every variable, and where it comes from",
+   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 14 of 14]\n\nconda run -p \"C:/Users/TOSHIBA/ds-general\" python ingestion/flows/pull_worldbank.py\nconda run -p \"C:/Users/TOSHIBA/ds-general\" python ingestion/flows/pull_worldbank_donors.py\nconda run -p \"C:/Users/TOSHIBA/ds-general\" python ingestion/flows/pull_fred.py\nconda run -p \"C:/Users/TOSHIBA/ds-general\" python tests/verify_provenance.py\n```",
+   "vintage": "2026-10-30",
+   "source": {
+    "path": "docs/dags.md",
+    "anchor": "every-variable-and-where-it-comes-from",
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
+   },
+   "citation": "dags — Every variable, and where it comes from — docs/dags.md (vintage 2026-10-30)",
+   "metadata": {
+    "document": "docs/dags.md",
+    "section": "Every variable, and where it comes from",
+    "part": 14,
+    "n_parts": 14
    },
    "chars": 529,
-   "text_sha256": "7552d534fd44065424ed85222ce3f575e36b6af2b87371eb7f494d888e4d3cc5"
+   "text_sha256": "7c00f4d1f217542308781891c8765dae6f7f74bf89d9a49b9ce97ff58f08cd44"
   },
   {
    "chunk_id": "doc:dags#every-variable-and-where-it-comes-from#p2",
    "doc_type": "methodology",
    "title": "dags — Every variable, and where it comes from",
-   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 2 of 13]\n\n| Node | Source | Status |\n|---|---|---|\n| `admin`, `treat` | Administration spine (base spec §7) | acquired |\n| `donor` | World Bank `DT.ODA.ALLD.CD` (net ODA) | acquired — **contaminated, see below** |\n| `fx` | World Bank `PA.NUS.FCRF` (annual); CBN for monthly | acquired |\n| `donors` (pool) | Donor panel: 99 candidate countries × 5 predictors (widened 2026-10-18) | acquired — 27,352 country-metric-years, 1960–2025; 62 countries carry all five across 1990–2015 |\n| `Y` | the outcome's own source, from `outcomes.yml` | per outcome |\n| `inherit`, `lagY`, `oilxadmin` | derived from other nodes | derived |\n| `statefe`, `timefe`, `trend`, `countryfe` | design artefacts, not data | construct |\n| `u_st`, `u_t`, `u_ng` | the node",
+   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 2 of 14]\n\n| Node | Source | Status |\n|---|---|---|\n| `admin`, `treat` | Administration spine (base spec §7) | acquired |\n| `donor` | World Bank `DT.ODA.ALLD.CD` (net ODA) | acquired — **contaminated, see below** |\n| `fx` | World Bank `PA.NUS.FCRF` (annual); CBN for monthly | acquired |\n| `donors` (pool) | Donor panel: 99 candidate countries × 5 predictors (widened 2026-10-18) | acquired — 27,352 country-metric-years, 1960–2025; 62 countries carry all five across 1990–2015 |\n| `Y` | the outcome's own source, from `outcomes.yml` | per outcome |\n| `inherit`, `lagY`, `oilxadmin` | derived from other nodes | derived |\n| `statefe`, `timefe`, `trend`, `countryfe` | design artefacts, not data | construct |\n| `u_st`, `u_t`, `u_ng` | the node",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/dags.md",
     "anchor": "every-variable-and-where-it-comes-from",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Every variable, and where it comes from — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/dags.md",
     "section": "Every variable, and where it comes from",
     "part": 2,
-    "n_parts": 13
+    "n_parts": 14
    },
    "chars": 926,
-   "text_sha256": "9918780735b0ba52374d9302b2fd45670e3b023588a8090ea2fea74de0e39848"
+   "text_sha256": "a436ade7ac1faa249604c286022f81fce6b6c480e37230df83578df33d6db99f"
   },
   {
    "chunk_id": "doc:dags#every-variable-and-where-it-comes-from#p3",
    "doc_type": "methodology",
    "title": "dags — Every variable, and where it comes from",
-   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 3 of 13]\n\nthe estimate assumes absent | unobserved |\n| `oil` | FRED `DCOILBRENTEU` via `ingestion/flows/pull_fred.py` | **acquired** (10,275 daily obs, 1987→2026) |\n| `common` | derived from the donor-panel paths and the Brent cycle | derived |\n| `dose`, `faac` | NBS FAAC disbursement reports | **gap** — needs a PDF parser |\n\n`index.json` carries `variables_still_missing`: every node with no usable source across the whole\nregistry. `tests/verify_dags.py` **recomputes that list from the cards** and fails if the index\ndisagrees, so the gap list cannot drift from the graphs it summarises. ### One acquired node is not a clean control",
+   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 3 of 14]\n\nthe estimate assumes absent | unobserved |\n| `oil` | FRED `DCOILBRENTEU` via `ingestion/flows/pull_fred.py` | **acquired** (10,275 daily obs, 1987→2026) |\n| `common` | derived from the donor-panel paths and the Brent cycle | derived |\n| `dose` | NBS FAAC disbursement reports, per state-month, via `ingestion/flows/pull_faac.py` | **acquired** — the nominal dose, 36 states, 2016-12 → 2026-06 (C-89). The D1 per-capita form is a normalisation, not a source: it needs a state population denominator, an unmade decision (X-09), and the fixed-effects elasticity does not require it (`estimation.yml` → `design_a.exposure`) |\n| `faac` | the same series, national | **acquired** — 114 national months, 2016-12 → 2026-06 (C-89) |",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/dags.md",
     "anchor": "every-variable-and-where-it-comes-from",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Every variable, and where it comes from — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/dags.md",
     "section": "Every variable, and where it comes from",
     "part": 3,
-    "n_parts": 13
+    "n_parts": 14
    },
-   "chars": 821,
-   "text_sha256": "323a8c695c41e498c9b7808f8d265e7aa77b98cfd738a4fa034b6b836089675a"
+   "chars": 917,
+   "text_sha256": "f071fb699978c4553f626cb07e5dc9b630630eb4ee47f51da6ef6afecedd3bf8"
   },
   {
    "chunk_id": "doc:dags#every-variable-and-where-it-comes-from#p4",
    "doc_type": "methodology",
    "title": "dags — Every variable, and where it comes from",
-   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 4 of 13]\n\nStage 3's spike gate caught `donor_oda` rising **+1006% in 2005** and reversing −82.9% by 2007, because\nParis Club debt relief is recorded as official development assistance (OECD, UNCTAD; Nigeria's US$18bn\ndeal was announced October 2005 and completed April 2006). The node is genuinely *acquired* — the series\nexists and is gated — but it measures aid **received including debt forgiveness**, not donor effort.",
+   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 4 of 14]\n\n`index.json` carries `variables_still_missing`: every node with no usable source across the whole\nregistry. It is **three nodes, all education** — `ner_primary`, `primary_completion` and\n`literacy_youth` — because no open series carries them into the APC era (C-11, C-12). `tests/verify_dags.py`\n**recomputes that list from the cards** and fails if the index disagrees, so the gap list cannot drift from\nthe graphs it summarises. ### One acquired node is not a clean control",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/dags.md",
     "anchor": "every-variable-and-where-it-comes-from",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Every variable, and where it comes from — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/dags.md",
     "section": "Every variable, and where it comes from",
     "part": 4,
-    "n_parts": 13
+    "n_parts": 14
    },
-   "chars": 606,
-   "text_sha256": "2a1d39f190f6aad41e79d492d3eaf3cbc4eaaa0e6ba4bd905831c0e7881daae3"
+   "chars": 668,
+   "text_sha256": "ddfab9f48fe5450ed788a01900a8e1a25dfc000842f9fef951d9cdbc2aa0c387"
   },
   {
    "chunk_id": "doc:dags#every-variable-and-where-it-comes-from#p5",
    "doc_type": "methodology",
    "title": "dags — Every variable, and where it comes from",
-   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 5 of 13]\n\nThat matters here rather than in a footnote: `donor` sits in the adjustment set for **design A and\ndesign B on every health and education outcome**, so conditioning on it partially conditions on a debt\nrestructuring that coincided with the start of the 2003–2007 tenure. Stage 5 must annotate those cards\nand, if the trace through `donor` is doing real work, report the estimate with and without it.\n\nThis is the intended division of labour: the graph layer declares *what is held fixed*, and the quality\ngates record *whether that thing is fit to hold fixed* (decisions C-28). ### Still missing, by root cause",
+   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 5 of 14]\n\nStage 3's spike gate caught `donor_oda` rising **+1006% in 2005** and reversing −82.9% by 2007, because\nParis Club debt relief is recorded as official development assistance (OECD, UNCTAD; Nigeria's US$18bn\ndeal was announced October 2005 and completed April 2006). The node is genuinely *acquired* — the series\nexists and is gated — but it measures aid **received including debt forgiveness**, not donor effort.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/dags.md",
     "anchor": "every-variable-and-where-it-comes-from",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Every variable, and where it comes from — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/dags.md",
     "section": "Every variable, and where it comes from",
     "part": 5,
-    "n_parts": 13
+    "n_parts": 14
    },
-   "chars": 804,
-   "text_sha256": "24ca3e4d9cadf33c614a6278794abe3cc17ec0f126be104e310f4d085e6ffd53"
+   "chars": 606,
+   "text_sha256": "79fd5b14773cb184a60d57183234da7e39ef06b52d36a926d3188b26952eab64"
   },
   {
    "chunk_id": "doc:dags#every-variable-and-where-it-comes-from#p6",
    "doc_type": "methodology",
    "title": "dags — Every variable, and where it comes from",
-   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 6 of 13]\n\n**Five variables, two root causes** — the oil group closed on 2026-10-11 and the security group on\n2026-10-17:\n\n| Root cause | Variables | What it needs |\n|---|---|---|\n| **Fiscal dose** | `dose` (D1), `faac` | ~~An NBS FAAC PDF/HTML parser, plus a decided state population denominator~~ — **the parser is done (2026-10-16) and the series is Stage 3 gated (2026-10-17)**; what is left is the state population denominator (X-09), on which the per-capita form of `dose` rests |\n| **Education outcomes** | primary completion, net enrolment, youth literacy | No open source reaches 2015+.",
+   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 6 of 14]\n\nThat matters here rather than in a footnote: `donor` sits in the adjustment set for **design A and\ndesign B on every health and education outcome**, so conditioning on it partially conditions on a debt\nrestructuring that coincided with the start of the 2003–2007 tenure. Stage 5 must annotate those cards\nand, if the trace through `donor` is doing real work, report the estimate with and without it.\n\nThis is the intended division of labour: the graph layer declares *what is held fixed*, and the quality\ngates record *whether that thing is fit to hold fixed* (decisions C-28). ### Still missing, by root cause",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/dags.md",
     "anchor": "every-variable-and-where-it-comes-from",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Every variable, and where it comes from — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/dags.md",
     "section": "Every variable, and where it comes from",
     "part": 6,
-    "n_parts": 13
+    "n_parts": 14
    },
-   "chars": 778,
-   "text_sha256": "f3c43cd68338b4ddfc8cd54792563327be6be87f4edb5e4675d0afbd38504efd"
+   "chars": 804,
+   "text_sha256": "60938eb0125c161b32cbfcf18fe633028080a172b0bab357eba6e78739ee2923"
   },
   {
    "chunk_id": "doc:dags#every-variable-and-where-it-comes-from#p7",
    "doc_type": "methodology",
    "title": "dags — Every variable, and where it comes from",
-   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 7 of 13]\n\nUNESCO UIS 404s, NEMIS times out |\n| **Security outcomes** | fatalities, incidents | ✅ **Closed 2026-10-17** — UCDP GED, landed from its **keyless bulk archive** (the API's token was never the only route, C-45); state-attributed on the panel, national on the spine |\n| ~~**Oil price**~~ | ~~`oil` (designs A, B), `common` (design C)~~ | ✅ **Closed** — free FRED key registered, Brent landed (C-23, C-24) |",
+   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 7 of 14]\n\n**Three variables, one root cause** — the oil group closed on 2026-10-11, the security group on\n2026-10-17 and the fiscal dose on 2026-10-30 (C-89):",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/dags.md",
     "anchor": "every-variable-and-where-it-comes-from",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Every variable, and where it comes from — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/dags.md",
     "section": "Every variable, and where it comes from",
     "part": 7,
-    "n_parts": 13
+    "n_parts": 14
    },
-   "chars": 599,
-   "text_sha256": "e0838a38f43e267b517be1c57d5a767c1f003ac09c0bb50306a34c8c12630e9f"
+   "chars": 342,
+   "text_sha256": "2feb82ed514ae3429831255780ed77841330a8cb431298926136210c3f229938"
   },
   {
    "chunk_id": "doc:dags#every-variable-and-where-it-comes-from#p8",
    "doc_type": "methodology",
    "title": "dags — Every variable, and where it comes from",
-   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 8 of 13]\n\nClosing the oil group took **design C to zero unsourced nodes**. With the security outcome also closed,\ndesigns A and B are each down to one unsourced node — the per-capita FAAC dose — and that one is now a\n*decision* (X-09) rather than a source, which is what Stage 6's log specification works around for the\nelasticity (S6-06).",
+   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 8 of 14]\n\n| Root cause | Variables | What it needs |\n|---|---|---|\n| **Education outcomes** | `ner_primary`, `primary_completion`, `literacy_youth` | No open source carries them into the APC era: UNESCO UIS 404s on every path (C-11), NEMIS times out (C-12), and the World Bank education series stop in 2010 — `primary_completion` has **8** observations (2000–2010), `ner_primary` **9** (1999–2010) and `literacy_youth` **8** across 1991–2024, too sparse to test |\n| ~~**Fiscal dose**~~ | ~~`dose` (A), `faac` (B)~~ | ✅ **Closed 2026-10-30 (C-89)** — the nominal FAAC series landed 2026-10-16 (174 documents, 114 months × 36 states), is Stage 3 gated (S4-13…S4-19, C-39…C-43) and carries Stage 6 estimates on both designs |\n| **Security",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/dags.md",
     "anchor": "every-variable-and-where-it-comes-from",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Every variable, and where it comes from — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/dags.md",
     "section": "Every variable, and where it comes from",
     "part": 8,
-    "n_parts": 13
+    "n_parts": 14
    },
-   "chars": 523,
-   "text_sha256": "81bb37d74bfa35863dfdc4642bd8ba031608e6a3c5aca5bd4f16a9cdd39941e5"
+   "chars": 919,
+   "text_sha256": "79e51dae465db0587895a7516a9523dd15ec5d94c56deddc82dc4f6cedd0195b"
   },
   {
    "chunk_id": "doc:dags#every-variable-and-where-it-comes-from#p9",
    "doc_type": "methodology",
    "title": "dags — Every variable, and where it comes from",
-   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 9 of 13]\n\n> **The two rows above `dose`/`faac` are not stale, and the reason is worth keeping.** `dose` and `faac`\n> still carry `source_status: gap` because `analysis/specs/dag_designs.yml` says so and the cards are\n> generated from it. The FAAC series itself exists — 174 documents, 114 months × 36 states, populated on\n> the panel, gated by Stage 3 (S4-13…S4-19, C-39…C-43) and now carrying an estimate on the *nominal* axis\n> (S6-06). What is missing is the per-capita form the `dose` node is specified as, and that waits on X-09. > So `gap` is under-specified rather than wrong, and it is left alone rather than hand-edited:\n> `tests/verify_dags.py` recomputes the gap list from the cards and would fail against an edited page.",
+   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Every variable, and where it comes from\n\n[dags — Every variable, and where it comes from — part 9 of 14]\n\noutcomes** | fatalities, incidents | ✅ **Closed 2026-10-17** — UCDP GED, landed from its **keyless bulk archive** (the API's token was never the only route, C-45); state-attributed on the panel, national on the spine |\n| ~~**Oil price**~~ | ~~`oil` (designs A, B), `common` (design C)~~ | ✅ **Closed** — free FRED key registered, Brent landed (C-23, C-24) |\n\nClosing the oil group took **design C to zero unsourced nodes**. With the security outcome and now the\nfiscal dose also closed, **no design has an unsourced exposure, confounder or mediator left** — every\nvariable in this list is an *outcome*, on the three education cards alone.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/dags.md",
     "anchor": "every-variable-and-where-it-comes-from",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Every variable, and where it comes from — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/dags.md",
     "section": "Every variable, and where it comes from",
     "part": 9,
-    "n_parts": 13
+    "n_parts": 14
    },
-   "chars": 916,
-   "text_sha256": "6f0e9f4625b84ae75ed1623557551e4423636b64ab36158fe86610415e769400"
+   "chars": 832,
+   "text_sha256": "ac427d1b98bb7b85ba5828ee277ea1369362d782eaf96da04de8012da9f1f9bb"
   },
   {
    "chunk_id": "doc:dags#how-assumed-absent-is-computed-and-shown",
@@ -3383,7 +3404,7 @@
    "source": {
     "path": "docs/dags.md",
     "anchor": "how-assumed-absent-is-computed-and-shown",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — How \"assumed absent\" is computed and shown — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
@@ -3404,7 +3425,7 @@
    "source": {
     "path": "docs/dags.md",
     "anchor": "node-vocabulary",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Node vocabulary — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
@@ -3420,12 +3441,12 @@
    "chunk_id": "doc:dags#node-vocabulary#p2",
    "doc_type": "methodology",
    "title": "dags — Node vocabulary",
-   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Node vocabulary\n\n[dags — Node vocabulary — part 2 of 3]\n\n| Node | Meaning | Appears in |\n|---|---|---|\n| `oil` | Brent crude price / global oil shock | A, B |\n| `inherit` | Inherited state conditions at baseline | A |\n| `statefe`, `timefe` | State and time fixed effects | A |\n| `donor` | Donor-funded programmes (health and education outcomes only) | A, B |\n| `dose` | Policy exposure intensity — D1, FAAC per capita | A (exposure) |\n| `lagY` | Lagged outcome (persistence) | B |\n| `trend` | Linear and quadratic time trend | B |\n| `admin` | Administration (party × tenure) | B (exposure) |\n| `oilxadmin` | Oil × administration — effect modification, never partialled out | B |\n| `faac` | FAAC allocation / fiscal space | B |\n| `fx` | NGN/USD exchange rate | B |\n| `common` | Common factors (global oil / commodity cycle) | C |\n|",
+   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Node vocabulary\n\n[dags — Node vocabulary — part 2 of 3]\n\n| Node | Meaning | Appears in |\n|---|---|---|\n| `oil` | Brent crude price / global oil shock | A, B |\n| `inherit` | Inherited state conditions at baseline | A |\n| `statefe`, `timefe` | State and time fixed effects | A |\n| `donor` | Donor-funded programmes (health and education outcomes only) | A, B |\n| `dose` | Policy exposure intensity — nominal FAAC allocation (the D1 per-capita form needs the population denominator, X-09) | A (exposure) |\n| `lagY` | Lagged outcome (persistence) | B |\n| `trend` | Linear and quadratic time trend | B |\n| `admin` | Administration (party × tenure) | B (exposure) |\n| `oilxadmin` | Oil × administration — effect modification, never partialled out | B |\n| `faac` | FAAC allocation / fiscal space | B |\n| `fx` | NGN/USD exchange rate | B |\n|",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/dags.md",
     "anchor": "node-vocabulary",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Node vocabulary — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
@@ -3434,19 +3455,19 @@
     "part": 2,
     "n_parts": 3
    },
-   "chars": 918,
-   "text_sha256": "d1d50bcc9b10e9cd0d9d0efad239493652b991458319fd0b064f10fd085c3a1c"
+   "chars": 921,
+   "text_sha256": "7d5c478274fd68ddf99220bcc40d368ec5d60274554cf2a8a73894f54abfa279"
   },
   {
    "chunk_id": "doc:dags#node-vocabulary#p3",
    "doc_type": "methodology",
    "title": "dags — Node vocabulary",
-   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Node vocabulary\n\n[dags — Node vocabulary — part 3 of 3]\n\n`countryfe` | Country fixed effects | C |\n| `donors` | Donor-pool outcome paths (synthetic weights) | C |\n| `treat` | Nigeria under administration X | C (exposure) |\n| `Y` | The outcome — substituted per outcome | A, B, C (outcome) |",
+   "text": "verify (independent of R: re-derives acyclicity and the backdoor-blocking property)\n\n## Node vocabulary\n\n[dags — Node vocabulary — part 3 of 3]\n\n`common` | Common factors (global oil / commodity cycle) | C |\n| `countryfe` | Country fixed effects | C |\n| `donors` | Donor-pool outcome paths (synthetic weights) | C |\n| `treat` | Nigeria under administration X | C (exposure) |\n| `Y` | The outcome — substituted per outcome | A, B, C (outcome) |",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/dags.md",
     "anchor": "node-vocabulary",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — Node vocabulary — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
@@ -3455,8 +3476,8 @@
     "part": 3,
     "n_parts": 3
    },
-   "chars": 378,
-   "text_sha256": "049e9f4afbac0070e5f4a9e01534ebdbf32f9e5a0634ab91a5d3e04616f04d16"
+   "chars": 443,
+   "text_sha256": "bd22ce709502aaa8b021f0f0a50967dd08a235ed3a929f0c34f2c88788c1a6b1"
   },
   {
    "chunk_id": "doc:dags#the-question-and-the-exposure",
@@ -3467,7 +3488,7 @@
    "source": {
     "path": "docs/dags.md",
     "anchor": "the-question-and-the-exposure",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — The question, and the exposure — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
@@ -3488,7 +3509,7 @@
    "source": {
     "path": "docs/dags.md",
     "anchor": "the-three-designs-as-assumptions",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — The three designs, as assumptions — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
@@ -3509,7 +3530,7 @@
    "source": {
     "path": "docs/dags.md",
     "anchor": "the-three-designs-as-assumptions",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — The three designs, as assumptions — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
@@ -3530,7 +3551,7 @@
    "source": {
     "path": "docs/dags.md",
     "anchor": "the-three-designs-as-assumptions",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — The three designs, as assumptions — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
@@ -3551,7 +3572,7 @@
    "source": {
     "path": "docs/dags.md",
     "anchor": "the-three-designs-as-assumptions",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — The three designs, as assumptions — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
@@ -3572,7 +3593,7 @@
    "source": {
     "path": "docs/dags.md",
     "anchor": "what-comes-next",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — What comes next — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
@@ -3593,7 +3614,7 @@
    "source": {
     "path": "docs/dags.md",
     "anchor": "what-comes-next",
-    "sha256": "9c6ef371b75d1fcd2a6ed8f93f749aee75c751863524198ebf7a1f3f5688092b"
+    "sha256": "1cf3f293329774fd280427bdd4dda5e202fa62d404144652934784a35c1d1520"
    },
    "citation": "dags — What comes next — docs/dags.md (vintage 2026-10-30)",
    "metadata": {
@@ -5483,7 +5504,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s01",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 1. The question this project was asked is not answerable with this data — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5504,7 +5525,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s01",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 1. The question this project was asked is not answerable with this data — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5525,7 +5546,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s01",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 1. The question this project was asked is not answerable with this data — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5546,7 +5567,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s01",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 1. The question this project was asked is not answerable with this data — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5567,7 +5588,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s02",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 2. Most of the monthly spine is not observed — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5588,7 +5609,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s02",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 2. Most of the monthly spine is not observed — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5604,12 +5625,12 @@
    "chunk_id": "doc:limitations#s03",
    "doc_type": "methodology",
    "title": "limitations — 3. Coverage limits, node by node",
-   "text": "What this project cannot say — the limitations, written before the findings\n\n## 3. Coverage limits, node by node\n\n[limitations — 3. Coverage limits, node by node — part 1 of 3]\n\n| Node | What landed | What it cannot carry | Where it is recorded |\n|---|---|---|---|\n| FAAC state allocation (the dose) | 2016-12 → 2026-06, 36 states, 174 documents | Nothing before 2016-12: the PDP era is a declared gap. `dose_status` is `observed` on **4,104** of 12,358 state-months, `declared_gap` on **8,218**, `not_covered` on 36 | `state_panel`; C-39…C-43 |\n| D1 — FAAC **per capita** | **0 of 12,358** rows | The axis Family A's estimand is written on.",
+   "text": "What this project cannot say — the limitations, written before the findings\n\n## 3. Coverage limits, node by node\n\n[limitations — 3. Coverage limits, node by node — part 1 of 3]\n\n| Node | What landed | What it cannot carry | Where it is recorded |\n|---|---|---|---|\n| FAAC state allocation (the dose) | 2016-12 → 2026-06, 36 states, 174 documents | Nothing before 2016-12: the PDP era is a declared gap. `dose_status` is `observed` on **4,104** of 12,358 state-months, `declared_gap` on **8,218**, `not_covered` on 36 | `state_panel`; C-39…C-43 |\n| D1 — FAAC **per capita** | **0 of 12,358** rows | The per-capita *form* of Family A's estimand: the fitted elasticity is nominal, because state fixed effects absorb `-log(population)` (S6-06), while the **level** claim — \"a state with more people gets more money\" — still needs the series.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s03",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 3. Coverage limits, node by node — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5618,8 +5639,8 @@
     "part": 1,
     "n_parts": 3
    },
-   "chars": 641,
-   "text_sha256": "fdc79832f15bb10bb0c0fa9a2652987a1cb24e91f59aac0d4048b796a9a3c6ed"
+   "chars": 837,
+   "text_sha256": "878951b60144bc2b859976cc69bf4cefac8ca0edb4334c8d0b10ba9a6f0fc95c"
   },
   {
    "chunk_id": "doc:limitations#s03#p2",
@@ -5630,7 +5651,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s03",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 3. Coverage limits, node by node — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5651,7 +5672,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s03",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 3. Coverage limits, node by node — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5672,7 +5693,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s04",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 4. The quality gates flagged almost half the landed series — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5693,7 +5714,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s04",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 4. The quality gates flagged almost half the landed series — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5714,7 +5735,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5735,7 +5756,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5756,7 +5777,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5777,7 +5798,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5798,7 +5819,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5819,7 +5840,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s06",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 6. Design B's channel is estimated; its timing and its decomposition are not — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5840,7 +5861,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s06",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 6. Design B's channel is estimated; its timing and its decomposition are not — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5861,7 +5882,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s06",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 6. Design B's channel is estimated; its timing and its decomposition are not — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5882,7 +5903,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s07",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 7. Design C was built, and it did not identify an effect — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5903,7 +5924,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s07",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 7. Design C was built, and it did not identify an effect — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5924,7 +5945,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s07",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 7. Design C was built, and it did not identify an effect — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5945,7 +5966,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s08",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 8. Inference floors that no interval can hide — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5966,7 +5987,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s08",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 8. Inference floors that no interval can hide — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5987,7 +6008,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s09",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 9. Robustness: the sign survives for one design and not the other — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6008,7 +6029,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s09",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 9. Robustness: the sign survives for one design and not the other — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6029,7 +6050,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s09",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 9. Robustness: the sign survives for one design and not the other — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6050,7 +6071,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s09",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 9. Robustness: the sign survives for one design and not the other — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6071,7 +6092,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s10",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 10. Measurement limits no design fixes — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6092,7 +6113,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s11",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 11. Reproduction limits — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6113,7 +6134,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s12",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 12. What is still claimed, stated narrowly — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6134,7 +6155,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s12",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 12. What is still claimed, stated narrowly — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6155,7 +6176,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s13",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 13. What would change each answer — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6176,7 +6197,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s13",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 13. What would change each answer — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6197,7 +6218,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s14",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 14. How this document is checked — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6218,7 +6239,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s14",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 14. How this document is checked — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6239,7 +6260,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s14",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 14. How this document is checked — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6260,7 +6281,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s14",
-    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+    "sha256": "3649e5696bc02eb1873f31b3471c5b41e225349278b55df98910e36fd6290517"
    },
    "citation": "limitations — 14. How this document is checked — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -7016,7 +7037,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__A.json",
     "anchor": null,
-    "sha256": "292823097974c1e23c6d4acb1ead847ecfc23b01484612ac0a3670832dd8404f"
+    "sha256": "46d3861c055891dccfe3b47b4ee3084ac13ca5c5cf358b896059b6b47827720a"
    },
    "citation": "Model card cpi_yoy__A — Headline inflation (y/y) under Design A — registry/dags/cpi_yoy__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -7044,7 +7065,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__A.json",
     "anchor": null,
-    "sha256": "292823097974c1e23c6d4acb1ead847ecfc23b01484612ac0a3670832dd8404f"
+    "sha256": "46d3861c055891dccfe3b47b4ee3084ac13ca5c5cf358b896059b6b47827720a"
    },
    "citation": "Model card cpi_yoy__A — Headline inflation (y/y) under Design A — registry/dags/cpi_yoy__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -7072,7 +7093,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__A.json",
     "anchor": null,
-    "sha256": "292823097974c1e23c6d4acb1ead847ecfc23b01484612ac0a3670832dd8404f"
+    "sha256": "46d3861c055891dccfe3b47b4ee3084ac13ca5c5cf358b896059b6b47827720a"
    },
    "citation": "Model card cpi_yoy__A — Headline inflation (y/y) under Design A — registry/dags/cpi_yoy__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -7100,7 +7121,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__A.json",
     "anchor": null,
-    "sha256": "292823097974c1e23c6d4acb1ead847ecfc23b01484612ac0a3670832dd8404f"
+    "sha256": "46d3861c055891dccfe3b47b4ee3084ac13ca5c5cf358b896059b6b47827720a"
    },
    "citation": "Model card cpi_yoy__A — Headline inflation (y/y) under Design A — registry/dags/cpi_yoy__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -7128,7 +7149,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__A.json",
     "anchor": null,
-    "sha256": "292823097974c1e23c6d4acb1ead847ecfc23b01484612ac0a3670832dd8404f"
+    "sha256": "46d3861c055891dccfe3b47b4ee3084ac13ca5c5cf358b896059b6b47827720a"
    },
    "citation": "Model card cpi_yoy__A — Headline inflation (y/y) under Design A — registry/dags/cpi_yoy__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -7156,7 +7177,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__B.json",
     "anchor": null,
-    "sha256": "9f31314367ab52575928bc0f459ee1bd4a4e3c246ca66b1a96bcd7c8ec898409"
+    "sha256": "4e914ab255c9f742b07306aae4b05325170baa7107ee7290d30ee1c37d6cade2"
    },
    "citation": "Model card cpi_yoy__B — Headline inflation (y/y) under Design B — registry/dags/cpi_yoy__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -7184,7 +7205,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__B.json",
     "anchor": null,
-    "sha256": "9f31314367ab52575928bc0f459ee1bd4a4e3c246ca66b1a96bcd7c8ec898409"
+    "sha256": "4e914ab255c9f742b07306aae4b05325170baa7107ee7290d30ee1c37d6cade2"
    },
    "citation": "Model card cpi_yoy__B — Headline inflation (y/y) under Design B — registry/dags/cpi_yoy__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -7212,7 +7233,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__B.json",
     "anchor": null,
-    "sha256": "9f31314367ab52575928bc0f459ee1bd4a4e3c246ca66b1a96bcd7c8ec898409"
+    "sha256": "4e914ab255c9f742b07306aae4b05325170baa7107ee7290d30ee1c37d6cade2"
    },
    "citation": "Model card cpi_yoy__B — Headline inflation (y/y) under Design B — registry/dags/cpi_yoy__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -7240,7 +7261,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__B.json",
     "anchor": null,
-    "sha256": "9f31314367ab52575928bc0f459ee1bd4a4e3c246ca66b1a96bcd7c8ec898409"
+    "sha256": "4e914ab255c9f742b07306aae4b05325170baa7107ee7290d30ee1c37d6cade2"
    },
    "citation": "Model card cpi_yoy__B — Headline inflation (y/y) under Design B — registry/dags/cpi_yoy__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -7268,7 +7289,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__B.json",
     "anchor": null,
-    "sha256": "9f31314367ab52575928bc0f459ee1bd4a4e3c246ca66b1a96bcd7c8ec898409"
+    "sha256": "4e914ab255c9f742b07306aae4b05325170baa7107ee7290d30ee1c37d6cade2"
    },
    "citation": "Model card cpi_yoy__B — Headline inflation (y/y) under Design B — registry/dags/cpi_yoy__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -7296,7 +7317,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__C.json",
     "anchor": null,
-    "sha256": "c6a4b593f98c1c9368d74bb462b672b3fc2a07cec518e5dd3541410a2d07c875"
+    "sha256": "20118de7793144417ac727cdb748ca7c41999bfc204623242f0c095bf1a91d5a"
    },
    "citation": "Model card cpi_yoy__C — Headline inflation (y/y) under Design C — registry/dags/cpi_yoy__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -7324,7 +7345,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__C.json",
     "anchor": null,
-    "sha256": "c6a4b593f98c1c9368d74bb462b672b3fc2a07cec518e5dd3541410a2d07c875"
+    "sha256": "20118de7793144417ac727cdb748ca7c41999bfc204623242f0c095bf1a91d5a"
    },
    "citation": "Model card cpi_yoy__C — Headline inflation (y/y) under Design C — registry/dags/cpi_yoy__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -7352,7 +7373,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__C.json",
     "anchor": null,
-    "sha256": "c6a4b593f98c1c9368d74bb462b672b3fc2a07cec518e5dd3541410a2d07c875"
+    "sha256": "20118de7793144417ac727cdb748ca7c41999bfc204623242f0c095bf1a91d5a"
    },
    "citation": "Model card cpi_yoy__C — Headline inflation (y/y) under Design C — registry/dags/cpi_yoy__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -7380,7 +7401,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__C.json",
     "anchor": null,
-    "sha256": "c6a4b593f98c1c9368d74bb462b672b3fc2a07cec518e5dd3541410a2d07c875"
+    "sha256": "20118de7793144417ac727cdb748ca7c41999bfc204623242f0c095bf1a91d5a"
    },
    "citation": "Model card cpi_yoy__C — Headline inflation (y/y) under Design C — registry/dags/cpi_yoy__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -7408,7 +7429,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__C.json",
     "anchor": null,
-    "sha256": "c6a4b593f98c1c9368d74bb462b672b3fc2a07cec518e5dd3541410a2d07c875"
+    "sha256": "20118de7793144417ac727cdb748ca7c41999bfc204623242f0c095bf1a91d5a"
    },
    "citation": "Model card cpi_yoy__C — Headline inflation (y/y) under Design C — registry/dags/cpi_yoy__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -7436,7 +7457,7 @@
    "source": {
     "path": "registry/dags/cpi_yoy__C.json",
     "anchor": null,
-    "sha256": "c6a4b593f98c1c9368d74bb462b672b3fc2a07cec518e5dd3541410a2d07c875"
+    "sha256": "20118de7793144417ac727cdb748ca7c41999bfc204623242f0c095bf1a91d5a"
    },
    "citation": "Model card cpi_yoy__C — Headline inflation (y/y) under Design C — registry/dags/cpi_yoy__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -7464,7 +7485,7 @@
    "source": {
     "path": "registry/dags/fatalities__A.json",
     "anchor": null,
-    "sha256": "541b42b95fcad6529961784c171f1c4858b79de5032583cfb74087fa56a52172"
+    "sha256": "6cf58592d38a8fba990cd8fc312ca3cf0002b7e4a53385884a4018ab710b35ab"
    },
    "citation": "Model card fatalities__A — Reported security fatalities under Design A — registry/dags/fatalities__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -7492,7 +7513,7 @@
    "source": {
     "path": "registry/dags/fatalities__A.json",
     "anchor": null,
-    "sha256": "541b42b95fcad6529961784c171f1c4858b79de5032583cfb74087fa56a52172"
+    "sha256": "6cf58592d38a8fba990cd8fc312ca3cf0002b7e4a53385884a4018ab710b35ab"
    },
    "citation": "Model card fatalities__A — Reported security fatalities under Design A — registry/dags/fatalities__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -7520,7 +7541,7 @@
    "source": {
     "path": "registry/dags/fatalities__A.json",
     "anchor": null,
-    "sha256": "541b42b95fcad6529961784c171f1c4858b79de5032583cfb74087fa56a52172"
+    "sha256": "6cf58592d38a8fba990cd8fc312ca3cf0002b7e4a53385884a4018ab710b35ab"
    },
    "citation": "Model card fatalities__A — Reported security fatalities under Design A — registry/dags/fatalities__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -7548,7 +7569,7 @@
    "source": {
     "path": "registry/dags/fatalities__A.json",
     "anchor": null,
-    "sha256": "541b42b95fcad6529961784c171f1c4858b79de5032583cfb74087fa56a52172"
+    "sha256": "6cf58592d38a8fba990cd8fc312ca3cf0002b7e4a53385884a4018ab710b35ab"
    },
    "citation": "Model card fatalities__A — Reported security fatalities under Design A — registry/dags/fatalities__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -7576,7 +7597,7 @@
    "source": {
     "path": "registry/dags/fatalities__A.json",
     "anchor": null,
-    "sha256": "541b42b95fcad6529961784c171f1c4858b79de5032583cfb74087fa56a52172"
+    "sha256": "6cf58592d38a8fba990cd8fc312ca3cf0002b7e4a53385884a4018ab710b35ab"
    },
    "citation": "Model card fatalities__A — Reported security fatalities under Design A — registry/dags/fatalities__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -7604,7 +7625,7 @@
    "source": {
     "path": "registry/dags/fatalities__A.json",
     "anchor": null,
-    "sha256": "541b42b95fcad6529961784c171f1c4858b79de5032583cfb74087fa56a52172"
+    "sha256": "6cf58592d38a8fba990cd8fc312ca3cf0002b7e4a53385884a4018ab710b35ab"
    },
    "citation": "Model card fatalities__A — Reported security fatalities under Design A — registry/dags/fatalities__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -7632,7 +7653,7 @@
    "source": {
     "path": "registry/dags/fatalities__A.json",
     "anchor": null,
-    "sha256": "541b42b95fcad6529961784c171f1c4858b79de5032583cfb74087fa56a52172"
+    "sha256": "6cf58592d38a8fba990cd8fc312ca3cf0002b7e4a53385884a4018ab710b35ab"
    },
    "citation": "Model card fatalities__A — Reported security fatalities under Design A — registry/dags/fatalities__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -7660,7 +7681,7 @@
    "source": {
     "path": "registry/dags/fatalities__B.json",
     "anchor": null,
-    "sha256": "814e3a9d8397bb1141f18c57f6c92f05ee7672ce5c2e4941cdd22c093c1971a4"
+    "sha256": "8d3c2cce85294a2c34d88a57a278d6e84cc9fefd17ddf09561edfc0c7d6e8e5d"
    },
    "citation": "Model card fatalities__B — Reported security fatalities under Design B — registry/dags/fatalities__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -7688,7 +7709,7 @@
    "source": {
     "path": "registry/dags/fatalities__B.json",
     "anchor": null,
-    "sha256": "814e3a9d8397bb1141f18c57f6c92f05ee7672ce5c2e4941cdd22c093c1971a4"
+    "sha256": "8d3c2cce85294a2c34d88a57a278d6e84cc9fefd17ddf09561edfc0c7d6e8e5d"
    },
    "citation": "Model card fatalities__B — Reported security fatalities under Design B — registry/dags/fatalities__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -7716,7 +7737,7 @@
    "source": {
     "path": "registry/dags/fatalities__B.json",
     "anchor": null,
-    "sha256": "814e3a9d8397bb1141f18c57f6c92f05ee7672ce5c2e4941cdd22c093c1971a4"
+    "sha256": "8d3c2cce85294a2c34d88a57a278d6e84cc9fefd17ddf09561edfc0c7d6e8e5d"
    },
    "citation": "Model card fatalities__B — Reported security fatalities under Design B — registry/dags/fatalities__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -7744,7 +7765,7 @@
    "source": {
     "path": "registry/dags/fatalities__B.json",
     "anchor": null,
-    "sha256": "814e3a9d8397bb1141f18c57f6c92f05ee7672ce5c2e4941cdd22c093c1971a4"
+    "sha256": "8d3c2cce85294a2c34d88a57a278d6e84cc9fefd17ddf09561edfc0c7d6e8e5d"
    },
    "citation": "Model card fatalities__B — Reported security fatalities under Design B — registry/dags/fatalities__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -7772,7 +7793,7 @@
    "source": {
     "path": "registry/dags/fatalities__B.json",
     "anchor": null,
-    "sha256": "814e3a9d8397bb1141f18c57f6c92f05ee7672ce5c2e4941cdd22c093c1971a4"
+    "sha256": "8d3c2cce85294a2c34d88a57a278d6e84cc9fefd17ddf09561edfc0c7d6e8e5d"
    },
    "citation": "Model card fatalities__B — Reported security fatalities under Design B — registry/dags/fatalities__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -7800,7 +7821,7 @@
    "source": {
     "path": "registry/dags/fatalities__C.json",
     "anchor": null,
-    "sha256": "b684e0d7bd77d47bb5be5ca6acd9bf4bc232b4ce2833d7b132f8522d41207d06"
+    "sha256": "887dc7ba875b7d24bbad86aa47e66ce8f90fac7bc9c423090374d0ec78ae5fd7"
    },
    "citation": "Model card fatalities__C — Reported security fatalities under Design C — registry/dags/fatalities__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -7828,7 +7849,7 @@
    "source": {
     "path": "registry/dags/fatalities__C.json",
     "anchor": null,
-    "sha256": "b684e0d7bd77d47bb5be5ca6acd9bf4bc232b4ce2833d7b132f8522d41207d06"
+    "sha256": "887dc7ba875b7d24bbad86aa47e66ce8f90fac7bc9c423090374d0ec78ae5fd7"
    },
    "citation": "Model card fatalities__C — Reported security fatalities under Design C — registry/dags/fatalities__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -7856,7 +7877,7 @@
    "source": {
     "path": "registry/dags/fatalities__C.json",
     "anchor": null,
-    "sha256": "b684e0d7bd77d47bb5be5ca6acd9bf4bc232b4ce2833d7b132f8522d41207d06"
+    "sha256": "887dc7ba875b7d24bbad86aa47e66ce8f90fac7bc9c423090374d0ec78ae5fd7"
    },
    "citation": "Model card fatalities__C — Reported security fatalities under Design C — registry/dags/fatalities__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -7884,7 +7905,7 @@
    "source": {
     "path": "registry/dags/fatalities__C.json",
     "anchor": null,
-    "sha256": "b684e0d7bd77d47bb5be5ca6acd9bf4bc232b4ce2833d7b132f8522d41207d06"
+    "sha256": "887dc7ba875b7d24bbad86aa47e66ce8f90fac7bc9c423090374d0ec78ae5fd7"
    },
    "citation": "Model card fatalities__C — Reported security fatalities under Design C — registry/dags/fatalities__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -7912,7 +7933,7 @@
    "source": {
     "path": "registry/dags/fatalities__C.json",
     "anchor": null,
-    "sha256": "b684e0d7bd77d47bb5be5ca6acd9bf4bc232b4ce2833d7b132f8522d41207d06"
+    "sha256": "887dc7ba875b7d24bbad86aa47e66ce8f90fac7bc9c423090374d0ec78ae5fd7"
    },
    "citation": "Model card fatalities__C — Reported security fatalities under Design C — registry/dags/fatalities__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -7940,7 +7961,7 @@
    "source": {
     "path": "registry/dags/fatalities__C.json",
     "anchor": null,
-    "sha256": "b684e0d7bd77d47bb5be5ca6acd9bf4bc232b4ce2833d7b132f8522d41207d06"
+    "sha256": "887dc7ba875b7d24bbad86aa47e66ce8f90fac7bc9c423090374d0ec78ae5fd7"
    },
    "citation": "Model card fatalities__C — Reported security fatalities under Design C — registry/dags/fatalities__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -7968,7 +7989,7 @@
    "source": {
     "path": "registry/dags/fatalities__C.json",
     "anchor": null,
-    "sha256": "b684e0d7bd77d47bb5be5ca6acd9bf4bc232b4ce2833d7b132f8522d41207d06"
+    "sha256": "887dc7ba875b7d24bbad86aa47e66ce8f90fac7bc9c423090374d0ec78ae5fd7"
    },
    "citation": "Model card fatalities__C — Reported security fatalities under Design C — registry/dags/fatalities__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -7996,7 +8017,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__A.json",
     "anchor": null,
-    "sha256": "b7fb5a375d31b4942c56a7a22914fc5d8a09cdbb4704ec21f8a8b05277893f61"
+    "sha256": "714126dd044aa2e5a151f667a8c03a7174d031ea47ec64d27d237d217b3fafa0"
    },
    "citation": "Model card gdp_growth__A — Real GDP growth (y/y) under Design A — registry/dags/gdp_growth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -8024,7 +8045,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__A.json",
     "anchor": null,
-    "sha256": "b7fb5a375d31b4942c56a7a22914fc5d8a09cdbb4704ec21f8a8b05277893f61"
+    "sha256": "714126dd044aa2e5a151f667a8c03a7174d031ea47ec64d27d237d217b3fafa0"
    },
    "citation": "Model card gdp_growth__A — Real GDP growth (y/y) under Design A — registry/dags/gdp_growth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -8052,7 +8073,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__A.json",
     "anchor": null,
-    "sha256": "b7fb5a375d31b4942c56a7a22914fc5d8a09cdbb4704ec21f8a8b05277893f61"
+    "sha256": "714126dd044aa2e5a151f667a8c03a7174d031ea47ec64d27d237d217b3fafa0"
    },
    "citation": "Model card gdp_growth__A — Real GDP growth (y/y) under Design A — registry/dags/gdp_growth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -8080,7 +8101,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__A.json",
     "anchor": null,
-    "sha256": "b7fb5a375d31b4942c56a7a22914fc5d8a09cdbb4704ec21f8a8b05277893f61"
+    "sha256": "714126dd044aa2e5a151f667a8c03a7174d031ea47ec64d27d237d217b3fafa0"
    },
    "citation": "Model card gdp_growth__A — Real GDP growth (y/y) under Design A — registry/dags/gdp_growth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -8108,7 +8129,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__A.json",
     "anchor": null,
-    "sha256": "b7fb5a375d31b4942c56a7a22914fc5d8a09cdbb4704ec21f8a8b05277893f61"
+    "sha256": "714126dd044aa2e5a151f667a8c03a7174d031ea47ec64d27d237d217b3fafa0"
    },
    "citation": "Model card gdp_growth__A — Real GDP growth (y/y) under Design A — registry/dags/gdp_growth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -8136,7 +8157,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__B.json",
     "anchor": null,
-    "sha256": "f603e087b109886d4d46b0a8031f1b7f8a5e07002f9089792ccf78717d3d1339"
+    "sha256": "990e3157e513b467f54e0f1bcc4b9bb550d3a021457397d52e70161737c73bac"
    },
    "citation": "Model card gdp_growth__B — Real GDP growth (y/y) under Design B — registry/dags/gdp_growth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -8164,7 +8185,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__B.json",
     "anchor": null,
-    "sha256": "f603e087b109886d4d46b0a8031f1b7f8a5e07002f9089792ccf78717d3d1339"
+    "sha256": "990e3157e513b467f54e0f1bcc4b9bb550d3a021457397d52e70161737c73bac"
    },
    "citation": "Model card gdp_growth__B — Real GDP growth (y/y) under Design B — registry/dags/gdp_growth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -8192,7 +8213,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__B.json",
     "anchor": null,
-    "sha256": "f603e087b109886d4d46b0a8031f1b7f8a5e07002f9089792ccf78717d3d1339"
+    "sha256": "990e3157e513b467f54e0f1bcc4b9bb550d3a021457397d52e70161737c73bac"
    },
    "citation": "Model card gdp_growth__B — Real GDP growth (y/y) under Design B — registry/dags/gdp_growth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -8220,7 +8241,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__B.json",
     "anchor": null,
-    "sha256": "f603e087b109886d4d46b0a8031f1b7f8a5e07002f9089792ccf78717d3d1339"
+    "sha256": "990e3157e513b467f54e0f1bcc4b9bb550d3a021457397d52e70161737c73bac"
    },
    "citation": "Model card gdp_growth__B — Real GDP growth (y/y) under Design B — registry/dags/gdp_growth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -8248,7 +8269,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__B.json",
     "anchor": null,
-    "sha256": "f603e087b109886d4d46b0a8031f1b7f8a5e07002f9089792ccf78717d3d1339"
+    "sha256": "990e3157e513b467f54e0f1bcc4b9bb550d3a021457397d52e70161737c73bac"
    },
    "citation": "Model card gdp_growth__B — Real GDP growth (y/y) under Design B — registry/dags/gdp_growth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -8276,7 +8297,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__C.json",
     "anchor": null,
-    "sha256": "671d2a2fd14efbe1e2443d1926718737e53c11a0380541d0e5b1ae510c69ba8f"
+    "sha256": "994ea8077dd236adc920e85b7c1a72da671af0cd6f0ff8f2534fb9cc3d22504e"
    },
    "citation": "Model card gdp_growth__C — Real GDP growth (y/y) under Design C — registry/dags/gdp_growth__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -8304,7 +8325,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__C.json",
     "anchor": null,
-    "sha256": "671d2a2fd14efbe1e2443d1926718737e53c11a0380541d0e5b1ae510c69ba8f"
+    "sha256": "994ea8077dd236adc920e85b7c1a72da671af0cd6f0ff8f2534fb9cc3d22504e"
    },
    "citation": "Model card gdp_growth__C — Real GDP growth (y/y) under Design C — registry/dags/gdp_growth__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -8332,7 +8353,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__C.json",
     "anchor": null,
-    "sha256": "671d2a2fd14efbe1e2443d1926718737e53c11a0380541d0e5b1ae510c69ba8f"
+    "sha256": "994ea8077dd236adc920e85b7c1a72da671af0cd6f0ff8f2534fb9cc3d22504e"
    },
    "citation": "Model card gdp_growth__C — Real GDP growth (y/y) under Design C — registry/dags/gdp_growth__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -8360,7 +8381,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__C.json",
     "anchor": null,
-    "sha256": "671d2a2fd14efbe1e2443d1926718737e53c11a0380541d0e5b1ae510c69ba8f"
+    "sha256": "994ea8077dd236adc920e85b7c1a72da671af0cd6f0ff8f2534fb9cc3d22504e"
    },
    "citation": "Model card gdp_growth__C — Real GDP growth (y/y) under Design C — registry/dags/gdp_growth__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -8388,7 +8409,7 @@
    "source": {
     "path": "registry/dags/gdp_growth__C.json",
     "anchor": null,
-    "sha256": "671d2a2fd14efbe1e2443d1926718737e53c11a0380541d0e5b1ae510c69ba8f"
+    "sha256": "994ea8077dd236adc920e85b7c1a72da671af0cd6f0ff8f2534fb9cc3d22504e"
    },
    "citation": "Model card gdp_growth__C — Real GDP growth (y/y) under Design C — registry/dags/gdp_growth__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -8416,7 +8437,7 @@
    "source": {
     "path": "registry/dags/immun_penta3__A.json",
     "anchor": null,
-    "sha256": "c43168e72f656bac9227737f6396f48f258a544461b9deceace1b9f1d68c6d02"
+    "sha256": "703ab6ae12fa0fe5f676f717a2c25806e85f93c0b38a702e29675bd2c6a3bf04"
    },
    "citation": "Model card immun_penta3__A — Penta3 immunisation coverage under Design A — registry/dags/immun_penta3__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -8444,7 +8465,7 @@
    "source": {
     "path": "registry/dags/immun_penta3__A.json",
     "anchor": null,
-    "sha256": "c43168e72f656bac9227737f6396f48f258a544461b9deceace1b9f1d68c6d02"
+    "sha256": "703ab6ae12fa0fe5f676f717a2c25806e85f93c0b38a702e29675bd2c6a3bf04"
    },
    "citation": "Model card immun_penta3__A — Penta3 immunisation coverage under Design A — registry/dags/immun_penta3__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -8472,7 +8493,7 @@
    "source": {
     "path": "registry/dags/immun_penta3__A.json",
     "anchor": null,
-    "sha256": "c43168e72f656bac9227737f6396f48f258a544461b9deceace1b9f1d68c6d02"
+    "sha256": "703ab6ae12fa0fe5f676f717a2c25806e85f93c0b38a702e29675bd2c6a3bf04"
    },
    "citation": "Model card immun_penta3__A — Penta3 immunisation coverage under Design A — registry/dags/immun_penta3__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -8500,7 +8521,7 @@
    "source": {
     "path": "registry/dags/immun_penta3__A.json",
     "anchor": null,
-    "sha256": "c43168e72f656bac9227737f6396f48f258a544461b9deceace1b9f1d68c6d02"
+    "sha256": "703ab6ae12fa0fe5f676f717a2c25806e85f93c0b38a702e29675bd2c6a3bf04"
    },
    "citation": "Model card immun_penta3__A — Penta3 immunisation coverage under Design A — registry/dags/immun_penta3__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -8528,7 +8549,7 @@
    "source": {
     "path": "registry/dags/immun_penta3__A.json",
     "anchor": null,
-    "sha256": "c43168e72f656bac9227737f6396f48f258a544461b9deceace1b9f1d68c6d02"
+    "sha256": "703ab6ae12fa0fe5f676f717a2c25806e85f93c0b38a702e29675bd2c6a3bf04"
    },
    "citation": "Model card immun_penta3__A — Penta3 immunisation coverage under Design A — registry/dags/immun_penta3__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -8556,7 +8577,7 @@
    "source": {
     "path": "registry/dags/immun_penta3__B.json",
     "anchor": null,
-    "sha256": "1725180098d611f3359408b75c0468cbcbc72c4545fbe178f4fd904704811ab3"
+    "sha256": "708da408e99edb70f544a276aff8e5bfda65bdcbc2c4eea9169d1ccbaab86530"
    },
    "citation": "Model card immun_penta3__B — Penta3 immunisation coverage under Design B — registry/dags/immun_penta3__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -8584,7 +8605,7 @@
    "source": {
     "path": "registry/dags/immun_penta3__B.json",
     "anchor": null,
-    "sha256": "1725180098d611f3359408b75c0468cbcbc72c4545fbe178f4fd904704811ab3"
+    "sha256": "708da408e99edb70f544a276aff8e5bfda65bdcbc2c4eea9169d1ccbaab86530"
    },
    "citation": "Model card immun_penta3__B — Penta3 immunisation coverage under Design B — registry/dags/immun_penta3__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -8612,7 +8633,7 @@
    "source": {
     "path": "registry/dags/immun_penta3__B.json",
     "anchor": null,
-    "sha256": "1725180098d611f3359408b75c0468cbcbc72c4545fbe178f4fd904704811ab3"
+    "sha256": "708da408e99edb70f544a276aff8e5bfda65bdcbc2c4eea9169d1ccbaab86530"
    },
    "citation": "Model card immun_penta3__B — Penta3 immunisation coverage under Design B — registry/dags/immun_penta3__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -8640,7 +8661,7 @@
    "source": {
     "path": "registry/dags/immun_penta3__B.json",
     "anchor": null,
-    "sha256": "1725180098d611f3359408b75c0468cbcbc72c4545fbe178f4fd904704811ab3"
+    "sha256": "708da408e99edb70f544a276aff8e5bfda65bdcbc2c4eea9169d1ccbaab86530"
    },
    "citation": "Model card immun_penta3__B — Penta3 immunisation coverage under Design B — registry/dags/immun_penta3__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -8668,7 +8689,7 @@
    "source": {
     "path": "registry/dags/immun_penta3__B.json",
     "anchor": null,
-    "sha256": "1725180098d611f3359408b75c0468cbcbc72c4545fbe178f4fd904704811ab3"
+    "sha256": "708da408e99edb70f544a276aff8e5bfda65bdcbc2c4eea9169d1ccbaab86530"
    },
    "citation": "Model card immun_penta3__B — Penta3 immunisation coverage under Design B — registry/dags/immun_penta3__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -8696,7 +8717,7 @@
    "source": {
     "path": "registry/dags/immun_penta3__C.json",
     "anchor": null,
-    "sha256": "3c1f171cb77f0955e587302e3ea767e9eb3b902741eadb599c271303d0f7647f"
+    "sha256": "c3044e466d5a0f97fbf5b48686c1978381f8c9f75416f4824adb0636e36fc693"
    },
    "citation": "Model card immun_penta3__C — Penta3 immunisation coverage under Design C — registry/dags/immun_penta3__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -8724,7 +8745,7 @@
    "source": {
     "path": "registry/dags/immun_penta3__C.json",
     "anchor": null,
-    "sha256": "3c1f171cb77f0955e587302e3ea767e9eb3b902741eadb599c271303d0f7647f"
+    "sha256": "c3044e466d5a0f97fbf5b48686c1978381f8c9f75416f4824adb0636e36fc693"
    },
    "citation": "Model card immun_penta3__C — Penta3 immunisation coverage under Design C — registry/dags/immun_penta3__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -8752,7 +8773,7 @@
    "source": {
     "path": "registry/dags/immun_penta3__C.json",
     "anchor": null,
-    "sha256": "3c1f171cb77f0955e587302e3ea767e9eb3b902741eadb599c271303d0f7647f"
+    "sha256": "c3044e466d5a0f97fbf5b48686c1978381f8c9f75416f4824adb0636e36fc693"
    },
    "citation": "Model card immun_penta3__C — Penta3 immunisation coverage under Design C — registry/dags/immun_penta3__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -8780,7 +8801,7 @@
    "source": {
     "path": "registry/dags/immun_penta3__C.json",
     "anchor": null,
-    "sha256": "3c1f171cb77f0955e587302e3ea767e9eb3b902741eadb599c271303d0f7647f"
+    "sha256": "c3044e466d5a0f97fbf5b48686c1978381f8c9f75416f4824adb0636e36fc693"
    },
    "citation": "Model card immun_penta3__C — Penta3 immunisation coverage under Design C — registry/dags/immun_penta3__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -8808,7 +8829,7 @@
    "source": {
     "path": "registry/dags/incidents__A.json",
     "anchor": null,
-    "sha256": "e81842377ef10025f9579015c67dc3e8ea2874fd4c29778545052e62e743a4eb"
+    "sha256": "86a68524e8d74c2c8730f0ad8dadd3c1b1d6e580541299e3f449fdf668e6d473"
    },
    "citation": "Model card incidents__A — Reported security incidents under Design A — registry/dags/incidents__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -8836,7 +8857,7 @@
    "source": {
     "path": "registry/dags/incidents__A.json",
     "anchor": null,
-    "sha256": "e81842377ef10025f9579015c67dc3e8ea2874fd4c29778545052e62e743a4eb"
+    "sha256": "86a68524e8d74c2c8730f0ad8dadd3c1b1d6e580541299e3f449fdf668e6d473"
    },
    "citation": "Model card incidents__A — Reported security incidents under Design A — registry/dags/incidents__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -8864,7 +8885,7 @@
    "source": {
     "path": "registry/dags/incidents__A.json",
     "anchor": null,
-    "sha256": "e81842377ef10025f9579015c67dc3e8ea2874fd4c29778545052e62e743a4eb"
+    "sha256": "86a68524e8d74c2c8730f0ad8dadd3c1b1d6e580541299e3f449fdf668e6d473"
    },
    "citation": "Model card incidents__A — Reported security incidents under Design A — registry/dags/incidents__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -8892,7 +8913,7 @@
    "source": {
     "path": "registry/dags/incidents__A.json",
     "anchor": null,
-    "sha256": "e81842377ef10025f9579015c67dc3e8ea2874fd4c29778545052e62e743a4eb"
+    "sha256": "86a68524e8d74c2c8730f0ad8dadd3c1b1d6e580541299e3f449fdf668e6d473"
    },
    "citation": "Model card incidents__A — Reported security incidents under Design A — registry/dags/incidents__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -8920,7 +8941,7 @@
    "source": {
     "path": "registry/dags/incidents__A.json",
     "anchor": null,
-    "sha256": "e81842377ef10025f9579015c67dc3e8ea2874fd4c29778545052e62e743a4eb"
+    "sha256": "86a68524e8d74c2c8730f0ad8dadd3c1b1d6e580541299e3f449fdf668e6d473"
    },
    "citation": "Model card incidents__A — Reported security incidents under Design A — registry/dags/incidents__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -8948,7 +8969,7 @@
    "source": {
     "path": "registry/dags/incidents__A.json",
     "anchor": null,
-    "sha256": "e81842377ef10025f9579015c67dc3e8ea2874fd4c29778545052e62e743a4eb"
+    "sha256": "86a68524e8d74c2c8730f0ad8dadd3c1b1d6e580541299e3f449fdf668e6d473"
    },
    "citation": "Model card incidents__A — Reported security incidents under Design A — registry/dags/incidents__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -8976,7 +8997,7 @@
    "source": {
     "path": "registry/dags/incidents__B.json",
     "anchor": null,
-    "sha256": "d526e785d1d6c9826527b08df59d2da07fa83fff27ff766dc49d21ceafa4f32b"
+    "sha256": "b0218a23d36b2f7f63b92d21edb78553e99b8177f008f47af602614bae87c312"
    },
    "citation": "Model card incidents__B — Reported security incidents under Design B — registry/dags/incidents__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -9004,7 +9025,7 @@
    "source": {
     "path": "registry/dags/incidents__B.json",
     "anchor": null,
-    "sha256": "d526e785d1d6c9826527b08df59d2da07fa83fff27ff766dc49d21ceafa4f32b"
+    "sha256": "b0218a23d36b2f7f63b92d21edb78553e99b8177f008f47af602614bae87c312"
    },
    "citation": "Model card incidents__B — Reported security incidents under Design B — registry/dags/incidents__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -9032,7 +9053,7 @@
    "source": {
     "path": "registry/dags/incidents__B.json",
     "anchor": null,
-    "sha256": "d526e785d1d6c9826527b08df59d2da07fa83fff27ff766dc49d21ceafa4f32b"
+    "sha256": "b0218a23d36b2f7f63b92d21edb78553e99b8177f008f47af602614bae87c312"
    },
    "citation": "Model card incidents__B — Reported security incidents under Design B — registry/dags/incidents__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -9060,7 +9081,7 @@
    "source": {
     "path": "registry/dags/incidents__B.json",
     "anchor": null,
-    "sha256": "d526e785d1d6c9826527b08df59d2da07fa83fff27ff766dc49d21ceafa4f32b"
+    "sha256": "b0218a23d36b2f7f63b92d21edb78553e99b8177f008f47af602614bae87c312"
    },
    "citation": "Model card incidents__B — Reported security incidents under Design B — registry/dags/incidents__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -9088,7 +9109,7 @@
    "source": {
     "path": "registry/dags/incidents__B.json",
     "anchor": null,
-    "sha256": "d526e785d1d6c9826527b08df59d2da07fa83fff27ff766dc49d21ceafa4f32b"
+    "sha256": "b0218a23d36b2f7f63b92d21edb78553e99b8177f008f47af602614bae87c312"
    },
    "citation": "Model card incidents__B — Reported security incidents under Design B — registry/dags/incidents__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -9116,7 +9137,7 @@
    "source": {
     "path": "registry/dags/incidents__C.json",
     "anchor": null,
-    "sha256": "bef2ae39b10a7ffc9e1370ef6890f8437545ed6841ff5d405b63876729976415"
+    "sha256": "2d6860d99cf7719c844cc66e94cda4867012b91fbf54b403687e47ce5b0cf735"
    },
    "citation": "Model card incidents__C — Reported security incidents under Design C — registry/dags/incidents__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -9144,7 +9165,7 @@
    "source": {
     "path": "registry/dags/incidents__C.json",
     "anchor": null,
-    "sha256": "bef2ae39b10a7ffc9e1370ef6890f8437545ed6841ff5d405b63876729976415"
+    "sha256": "2d6860d99cf7719c844cc66e94cda4867012b91fbf54b403687e47ce5b0cf735"
    },
    "citation": "Model card incidents__C — Reported security incidents under Design C — registry/dags/incidents__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -9172,7 +9193,7 @@
    "source": {
     "path": "registry/dags/incidents__C.json",
     "anchor": null,
-    "sha256": "bef2ae39b10a7ffc9e1370ef6890f8437545ed6841ff5d405b63876729976415"
+    "sha256": "2d6860d99cf7719c844cc66e94cda4867012b91fbf54b403687e47ce5b0cf735"
    },
    "citation": "Model card incidents__C — Reported security incidents under Design C — registry/dags/incidents__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -9200,7 +9221,7 @@
    "source": {
     "path": "registry/dags/incidents__C.json",
     "anchor": null,
-    "sha256": "bef2ae39b10a7ffc9e1370ef6890f8437545ed6841ff5d405b63876729976415"
+    "sha256": "2d6860d99cf7719c844cc66e94cda4867012b91fbf54b403687e47ce5b0cf735"
    },
    "citation": "Model card incidents__C — Reported security incidents under Design C — registry/dags/incidents__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -9228,7 +9249,7 @@
    "source": {
     "path": "registry/dags/literacy_youth__A.json",
     "anchor": null,
-    "sha256": "6acbc243754ead3bac2ac0410fc7d82a27974b9e7ea284ecccda96e5f7a91f8e"
+    "sha256": "0c3002e51ca8d7f27130e90c6ca6fb3cd4a62f21dde8430ad9970cb4ca5c2613"
    },
    "citation": "Model card literacy_youth__A — Youth literacy (15-24) under Design A — registry/dags/literacy_youth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -9256,7 +9277,7 @@
    "source": {
     "path": "registry/dags/literacy_youth__A.json",
     "anchor": null,
-    "sha256": "6acbc243754ead3bac2ac0410fc7d82a27974b9e7ea284ecccda96e5f7a91f8e"
+    "sha256": "0c3002e51ca8d7f27130e90c6ca6fb3cd4a62f21dde8430ad9970cb4ca5c2613"
    },
    "citation": "Model card literacy_youth__A — Youth literacy (15-24) under Design A — registry/dags/literacy_youth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -9284,7 +9305,7 @@
    "source": {
     "path": "registry/dags/literacy_youth__A.json",
     "anchor": null,
-    "sha256": "6acbc243754ead3bac2ac0410fc7d82a27974b9e7ea284ecccda96e5f7a91f8e"
+    "sha256": "0c3002e51ca8d7f27130e90c6ca6fb3cd4a62f21dde8430ad9970cb4ca5c2613"
    },
    "citation": "Model card literacy_youth__A — Youth literacy (15-24) under Design A — registry/dags/literacy_youth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -9312,7 +9333,7 @@
    "source": {
     "path": "registry/dags/literacy_youth__A.json",
     "anchor": null,
-    "sha256": "6acbc243754ead3bac2ac0410fc7d82a27974b9e7ea284ecccda96e5f7a91f8e"
+    "sha256": "0c3002e51ca8d7f27130e90c6ca6fb3cd4a62f21dde8430ad9970cb4ca5c2613"
    },
    "citation": "Model card literacy_youth__A — Youth literacy (15-24) under Design A — registry/dags/literacy_youth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -9340,7 +9361,7 @@
    "source": {
     "path": "registry/dags/literacy_youth__A.json",
     "anchor": null,
-    "sha256": "6acbc243754ead3bac2ac0410fc7d82a27974b9e7ea284ecccda96e5f7a91f8e"
+    "sha256": "0c3002e51ca8d7f27130e90c6ca6fb3cd4a62f21dde8430ad9970cb4ca5c2613"
    },
    "citation": "Model card literacy_youth__A — Youth literacy (15-24) under Design A — registry/dags/literacy_youth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -9368,7 +9389,7 @@
    "source": {
     "path": "registry/dags/literacy_youth__B.json",
     "anchor": null,
-    "sha256": "3f677a091905d9b37be03555be85dfaa6c67cd07d6fcf0a63775cd382f4c7910"
+    "sha256": "8654a03d71d822d090b12d9c7b869c893cb9936dc6f2fef3e4b3f0677e75d586"
    },
    "citation": "Model card literacy_youth__B — Youth literacy (15-24) under Design B — registry/dags/literacy_youth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -9396,7 +9417,7 @@
    "source": {
     "path": "registry/dags/literacy_youth__B.json",
     "anchor": null,
-    "sha256": "3f677a091905d9b37be03555be85dfaa6c67cd07d6fcf0a63775cd382f4c7910"
+    "sha256": "8654a03d71d822d090b12d9c7b869c893cb9936dc6f2fef3e4b3f0677e75d586"
    },
    "citation": "Model card literacy_youth__B — Youth literacy (15-24) under Design B — registry/dags/literacy_youth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -9424,7 +9445,7 @@
    "source": {
     "path": "registry/dags/literacy_youth__B.json",
     "anchor": null,
-    "sha256": "3f677a091905d9b37be03555be85dfaa6c67cd07d6fcf0a63775cd382f4c7910"
+    "sha256": "8654a03d71d822d090b12d9c7b869c893cb9936dc6f2fef3e4b3f0677e75d586"
    },
    "citation": "Model card literacy_youth__B — Youth literacy (15-24) under Design B — registry/dags/literacy_youth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -9452,7 +9473,7 @@
    "source": {
     "path": "registry/dags/literacy_youth__B.json",
     "anchor": null,
-    "sha256": "3f677a091905d9b37be03555be85dfaa6c67cd07d6fcf0a63775cd382f4c7910"
+    "sha256": "8654a03d71d822d090b12d9c7b869c893cb9936dc6f2fef3e4b3f0677e75d586"
    },
    "citation": "Model card literacy_youth__B — Youth literacy (15-24) under Design B — registry/dags/literacy_youth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -9480,7 +9501,7 @@
    "source": {
     "path": "registry/dags/literacy_youth__B.json",
     "anchor": null,
-    "sha256": "3f677a091905d9b37be03555be85dfaa6c67cd07d6fcf0a63775cd382f4c7910"
+    "sha256": "8654a03d71d822d090b12d9c7b869c893cb9936dc6f2fef3e4b3f0677e75d586"
    },
    "citation": "Model card literacy_youth__B — Youth literacy (15-24) under Design B — registry/dags/literacy_youth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -9508,7 +9529,7 @@
    "source": {
     "path": "registry/dags/literacy_youth__C.json",
     "anchor": null,
-    "sha256": "492d54dcf9ecec00e1705bf8bf355afc3d1aae757dc69b197f476ef7150bda99"
+    "sha256": "33d752d0bc270247491f7b5bd6d312a11c96fb72c9d6ec137b30d30bf074acf2"
    },
    "citation": "Model card literacy_youth__C — Youth literacy (15-24) under Design C — registry/dags/literacy_youth__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -9536,7 +9557,7 @@
    "source": {
     "path": "registry/dags/literacy_youth__C.json",
     "anchor": null,
-    "sha256": "492d54dcf9ecec00e1705bf8bf355afc3d1aae757dc69b197f476ef7150bda99"
+    "sha256": "33d752d0bc270247491f7b5bd6d312a11c96fb72c9d6ec137b30d30bf074acf2"
    },
    "citation": "Model card literacy_youth__C — Youth literacy (15-24) under Design C — registry/dags/literacy_youth__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -9564,7 +9585,7 @@
    "source": {
     "path": "registry/dags/literacy_youth__C.json",
     "anchor": null,
-    "sha256": "492d54dcf9ecec00e1705bf8bf355afc3d1aae757dc69b197f476ef7150bda99"
+    "sha256": "33d752d0bc270247491f7b5bd6d312a11c96fb72c9d6ec137b30d30bf074acf2"
    },
    "citation": "Model card literacy_youth__C — Youth literacy (15-24) under Design C — registry/dags/literacy_youth__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -9592,7 +9613,7 @@
    "source": {
     "path": "registry/dags/literacy_youth__C.json",
     "anchor": null,
-    "sha256": "492d54dcf9ecec00e1705bf8bf355afc3d1aae757dc69b197f476ef7150bda99"
+    "sha256": "33d752d0bc270247491f7b5bd6d312a11c96fb72c9d6ec137b30d30bf074acf2"
    },
    "citation": "Model card literacy_youth__C — Youth literacy (15-24) under Design C — registry/dags/literacy_youth__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -9620,7 +9641,7 @@
    "source": {
     "path": "registry/dags/mmr__A.json",
     "anchor": null,
-    "sha256": "f662d23c623b7a5cae8f828cf2f5dfd4bb32651e8e632f22adf6c2696277db96"
+    "sha256": "ba1f205ba9efc49e36656c1e805c8cca5ae17255afff529254da02ba1c9b4ca4"
    },
    "citation": "Model card mmr__A — Maternal mortality ratio under Design A — registry/dags/mmr__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -9648,7 +9669,7 @@
    "source": {
     "path": "registry/dags/mmr__A.json",
     "anchor": null,
-    "sha256": "f662d23c623b7a5cae8f828cf2f5dfd4bb32651e8e632f22adf6c2696277db96"
+    "sha256": "ba1f205ba9efc49e36656c1e805c8cca5ae17255afff529254da02ba1c9b4ca4"
    },
    "citation": "Model card mmr__A — Maternal mortality ratio under Design A — registry/dags/mmr__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -9676,7 +9697,7 @@
    "source": {
     "path": "registry/dags/mmr__A.json",
     "anchor": null,
-    "sha256": "f662d23c623b7a5cae8f828cf2f5dfd4bb32651e8e632f22adf6c2696277db96"
+    "sha256": "ba1f205ba9efc49e36656c1e805c8cca5ae17255afff529254da02ba1c9b4ca4"
    },
    "citation": "Model card mmr__A — Maternal mortality ratio under Design A — registry/dags/mmr__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -9704,7 +9725,7 @@
    "source": {
     "path": "registry/dags/mmr__A.json",
     "anchor": null,
-    "sha256": "f662d23c623b7a5cae8f828cf2f5dfd4bb32651e8e632f22adf6c2696277db96"
+    "sha256": "ba1f205ba9efc49e36656c1e805c8cca5ae17255afff529254da02ba1c9b4ca4"
    },
    "citation": "Model card mmr__A — Maternal mortality ratio under Design A — registry/dags/mmr__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -9732,7 +9753,7 @@
    "source": {
     "path": "registry/dags/mmr__A.json",
     "anchor": null,
-    "sha256": "f662d23c623b7a5cae8f828cf2f5dfd4bb32651e8e632f22adf6c2696277db96"
+    "sha256": "ba1f205ba9efc49e36656c1e805c8cca5ae17255afff529254da02ba1c9b4ca4"
    },
    "citation": "Model card mmr__A — Maternal mortality ratio under Design A — registry/dags/mmr__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -9760,7 +9781,7 @@
    "source": {
     "path": "registry/dags/mmr__B.json",
     "anchor": null,
-    "sha256": "47944d9cc3496d11f159855ee888aa9f39f9be39e4e731c3d75688cb1a3aba66"
+    "sha256": "4b847a01a86fe9e5b00a86000986a6d6b91fedaff2103533edea4ddb2d62be33"
    },
    "citation": "Model card mmr__B — Maternal mortality ratio under Design B — registry/dags/mmr__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -9788,7 +9809,7 @@
    "source": {
     "path": "registry/dags/mmr__B.json",
     "anchor": null,
-    "sha256": "47944d9cc3496d11f159855ee888aa9f39f9be39e4e731c3d75688cb1a3aba66"
+    "sha256": "4b847a01a86fe9e5b00a86000986a6d6b91fedaff2103533edea4ddb2d62be33"
    },
    "citation": "Model card mmr__B — Maternal mortality ratio under Design B — registry/dags/mmr__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -9816,7 +9837,7 @@
    "source": {
     "path": "registry/dags/mmr__B.json",
     "anchor": null,
-    "sha256": "47944d9cc3496d11f159855ee888aa9f39f9be39e4e731c3d75688cb1a3aba66"
+    "sha256": "4b847a01a86fe9e5b00a86000986a6d6b91fedaff2103533edea4ddb2d62be33"
    },
    "citation": "Model card mmr__B — Maternal mortality ratio under Design B — registry/dags/mmr__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -9844,7 +9865,7 @@
    "source": {
     "path": "registry/dags/mmr__B.json",
     "anchor": null,
-    "sha256": "47944d9cc3496d11f159855ee888aa9f39f9be39e4e731c3d75688cb1a3aba66"
+    "sha256": "4b847a01a86fe9e5b00a86000986a6d6b91fedaff2103533edea4ddb2d62be33"
    },
    "citation": "Model card mmr__B — Maternal mortality ratio under Design B — registry/dags/mmr__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -9872,7 +9893,7 @@
    "source": {
     "path": "registry/dags/mmr__B.json",
     "anchor": null,
-    "sha256": "47944d9cc3496d11f159855ee888aa9f39f9be39e4e731c3d75688cb1a3aba66"
+    "sha256": "4b847a01a86fe9e5b00a86000986a6d6b91fedaff2103533edea4ddb2d62be33"
    },
    "citation": "Model card mmr__B — Maternal mortality ratio under Design B — registry/dags/mmr__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -9900,7 +9921,7 @@
    "source": {
     "path": "registry/dags/mmr__C.json",
     "anchor": null,
-    "sha256": "c86c66d62e006f0b58c3a0f6bf67f97088b2232aaf2d065a05dc5e677c3335b0"
+    "sha256": "7de9e93c92130ce2752e5f9d22796aeb9602b62162cd33a8d3361fcd5efa102c"
    },
    "citation": "Model card mmr__C — Maternal mortality ratio under Design C — registry/dags/mmr__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -9928,7 +9949,7 @@
    "source": {
     "path": "registry/dags/mmr__C.json",
     "anchor": null,
-    "sha256": "c86c66d62e006f0b58c3a0f6bf67f97088b2232aaf2d065a05dc5e677c3335b0"
+    "sha256": "7de9e93c92130ce2752e5f9d22796aeb9602b62162cd33a8d3361fcd5efa102c"
    },
    "citation": "Model card mmr__C — Maternal mortality ratio under Design C — registry/dags/mmr__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -9956,7 +9977,7 @@
    "source": {
     "path": "registry/dags/mmr__C.json",
     "anchor": null,
-    "sha256": "c86c66d62e006f0b58c3a0f6bf67f97088b2232aaf2d065a05dc5e677c3335b0"
+    "sha256": "7de9e93c92130ce2752e5f9d22796aeb9602b62162cd33a8d3361fcd5efa102c"
    },
    "citation": "Model card mmr__C — Maternal mortality ratio under Design C — registry/dags/mmr__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -9984,7 +10005,7 @@
    "source": {
     "path": "registry/dags/mmr__C.json",
     "anchor": null,
-    "sha256": "c86c66d62e006f0b58c3a0f6bf67f97088b2232aaf2d065a05dc5e677c3335b0"
+    "sha256": "7de9e93c92130ce2752e5f9d22796aeb9602b62162cd33a8d3361fcd5efa102c"
    },
    "citation": "Model card mmr__C — Maternal mortality ratio under Design C — registry/dags/mmr__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -10012,7 +10033,7 @@
    "source": {
     "path": "registry/dags/ner_primary__A.json",
     "anchor": null,
-    "sha256": "9e462c2776e8ee3a5ddeec08ad70b9c11be07282e613f751f0993849065cdc89"
+    "sha256": "4ecc82c07d24de47c0c6b73b9b6ca7dcd2ea5b1d59b30860b239656774d46fb3"
    },
    "citation": "Model card ner_primary__A — Net enrolment rate, primary under Design A — registry/dags/ner_primary__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -10040,7 +10061,7 @@
    "source": {
     "path": "registry/dags/ner_primary__A.json",
     "anchor": null,
-    "sha256": "9e462c2776e8ee3a5ddeec08ad70b9c11be07282e613f751f0993849065cdc89"
+    "sha256": "4ecc82c07d24de47c0c6b73b9b6ca7dcd2ea5b1d59b30860b239656774d46fb3"
    },
    "citation": "Model card ner_primary__A — Net enrolment rate, primary under Design A — registry/dags/ner_primary__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -10068,7 +10089,7 @@
    "source": {
     "path": "registry/dags/ner_primary__A.json",
     "anchor": null,
-    "sha256": "9e462c2776e8ee3a5ddeec08ad70b9c11be07282e613f751f0993849065cdc89"
+    "sha256": "4ecc82c07d24de47c0c6b73b9b6ca7dcd2ea5b1d59b30860b239656774d46fb3"
    },
    "citation": "Model card ner_primary__A — Net enrolment rate, primary under Design A — registry/dags/ner_primary__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -10096,7 +10117,7 @@
    "source": {
     "path": "registry/dags/ner_primary__A.json",
     "anchor": null,
-    "sha256": "9e462c2776e8ee3a5ddeec08ad70b9c11be07282e613f751f0993849065cdc89"
+    "sha256": "4ecc82c07d24de47c0c6b73b9b6ca7dcd2ea5b1d59b30860b239656774d46fb3"
    },
    "citation": "Model card ner_primary__A — Net enrolment rate, primary under Design A — registry/dags/ner_primary__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -10124,7 +10145,7 @@
    "source": {
     "path": "registry/dags/ner_primary__A.json",
     "anchor": null,
-    "sha256": "9e462c2776e8ee3a5ddeec08ad70b9c11be07282e613f751f0993849065cdc89"
+    "sha256": "4ecc82c07d24de47c0c6b73b9b6ca7dcd2ea5b1d59b30860b239656774d46fb3"
    },
    "citation": "Model card ner_primary__A — Net enrolment rate, primary under Design A — registry/dags/ner_primary__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -10152,7 +10173,7 @@
    "source": {
     "path": "registry/dags/ner_primary__B.json",
     "anchor": null,
-    "sha256": "a7747d1d57e22c379a8bbb91e0a66ff4025103b5e982d1f7cffff69945bb7ed7"
+    "sha256": "f6cd2e1d1bac0ac8da569aab4e290ddefc2a39a5ce2670d92f120ffaae4b448a"
    },
    "citation": "Model card ner_primary__B — Net enrolment rate, primary under Design B — registry/dags/ner_primary__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -10180,7 +10201,7 @@
    "source": {
     "path": "registry/dags/ner_primary__B.json",
     "anchor": null,
-    "sha256": "a7747d1d57e22c379a8bbb91e0a66ff4025103b5e982d1f7cffff69945bb7ed7"
+    "sha256": "f6cd2e1d1bac0ac8da569aab4e290ddefc2a39a5ce2670d92f120ffaae4b448a"
    },
    "citation": "Model card ner_primary__B — Net enrolment rate, primary under Design B — registry/dags/ner_primary__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -10208,7 +10229,7 @@
    "source": {
     "path": "registry/dags/ner_primary__B.json",
     "anchor": null,
-    "sha256": "a7747d1d57e22c379a8bbb91e0a66ff4025103b5e982d1f7cffff69945bb7ed7"
+    "sha256": "f6cd2e1d1bac0ac8da569aab4e290ddefc2a39a5ce2670d92f120ffaae4b448a"
    },
    "citation": "Model card ner_primary__B — Net enrolment rate, primary under Design B — registry/dags/ner_primary__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -10236,7 +10257,7 @@
    "source": {
     "path": "registry/dags/ner_primary__B.json",
     "anchor": null,
-    "sha256": "a7747d1d57e22c379a8bbb91e0a66ff4025103b5e982d1f7cffff69945bb7ed7"
+    "sha256": "f6cd2e1d1bac0ac8da569aab4e290ddefc2a39a5ce2670d92f120ffaae4b448a"
    },
    "citation": "Model card ner_primary__B — Net enrolment rate, primary under Design B — registry/dags/ner_primary__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -10264,7 +10285,7 @@
    "source": {
     "path": "registry/dags/ner_primary__B.json",
     "anchor": null,
-    "sha256": "a7747d1d57e22c379a8bbb91e0a66ff4025103b5e982d1f7cffff69945bb7ed7"
+    "sha256": "f6cd2e1d1bac0ac8da569aab4e290ddefc2a39a5ce2670d92f120ffaae4b448a"
    },
    "citation": "Model card ner_primary__B — Net enrolment rate, primary under Design B — registry/dags/ner_primary__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -10292,7 +10313,7 @@
    "source": {
     "path": "registry/dags/ner_primary__C.json",
     "anchor": null,
-    "sha256": "67c87f894e680ffd9eab10641acb4c5d02703a8a47d9c708d18a697818440c79"
+    "sha256": "fc9ba3066a175496c5081d9c567158394d63d874a7d255f4a68f4fc191be0bef"
    },
    "citation": "Model card ner_primary__C — Net enrolment rate, primary under Design C — registry/dags/ner_primary__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -10320,7 +10341,7 @@
    "source": {
     "path": "registry/dags/ner_primary__C.json",
     "anchor": null,
-    "sha256": "67c87f894e680ffd9eab10641acb4c5d02703a8a47d9c708d18a697818440c79"
+    "sha256": "fc9ba3066a175496c5081d9c567158394d63d874a7d255f4a68f4fc191be0bef"
    },
    "citation": "Model card ner_primary__C — Net enrolment rate, primary under Design C — registry/dags/ner_primary__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -10348,7 +10369,7 @@
    "source": {
     "path": "registry/dags/ner_primary__C.json",
     "anchor": null,
-    "sha256": "67c87f894e680ffd9eab10641acb4c5d02703a8a47d9c708d18a697818440c79"
+    "sha256": "fc9ba3066a175496c5081d9c567158394d63d874a7d255f4a68f4fc191be0bef"
    },
    "citation": "Model card ner_primary__C — Net enrolment rate, primary under Design C — registry/dags/ner_primary__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -10376,7 +10397,7 @@
    "source": {
     "path": "registry/dags/ner_primary__C.json",
     "anchor": null,
-    "sha256": "67c87f894e680ffd9eab10641acb4c5d02703a8a47d9c708d18a697818440c79"
+    "sha256": "fc9ba3066a175496c5081d9c567158394d63d874a7d255f4a68f4fc191be0bef"
    },
    "citation": "Model card ner_primary__C — Net enrolment rate, primary under Design C — registry/dags/ner_primary__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -10404,7 +10425,7 @@
    "source": {
     "path": "registry/dags/ner_primary__C.json",
     "anchor": null,
-    "sha256": "67c87f894e680ffd9eab10641acb4c5d02703a8a47d9c708d18a697818440c79"
+    "sha256": "fc9ba3066a175496c5081d9c567158394d63d874a7d255f4a68f4fc191be0bef"
    },
    "citation": "Model card ner_primary__C — Net enrolment rate, primary under Design C — registry/dags/ner_primary__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -10432,7 +10453,7 @@
    "source": {
     "path": "registry/dags/primary_completion__A.json",
     "anchor": null,
-    "sha256": "a6f6ca4edabb9e720e6fa1abf902110269ce22023b606b8f1d48466721c01be7"
+    "sha256": "cf893d06d318fb3440f4324f0adac2fea418fe3adca0848fde3803ae8117af02"
    },
    "citation": "Model card primary_completion__A — Primary completion rate under Design A — registry/dags/primary_completion__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -10460,7 +10481,7 @@
    "source": {
     "path": "registry/dags/primary_completion__A.json",
     "anchor": null,
-    "sha256": "a6f6ca4edabb9e720e6fa1abf902110269ce22023b606b8f1d48466721c01be7"
+    "sha256": "cf893d06d318fb3440f4324f0adac2fea418fe3adca0848fde3803ae8117af02"
    },
    "citation": "Model card primary_completion__A — Primary completion rate under Design A — registry/dags/primary_completion__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -10488,7 +10509,7 @@
    "source": {
     "path": "registry/dags/primary_completion__A.json",
     "anchor": null,
-    "sha256": "a6f6ca4edabb9e720e6fa1abf902110269ce22023b606b8f1d48466721c01be7"
+    "sha256": "cf893d06d318fb3440f4324f0adac2fea418fe3adca0848fde3803ae8117af02"
    },
    "citation": "Model card primary_completion__A — Primary completion rate under Design A — registry/dags/primary_completion__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -10516,7 +10537,7 @@
    "source": {
     "path": "registry/dags/primary_completion__A.json",
     "anchor": null,
-    "sha256": "a6f6ca4edabb9e720e6fa1abf902110269ce22023b606b8f1d48466721c01be7"
+    "sha256": "cf893d06d318fb3440f4324f0adac2fea418fe3adca0848fde3803ae8117af02"
    },
    "citation": "Model card primary_completion__A — Primary completion rate under Design A — registry/dags/primary_completion__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -10544,7 +10565,7 @@
    "source": {
     "path": "registry/dags/primary_completion__A.json",
     "anchor": null,
-    "sha256": "a6f6ca4edabb9e720e6fa1abf902110269ce22023b606b8f1d48466721c01be7"
+    "sha256": "cf893d06d318fb3440f4324f0adac2fea418fe3adca0848fde3803ae8117af02"
    },
    "citation": "Model card primary_completion__A — Primary completion rate under Design A — registry/dags/primary_completion__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -10572,7 +10593,7 @@
    "source": {
     "path": "registry/dags/primary_completion__B.json",
     "anchor": null,
-    "sha256": "665770828c6e974505d78a1ce5723a765aae620c6fde325ef43fce63eb24b73f"
+    "sha256": "45c52270dbcccd575c4aaf3940fab7757539b071c4ab4e85d15fed10636213c0"
    },
    "citation": "Model card primary_completion__B — Primary completion rate under Design B — registry/dags/primary_completion__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -10600,7 +10621,7 @@
    "source": {
     "path": "registry/dags/primary_completion__B.json",
     "anchor": null,
-    "sha256": "665770828c6e974505d78a1ce5723a765aae620c6fde325ef43fce63eb24b73f"
+    "sha256": "45c52270dbcccd575c4aaf3940fab7757539b071c4ab4e85d15fed10636213c0"
    },
    "citation": "Model card primary_completion__B — Primary completion rate under Design B — registry/dags/primary_completion__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -10628,7 +10649,7 @@
    "source": {
     "path": "registry/dags/primary_completion__B.json",
     "anchor": null,
-    "sha256": "665770828c6e974505d78a1ce5723a765aae620c6fde325ef43fce63eb24b73f"
+    "sha256": "45c52270dbcccd575c4aaf3940fab7757539b071c4ab4e85d15fed10636213c0"
    },
    "citation": "Model card primary_completion__B — Primary completion rate under Design B — registry/dags/primary_completion__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -10656,7 +10677,7 @@
    "source": {
     "path": "registry/dags/primary_completion__B.json",
     "anchor": null,
-    "sha256": "665770828c6e974505d78a1ce5723a765aae620c6fde325ef43fce63eb24b73f"
+    "sha256": "45c52270dbcccd575c4aaf3940fab7757539b071c4ab4e85d15fed10636213c0"
    },
    "citation": "Model card primary_completion__B — Primary completion rate under Design B — registry/dags/primary_completion__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -10684,7 +10705,7 @@
    "source": {
     "path": "registry/dags/primary_completion__B.json",
     "anchor": null,
-    "sha256": "665770828c6e974505d78a1ce5723a765aae620c6fde325ef43fce63eb24b73f"
+    "sha256": "45c52270dbcccd575c4aaf3940fab7757539b071c4ab4e85d15fed10636213c0"
    },
    "citation": "Model card primary_completion__B — Primary completion rate under Design B — registry/dags/primary_completion__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -10712,7 +10733,7 @@
    "source": {
     "path": "registry/dags/primary_completion__C.json",
     "anchor": null,
-    "sha256": "782b5aa9c3a2b1f506603139d9fdb15628cbb136c0ba8247530b013ea8430228"
+    "sha256": "a09f6c031a8e5f4fa498959a1a23cbd8fa10e2de2db8c12305ce4fd1addfd00e"
    },
    "citation": "Model card primary_completion__C — Primary completion rate under Design C — registry/dags/primary_completion__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -10740,7 +10761,7 @@
    "source": {
     "path": "registry/dags/primary_completion__C.json",
     "anchor": null,
-    "sha256": "782b5aa9c3a2b1f506603139d9fdb15628cbb136c0ba8247530b013ea8430228"
+    "sha256": "a09f6c031a8e5f4fa498959a1a23cbd8fa10e2de2db8c12305ce4fd1addfd00e"
    },
    "citation": "Model card primary_completion__C — Primary completion rate under Design C — registry/dags/primary_completion__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -10768,7 +10789,7 @@
    "source": {
     "path": "registry/dags/primary_completion__C.json",
     "anchor": null,
-    "sha256": "782b5aa9c3a2b1f506603139d9fdb15628cbb136c0ba8247530b013ea8430228"
+    "sha256": "a09f6c031a8e5f4fa498959a1a23cbd8fa10e2de2db8c12305ce4fd1addfd00e"
    },
    "citation": "Model card primary_completion__C — Primary completion rate under Design C — registry/dags/primary_completion__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -10796,7 +10817,7 @@
    "source": {
     "path": "registry/dags/primary_completion__C.json",
     "anchor": null,
-    "sha256": "782b5aa9c3a2b1f506603139d9fdb15628cbb136c0ba8247530b013ea8430228"
+    "sha256": "a09f6c031a8e5f4fa498959a1a23cbd8fa10e2de2db8c12305ce4fd1addfd00e"
    },
    "citation": "Model card primary_completion__C — Primary completion rate under Design C — registry/dags/primary_completion__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -10824,7 +10845,7 @@
    "source": {
     "path": "registry/dags/skilled_birth__A.json",
     "anchor": null,
-    "sha256": "44d3822b1e59a450af181e6cb0e98f4dc34445c2d18dc2812ee41b552f1126fd"
+    "sha256": "2d7a15cbc715faacc30a4e000aae57bcd1fc435ee7c1da7cb148c8b982508685"
    },
    "citation": "Model card skilled_birth__A — Skilled birth attendance under Design A — registry/dags/skilled_birth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -10852,7 +10873,7 @@
    "source": {
     "path": "registry/dags/skilled_birth__A.json",
     "anchor": null,
-    "sha256": "44d3822b1e59a450af181e6cb0e98f4dc34445c2d18dc2812ee41b552f1126fd"
+    "sha256": "2d7a15cbc715faacc30a4e000aae57bcd1fc435ee7c1da7cb148c8b982508685"
    },
    "citation": "Model card skilled_birth__A — Skilled birth attendance under Design A — registry/dags/skilled_birth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -10880,7 +10901,7 @@
    "source": {
     "path": "registry/dags/skilled_birth__A.json",
     "anchor": null,
-    "sha256": "44d3822b1e59a450af181e6cb0e98f4dc34445c2d18dc2812ee41b552f1126fd"
+    "sha256": "2d7a15cbc715faacc30a4e000aae57bcd1fc435ee7c1da7cb148c8b982508685"
    },
    "citation": "Model card skilled_birth__A — Skilled birth attendance under Design A — registry/dags/skilled_birth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -10908,7 +10929,7 @@
    "source": {
     "path": "registry/dags/skilled_birth__A.json",
     "anchor": null,
-    "sha256": "44d3822b1e59a450af181e6cb0e98f4dc34445c2d18dc2812ee41b552f1126fd"
+    "sha256": "2d7a15cbc715faacc30a4e000aae57bcd1fc435ee7c1da7cb148c8b982508685"
    },
    "citation": "Model card skilled_birth__A — Skilled birth attendance under Design A — registry/dags/skilled_birth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -10936,7 +10957,7 @@
    "source": {
     "path": "registry/dags/skilled_birth__A.json",
     "anchor": null,
-    "sha256": "44d3822b1e59a450af181e6cb0e98f4dc34445c2d18dc2812ee41b552f1126fd"
+    "sha256": "2d7a15cbc715faacc30a4e000aae57bcd1fc435ee7c1da7cb148c8b982508685"
    },
    "citation": "Model card skilled_birth__A — Skilled birth attendance under Design A — registry/dags/skilled_birth__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -10964,7 +10985,7 @@
    "source": {
     "path": "registry/dags/skilled_birth__B.json",
     "anchor": null,
-    "sha256": "2537826feb0a07bc7fb85eb8c9ec56975411eeb5181c2f3ff418e4680001cb52"
+    "sha256": "0d126f1d1fc1404769f3b87f730a5a260b7630c0f49d2d3f435656f290853be7"
    },
    "citation": "Model card skilled_birth__B — Skilled birth attendance under Design B — registry/dags/skilled_birth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -10992,7 +11013,7 @@
    "source": {
     "path": "registry/dags/skilled_birth__B.json",
     "anchor": null,
-    "sha256": "2537826feb0a07bc7fb85eb8c9ec56975411eeb5181c2f3ff418e4680001cb52"
+    "sha256": "0d126f1d1fc1404769f3b87f730a5a260b7630c0f49d2d3f435656f290853be7"
    },
    "citation": "Model card skilled_birth__B — Skilled birth attendance under Design B — registry/dags/skilled_birth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -11020,7 +11041,7 @@
    "source": {
     "path": "registry/dags/skilled_birth__B.json",
     "anchor": null,
-    "sha256": "2537826feb0a07bc7fb85eb8c9ec56975411eeb5181c2f3ff418e4680001cb52"
+    "sha256": "0d126f1d1fc1404769f3b87f730a5a260b7630c0f49d2d3f435656f290853be7"
    },
    "citation": "Model card skilled_birth__B — Skilled birth attendance under Design B — registry/dags/skilled_birth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -11048,7 +11069,7 @@
    "source": {
     "path": "registry/dags/skilled_birth__B.json",
     "anchor": null,
-    "sha256": "2537826feb0a07bc7fb85eb8c9ec56975411eeb5181c2f3ff418e4680001cb52"
+    "sha256": "0d126f1d1fc1404769f3b87f730a5a260b7630c0f49d2d3f435656f290853be7"
    },
    "citation": "Model card skilled_birth__B — Skilled birth attendance under Design B — registry/dags/skilled_birth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -11076,7 +11097,7 @@
    "source": {
     "path": "registry/dags/skilled_birth__B.json",
     "anchor": null,
-    "sha256": "2537826feb0a07bc7fb85eb8c9ec56975411eeb5181c2f3ff418e4680001cb52"
+    "sha256": "0d126f1d1fc1404769f3b87f730a5a260b7630c0f49d2d3f435656f290853be7"
    },
    "citation": "Model card skilled_birth__B — Skilled birth attendance under Design B — registry/dags/skilled_birth__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -11104,7 +11125,7 @@
    "source": {
     "path": "registry/dags/skilled_birth__C.json",
     "anchor": null,
-    "sha256": "4444daf3dff34d84c813b910db64402ab451ff0bba006168665bdeaae554c42b"
+    "sha256": "60cc72d027e8df6384d4af01df7d848965b18f422649774506a28fcd48ced278"
    },
    "citation": "Model card skilled_birth__C — Skilled birth attendance under Design C — registry/dags/skilled_birth__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -11132,7 +11153,7 @@
    "source": {
     "path": "registry/dags/skilled_birth__C.json",
     "anchor": null,
-    "sha256": "4444daf3dff34d84c813b910db64402ab451ff0bba006168665bdeaae554c42b"
+    "sha256": "60cc72d027e8df6384d4af01df7d848965b18f422649774506a28fcd48ced278"
    },
    "citation": "Model card skilled_birth__C — Skilled birth attendance under Design C — registry/dags/skilled_birth__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -11160,7 +11181,7 @@
    "source": {
     "path": "registry/dags/skilled_birth__C.json",
     "anchor": null,
-    "sha256": "4444daf3dff34d84c813b910db64402ab451ff0bba006168665bdeaae554c42b"
+    "sha256": "60cc72d027e8df6384d4af01df7d848965b18f422649774506a28fcd48ced278"
    },
    "citation": "Model card skilled_birth__C — Skilled birth attendance under Design C — registry/dags/skilled_birth__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -11188,7 +11209,7 @@
    "source": {
     "path": "registry/dags/skilled_birth__C.json",
     "anchor": null,
-    "sha256": "4444daf3dff34d84c813b910db64402ab451ff0bba006168665bdeaae554c42b"
+    "sha256": "60cc72d027e8df6384d4af01df7d848965b18f422649774506a28fcd48ced278"
    },
    "citation": "Model card skilled_birth__C — Skilled birth attendance under Design C — registry/dags/skilled_birth__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -11216,7 +11237,7 @@
    "source": {
     "path": "registry/dags/u5mr__A.json",
     "anchor": null,
-    "sha256": "83d4578c8bd85c7ca6aee48ffd7918a0435ea582c870a2647dae3975c62dc78b"
+    "sha256": "79457c029610dba5d458a99b9b548eb4515d88b487fb0b399c4a2cfc01dbf1f4"
    },
    "citation": "Model card u5mr__A — Under-5 mortality rate under Design A — registry/dags/u5mr__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -11244,7 +11265,7 @@
    "source": {
     "path": "registry/dags/u5mr__A.json",
     "anchor": null,
-    "sha256": "83d4578c8bd85c7ca6aee48ffd7918a0435ea582c870a2647dae3975c62dc78b"
+    "sha256": "79457c029610dba5d458a99b9b548eb4515d88b487fb0b399c4a2cfc01dbf1f4"
    },
    "citation": "Model card u5mr__A — Under-5 mortality rate under Design A — registry/dags/u5mr__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -11272,7 +11293,7 @@
    "source": {
     "path": "registry/dags/u5mr__A.json",
     "anchor": null,
-    "sha256": "83d4578c8bd85c7ca6aee48ffd7918a0435ea582c870a2647dae3975c62dc78b"
+    "sha256": "79457c029610dba5d458a99b9b548eb4515d88b487fb0b399c4a2cfc01dbf1f4"
    },
    "citation": "Model card u5mr__A — Under-5 mortality rate under Design A — registry/dags/u5mr__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -11300,7 +11321,7 @@
    "source": {
     "path": "registry/dags/u5mr__A.json",
     "anchor": null,
-    "sha256": "83d4578c8bd85c7ca6aee48ffd7918a0435ea582c870a2647dae3975c62dc78b"
+    "sha256": "79457c029610dba5d458a99b9b548eb4515d88b487fb0b399c4a2cfc01dbf1f4"
    },
    "citation": "Model card u5mr__A — Under-5 mortality rate under Design A — registry/dags/u5mr__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -11328,7 +11349,7 @@
    "source": {
     "path": "registry/dags/u5mr__A.json",
     "anchor": null,
-    "sha256": "83d4578c8bd85c7ca6aee48ffd7918a0435ea582c870a2647dae3975c62dc78b"
+    "sha256": "79457c029610dba5d458a99b9b548eb4515d88b487fb0b399c4a2cfc01dbf1f4"
    },
    "citation": "Model card u5mr__A — Under-5 mortality rate under Design A — registry/dags/u5mr__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -11356,7 +11377,7 @@
    "source": {
     "path": "registry/dags/u5mr__B.json",
     "anchor": null,
-    "sha256": "e8330488b435b7a72091357602ca98de9e0c0026e38bda598ca238a7558a72de"
+    "sha256": "484d1b4402ce5547be434c355c6fe34b45cfc499d591dd583addc3387aa8d8eb"
    },
    "citation": "Model card u5mr__B — Under-5 mortality rate under Design B — registry/dags/u5mr__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -11384,7 +11405,7 @@
    "source": {
     "path": "registry/dags/u5mr__B.json",
     "anchor": null,
-    "sha256": "e8330488b435b7a72091357602ca98de9e0c0026e38bda598ca238a7558a72de"
+    "sha256": "484d1b4402ce5547be434c355c6fe34b45cfc499d591dd583addc3387aa8d8eb"
    },
    "citation": "Model card u5mr__B — Under-5 mortality rate under Design B — registry/dags/u5mr__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -11412,7 +11433,7 @@
    "source": {
     "path": "registry/dags/u5mr__B.json",
     "anchor": null,
-    "sha256": "e8330488b435b7a72091357602ca98de9e0c0026e38bda598ca238a7558a72de"
+    "sha256": "484d1b4402ce5547be434c355c6fe34b45cfc499d591dd583addc3387aa8d8eb"
    },
    "citation": "Model card u5mr__B — Under-5 mortality rate under Design B — registry/dags/u5mr__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -11440,7 +11461,7 @@
    "source": {
     "path": "registry/dags/u5mr__B.json",
     "anchor": null,
-    "sha256": "e8330488b435b7a72091357602ca98de9e0c0026e38bda598ca238a7558a72de"
+    "sha256": "484d1b4402ce5547be434c355c6fe34b45cfc499d591dd583addc3387aa8d8eb"
    },
    "citation": "Model card u5mr__B — Under-5 mortality rate under Design B — registry/dags/u5mr__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -11468,7 +11489,7 @@
    "source": {
     "path": "registry/dags/u5mr__B.json",
     "anchor": null,
-    "sha256": "e8330488b435b7a72091357602ca98de9e0c0026e38bda598ca238a7558a72de"
+    "sha256": "484d1b4402ce5547be434c355c6fe34b45cfc499d591dd583addc3387aa8d8eb"
    },
    "citation": "Model card u5mr__B — Under-5 mortality rate under Design B — registry/dags/u5mr__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -11496,7 +11517,7 @@
    "source": {
     "path": "registry/dags/u5mr__C.json",
     "anchor": null,
-    "sha256": "912caeab710bcd03344297bbb20d63d206a491ba5e87e9ab562c3851c83c0365"
+    "sha256": "d755c00141e45a7105a849a1c374ffbe65320239f7059d1cbad4d6776838a497"
    },
    "citation": "Model card u5mr__C — Under-5 mortality rate under Design C — registry/dags/u5mr__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -11524,7 +11545,7 @@
    "source": {
     "path": "registry/dags/u5mr__C.json",
     "anchor": null,
-    "sha256": "912caeab710bcd03344297bbb20d63d206a491ba5e87e9ab562c3851c83c0365"
+    "sha256": "d755c00141e45a7105a849a1c374ffbe65320239f7059d1cbad4d6776838a497"
    },
    "citation": "Model card u5mr__C — Under-5 mortality rate under Design C — registry/dags/u5mr__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -11552,7 +11573,7 @@
    "source": {
     "path": "registry/dags/u5mr__C.json",
     "anchor": null,
-    "sha256": "912caeab710bcd03344297bbb20d63d206a491ba5e87e9ab562c3851c83c0365"
+    "sha256": "d755c00141e45a7105a849a1c374ffbe65320239f7059d1cbad4d6776838a497"
    },
    "citation": "Model card u5mr__C — Under-5 mortality rate under Design C — registry/dags/u5mr__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -11580,7 +11601,7 @@
    "source": {
     "path": "registry/dags/u5mr__C.json",
     "anchor": null,
-    "sha256": "912caeab710bcd03344297bbb20d63d206a491ba5e87e9ab562c3851c83c0365"
+    "sha256": "d755c00141e45a7105a849a1c374ffbe65320239f7059d1cbad4d6776838a497"
    },
    "citation": "Model card u5mr__C — Under-5 mortality rate under Design C — registry/dags/u5mr__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -11608,7 +11629,7 @@
    "source": {
     "path": "registry/dags/unemp__A.json",
     "anchor": null,
-    "sha256": "7cce20d64de83df6126730609b205c5db3fef318e5dcb6b44103ec52373a68a1"
+    "sha256": "67cb84f90f32b3ab8b72608f805ec14ada1cbff5318c6534c8b8c01a284102d0"
    },
    "citation": "Model card unemp__A — Unemployment rate under Design A — registry/dags/unemp__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -11636,7 +11657,7 @@
    "source": {
     "path": "registry/dags/unemp__A.json",
     "anchor": null,
-    "sha256": "7cce20d64de83df6126730609b205c5db3fef318e5dcb6b44103ec52373a68a1"
+    "sha256": "67cb84f90f32b3ab8b72608f805ec14ada1cbff5318c6534c8b8c01a284102d0"
    },
    "citation": "Model card unemp__A — Unemployment rate under Design A — registry/dags/unemp__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -11664,7 +11685,7 @@
    "source": {
     "path": "registry/dags/unemp__A.json",
     "anchor": null,
-    "sha256": "7cce20d64de83df6126730609b205c5db3fef318e5dcb6b44103ec52373a68a1"
+    "sha256": "67cb84f90f32b3ab8b72608f805ec14ada1cbff5318c6534c8b8c01a284102d0"
    },
    "citation": "Model card unemp__A — Unemployment rate under Design A — registry/dags/unemp__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -11692,7 +11713,7 @@
    "source": {
     "path": "registry/dags/unemp__A.json",
     "anchor": null,
-    "sha256": "7cce20d64de83df6126730609b205c5db3fef318e5dcb6b44103ec52373a68a1"
+    "sha256": "67cb84f90f32b3ab8b72608f805ec14ada1cbff5318c6534c8b8c01a284102d0"
    },
    "citation": "Model card unemp__A — Unemployment rate under Design A — registry/dags/unemp__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -11720,7 +11741,7 @@
    "source": {
     "path": "registry/dags/unemp__A.json",
     "anchor": null,
-    "sha256": "7cce20d64de83df6126730609b205c5db3fef318e5dcb6b44103ec52373a68a1"
+    "sha256": "67cb84f90f32b3ab8b72608f805ec14ada1cbff5318c6534c8b8c01a284102d0"
    },
    "citation": "Model card unemp__A — Unemployment rate under Design A — registry/dags/unemp__A.json (vintage 2026-10-30)",
    "metadata": {
@@ -11748,7 +11769,7 @@
    "source": {
     "path": "registry/dags/unemp__B.json",
     "anchor": null,
-    "sha256": "10c7dfadd05742bcaecb818f696ce3219c92b7d9e241a7c54839c3613aa0de2d"
+    "sha256": "b3aa609bb1921d067082c03cacc51cab7dac29e408131357737fe3f9a4b99dde"
    },
    "citation": "Model card unemp__B — Unemployment rate under Design B — registry/dags/unemp__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -11776,7 +11797,7 @@
    "source": {
     "path": "registry/dags/unemp__B.json",
     "anchor": null,
-    "sha256": "10c7dfadd05742bcaecb818f696ce3219c92b7d9e241a7c54839c3613aa0de2d"
+    "sha256": "b3aa609bb1921d067082c03cacc51cab7dac29e408131357737fe3f9a4b99dde"
    },
    "citation": "Model card unemp__B — Unemployment rate under Design B — registry/dags/unemp__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -11804,7 +11825,7 @@
    "source": {
     "path": "registry/dags/unemp__B.json",
     "anchor": null,
-    "sha256": "10c7dfadd05742bcaecb818f696ce3219c92b7d9e241a7c54839c3613aa0de2d"
+    "sha256": "b3aa609bb1921d067082c03cacc51cab7dac29e408131357737fe3f9a4b99dde"
    },
    "citation": "Model card unemp__B — Unemployment rate under Design B — registry/dags/unemp__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -11832,7 +11853,7 @@
    "source": {
     "path": "registry/dags/unemp__B.json",
     "anchor": null,
-    "sha256": "10c7dfadd05742bcaecb818f696ce3219c92b7d9e241a7c54839c3613aa0de2d"
+    "sha256": "b3aa609bb1921d067082c03cacc51cab7dac29e408131357737fe3f9a4b99dde"
    },
    "citation": "Model card unemp__B — Unemployment rate under Design B — registry/dags/unemp__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -11860,7 +11881,7 @@
    "source": {
     "path": "registry/dags/unemp__B.json",
     "anchor": null,
-    "sha256": "10c7dfadd05742bcaecb818f696ce3219c92b7d9e241a7c54839c3613aa0de2d"
+    "sha256": "b3aa609bb1921d067082c03cacc51cab7dac29e408131357737fe3f9a4b99dde"
    },
    "citation": "Model card unemp__B — Unemployment rate under Design B — registry/dags/unemp__B.json (vintage 2026-10-30)",
    "metadata": {
@@ -11888,7 +11909,7 @@
    "source": {
     "path": "registry/dags/unemp__C.json",
     "anchor": null,
-    "sha256": "2b6ad2d5f5620f4f3122d0e59e06fe4de4fa2c300e198f3c985ac56c1a9cf12d"
+    "sha256": "94082945fb93671ff0ed9664275a14a7d04ab18a93a71a20a5348c60b798915f"
    },
    "citation": "Model card unemp__C — Unemployment rate under Design C — registry/dags/unemp__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -11916,7 +11937,7 @@
    "source": {
     "path": "registry/dags/unemp__C.json",
     "anchor": null,
-    "sha256": "2b6ad2d5f5620f4f3122d0e59e06fe4de4fa2c300e198f3c985ac56c1a9cf12d"
+    "sha256": "94082945fb93671ff0ed9664275a14a7d04ab18a93a71a20a5348c60b798915f"
    },
    "citation": "Model card unemp__C — Unemployment rate under Design C — registry/dags/unemp__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -11944,7 +11965,7 @@
    "source": {
     "path": "registry/dags/unemp__C.json",
     "anchor": null,
-    "sha256": "2b6ad2d5f5620f4f3122d0e59e06fe4de4fa2c300e198f3c985ac56c1a9cf12d"
+    "sha256": "94082945fb93671ff0ed9664275a14a7d04ab18a93a71a20a5348c60b798915f"
    },
    "citation": "Model card unemp__C — Unemployment rate under Design C — registry/dags/unemp__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -11972,7 +11993,7 @@
    "source": {
     "path": "registry/dags/unemp__C.json",
     "anchor": null,
-    "sha256": "2b6ad2d5f5620f4f3122d0e59e06fe4de4fa2c300e198f3c985ac56c1a9cf12d"
+    "sha256": "94082945fb93671ff0ed9664275a14a7d04ab18a93a71a20a5348c60b798915f"
    },
    "citation": "Model card unemp__C — Unemployment rate under Design C — registry/dags/unemp__C.json (vintage 2026-10-30)",
    "metadata": {
@@ -12000,7 +12021,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.A",
-    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+    "sha256": "d776a7de345ae2455a66228a893a34c3d247ced74d8d25c1463e31985025bacd"
    },
    "citation": "Published result — Design A — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -12023,7 +12044,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.A",
-    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+    "sha256": "d776a7de345ae2455a66228a893a34c3d247ced74d8d25c1463e31985025bacd"
    },
    "citation": "Published result — Design A — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -12046,7 +12067,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.A",
-    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+    "sha256": "d776a7de345ae2455a66228a893a34c3d247ced74d8d25c1463e31985025bacd"
    },
    "citation": "Published result — Design A — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -12069,7 +12090,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+    "sha256": "d776a7de345ae2455a66228a893a34c3d247ced74d8d25c1463e31985025bacd"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -12092,7 +12113,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+    "sha256": "d776a7de345ae2455a66228a893a34c3d247ced74d8d25c1463e31985025bacd"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -12115,7 +12136,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+    "sha256": "d776a7de345ae2455a66228a893a34c3d247ced74d8d25c1463e31985025bacd"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -12138,7 +12159,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+    "sha256": "d776a7de345ae2455a66228a893a34c3d247ced74d8d25c1463e31985025bacd"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -12161,7 +12182,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+    "sha256": "d776a7de345ae2455a66228a893a34c3d247ced74d8d25c1463e31985025bacd"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -12184,7 +12205,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+    "sha256": "d776a7de345ae2455a66228a893a34c3d247ced74d8d25c1463e31985025bacd"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -12207,7 +12228,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+    "sha256": "d776a7de345ae2455a66228a893a34c3d247ced74d8d25c1463e31985025bacd"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -12230,7 +12251,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+    "sha256": "d776a7de345ae2455a66228a893a34c3d247ced74d8d25c1463e31985025bacd"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -12253,7 +12274,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+    "sha256": "d776a7de345ae2455a66228a893a34c3d247ced74d8d25c1463e31985025bacd"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -12276,7 +12297,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.C",
-    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+    "sha256": "d776a7de345ae2455a66228a893a34c3d247ced74d8d25c1463e31985025bacd"
    },
    "citation": "Published result — Design C — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -12299,7 +12320,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.C",
-    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+    "sha256": "d776a7de345ae2455a66228a893a34c3d247ced74d8d25c1463e31985025bacd"
    },
    "citation": "Published result — Design C — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {

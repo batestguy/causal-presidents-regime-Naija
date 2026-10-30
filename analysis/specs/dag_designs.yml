@@ -69,7 +69,13 @@ designs:
       - {id: statefe, label: "State fixed effect", short: "State FE", role: confounder, observed: true, pos: "0,0.2", source: "Design construct: state fixed effects", source_status: construct}
       - {id: timefe, label: "Time fixed effect", short: "Time FE", role: confounder, observed: true, pos: "0,-1.0", source: "Design construct: time fixed effects", source_status: construct}
       - {id: donor, label: "Donor-funded programmes", short: "Donor funding", role: confounder, observed: true, pos: "0,-2.2", when_domain: [health, education], source: "World Bank DT.ODA.ALLD.CD (net ODA received)", source_status: acquired}
-      - {id: dose, label: "Policy exposure dose (D1, FAAC per capita)", short: "Exposure dose (D1)", role: exposure, observed: true, pos: "1.8,0.8", source: "NBS FAAC disbursement reports + state population (D1)", source_status: gap}
+      # C-89: the dose is **acquired**, because what the design fits is the nominal FAAC allocation, and
+      # that series landed. The D1 per-capita form is not a second source — it is a normalisation that
+      # needs a state population denominator (X-09), and `estimation.yml -> design_a.exposure` records why
+      # the fixed-effects elasticity does not require it: `-log(population)` is a state-level constant the
+      # fixed effect absorbs. The caveat stays in the source text so the card cannot be read as claiming
+      # the per-capita axis exists; what it stops claiming is that the design has no exposure at all.
+      - {id: dose, label: "Policy exposure dose (nominal FAAC; D1 per capita needs X-09)", short: "Exposure dose", role: exposure, observed: true, pos: "1.8,0.8", source: "NBS FAAC disbursement reports — nominal FAAC per state-month, 36 states, 2016-12 to 2026-06, landed via ingestion/flows/pull_faac.py; the D1 per-capita normalisation needs a state population denominator (unmade decision, X-09) and is not required by the fixed-effects elasticity (estimation.yml design_a.exposure)", source_status: acquired}
       - {id: "Y", label: "{{outcome_label}}", short: "{{outcome_short}}", role: outcome, observed: true, pos: "3.6,0.2", source: "{{outcome_source}}", source_status: acquired}
       - {id: u_st, label: "Unmeasured state-by-time shock", short: "Unmeasured state-time shock", role: confounder, observed: false, pos: "1.8,-1.4", source: "Unobserved: assumed absent by the parallel-trends assumption", source_status: unobserved}
     edges:
@@ -122,7 +128,10 @@ designs:
       - {id: u_t, label: "Omitted time-varying determinant", short: "Omitted time-varying factor", role: confounder, observed: false, pos: "0,-2.0", source: "Unobserved: assumed absent by the conditional-exogeneity assumption", source_status: unobserved}
       - {id: admin, label: "Administration (party x tenure)", short: "Administration", role: exposure, observed: true, pos: "1.8,2.4", source: "Administration spine (base spec section 7)", source_status: acquired}
       - {id: oilxadmin, label: "Oil x administration (effect modification)", short: "Oil x Administration", role: modifier, observed: true, pos: "1.8,1.0", source: "Derived: oil x administration interaction", source_status: derived}
-      - {id: faac, label: "FAAC allocation / fiscal space", short: "FAAC / fiscal space", role: mediator, observed: true, pos: "1.8,-0.2", source: "NBS FAAC disbursement reports", source_status: gap}
+      # Design B's own mediator: 114 national months landed and fitted (C-89). It was reading `gap`
+      # long after the acquisition, which made the registry's gap list say the design had no fiscal
+      # channel at all while Stage 6 published a pass-through estimate from it.
+      - {id: faac, label: "FAAC allocation / fiscal space", short: "FAAC / fiscal space", role: mediator, observed: true, pos: "1.8,-0.2", source: "NBS FAAC disbursement reports via ingestion/flows/pull_faac.py — 114 national months, 2016-12 to 2026-06", source_status: acquired}
       - {id: fx, label: "NGN/USD exchange rate", short: "NGN/USD", role: mediator, observed: true, pos: "1.8,-1.4", source: "World Bank PA.NUS.FCRF (annual); CBN needed for monthly", source_status: acquired}
       - {id: "Y", label: "{{outcome_label}}", short: "{{outcome_short}}", role: outcome, observed: true, pos: "3.6,0.6", source: "{{outcome_source}}", source_status: acquired}
     edges:

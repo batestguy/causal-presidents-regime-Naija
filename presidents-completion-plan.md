@@ -85,9 +85,14 @@ planned specific fix.
   (iii) education (NEMIS/UIS) stays **permanently refused on the record** — C-11/C-12 measured both dead;
   only a verified new source reopens it. Acquisitions follow the standing pattern: land → parse → verify →
   declare in the gate → adopt in one accountable pass (C-79/C-81), never silently.
-- [ ] **C4. `variables_still_missing` audit.** The index list still names FAAC and primary-completion as
-  missing while both are landed — the list's *grain* is the unresolved pieces (D1 needs the state
-  population denominator, X-09). Trim it to what is genuinely outstanding, with the audit written down.
+- [x] **C4. `variables_still_missing` audit — DONE (C-89), and its premise was half wrong.** FAAC was
+  landed (114 months, 4,104 observed state-months, Stage 6 estimates on both designs) while `dose` and
+  `faac` still read `source_status: gap`, so the list said two fitted designs had no exposure;
+  `primary_completion` is **not** landed (8 of 66 anchors, 2000–2010) and stays a gap. Status corrected at
+  the declaration (`dag_designs.yml`), cards/index/SVGs regenerated, `dose`'s label corrected to the nominal
+  dose the design fits, the per-capita axis kept in `robustness.yml → unbuilt_axes`. The list is now **3,
+  one root cause**: the three education outcomes, all of them *outcomes*, so no design has an unsourced
+  exposure, confounder or mediator left.
 - [ ] **C5. Exit criteria.** Every card's reason re-published with its final state; `verify_dags.py`'s
   G-11 check (the index carries missing variables) PASS; the full battery green. **Do not proceed to
   Phase D until green.**

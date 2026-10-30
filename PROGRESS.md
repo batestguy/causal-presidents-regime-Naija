@@ -2815,6 +2815,60 @@ invariant included), the eight R stages green in declared order, the corpus rebu
 re-measured. Phase B closes and Phase C — "close or permanently record every not-estimated reason" — is the
 frontier.
 
+## Twenty-second session (2026-10-31) — Phase C4: the gap list stopped naming a design that has an estimate
+
+**The unit was C4, and its corner was that the plan's own premise was half false.** The plan said the index
+"still names FAAC and primary-completion as missing though both are landed". Measured first, acted second:
+**FAAC is landed** — `faac_national_monthly` carries 114 months (2016-12 → 2026-06), `state_panel
+.faac_gross_total_naira` is populated on **4,104** state-months with `dose_status = observed` on exactly
+those, and Stage 6 publishes **+0.4678** (A, fatalities) and **+0.5181** (B, h=2) from that series, while
+`dag_designs.yml` still said `source_status: gap` for both nodes. **`primary_completion` is not landed**: of
+its 66 World Bank anchors only **8** carry a value (2000–2010), so it cannot see the APC tenures — exactly
+what C-07 recorded. Taking the plan's letter would have removed a real gap and kept a false status.
+
+**The status was a declaration, so it moved there.** `dose` and `faac` are now `acquired` in
+`analysis/specs/dag_designs.yml`, with the landed span in the source text; `01_build_dags.R` regenerated the
+cards and SVGs and `05_registry.R` folded the Stage-8 estimate blocks back in. No registry artifact was
+hand-edited, and `verify_dags.py`'s G-11 recomputation from the cards stayed green. The only unexpected diff
+surface was provenance: every unaffected card differs by nothing but `generated_at` and `git_sha`.
+
+**`dose`'s label was corrected too**, from "D1, FAAC per capita" to **"nominal FAAC; D1 per capita needs
+X-09"** — because the design fits the nominal allocation. `estimation.yml → design_a.exposure` had already
+recorded why: with state fixed effects, `-log(population)` is a state-level constant the fixed effect
+absorbs, so the elasticity does not need the denominator and buying one would not change the number.
+
+**What was deliberately not dropped.** The per-capita axis is still **0 of 12,358** rows and still
+unbuilt; it is recorded in `robustness.yml → unbuilt_axes`, and `limitations.md`'s D1 row now separates the
+*form* (fitted nominal) from the *level* claim (which still needs the series). The trim moved a node's
+status, not the limitation. `variables_still_missing` falls **5 → 3, from two root causes to one**: the three
+education outcomes — and all three are *outcomes*, so **no design has an unsourced exposure, confounder or
+mediator left**.
+
+**One prose site had to be reversed rather than merely edited.** `docs/dags.md` carried a note arguing that
+`dose`/`faac` "are not stale" and that `gap` was "under-specified rather than wrong, and it is left alone
+rather than hand-edited". That was defensible when written and had become an argument for keeping a status
+that told a reader the design with a published pass-through estimate had no exposure at all; it was replaced
+with the new state and the reason it changed. `README.md`'s count moved 5 → 3 with the education detail
+per outcome (`primary_completion` 8 points to 2010, `ner_primary` 9, `literacy_youth` 8 across 1991–2024).
+
+**Re-measured, because the index and the cards are corpus sources:** corpus **493 chunks**, recall@5 0.944,
+gold coverage 0.424, **MRR 0.673 unchanged**, BM25 0.616; answer rate **0.947 (36 of 38)**, needles 22 of 25;
+answer quality re-run fresh on 15 questions at faithfulness **0.951**, relevancy 0.825, precision 0.989,
+recall **0.793**.
+
+**Two mechanical lessons, both recorded rather than remembered.** (1) `01_build_dags.R` alone leaves the
+cards without the Stage-8 estimate block, and `verify_dags.py` then fails on `the_number_is_for_this_card`
+and `not_estimated_reason` being required — **`05_registry.R` must follow `01`**, because the graph stage
+writes the graph and the registry stage writes the results. (2) An intermediate answer-quality run's scores
+were first copied into the C-89 row, and they **drifted inside the same session** across three runs
+(0.962/0.827/1.000/0.823 → 0.933/0.808/0.989/0.870 → 0.951/0.825/0.989/0.793). The row now names the
+artifact and lets `docs/rag.md` quote the numbers, because a second copy of a noisy measurement is a
+guaranteed drift — the same defect as C-49 and C-83 in a new place.
+
+**C-89 records the audit.** All **23 verifiers PASS**, `validate_artifacts` PASS, phase gate `[~] C`,
+frontier C. The remaining phase-C work is unchanged: C1 (10 `no_specification_declared`), C2 (2
+`design_not_run`), C3 (12 `outcome_series_absent`), C5 exit.
+
 ## Next session starts here (written 2026-10-30, end of session)
 
 **Phases A and B are closed and the gate accepts the move: `[x] A`, `[x] B`, `[~] C`, `frontier: C`.**
@@ -2828,10 +2882,12 @@ are already final: 2 carry a number, 9 are `design_result_is_channel_level`, 1 i
 `design_estimated_not_identified`. The order below is cheapest-first, so the cheap closures land before the
 acquisition work can block them.
 
-1. **C4 first (30 minutes).** `variables_still_missing` in `registry/dags/index.json` still names FAAC and
-   primary-completion as missing while both are landed. Trim it to the genuinely outstanding pieces (D1's
-   state population denominator, X-09) and write the audit down; `verify_dags.py`'s G-11 check must stay green.
-2. **C1 — the 10 `no_specification_declared` cards.** For each (outcome, design) pair: declare the
+1. **C4 — DONE (C-89, twenty-second session).** `dose` and `faac` were declared `gap` long after the fiscal
+   series landed; the status was corrected at the declaration and the cards/index regenerated. The list is
+   now **3, one root cause** — the three education outcomes, all of them outcomes, so no design has an
+   unsourced exposure, confounder or mediator. (The plan's premise was half wrong: `primary_completion` is
+   **not** landed — 8 of 66 anchors, 2000–2010 — so it stays a gap.)
+2. **C1 — the 10 `no_specification_declared` cards (next).** For each (outcome, design) pair: declare the
    specification in the stage spec, or record the refusal with its reason. Nothing is left "open". The pairs
    are on each card's `estimate.reason` and counted in `index.json → registry.card_estimate_counts`. Expect
    one spec unit plus one chain run.

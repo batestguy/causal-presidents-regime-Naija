@@ -2,10 +2,10 @@
   "schema_version": "0.3.0",
   "layer": "causal DAGs + published results (the app's data contract)",
   "vintage_date": "2026-10-30",
-  "generated_at": "2026-10-30T12:16:09+0100",
+  "generated_at": "2026-10-30T22:54:11+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "51803ea"
+    "git_sha": "a7519ee"
   },
   "diagnostics": {
     "vintage": "2026-10-30",
@@ -45,7 +45,7 @@
         "gates": {
           "integration_order": {
             "passed": null,
-            "detail": "24 series tested at native grain"
+            "detail": "25 series tested at native grain"
           },
           "cointegration_rank": {
             "passed": null,
@@ -774,14 +774,12 @@
     }
   ],
   "variables_still_missing": [
-    "FAAC allocation / fiscal space [NBS FAAC disbursement reports]",
     "Net enrolment rate, primary [NEMIS]",
-    "Policy exposure dose (D1, FAAC per capita) [NBS FAAC disbursement reports + state population (D1)]",
     "Primary completion rate [NEMIS / World Bank]",
     "Youth literacy (15-24) [NBS / UNESCO UIS]"
   ],
   "registry": {
-    "generated_at": "2026-10-30T15:42:34+0100",
+    "generated_at": "2026-10-30T22:55:33+0100",
     "generated_by": "analysis/R/05_registry.R",
     "spec": "analysis/specs/registry.yml",
     "rule": "A card with design `A` is `estimated` **iff** the estimates artifact publishes a Design A specification whose `outcome` is the card's outcome id. The number, interval and sample are copied from that specification, not from anywhere else.",

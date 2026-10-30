@@ -2,10 +2,10 @@
   "dag_id": "literacy_youth__A",
   "schema_version": "0.3.0",
   "vintage_date": "2026-10-30",
-  "generated_at": "2026-10-30T12:16:09+0100",
+  "generated_at": "2026-10-30T22:54:11+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "51803ea"
+    "git_sha": "a7519ee"
   },
   "outcome": {
     "id": "literacy_youth",
@@ -83,12 +83,12 @@
     },
     {
       "id": "dose",
-      "label": "Policy exposure dose (D1, FAAC per capita)",
-      "short": "Exposure dose (D1)",
+      "label": "Policy exposure dose (nominal FAAC; D1 per capita needs X-09)",
+      "short": "Exposure dose",
       "role": "exposure",
       "observed": true,
-      "source": "NBS FAAC disbursement reports + state population (D1)",
-      "source_status": "gap"
+      "source": "NBS FAAC disbursement reports — nominal FAAC per state-month, 36 states, 2016-12 to 2026-06, landed via ingestion/flows/pull_faac.py; the D1 per-capita normalisation needs a state population denominator (unmade decision, X-09) and is not required by the fixed-effects elasticity (estimation.yml design_a.exposure)",
+      "source_status": "acquired"
     },
     {
       "id": "Y",

@@ -2,23 +2,23 @@
  "schema_version": 1,
  "layer": "Stage 9 — the answer layer: gate -> retrieve -> assemble -> R-04 post-check",
  "vintage": "2026-10-30",
- "generated_at": "2026-10-30T15:04:00+00:00",
+ "generated_at": "2026-10-30T22:46:29+00:00",
  "generator": {
   "script": "scripts/eval_answer.py",
   "spec": "analysis/specs/rag.yml#answer_contract",
   "gate_spec": "analysis/specs/intent_gate.yml",
-  "git_sha": "7e630a0f9bcb56f274539a19d14ef1abd3eb361b"
+  "git_sha": "a7519eedeee87a8d5115ebcd74a03c661c8703a7"
  },
  "corpus": {
   "path": "registry/rag/2026-10-30/corpus.json",
-  "sha256": "49ffc59d11758a6f9131260fdd9458b6f83bc9fc37c207bbbe14e4877e7fe480",
-  "chunks": 492
+  "sha256": "25210c1aa10b0606d4599d4ad4c11f5efe49c22fe86244dda7789d260d964751",
+  "chunks": 493
  },
  "gate": {
   "path": "analysis/specs/intent_gate.yml",
   "sha256": "f89b39cc7e0476b436f6c1ffe3b01777c9114421125f213d449708922c95a3b3",
   "artifact": "registry/rag/2026-10-30/intent_eval.json",
-  "artifact_sha256": "17b94d6a69d3debefcfe6c3ce3eb8614c2d2892e4bccb31915ffdba6abd80fd3"
+  "artifact_sha256": "ca33e3668a4458a88e0ed6f13ae0a899e3929b0c618bc9526f6afea981bbd8e8"
  },
  "contract": {
   "path": "analysis/specs/rag.yml#answer_contract",
@@ -2241,11 +2241,12 @@
     "3",
     "36",
     "4104",
+    "6",
     "8218"
    ],
    "numbers_absent_from_citation": [],
    "plain_numbers_absent_from_citation": [],
-   "text": "**Question:** How many months of the state panel are observed from 2016?\n\n**The record says:** | Node | What landed | What it cannot carry | Where it is recorded |\n|---|---|---|---|\n| FAAC state allocation (the dose) | 2016-12 → 2026-06, 36 states, 174 documents | Nothing before 2016-12: the PDP era is a declared gap. `dose_status` is `observed` on **4,104** of 12,358 state-months, `declared_gap` on **8,218**, `not_covered` on 36 | `state_panel`; C-39…C-43 |\n| D1 — FAAC **per capita** | **0 of 12,358** rows | The axis Family A's estimand is written on.\n\nexchange-rate channel inside Design B | C-46 |\n| Brent crude | daily 1987 → 2026 | Nothing, once the daily→monthly rule is frozen — which it is (`mean_of_daily_observations`) | Stage 3 |\n\n**The FX omission is substantive, not cosmetic.** A naira-denominated allocation response to a\ndollar-denominated shock mixes two channels, and the naira was devalued twice inside the 2016-12 →\n2026-06 window. No keyless publisher carries a monthly NGN/USD series; it would have to be assembled from\nCBN by hand.\n\n**Citation:** limitations — 3. Coverage limits, node by node — docs/limitations.md (vintage 2026-10-30) — doc:limitations#s03",
+   "text": "**Question:** How many months of the state panel are observed from 2016?\n\n**The record says:** | Node | What landed | What it cannot carry | Where it is recorded |\n|---|---|---|---|\n| FAAC state allocation (the dose) | 2016-12 → 2026-06, 36 states, 174 documents | Nothing before 2016-12: the PDP era is a declared gap. `dose_status` is `observed` on **4,104** of 12,358 state-months, `declared_gap` on **8,218**, `not_covered` on 36 | `state_panel`; C-39…C-43 |\n| D1 — FAAC **per capita** | **0 of 12,358** rows | The per-capita *form* of Family A's estimand: the fitted elasticity is nominal, because state fixed effects absorb `-log(population)` (S6-06), while the **level** claim — \"a state with more people gets more money\" — still needs the series.\n\nexchange-rate channel inside Design B | C-46 |\n| Brent crude | daily 1987 → 2026 | Nothing, once the daily→monthly rule is frozen — which it is (`mean_of_daily_observations`) | Stage 3 |\n\n**The FX omission is substantive, not cosmetic.** A naira-denominated allocation response to a\ndollar-denominated shock mixes two channels, and the naira was devalued twice inside the 2016-12 →\n2026-06 window. No keyless publisher carries a monthly NGN/USD series; it would have to be assembled from\nCBN by hand.\n\n**Citation:** limitations — 3. Coverage limits, node by node — docs/limitations.md (vintage 2026-10-30) — doc:limitations#s03",
    "plain": {
     "headline": "| Node | What landed | What it cannot carry | Where it is recorded | |---|---|---|---| | FAAC state allocation (the dose) | 2016-12 → 2026-06, 36 states, 174 documents | Nothing before 2016-12: the PDP era is a declared gap.",
     "reading": null,
@@ -2257,9 +2258,13 @@
      {
       "term": "design",
       "meaning": "The identification strategy — the argument for why the comparison is informative. This project has a two-way fixed-effects panel (Design A), a panel with a shock interaction (Design B), and a synthetic control (Design C)."
+     },
+     {
+      "term": "per-capita",
+      "meaning": "Divided by population, so that places of different sizes can be compared. The denominator this project would need for that is typed into the schema and empty — an unmade decision, not a missing download."
      }
     ],
-    "text": "**Short answer:** | Node | What landed | What it cannot carry | Where it is recorded | |---|---|---|---| | FAAC state allocation (the dose) | 2016-12 → 2026-06, 36 states, 174 documents | Nothing before 2016-12: the PDP era is a declared gap.\n\n**The record says:** | Node | What landed | What it cannot carry | Where it is recorded | |---|---|---|---| | FAAC state allocation (the dose) | 2016-12 → 2026-06, 36 states, 174 documents | Nothing before 2016-12: the PDP era is a declared gap. `dose_status` is `observed` on **4,104** of 12,358 state-months, `declared_gap` on **8,218**, `not_covered` on 36 | `state_panel`; C-39…C-43 | | D1 — FAAC **per capita** | **0 of 12,358** rows | The axis Family A's estimand is written on. exchange-rate channel inside Design B | C-46 | | Brent crude | daily 1987 → 2026 | Nothing, once the daily→monthly rule is frozen — which it is (`mean_of_daily_observations`) | Stage 3 | **The FX omission is substantive, not cosmetic.** A naira-denominated allocation response to a dollar-denominated shock mixes two channels, and the naira was devalued twice inside the 2016-12 → 2026-06 window. No keyless publisher carries a monthly NGN/USD series; it would have to be assembled from CBN by hand.\n\n**Where this comes from:** limitations — 3. Coverage limits, node by node — docs/limitations.md (vintage 2026-10-30) — doc:limitations#s03\n\n**What the words mean:**\n\n- **state-months** — One state observed in one month. A sample of this size is the states followed for a number of months, and the count is the unit the regression works in — so the precision is quoted in the same unit.\n- **design** — The identification strategy — the argument for why the comparison is informative. This project has a two-way fixed-effects panel (Design A), a panel with a shock interaction (Design B), and a synthetic control (Design C)."
+    "text": "**Short answer:** | Node | What landed | What it cannot carry | Where it is recorded | |---|---|---|---| | FAAC state allocation (the dose) | 2016-12 → 2026-06, 36 states, 174 documents | Nothing before 2016-12: the PDP era is a declared gap.\n\n**The record says:** | Node | What landed | What it cannot carry | Where it is recorded | |---|---|---|---| | FAAC state allocation (the dose) | 2016-12 → 2026-06, 36 states, 174 documents | Nothing before 2016-12: the PDP era is a declared gap. `dose_status` is `observed` on **4,104** of 12,358 state-months, `declared_gap` on **8,218**, `not_covered` on 36 | `state_panel`; C-39…C-43 | | D1 — FAAC **per capita** | **0 of 12,358** rows | The per-capita *form* of Family A's estimand: the fitted elasticity is nominal, because state fixed effects absorb `-log(population)` (S6-06), while the **level** claim — \"a state with more people gets more money\" — still needs the series. exchange-rate channel inside Design B | C-46 | | Brent crude | daily 1987 → 2026 | Nothing, once the daily→monthly rule is frozen — which it is (`mean_of_daily_observations`) | Stage 3 | **The FX omission is substantive, not cosmetic.** A naira-denominated allocation response to a dollar-denominated shock mixes two channels, and the naira was devalued twice inside the 2016-12 → 2026-06 window. No keyless publisher carries a monthly NGN/USD series; it would have to be assembled from CBN by hand.\n\n**Where this comes from:** limitations — 3. Coverage limits, node by node — docs/limitations.md (vintage 2026-10-30) — doc:limitations#s03\n\n**What the words mean:**\n\n- **state-months** — One state observed in one month. A sample of this size is the states followed for a number of months, and the count is the unit the regression works in — so the precision is quoted in the same unit.\n- **design** — The identification strategy — the argument for why the comparison is informative. This project has a two-way fixed-effects panel (Design A), a panel with a shock interaction (Design B), and a synthetic control (Design C).\n- **per-capita** — Divided by population, so that places of different sizes can be compared. The denominator this project would need for that is typed into the schema and empty — an unmade decision, not a missing download."
    }
   },
   {
