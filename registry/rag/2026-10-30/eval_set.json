@@ -1,0 +1,500 @@
+{
+ "schema_version": "0.1.0",
+ "layer": "RAG evaluation set (retrieval-gated; generation metrics declared, not measured)",
+ "vintage": "2026-10-30",
+ "generated_at": "2026-10-30T11:37:30+00:00",
+ "generator": {
+  "script": "scripts/build_rag_corpus.py",
+  "spec": "analysis/specs/rag_eval.yml",
+  "git_sha": "51803ea"
+ },
+ "corpus": "registry/rag/2026-10-30/corpus.json",
+ "ragas": {
+  "status": "not_run",
+  "why": "This block describes the `ragas` *library*, which is not installed in this repository or on this machine: installing it would add a dependency tree to a project whose answering path deliberately has none. The four metric definitions it implements — faithfulness, answer relevancy, context precision and context recall — are implemented in `scripts/eval_answer_quality.py` and measured with a judge model in `answer_quality_eval.json`. Those scores are not comparable to a library run, because the prompt, the decomposition and the call pattern are this repository's.",
+  "measured_elsewhere": "registry/rag/2026-10-30/answer_quality_eval.json",
+  "metadata": [
+   "question",
+   "contexts",
+   "answer",
+   "ground_truth"
+  ]
+ },
+ "counts": {
+  "questions": 22,
+  "answerable": 16,
+  "refusal_with_reason": 2,
+  "out_of_scope": 4
+ },
+ "questions": [
+  {
+   "id": "q01_fatalities_elasticity",
+   "type": "answerable",
+   "question": "What did the published estimate find for the effect of FAAC allocations on reported fatalities?",
+   "gold_refs": [
+    "card:fatalities__A"
+   ],
+   "gold_chunks": [
+    "card:fatalities__A",
+    "card:fatalities__A#p2",
+    "card:fatalities__A#p3",
+    "card:fatalities__A#p4",
+    "card:fatalities__A#p5",
+    "card:fatalities__A#p6",
+    "card:fatalities__A#p7"
+   ],
+   "must_contain": [
+    "+0.4678",
+    "[-0.0833, +1.0189]"
+   ],
+   "refusal_must_cite": null,
+   "reference_answer": "The published Design A specification is a PPML elasticity of fatalities to the logged gross FAAC allocation of +0.4678 (SE 0.2812), 95 % interval [-0.0833, +1.0189], p = 0.0962, on 3,888 state-months for 36 states from 2016-12 to 2025-12. The interval crosses zero and the verdict is `estimated_not_identified`.",
+   "notes": null
+  },
+  {
+   "id": "q02_fatalities_identified",
+   "type": "answerable",
+   "question": "Is the fatality estimate identified, and which check decided that?",
+   "gold_refs": [
+    "card:fatalities__A"
+   ],
+   "gold_chunks": [
+    "card:fatalities__A",
+    "card:fatalities__A#p2",
+    "card:fatalities__A#p3",
+    "card:fatalities__A#p4",
+    "card:fatalities__A#p5",
+    "card:fatalities__A#p6",
+    "card:fatalities__A#p7"
+   ],
+   "must_contain": [
+    "estimated_not_identified",
+    "the lead-shift p-value is 0.167"
+   ],
+   "refusal_must_cite": null,
+   "reference_answer": "No. The pre-declared rule requires a lead-shift p-value below 0.05 and a 24-month placebo smaller than the estimate; the lead-shift p-value is 0.167, with 10 of 60 mis-timed doses returning an estimate at least as large as the published one. The verdict is `estimated_not_identified`.",
+   "notes": null
+  },
+  {
+   "id": "q03_incidents_interval",
+   "type": "answerable",
+   "question": "What is the point estimate and 95 % interval for the effect on the number of reported incidents?",
+   "gold_refs": [
+    "card:incidents__A"
+   ],
+   "gold_chunks": [
+    "card:incidents__A",
+    "card:incidents__A#p2",
+    "card:incidents__A#p3",
+    "card:incidents__A#p4",
+    "card:incidents__A#p5",
+    "card:incidents__A#p6"
+   ],
+   "must_contain": [
+    "+0.5278",
+    "[+0.1467, +0.9088]"
+   ],
+   "refusal_must_cite": null,
+   "reference_answer": "+0.5278 with a 95 % interval of [+0.1467, +0.9088], p = 0.0066, on the same 3,888 state-months. The interval excludes zero, but the same lead-shift check fails (p = 0.167), so the card still reads `estimated_not_identified`.",
+   "notes": null
+  },
+  {
+   "id": "q04_oil_to_states",
+   "type": "answerable",
+   "question": "How much of a Brent crude oil shock reaches state governments, and after how long?",
+   "gold_refs": [
+    "result:B"
+   ],
+   "gold_chunks": [
+    "result:B",
+    "result:B#p2",
+    "result:B#p3",
+    "result:B#p4",
+    "result:B#p5",
+    "result:B#p6"
+   ],
+   "must_contain": [
+    "+0.5181",
+    "cumulative log change in national FAAC"
+   ],
+   "refusal_must_cite": null,
+   "reference_answer": "Design B is a local projection of the cumulative log change in national FAAC on the Brent shock. The response is -0.1600 at h = 0, +0.5181 at h = 2 (interval [+0.1919, +0.8443]) and +0.4698 at h = 3, so roughly a 10 % Brent move reaches the states as about 5 % more money two to three months later. Only h = 2 and h = 3 exclude zero.",
+   "notes": null
+  },
+  {
+   "id": "q05_design_b_robust",
+   "type": "answerable",
+   "question": "Did Design B's result survive the robustness grid?",
+   "gold_refs": [
+    "result:B",
+    "doc:robustness#s02"
+   ],
+   "gold_chunks": [
+    "result:B",
+    "result:B#p2",
+    "result:B#p3",
+    "result:B#p4",
+    "result:B#p5",
+    "result:B#p6",
+    "doc:robustness#s02",
+    "doc:robustness#s02#p2",
+    "doc:robustness#s02#p3",
+    "doc:robustness#s02#p4",
+    "doc:robustness#s02#p5"
+   ],
+   "must_contain": [
+    "24 of 24"
+   ],
+   "refusal_must_cite": null,
+   "reference_answer": "Its sign did: 24 of 24 specifications are positive and all 24 intervals exclude zero. Its timing is weaker — the in-time placebo over 48 shifted alignments returns p = 0.0625, published as a bound rather than widened until it passed.",
+   "notes": null
+  },
+  {
+   "id": "q06_design_c_status",
+   "type": "answerable",
+   "question": "Was the synthetic control estimated, and what did its placebos find?",
+   "gold_refs": [
+    "result:C",
+    "doc:estimates#s02",
+    "doc:design-memo#s04"
+   ],
+   "gold_chunks": [
+    "result:C",
+    "result:C#p2",
+    "doc:estimates#s02",
+    "doc:estimates#s02#p10",
+    "doc:estimates#s02#p11",
+    "doc:estimates#s02#p12",
+    "doc:estimates#s02#p13",
+    "doc:estimates#s02#p14",
+    "doc:estimates#s02#p15",
+    "doc:estimates#s02#p2",
+    "doc:estimates#s02#p3",
+    "doc:estimates#s02#p4",
+    "doc:estimates#s02#p5",
+    "doc:estimates#s02#p6",
+    "doc:estimates#s02#p7",
+    "doc:estimates#s02#p8",
+    "doc:estimates#s02#p9",
+    "doc:design-memo#s04",
+    "doc:design-memo#s04#p10",
+    "doc:design-memo#s04#p11",
+    "doc:design-memo#s04#p12",
+    "doc:design-memo#s04#p2",
+    "doc:design-memo#s04#p3",
+    "doc:design-memo#s04#p4",
+    "doc:design-memo#s04#p5",
+    "doc:design-memo#s04#p6",
+    "doc:design-memo#s04#p7",
+    "doc:design-memo#s04#p8",
+    "doc:design-memo#s04#p9"
+   ],
+   "must_contain": [
+    "estimated_not_identified",
+    "placebos"
+   ],
+   "refusal_must_cite": null,
+   "reference_answer": "Estimated, and not identified. The donor pool was widened to 99 candidates and the gate passes u5mr on 3 of its 4 runnable windows; the estimator, the in-space and in-time placebos and the leave-one-donor-out sweep were then built. Four windows were estimated and none survived the declared rule: the in-space rank p runs from 0.17 to 0.50, and 304 of 396 placebo fits also clear the same pre-fit gate, so the gate does not discriminate on this pool.",
+   "notes": null
+  },
+  {
+   "id": "q07_u5mr_synthetic_control",
+   "type": "answerable",
+   "question": "Can you show me an estimate for under-5 mortality under the synthetic-control design?",
+   "gold_refs": [
+    "card:u5mr__C"
+   ],
+   "gold_chunks": [
+    "card:u5mr__C",
+    "card:u5mr__C#p2",
+    "card:u5mr__C#p3",
+    "card:u5mr__C#p4"
+   ],
+   "must_contain": [
+    "design_estimated_not_identified"
+   ],
+   "refusal_must_cite": null,
+   "reference_answer": "No number appears on the card. The synthetic control was run for under-5 mortality and no window survived its placebos, so the card carries the reason code `design_estimated_not_identified` and points at registry/design_c/ for the gaps, the placebos and the check that failed. A synthetic control has no sampling distribution, so there is no interval to put on a card.",
+   "notes": null
+  },
+  {
+   "id": "q08_observed_share",
+   "type": "answerable",
+   "question": "How much of the monthly data series is actually observed rather than interpolated?",
+   "gold_refs": [
+    "doc:limitations#s02"
+   ],
+   "gold_chunks": [
+    "doc:limitations#s02",
+    "doc:limitations#s02#p2"
+   ],
+   "must_contain": [
+    "16.4 %"
+   ],
+   "refusal_must_cite": null,
+   "reference_answer": "1,373 of 8,350 rows are observed (16.4 %); 4,389 are interpolated and 2,588 unobserved. The app draws interpolated months dashed and Stage 7 excludes them on a robustness axis.",
+   "notes": null
+  },
+  {
+   "id": "q09_tenure_comparison",
+   "type": "answerable",
+   "question": "Why can't you tell me whether PDP or APC tenures did better?",
+   "gold_refs": [
+    "doc:limitations#s01"
+   ],
+   "gold_chunks": [
+    "doc:limitations#s01",
+    "doc:limitations#s01#p2",
+    "doc:limitations#s01#p3",
+    "doc:limitations#s01#p4"
+   ],
+   "must_contain": [
+    "arithmetic, not a null result"
+   ],
+   "refusal_must_cite": null,
+   "reference_answer": "There are four to five administrations against 22–23 annual observations per outcome, and the mandated oil x tenure interactions are collinear with the tenure dummies at R² 0.997–0.999, so the smallest detectable effect is 35–99 residual standard deviations. It is a statement about arithmetic, not a null result.",
+   "notes": null
+  },
+  {
+   "id": "q10_flagged_series",
+   "type": "answerable",
+   "question": "How many of the landed series did the quality gates flag?",
+   "gold_refs": [
+    "doc:limitations#s04"
+   ],
+   "gold_chunks": [
+    "doc:limitations#s04",
+    "doc:limitations#s04#p2"
+   ],
+   "must_contain": [
+    "313"
+   ],
+   "refusal_must_cite": null,
+   "reference_answer": "674 series are gated: 359 ok, 313 flagged and 2 empty. A flag means a rule fired and the reason travels with the series; it does not mean the series was removed.",
+   "notes": null
+  },
+  {
+   "id": "q11_cards_with_numbers",
+   "type": "answerable",
+   "question": "How many of the 36 model cards carry a published number?",
+   "gold_refs": [
+    "coverage:registry",
+    "doc:registry#s02"
+   ],
+   "gold_chunks": [
+    "coverage:registry",
+    "doc:registry#s02",
+    "doc:registry#s02#p2",
+    "doc:registry#s02#p3",
+    "doc:registry#s02#p4"
+   ],
+   "must_contain": [
+    "2 cards carry a published estimate",
+    "two `estimated` cards"
+   ],
+   "refusal_must_cite": null,
+   "reference_answer": "Two of 36. Both are Design A cards whose outcome Stage 6 published a specification for; the other 34 carry a reason from a closed set, and the two design-level results sit on the index.",
+   "notes": null
+  },
+  {
+   "id": "q12_interpolation_visible",
+   "type": "answerable",
+   "question": "How can I tell an interpolated value from an observed one in the app?",
+   "gold_refs": [
+    "doc:data-dictionary#imputation-and-how-to-tell-it-apart-from-data"
+   ],
+   "gold_chunks": [
+    "doc:data-dictionary#imputation-and-how-to-tell-it-apart-from-data",
+    "doc:data-dictionary#imputation-and-how-to-tell-it-apart-from-data#p2",
+    "doc:data-dictionary#imputation-and-how-to-tell-it-apart-from-data#p3"
+   ],
+   "must_contain": [
+    "dashed"
+   ],
+   "refusal_must_cite": null,
+   "reference_answer": "Every row carries `observation_type`; the app draws `interpolated` segments dashed and Stage 7 excludes them on a robustness axis. Interpolation is linear and only between two observations exactly twelve months apart, and never for a count.",
+   "notes": null
+  },
+  {
+   "id": "q13_buhari_fatalities",
+   "type": "answerable",
+   "question": "Did fatalities change after Buhari was sworn in in 2015, and can that shift be interpreted?",
+   "gold_refs": [
+    "event:buhari_2015"
+   ],
+   "gold_chunks": [
+    "event:buhari_2015",
+    "event:buhari_2015#p2",
+    "event:buhari_2015#p3"
+   ],
+   "must_contain": [
+    "not_interpretable_pre_trend"
+   ],
+   "refusal_must_cite": null,
+   "reference_answer": "Fatalities fell 67.5 % over the 12 months after the transition (placebo p = 0.017), but the pre-trend placebo moves 83.8 % over the same span, so the cell is `not_interpretable_pre_trend`: the series was already moving that way before the transition.",
+   "notes": null
+  },
+  {
+   "id": "q14_covid_shock_band",
+   "type": "answerable",
+   "question": "Which period does the COVID-19 shock band cover?",
+   "gold_refs": [
+    "shock:2"
+   ],
+   "gold_chunks": [
+    "shock:2"
+   ],
+   "must_contain": [
+    "COVID-19",
+    "2020-03-01"
+   ],
+   "refusal_must_cite": null,
+   "reference_answer": "The annotated COVID-19 band runs from 2020-03-01 to 2020-12-01; Brent averaged $18.38 in April 2020. It is a declared annotation on the charts, not a break detected by a test.",
+   "notes": null
+  },
+  {
+   "id": "q15_president_2012",
+   "type": "answerable",
+   "question": "Who was president in 2012, and for which party?",
+   "gold_refs": [
+    "admin:3"
+   ],
+   "gold_chunks": [
+    "admin:3"
+   ],
+   "must_contain": [
+    "Goodluck Jonathan",
+    "2010-05-06"
+   ],
+   "refusal_must_cite": null,
+   "reference_answer": "Goodluck Jonathan (PDP), from 2010-05-06 to 2015-05-29. Acting from 2010-02-09; the sworn-in date is the single decided boundary of the administration spine.",
+   "notes": null
+  },
+  {
+   "id": "q16_u5mr_unit",
+   "type": "answerable",
+   "question": "What unit is under-5 mortality measured in, and which direction is better?",
+   "gold_refs": [
+    "card:u5mr__A"
+   ],
+   "gold_chunks": [
+    "card:u5mr__A",
+    "card:u5mr__A#p2",
+    "card:u5mr__A#p3",
+    "card:u5mr__A#p4",
+    "card:u5mr__A#p5"
+   ],
+   "must_contain": [
+    "per 1,000 live births",
+    "down (lower is better)"
+   ],
+   "refusal_must_cite": null,
+   "reference_answer": "Per 1,000 live births, annual, and lower is better. The card's coverage status is `partial` because the annual series is largely interpolation across a five-yearly NDHS cycle.",
+   "notes": null
+  },
+  {
+   "id": "r01_which_president_better",
+   "type": "refusal_with_reason",
+   "question": "Which president had the better record on child mortality?",
+   "gold_refs": [
+    "doc:limitations#s01",
+    "doc:estimates#s01"
+   ],
+   "gold_chunks": [
+    "doc:limitations#s01",
+    "doc:limitations#s01#p2",
+    "doc:limitations#s01#p3",
+    "doc:limitations#s01#p4",
+    "doc:estimates#s01",
+    "doc:estimates#s01#p2",
+    "doc:estimates#s01#p3"
+   ],
+   "must_contain": [
+    "not answerable",
+    "annual observations per national outcome"
+   ],
+   "refusal_must_cite": "doc:limitations#s01",
+   "reference_answer": "I don't have a model for that. The tenure comparison needs a counterfactual the data cannot supply: four to five administrations against 22–23 annual observations per national outcome. See docs/limitations.md §1.",
+   "notes": null
+  },
+  {
+   "id": "r02_synthetic_control_tenure",
+   "type": "refusal_with_reason",
+   "question": "Can the synthetic control tell me whether Buhari's tenure caused the fall in under-5 mortality?",
+   "gold_refs": [
+    "result:C",
+    "doc:estimates#s02"
+   ],
+   "gold_chunks": [
+    "result:C",
+    "result:C#p2",
+    "doc:estimates#s02",
+    "doc:estimates#s02#p10",
+    "doc:estimates#s02#p11",
+    "doc:estimates#s02#p12",
+    "doc:estimates#s02#p13",
+    "doc:estimates#s02#p14",
+    "doc:estimates#s02#p15",
+    "doc:estimates#s02#p2",
+    "doc:estimates#s02#p3",
+    "doc:estimates#s02#p4",
+    "doc:estimates#s02#p5",
+    "doc:estimates#s02#p6",
+    "doc:estimates#s02#p7",
+    "doc:estimates#s02#p8",
+    "doc:estimates#s02#p9"
+   ],
+   "must_contain": [
+    "estimated_not_identified",
+    "placebos"
+   ],
+   "refusal_must_cite": "result:C",
+   "reference_answer": "I don't have a model for that. The synthetic control was run on under-5 mortality, but none of its four windows survived its placebos, so the result is published as estimated_not_identified rather than as an effect of a particular tenure: the in-space rank p runs from 0.17 to 0.50, and 304 of 396 placebo fits clear the same pre-fit gate. See the Design C published result.",
+   "notes": null
+  },
+  {
+   "id": "o01_inflation_forecast",
+   "type": "out_of_scope",
+   "question": "What will inflation be in 2030?",
+   "gold_refs": [],
+   "gold_chunks": [],
+   "must_contain": [],
+   "refusal_must_cite": null,
+   "reference_answer": "Refusal. The project holds historical series and published estimates; it makes no forecasts, and no chunk supports one.",
+   "notes": null
+  },
+  {
+   "id": "o02_population_1960",
+   "type": "out_of_scope",
+   "question": "What was Nigeria's population in 1960?",
+   "gold_refs": [],
+   "gold_chunks": [],
+   "must_contain": [],
+   "refusal_must_cite": null,
+   "reference_answer": "Refusal. The study window starts in 1999 and the corpus carries no 1960 population figure.",
+   "notes": null
+  },
+  {
+   "id": "o03_kano_population",
+   "type": "out_of_scope",
+   "question": "How many people live in Kano today?",
+   "gold_refs": [],
+   "gold_chunks": [],
+   "must_contain": [],
+   "refusal_must_cite": null,
+   "reference_answer": "Refusal. No current sub-national population series is in the corpus (the state population denominator is the unmade decision X-09).",
+   "notes": null
+  },
+  {
+   "id": "o04_normative_allocation",
+   "type": "out_of_scope",
+   "question": "Should the federal government increase the FAAC allocation to the states?",
+   "gold_refs": [],
+   "gold_chunks": [],
+   "must_contain": [],
+   "refusal_must_cite": null,
+   "reference_answer": "Refusal. This is a normative question; the project publishes estimates with intervals and assumptions, not recommendations.",
+   "notes": null
+  }
+ ]
+}

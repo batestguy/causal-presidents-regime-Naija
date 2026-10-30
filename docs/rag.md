@@ -5,7 +5,7 @@ chat layer can produce is assembled from a chunk listed here, each chunk names t
 copied from, and the file's hash is checked on every verification run.
 
 The layer exists because a RAG system is the one component that can undo this project's honesty argument in
-a sentence. Retrieve the `+0.4793`, drop the `estimated_not_identified` verdict, and the answer is
+a sentence. Retrieve the `+0.4678`, drop the `estimated_not_identified` verdict, and the answer is
 authoritative-looking and wrong. Everything below is shaped by that.
 
 - **Spec:** `analysis/specs/rag.yml` (chunk families, budget, retriever, refusal contract)
@@ -18,7 +18,7 @@ authoritative-looking and wrong. Everything below is shaped by that.
 
 ## 1. What is in it
 
-**488 chunks from 53 attributed sources**, at vintage 2026-10-18 — the registry's vintage, not the build date,
+**485 chunks from 53 attributed sources**, at vintage 2026-10-30 - the registry's vintage, not the build date,
 so an answer that quotes a card is a statement about that data vintage whenever it is read.
 
 | Family | Chunks | Parent documents |
@@ -81,8 +81,8 @@ Design C's status, coverage, quality, the event study, the tables), 2 refusals t
 | Metric | Embeddings | BM25 baseline | Gate |
 |---|---|---|---|
 | recall@5 | **0.944** | 0.778 | ≥ 0.90 — **met** for embeddings, not for the baseline |
-| gold coverage@5 | 0.432 | 0.376 | - |
-| MRR | 0.718 | 0.653 | - |
+| gold coverage@5 | 0.429 | 0.377 | - |
+| MRR | 0.718 | 0.644 | - |
 | refusal-with-reason recall | **0.5** | 0.0 | 1.0 — **not met** |
 | out-of-scope refused | **0.25** | n/a | 1.0 — **not met** |
 | answerable kept (not refused) | 1.0 | n/a | 1.0 — met |
@@ -112,20 +112,20 @@ held-out set the rules never saw (v3), it refuses **0.947** of out-of-scope ques
 through its capital city, is published rather than tuned away (`docs/intent.md`). On this eval set, out-of-scope refusal goes
 **0.25 → 1.000** and reason-citation **0.5 → 1.000**, with answerable recall unchanged.
 
-The refusal threshold is `0.302695`, derived as 0.5 × the median answerable top-1 similarity (0.6054). It is
+The refusal threshold is `0.302598`, derived as 0.5 × the median answerable top-1 similarity (0.6052). It is
 calibrated on the eval set, so the refusal number is optimistic; that caveat travels in the artifact.
 
 ### The answer-quality measurement — the definitions, not the library
 
-`registry/rag/2026-10-29/answer_quality_eval.json` scores the 15 answered questions on the four metrics RAGAS
+`registry/rag/2026-10-30/answer_quality_eval.json` scores the 15 answered questions on the four metrics RAGAS
 defines, judged by `gemini-3.5-flash-lite` at temperature 0:
 
 | Metric | Measured | What it means here |
 |---|---|---|
-| faithfulness | **0.956** | statements in an answer that its own cited contexts support |
-| answer relevancy | **0.806** | mean cosine between the question and three questions generated from the answer |
-| context precision | **0.978** | average precision over the cited chunks a judge calls useful for the reference answer |
-| context recall | **0.792** | reference-answer claims the cited contexts can support |
+| faithfulness | **0.965** | statements in an answer that its own cited contexts support |
+| answer relevancy | **0.809** | mean cosine between the question and three questions generated from the answer |
+| context precision | **1.000** | average precision over the cited chunks a judge calls useful for the reference answer |
+| context recall | **0.820** | reference-answer claims the cited contexts can support |
 
 **This is not a `ragas` library run, and the artifact says so in its own fields.** The package is not
 installed in this repository or on this machine, and installing it would add a dependency tree to a project
@@ -137,14 +137,15 @@ RAGAS's per-item calls, because this key's free tier allows 20 requests per wind
 What the numbers say, read honestly:
 
 - **Faithfulness is high by construction, not by quality.** The answer is a selection of quoted corpus
-  paragraphs, so the check confirms the contract rather than judging retrieval. 0.956 here means "it quotes
-  what it cites", nothing more — and earlier runs of the same measurement gave 0.964, 0.965 and 0.971, so even
+  paragraphs, so the check confirms the contract rather than judging retrieval. 0.965 here means "it quotes
+  what it cites", nothing more — and earlier runs of the same measurement gave 0.956, 0.964 and 0.971, so even
   that is measured with a judge that varies.
-- **Context recall 0.792 is the number that matters.** About one reference claim in five is not supported by
-  the chunks the answer actually cited: in earlier runs `q04_oil_to_states` and `q05_design_b_robust` scored
-  **0.500** each. The answer quotes the right document but not always the paragraph that carries the
-  reference's claim.
-- **The judge is noisy, and that is published too.** Six runs of the same measurement gave faithfulness
+- **Context recall 0.820 is the number that matters.** About one reference claim in five is not supported by
+  the chunks the answer actually cited: in this run `q05_design_b_robust` scored **0.000** and
+  `q04_oil_to_states` **0.250**, where earlier runs scored 0.500 each. The answer quotes the right document
+  but not always the paragraph that carries the reference's claim, and on the 26.1 corpus it lost the
+  paragraph entirely for those two.
+- **The judge is noisy, and that is published too.** Seven runs of the same measurement gave faithfulness
   0.956–1.000, answer relevancy 0.800–0.834, context precision 0.885–1.000 and context recall 0.792–0.863. A
   lite judge at temperature 0 is not deterministic, and context precision scored every chunk useful in some
   runs and not in the others — a weak instrument, said so here rather than averaged into respectability. The
@@ -195,7 +196,7 @@ machine (no network service, no GPU):
 
 `sentence-transformers==5.1.2`, `torch==2.14.1+cpu`, `numpy 2.4.6`; the model is `multi-qa-MiniLM-L6-cos-v1`
 (384 dims, 512 tokens). The first `--embed` downloads ~90 MB into the Hugging Face cache; after that the run
-is ~20 seconds for 482 chunks.
+is ~20 seconds for 485 chunks.
 
 **Then rebuild whenever a source changes.** The corpus records the sha256 of all 51 sources and
 `tests/verify_rag.py` fails when one no longer matches, with the rebuild command in the message. That is the

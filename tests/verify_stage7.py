@@ -434,6 +434,13 @@ def main() -> int:
     # ---- 5. the pre-registered cell is the published Stage 6 estimate -------------------------
     upstream = report["upstream"]
     estimates_path = REPO_ROOT / spec["upstream"]["estimates"]
+    # The same rule the engine enforces (C-83): the artifact this stage reproduces must be its own
+    # vintage's. Checked from the spec, not from the artifact, so a stale declaration fails here even if
+    # the numbers happened to match.
+    if estimates_path.parent.name != str(spec["labelled"]):
+        fail(failures, f"upstream: the declared estimates path is vintage {estimates_path.parent.name} "
+                       f"but this stage writes {spec['labelled']} — the reproduction check would read a "
+                       "superseded artifact (C-83)")
     estimates = json.loads(estimates_path.read_text(encoding="utf-8"))
     h_focus = spec["design_b"]["focus_horizon"]
     stage6_a = next(s for s in estimates["specifications"]

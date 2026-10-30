@@ -40,13 +40,19 @@
 # the curve cannot tell a reader whether the per-capita estimand behaves the same way. That is recorded
 # in `unbuilt_axes` and repeated in the report, not left to be inferred from a missing level.
 version: 1
-labelled: "2026-10-29"
+labelled: "2026-10-30"
 spec_path: "analysis/specs/robustness.yml"
 engine: "analysis/R/04_robustness.R"
 verifier: "tests/verify_stage7.py"
 upstream:
   estimation_spec: "analysis/specs/estimation.yml"
-  estimates: "registry/estimates/2026-10-17/estimates.json"
+  # The artifact this stage checks itself against must be the one of **its own vintage**: the check is
+  # "the pre-registered cell reproduces the estimate Stage 6 published", and a path pinned to a
+  # superseded vintage silently answers a different question. It was pinned to 2026-10-17 and stayed
+  # green through two re-fits because the numbers happened not to move; the 26.1 revision moved them and
+  # the check fired (C-83). The engine and `tests/verify_stage7.py` now both refuse a declared vintage
+  # that is not `labelled`.
+  estimates: "registry/estimates/2026-10-30/estimates.json"
 
 # ---------------------------------------------------------------------------------------------
 # Inputs — the same base the estimates read, never a staging CSV
@@ -68,7 +74,7 @@ windows:
   full:
     start: null
     end: null
-    why: "the landed intersection — Design A 2016-12 -> 2024-12, Design B 2016-12 -> 2026-06"
+    why: "the landed intersection — Design A 2016-12 -> 2025-12, Design B 2016-12 -> 2026-06"
   exclude_covid:
     drop: ["2020-03", "2021-12"]
     why: >-
@@ -109,7 +115,7 @@ design_a:
       why: >-
         adds a state-specific linear trend, which is the adjustment that would absorb a slow divergence
         between a state's allocation and its conflict path. It is also the most demanding: 36 extra
-        parameters on 3,456 rows.
+        parameters on 3,888 rows.
   dose_lag:
     why: >-
       The allocation is published after the revenue accrues and after the month it is shared (S4-16), so
@@ -280,16 +286,19 @@ support:
   # declared, its members are counted, and every claim in the report is made with them set aside.
   near_zero_band: 0.02
   near_zero_why: >-
-    0.02 is about 4 % of the pre-registered Design A coefficient (0.4793) — below it, a specification
+    0.02 is a few per cent of the pre-registered Design A coefficient — below it, a specification
     contributes nothing to a statement about direction, and a count that moved when such a cell flipped
     would be a count of floating-point noise. Members of the band are published as a subset of both signs,
     never removed: `n_positive` still counts them, and `n_near_zero` says how many of those are the ones
-    the reader should not interpret.
+    the reader should not interpret. The coefficient the band is a fraction of is not typed here: it moved
+    when the UCDP history was revised (C-82) and a typed copy would have gone stale silently.
   counting_note: >-
-    The count is descriptive, not a vote. The specifications are deliberately correlated — 81 of them
-    reuse the same 3,456 rows, the same outcome and overlapping windows — so "70 of 81 are positive" is a
-    statement about the grid, not 70 independent pieces of evidence. It is published as a count, never as
-    a share of evidence, and never as a probability that the sign is right.
+    The count is descriptive, not a vote. The specifications are deliberately correlated — the same 3,888
+    rows, the same outcome and overlapping windows — so a positive count is a
+    statement about the grid, not that many independent pieces of evidence. It is published as a count,
+    never as a share of evidence, and never as a probability that the sign is right. The tally itself is
+    read from the fitted rows, never typed — the revision pass of 2026-10-30 moved it, and a literal here
+    would have gone stale silently (C-82, C-83).
   flips:
     rule: >-
       A level flips when **more than half** of the specifications carrying it have the opposite sign to

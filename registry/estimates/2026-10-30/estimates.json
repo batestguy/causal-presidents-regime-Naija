@@ -1,0 +1,931 @@
+{
+  "stage": 6,
+  "layer": "estimation",
+  "vintage": "2026-10-30",
+  "generated_at": "2026-10-30T12:17:48+0100",
+  "generator": "analysis/R/03_estimate.R",
+  "spec": "analysis/specs/estimation.yml",
+  "verifier": "tests/verify_stage6.py",
+  "input": {
+    "database": "data/analytics.duckdb",
+    "panel_table": "main_analytics.state_panel",
+    "national_faac_table": "main_analytics.faac_national_monthly",
+    "fact_metric_table": "main_analytics.fact_metric",
+    "oil_metric_id": "oil"
+  },
+  "samples": {
+    "design_a": {
+      "n_obs": 3888,
+      "n_units": 36,
+      "first_month": "2016-12-01",
+      "last_month": "2025-12-01",
+      "window_source": "The intersection of the two series as landed: FAAC begins 2016-12 (the OAGF/NBS archives do not publish the PDP era — harmonisation.yml `state_dose_d1_coverage`) and UCDP GED 26.1 publishes through 2025-12, where the base marks 2026-01 onward a declared gap. 3,888 state-months for 36 states, 2016-12 to 2025-12; the one interior month absent is 2018-12, which the FAAC archive does not cover (`dose_status = not_covered`). The window is a property of the data, not a choice, and it is why Design A is an APC-era design whatever the card says."
+    },
+    "design_b": {
+      "n_obs": 114,
+      "first_month": "2016-12-01",
+      "last_month": "2026-06-01"
+    }
+  },
+  "designs": [
+    {
+      "id": "A",
+      "status": "estimated_not_identified",
+      "verdict": {
+        "status": "estimated_not_identified",
+        "rule": "Reported as `identified` only if the lead-shift p-value is below 0.05 **and** the 24-month placebo estimate is smaller in magnitude than the estimated coefficient. Otherwise `estimated_not_identified`, with the failed check named. Fixed before the numbers were read.",
+        "failed_checks": "the lead-shift p-value is 0.167: 10 of 60 mis-timed doses return an estimate at least as large as the estimate itself"
+      },
+      "checks": {
+        "placebo": {
+          "lead_months": 24,
+          "coefficient": 0.31006908026,
+          "standard_error": 0.15191018999,
+          "n_obs": 3024,
+          "note": "the dose shifted 24 months forward within each state; an estimate of comparable size means the specification is reading a shared pattern rather than the dose"
+        },
+        "lead_shift": {
+          "offsets": [-30, -29, -28, -27, -26, -25, -24, -23, -22, -21, -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
+          "n_draws": 60,
+          "p_value": 0.16666666667,
+          "shifted_mean_abs": 0.239807755,
+          "shifted_max_abs": 0.59797032216,
+          "observed_mean_abs": 0.45925964028,
+          "distribution": [
+            {
+              "offset": -30,
+              "observed": 0.58052273947,
+              "shifted": 0.12985503582,
+              "direction": "dose lagged",
+              "n_obs": 2808
+            },
+            {
+              "offset": -29,
+              "observed": 0.52978690449,
+              "shifted": 0.3185026643,
+              "direction": "dose lagged",
+              "n_obs": 2844
+            },
+            {
+              "offset": -28,
+              "observed": 0.53380380282,
+              "shifted": 0.43511667798,
+              "direction": "dose lagged",
+              "n_obs": 2880
+            },
+            {
+              "offset": -27,
+              "observed": 0.54011337077,
+              "shifted": 0.29439757849,
+              "direction": "dose lagged",
+              "n_obs": 2916
+            },
+            {
+              "offset": -26,
+              "observed": 0.52942946552,
+              "shifted": 0.45239763711,
+              "direction": "dose lagged",
+              "n_obs": 2952
+            },
+            {
+              "offset": -25,
+              "observed": 0.56116683882,
+              "shifted": 0.43327842588,
+              "direction": "dose lagged",
+              "n_obs": 2988
+            },
+            {
+              "offset": -24,
+              "observed": 0.54356084492,
+              "shifted": 0.31006908026,
+              "direction": "dose lagged",
+              "n_obs": 3024
+            },
+            {
+              "offset": -23,
+              "observed": 0.55534839213,
+              "shifted": 0.31991772135,
+              "direction": "dose lagged",
+              "n_obs": 3060
+            },
+            {
+              "offset": -22,
+              "observed": 0.56062117641,
+              "shifted": 0.42308397094,
+              "direction": "dose lagged",
+              "n_obs": 3096
+            },
+            {
+              "offset": -21,
+              "observed": 0.45728546399,
+              "shifted": 0.49694285017,
+              "direction": "dose lagged",
+              "n_obs": 3132
+            },
+            {
+              "offset": -20,
+              "observed": 0.44712684189,
+              "shifted": 0.49683275515,
+              "direction": "dose lagged",
+              "n_obs": 3168
+            },
+            {
+              "offset": -19,
+              "observed": 0.45683837388,
+              "shifted": 0.276304988,
+              "direction": "dose lagged",
+              "n_obs": 3204
+            },
+            {
+              "offset": -18,
+              "observed": 0.45656190763,
+              "shifted": -0.052276251329,
+              "direction": "dose lagged",
+              "n_obs": 3240
+            },
+            {
+              "offset": -17,
+              "observed": 0.47988669346,
+              "shifted": -0.056945876435,
+              "direction": "dose lagged",
+              "n_obs": 3276
+            },
+            {
+              "offset": -16,
+              "observed": 0.44363859462,
+              "shifted": 0.19908425486,
+              "direction": "dose lagged",
+              "n_obs": 3312
+            },
+            {
+              "offset": -15,
+              "observed": 0.44150734889,
+              "shifted": -0.046354154541,
+              "direction": "dose lagged",
+              "n_obs": 3348
+            },
+            {
+              "offset": -14,
+              "observed": 0.47052363134,
+              "shifted": 0.19898727317,
+              "direction": "dose lagged",
+              "n_obs": 3384
+            },
+            {
+              "offset": -13,
+              "observed": 0.45627778297,
+              "shifted": 0.2228839737,
+              "direction": "dose lagged",
+              "n_obs": 3420
+            },
+            {
+              "offset": -12,
+              "observed": 0.45823563788,
+              "shifted": -0.0031889374321,
+              "direction": "dose lagged",
+              "n_obs": 3456
+            },
+            {
+              "offset": -11,
+              "observed": 0.45579201479,
+              "shifted": 0.0053578551388,
+              "direction": "dose lagged",
+              "n_obs": 3492
+            },
+            {
+              "offset": -10,
+              "observed": 0.45313565252,
+              "shifted": -0.095177801389,
+              "direction": "dose lagged",
+              "n_obs": 3528
+            },
+            {
+              "offset": -9,
+              "observed": 0.44659953891,
+              "shifted": -0.12406225209,
+              "direction": "dose lagged",
+              "n_obs": 3564
+            },
+            {
+              "offset": -8,
+              "observed": 0.44303611604,
+              "shifted": 0.087599799233,
+              "direction": "dose lagged",
+              "n_obs": 3600
+            },
+            {
+              "offset": -7,
+              "observed": 0.44749929092,
+              "shifted": -0.072652696564,
+              "direction": "dose lagged",
+              "n_obs": 3636
+            },
+            {
+              "offset": -6,
+              "observed": 0.44854970971,
+              "shifted": 0.063291163259,
+              "direction": "dose lagged",
+              "n_obs": 3672
+            },
+            {
+              "offset": -5,
+              "observed": 0.44797222728,
+              "shifted": 0.14808796497,
+              "direction": "dose lagged",
+              "n_obs": 3708
+            },
+            {
+              "offset": -4,
+              "observed": 0.45176256642,
+              "shifted": -0.02402421801,
+              "direction": "dose lagged",
+              "n_obs": 3744
+            },
+            {
+              "offset": -3,
+              "observed": 0.45514874532,
+              "shifted": -0.0049997199081,
+              "direction": "dose lagged",
+              "n_obs": 3780
+            },
+            {
+              "offset": -2,
+              "observed": 0.45823023054,
+              "shifted": 0.06467097218,
+              "direction": "dose lagged",
+              "n_obs": 3816
+            },
+            {
+              "offset": -1,
+              "observed": 0.46324540253,
+              "shifted": 0.31171202989,
+              "direction": "dose lagged",
+              "n_obs": 3852
+            },
+            {
+              "offset": 1,
+              "observed": 0.48175169526,
+              "shifted": 0.03623255077,
+              "direction": "dose led",
+              "n_obs": 3852
+            },
+            {
+              "offset": 2,
+              "observed": 0.47456509799,
+              "shifted": 0.38425628666,
+              "direction": "dose led",
+              "n_obs": 3816
+            },
+            {
+              "offset": 3,
+              "observed": 0.4711739509,
+              "shifted": 0.40515522531,
+              "direction": "dose led",
+              "n_obs": 3780
+            },
+            {
+              "offset": 4,
+              "observed": 0.46927548326,
+              "shifted": 0.36999757801,
+              "direction": "dose led",
+              "n_obs": 3744
+            },
+            {
+              "offset": 5,
+              "observed": 0.46927517702,
+              "shifted": -0.054087992626,
+              "direction": "dose led",
+              "n_obs": 3708
+            },
+            {
+              "offset": 6,
+              "observed": 0.47781492077,
+              "shifted": 0.11220679275,
+              "direction": "dose led",
+              "n_obs": 3672
+            },
+            {
+              "offset": 7,
+              "observed": 0.48503677534,
+              "shifted": 0.22792543266,
+              "direction": "dose led",
+              "n_obs": 3636
+            },
+            {
+              "offset": 8,
+              "observed": 0.49095457886,
+              "shifted": 0.088624236083,
+              "direction": "dose led",
+              "n_obs": 3600
+            },
+            {
+              "offset": 9,
+              "observed": 0.49049047446,
+              "shifted": 0.016646472054,
+              "direction": "dose led",
+              "n_obs": 3564
+            },
+            {
+              "offset": 10,
+              "observed": 0.47790901349,
+              "shifted": -0.019117109829,
+              "direction": "dose led",
+              "n_obs": 3528
+            },
+            {
+              "offset": 11,
+              "observed": 0.47212193332,
+              "shifted": 0.23634132517,
+              "direction": "dose led",
+              "n_obs": 3492
+            },
+            {
+              "offset": 12,
+              "observed": 0.46382910652,
+              "shifted": -0.12736466236,
+              "direction": "dose led",
+              "n_obs": 3456
+            },
+            {
+              "offset": 13,
+              "observed": 0.45712491812,
+              "shifted": -0.32859228911,
+              "direction": "dose led",
+              "n_obs": 3420
+            },
+            {
+              "offset": 14,
+              "observed": 0.44512050813,
+              "shifted": -0.13549688934,
+              "direction": "dose led",
+              "n_obs": 3384
+            },
+            {
+              "offset": 15,
+              "observed": 0.43966552763,
+              "shifted": -0.52412715962,
+              "direction": "dose led",
+              "n_obs": 3348
+            },
+            {
+              "offset": 16,
+              "observed": 0.43494329261,
+              "shifted": -0.32099109072,
+              "direction": "dose led",
+              "n_obs": 3312
+            },
+            {
+              "offset": 17,
+              "observed": 0.42060112335,
+              "shifted": -0.37455252135,
+              "direction": "dose led",
+              "n_obs": 3276
+            },
+            {
+              "offset": 18,
+              "observed": 0.42097659537,
+              "shifted": -0.48825677975,
+              "direction": "dose led",
+              "n_obs": 3240
+            },
+            {
+              "offset": 19,
+              "observed": 0.40690493148,
+              "shifted": -0.49651610457,
+              "direction": "dose led",
+              "n_obs": 3204
+            },
+            {
+              "offset": 20,
+              "observed": 0.39254841748,
+              "shifted": -0.59797032216,
+              "direction": "dose led",
+              "n_obs": 3168
+            },
+            {
+              "offset": 21,
+              "observed": 0.38514244963,
+              "shifted": -0.40314635285,
+              "direction": "dose led",
+              "n_obs": 3132
+            },
+            {
+              "offset": 22,
+              "observed": 0.37647463504,
+              "shifted": -0.12336264938,
+              "direction": "dose led",
+              "n_obs": 3096
+            },
+            {
+              "offset": 23,
+              "observed": 0.36651403778,
+              "shifted": -0.26975117185,
+              "direction": "dose led",
+              "n_obs": 3060
+            },
+            {
+              "offset": 24,
+              "observed": 0.36067226456,
+              "shifted": 0.43955884338,
+              "direction": "dose led",
+              "n_obs": 3024
+            },
+            {
+              "offset": 25,
+              "observed": 0.36281456969,
+              "shifted": 0.45144929211,
+              "direction": "dose led",
+              "n_obs": 2988
+            },
+            {
+              "offset": 26,
+              "observed": 0.38681282876,
+              "shifted": -0.14414722302,
+              "direction": "dose led",
+              "n_obs": 2952
+            },
+            {
+              "offset": 27,
+              "observed": 0.39257457093,
+              "shifted": 0.25759973768,
+              "direction": "dose led",
+              "n_obs": 2916
+            },
+            {
+              "offset": 28,
+              "observed": 0.41518219347,
+              "shifted": 0.0055921493863,
+              "direction": "dose led",
+              "n_obs": 2880
+            },
+            {
+              "offset": 29,
+              "observed": 0.45183169474,
+              "shifted": 0.23952633746,
+              "direction": "dose led",
+              "n_obs": 2844
+            },
+            {
+              "offset": 30,
+              "observed": 0.4422683442,
+              "shifted": -0.5418161422,
+              "direction": "dose led",
+              "n_obs": 2808
+            }
+          ]
+        },
+        "secondary_check": {
+          "n_draws": 499,
+          "seed": 20261017,
+          "scheme": "shuffle the dose across states within each month",
+          "p_value": 0,
+          "null_mean": 0.012697439656,
+          "null_sd": 0.087205536065,
+          "observed": 0.46781005778,
+          "note": "Reported beside the lead-shift distribution because it is a real null for a different question (\"is the state-to-dose assignment meaningful at all?\"), and because publishing the check that did *not* decide the verdict is the point of running two."
+        }
+      }
+    },
+    {
+      "id": "B",
+      "status": "estimated",
+      "verdict": {
+        "status": "estimated",
+        "rule": "`estimated` if the cumulative response is positive at the declared horizon band with a HAC t above 1.96 at some horizon in it, and the lead placebo at 6 months is smaller in magnitude. Reported with its confidence bounds either way; a null is a result.",
+        "failed_checks": {}
+      },
+      "checks": {
+        "peak_horizon": 2,
+        "expected_band": [2, 4],
+        "significant_horizons": [2, 3],
+        "placebo": {
+          "lead_months": 6,
+          "coefficient": 0.0953014756,
+          "standard_error": 0.15172564647,
+          "n_obs": 107,
+          "note": "a future shock regressed on today's allocation; a comparable size means trend, not transmission"
+        },
+        "horizon_path": [
+          {
+            "horizon": 0,
+            "coefficient": -0.15995169851,
+            "standard_error": 0.12346066382,
+            "ci_low": -0.40193459959,
+            "ci_high": 0.082031202577,
+            "t_statistic": -1.295568107,
+            "n_obs": 113
+          },
+          {
+            "horizon": 1,
+            "coefficient": 0.15710321667,
+            "standard_error": 0.12777906331,
+            "ci_low": -0.093343747414,
+            "ci_high": 0.40755018075,
+            "t_statistic": 1.2294910653,
+            "n_obs": 112
+          },
+          {
+            "horizon": 2,
+            "coefficient": 0.51811762897,
+            "standard_error": 0.16642068273,
+            "ci_low": 0.19193309083,
+            "ci_high": 0.84430216712,
+            "t_statistic": 3.1133007057,
+            "n_obs": 111
+          },
+          {
+            "horizon": 3,
+            "coefficient": 0.46977378446,
+            "standard_error": 0.15760525731,
+            "ci_low": 0.16086748014,
+            "ci_high": 0.77868008879,
+            "t_statistic": 2.9806986929,
+            "n_obs": 110
+          },
+          {
+            "horizon": 4,
+            "coefficient": 0.16078008044,
+            "standard_error": 0.16172699712,
+            "ci_low": -0.15620483391,
+            "ci_high": 0.47776499479,
+            "t_statistic": 0.99414496842,
+            "n_obs": 109
+          },
+          {
+            "horizon": 5,
+            "coefficient": 0.032708100571,
+            "standard_error": 0.18848267062,
+            "ci_low": -0.33671793384,
+            "ci_high": 0.40213413498,
+            "t_statistic": 0.1735337284,
+            "n_obs": 108
+          },
+          {
+            "horizon": 6,
+            "coefficient": 0.23130198727,
+            "standard_error": 0.21832096113,
+            "ci_low": -0.19660709655,
+            "ci_high": 0.65921107109,
+            "t_statistic": 1.0594584509,
+            "n_obs": 107
+          },
+          {
+            "horizon": 9,
+            "coefficient": 0.39608182992,
+            "standard_error": 0.30192182143,
+            "ci_low": -0.19568494009,
+            "ci_high": 0.98784859993,
+            "t_statistic": 1.3118688409,
+            "n_obs": 104
+          },
+          {
+            "horizon": 12,
+            "coefficient": 0.32449710934,
+            "standard_error": 0.31875958011,
+            "ci_low": -0.30027166768,
+            "ci_high": 0.94926588636,
+            "t_statistic": 1.0179995507,
+            "n_obs": 101
+          }
+        ]
+      }
+    },
+    {
+      "id": "C",
+      "status": "estimated_not_identified",
+      "verdict": {
+        "status": "estimated_not_identified",
+        "rule": "A window is `identified` only if **all three** hold: (1) its pre-fit ratio is at or below 0.10, the gate's own threshold, carried rather than re-decided; (2) the in-space rank p is at or below 0.05, i.e. the treated unit's post/pre RMSPE ratio is the largest among itself and the placebos; and (3) every in-time placebo that could be run returns a mean gap smaller in absolute value than **half** the estimated gap. Otherwise the window is `estimated_not_identified` and each failed check is named. A window the gate refused is `refused` with the gate's reason and no number. Report the gap and its placebos either way. Declared 2026-10-28, before any weight was fitted.",
+        "failed_checks": [
+          "the in-space rank p is 0.5000: 49 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio",
+          "the in-space rank p is 0.3200: 31 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio",
+          "the in-space rank p is 0.1700: 16 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio",
+          "an in-time placebo returns a gap at least half the size of the estimated gap",
+          "the pre-fit ratio is 0.1984 against the declared 0.10 threshold",
+          "the in-space rank p is 0.3300: 32 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio"
+        ]
+      },
+      "artifact": "registry/design_c/2026-10-30/design_c.json",
+      "counts": {
+        "windows": 5,
+        "estimated": 4,
+        "refused": 1,
+        "identified": 0,
+        "not_identified": 4,
+        "donors": 99,
+        "placebos_in_space": 396,
+        "placebos_in_time": 7,
+        "placebos_passing_pre_fit": 304,
+        "loo_fits": 396
+      },
+      "windows": [
+        {
+          "id": "obasanjo",
+          "status": "refused",
+          "first_year": null,
+          "last_year": null,
+          "mean_gap": null,
+          "p_value": null,
+          "ridge_gap": null
+        },
+        {
+          "id": "yaradua",
+          "status": "estimated_not_identified",
+          "first_year": 2007,
+          "last_year": 2009,
+          "mean_gap": 2.107557332,
+          "p_value": 0.5,
+          "ridge_gap": -2.595613202
+        },
+        {
+          "id": "jonathan",
+          "status": "estimated_not_identified",
+          "first_year": 2010,
+          "last_year": 2014,
+          "mean_gap": -11.55851326,
+          "p_value": 0.32,
+          "ridge_gap": -0.370934959
+        },
+        {
+          "id": "buhari",
+          "status": "estimated_not_identified",
+          "first_year": 2015,
+          "last_year": 2022,
+          "mean_gap": 8.588164544,
+          "p_value": 0.17,
+          "ridge_gap": 9.375701467
+        },
+        {
+          "id": "tinubu",
+          "status": "estimated_not_identified",
+          "first_year": 2023,
+          "last_year": 2024,
+          "mean_gap": 18.53395444,
+          "p_value": 0.33,
+          "ridge_gap": 18.50234273
+        }
+      ]
+    }
+  ],
+  "figure": {
+    "path": "forest_plot.svg",
+    "bytes": 12947,
+    "layout": "two panels side by side, one per design, each with its own axis. One row per published specification: the estimate as a filled point with its 95 % interval, and the zero rule. The decisive check of each design is drawn **hollow** beside its estimate (A: the 24-month mis-timed dose that returns an estimate as large as the published one; B: the 6-month lead placebo), because a forest plot of estimates alone would show a number whose own artifact says it is not identified without showing why."
+  },
+  "specifications": [
+    {
+      "design": "A",
+      "design_name": "State dose-response: does a larger federal allocation reduce conflict fatalities?",
+      "outcome": "fatalities",
+      "estimator": "PPML (Poisson pseudo-maximum-likelihood), fixest::fepois",
+      "formula": "fatalities ~ log(faac_gross_total_naira) | state_id + year_month",
+      "fixed_effects": "state_id + year_month",
+      "controls": "state fixed effects, month fixed effects",
+      "n_obs": 3888,
+      "n_units": 36,
+      "first_month": "2016-12-01",
+      "last_month": "2025-12-01",
+      "coefficient_name": "elasticity_of_fatalities_to_allocation",
+      "coefficient": 0.46781005778,
+      "standard_error": 0.28118111593,
+      "ci_low": -0.08330492943,
+      "ci_high": 1.018925045,
+      "p_value": 0.096165971786,
+      "covariance": "cluster by state (36 clusters)",
+      "units_dropped_by_separation": [],
+      "n_units_used": 36,
+      "note": "all 36 states used"
+    },
+    {
+      "design": "A",
+      "design_name": "State dose-response: does a larger federal allocation reduce conflict fatalities?",
+      "outcome": "incidents",
+      "estimator": "PPML (Poisson pseudo-maximum-likelihood), fixest::fepois",
+      "formula": "incidents ~ log(faac_gross_total_naira) | state_id + year_month",
+      "fixed_effects": "state_id + year_month",
+      "controls": "state fixed effects, month fixed effects",
+      "n_obs": 3888,
+      "n_units": 36,
+      "first_month": "2016-12-01",
+      "last_month": "2025-12-01",
+      "coefficient_name": "elasticity_of_fatalities_to_allocation",
+      "coefficient": 0.52775710455,
+      "standard_error": 0.19440489451,
+      "ci_low": 0.1467235113,
+      "ci_high": 0.9087906978,
+      "p_value": 0.0066329509235,
+      "covariance": "cluster by state (36 clusters)",
+      "units_dropped_by_separation": [],
+      "n_units_used": 36,
+      "note": "all 36 states used"
+    },
+    {
+      "design": "A",
+      "design_name": "State dose-response: does a larger federal allocation reduce conflict fatalities?",
+      "outcome": "fatalities_civilians",
+      "estimator": "PPML (Poisson pseudo-maximum-likelihood), fixest::fepois",
+      "formula": "fatalities_civilians ~ log(faac_gross_total_naira) | state_id + year_month",
+      "fixed_effects": "state_id + year_month",
+      "controls": "state fixed effects, month fixed effects",
+      "n_obs": 3564,
+      "n_units": 36,
+      "first_month": "2016-12-01",
+      "last_month": "2025-12-01",
+      "coefficient_name": "elasticity_of_fatalities_to_allocation",
+      "coefficient": 0.3427073055,
+      "standard_error": 0.49105828696,
+      "ci_low": -0.61976693695,
+      "ci_high": 1.305181548,
+      "p_value": 0.48524262932,
+      "covariance": "cluster by state (36 clusters)",
+      "units_dropped_by_separation": ["Ekiti", "Gombe", "Jigawa"],
+      "n_units_used": 33,
+      "note": "3 state(s) dropped by Poisson separation: no positive value for this outcome anywhere in the window, so the state fixed effect is unidentified"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "outcome": "cumulative log change in national FAAC at h=0",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=0",
+      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 113,
+      "n_units": 1,
+      "first_month": "2017-01-01",
+      "last_month": "2026-06-01",
+      "coefficient_name": "cumulative_pass_through_h0",
+      "coefficient": -0.15995169851,
+      "standard_error": 0.12346066382,
+      "ci_low": -0.40193459959,
+      "ci_high": 0.082031202577,
+      "p_value": 0.19783648373,
+      "covariance": "Newey-West, 12 lags"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "outcome": "cumulative log change in national FAAC at h=1",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=1",
+      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 112,
+      "n_units": 1,
+      "first_month": "2017-01-01",
+      "last_month": "2026-05-01",
+      "coefficient_name": "cumulative_pass_through_h1",
+      "coefficient": 0.15710321667,
+      "standard_error": 0.12777906331,
+      "ci_low": -0.093343747414,
+      "ci_high": 0.40755018075,
+      "p_value": 0.22153511752,
+      "covariance": "Newey-West, 12 lags"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "outcome": "cumulative log change in national FAAC at h=2",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=2",
+      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 111,
+      "n_units": 1,
+      "first_month": "2017-01-01",
+      "last_month": "2026-04-01",
+      "coefficient_name": "cumulative_pass_through_h2",
+      "coefficient": 0.51811762897,
+      "standard_error": 0.16642068273,
+      "ci_low": 0.19193309083,
+      "ci_high": 0.84430216712,
+      "p_value": 0.0023684656959,
+      "covariance": "Newey-West, 12 lags"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "outcome": "cumulative log change in national FAAC at h=3",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=3",
+      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 110,
+      "n_units": 1,
+      "first_month": "2017-01-01",
+      "last_month": "2026-03-01",
+      "coefficient_name": "cumulative_pass_through_h3",
+      "coefficient": 0.46977378446,
+      "standard_error": 0.15760525731,
+      "ci_low": 0.16086748014,
+      "ci_high": 0.77868008879,
+      "p_value": 0.003560437595,
+      "covariance": "Newey-West, 12 lags"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "outcome": "cumulative log change in national FAAC at h=4",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=4",
+      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 109,
+      "n_units": 1,
+      "first_month": "2017-01-01",
+      "last_month": "2026-02-01",
+      "coefficient_name": "cumulative_pass_through_h4",
+      "coefficient": 0.16078008044,
+      "standard_error": 0.16172699712,
+      "ci_low": -0.15620483391,
+      "ci_high": 0.47776499479,
+      "p_value": 0.32241629397,
+      "covariance": "Newey-West, 12 lags"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "outcome": "cumulative log change in national FAAC at h=5",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=5",
+      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 108,
+      "n_units": 1,
+      "first_month": "2017-01-01",
+      "last_month": "2026-01-01",
+      "coefficient_name": "cumulative_pass_through_h5",
+      "coefficient": 0.032708100571,
+      "standard_error": 0.18848267062,
+      "ci_low": -0.33671793384,
+      "ci_high": 0.40213413498,
+      "p_value": 0.86256602617,
+      "covariance": "Newey-West, 12 lags"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "outcome": "cumulative log change in national FAAC at h=6",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=6",
+      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 107,
+      "n_units": 1,
+      "first_month": "2017-01-01",
+      "last_month": "2025-12-01",
+      "coefficient_name": "cumulative_pass_through_h6",
+      "coefficient": 0.23130198727,
+      "standard_error": 0.21832096113,
+      "ci_low": -0.19660709655,
+      "ci_high": 0.65921107109,
+      "p_value": 0.29184545302,
+      "covariance": "Newey-West, 12 lags"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "outcome": "cumulative log change in national FAAC at h=9",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=9",
+      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 104,
+      "n_units": 1,
+      "first_month": "2017-01-01",
+      "last_month": "2025-09-01",
+      "coefficient_name": "cumulative_pass_through_h9",
+      "coefficient": 0.39608182992,
+      "standard_error": 0.30192182143,
+      "ci_low": -0.19568494009,
+      "ci_high": 0.98784859993,
+      "p_value": 0.1925383955,
+      "covariance": "Newey-West, 12 lags"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "outcome": "cumulative log change in national FAAC at h=12",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=12",
+      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 101,
+      "n_units": 1,
+      "first_month": "2017-01-01",
+      "last_month": "2025-06-01",
+      "coefficient_name": "cumulative_pass_through_h12",
+      "coefficient": 0.32449710934,
+      "standard_error": 0.31875958011,
+      "ci_low": -0.30027166768,
+      "ci_high": 0.94926588636,
+      "p_value": 0.31118479564,
+      "covariance": "Newey-West, 12 lags"
+    }
+  ],
+  "notes": [
+    "Every estimate is a pre-declared specification from analysis/specs/estimation.yml.",
+    "Design A is reported as estimated, not identified, when its own checks say so; the number is still published with its bounds.",
+    "Design C is published in its own artifact (registry/design_c/) and this file carries its status rather than a second copy of its numbers."
+  ]
+}

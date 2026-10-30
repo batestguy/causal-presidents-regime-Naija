@@ -1,11 +1,11 @@
 {
   "dag_id": "ner_primary__B",
   "schema_version": "0.3.0",
-  "vintage_date": "2026-10-29",
-  "generated_at": "2026-10-29T06:39:35+0100",
+  "vintage_date": "2026-10-30",
+  "generated_at": "2026-10-30T12:16:09+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "533c2aa"
+    "git_sha": "51803ea"
   },
   "outcome": {
     "id": "ner_primary",
@@ -257,8 +257,8 @@
     "blocker": "no usable series for this outcome (declared_gap)",
     "note": "No pre-check could run: this outcome has no series over the window.",
     "coverage_status": "declared_gap",
-    "vintage": "2026-10-29",
-    "source": "registry/diagnostics/2026-10-29/diagnostics.json"
+    "vintage": "2026-10-30",
+    "source": "registry/diagnostics/2026-10-30/diagnostics.json"
   },
   "assets": {
     "svg": "registry/dags/ner_primary__B.svg"

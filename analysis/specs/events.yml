@@ -20,7 +20,7 @@
 #
 # ---------------------------------------------------------------------------------------------
 version: 1
-labelled: "2026-10-29"
+labelled: "2026-10-30"
 spec_path: "analysis/specs/events.yml"
 engine: "analysis/R/06_events.R"
 verifier: "tests/verify_events.py"
@@ -41,17 +41,17 @@ input:
 # would leave two transitions with no pre-period.
 series:
   start_month: "1999-01"
-  end_month: "2024-12"
+  end_month: "2025-12"
   outcomes: [fatalities, incidents]
   # The archive emits only months it covers: a month with no Nigeria event at all is absent, not zero.
   blank_months_rule: >-
-    An absent month is filled with **zero** for the 1999-01 -> 2024-12 window and the count of filled months
+    An absent month is filled with **zero** for the 1999-01 -> 2025-12 window and the count of filled months
     is published on the artifact. The rule is declared rather than assumed because it is the only
     discretionary step in the series: UCDP emits no row when no event was recorded, and dropping those
     months instead would silently turn "no reported event" into "not in the sample" — which is the
     difference between a mean and a conditional mean.
   blank_months_why: >-
-    25 of the 312 months in the window have no row (all before 2010-01). UCDP GED coverage for Nigeria is
+    25 of the 324 months in the window have no row (all before 2010-01). UCDP GED coverage for Nigeria is
     continuous over this window, so an absent month is read as a zero count, and the artifact prints the
     per-year count of filled months so a reader can see where they are.
 
@@ -83,8 +83,12 @@ events:
     label: "Tinubu sworn in"
     tenure_stratum: APC_first
     note: >-
-      The post-window is truncated by the end of the UCDP archive (2024-12): 19 months, below the 24-month
-      focus horizon, so this event is reported at h=12 only and that is stated rather than silently dropped.
+      The post-window is bounded by the end of the archive, not by the transition: the artifact publishes
+      the months available for each event and whether a horizon was truncated. Under the superseded 25.1
+      archive this event's post-window was shorter than 24 months but still cleared the declared 75 %
+      floor, so h=24 was fitted then as it is now — the earlier note here claimed "h=12 only", which the
+      fitted rows never supported. That is a typed number contradicting the engine, corrected in the
+      26.1 revision pass rather than carried forward (C-82).
 excluded:
   - id: obasanjo_1999
     date: "1999-05-29"

@@ -82,9 +82,9 @@ still falls under the outgoing administration, so the transition month goes to t
 flagged `is_transition_month`. Without the flag, a Tier-2 inherited-conditions view or a robustness axis
 would have to reconstruct the boundary dates itself.
 
-### Why the spine is only 16.2 % observed
+### Why the spine is only 16.4 % observed
 
-1,349 of 8,350 rows are direct observations; 4,389 are interpolated and 2,612 are empty. That ratio is the
+1,373 of 8,350 rows are direct observations; 4,389 are interpolated and 2,588 are empty. That ratio is the
 honest consequence of a monthly spine over annual sources, and it is the most consequential number in
 this stage: **a monthly model on `cpi_yoy` cannot see the 2023-06→2023-12 subsidy window**, because the
 landed CPI series is annual and that window contains two observations. `dim_metric.frequency_gap` flags
@@ -272,7 +272,7 @@ because absence of records is not evidence of peace.
 ## `ucdp_national_monthly`
 
 The same archive at national grain, on the metric spine as `fatalities` and `incidents` over the archive's
-own span, 1990-09 → 2024-12 (where GED 25.1 ends) — 331 of those 412 months carry at least one event;
+own span, 1990-09 → 2025-12 (where GED 26.1 ends) — 343 of those 424 months carry at least one event;
 the rest are absent from the model and `unobserved` on the 1999-01 → 2026-10 spine. Summed over **38 scopes** — the 37 units plus
 `unattributed` — so it is the country and not the sum of the states, with `n_scopes` on every row making
 that auditable.
@@ -328,7 +328,7 @@ from a real observation, which is how "no interpolation across a gap" is enforce
 | A metric-catalogue entry for FAAC | Putting FAAC into `dim_metric` and the Tier-3 system | A declared monthly-to-annual aggregation and the national series' outcome decision. **The Stage 3 gate is no longer part of this** — the dose is gated (37 series, `flagged`); the remaining question is what the series *is* on a national spine, not whether it has been checked (S4-19) |
 | FAAC share of revenue (D2) | Family A's secondary dose | The NBS quarterly state IGR series |
 | Monthly NGN/USD | Separating the price channel from the exchange-rate channel inside Design B | A keyless publisher: FRED has none (verified 2026-10-17 — the only Nigeria FX series there are annual) and CBN's site exposes no resolving monthly file, so it has to be assembled by hand (C-46) |
-| Security coverage after 2024-12 | The last 22 months of the spine | GED 26.x, when UCDP publishes it. `security_status = 'declared_gap'` there, not zero |
+| Security coverage after 2025-12 | The 10 months of the spine after the archive ends | The next GED release. `security_status = 'declared_gap'` there, not zero |
 | A non-oil fiscal instrument that varies within state | Identification for Design A | State IGR (D2) or the VAT distribution. The dose *is* oil revenue, which is why the design is estimated and not identified (C-47) |
 | A state population denominator | Any per-capita dose | A decision, not data (X-09) — NBS projections and World Bank population diverge |
 | Education outcomes 2015+ | The education domain, every design | No open source reaches the APC tenures (C-07, C-11, C-12) |

@@ -20,7 +20,7 @@
 # `reference_answer` is not used by the offline harness (there is no generation step yet, and no LLM key).
 # It is carried so the RAGAS half can be wired the day a key exists: question, contexts, answer, ground_truth.
 version: 1
-labelled: "2026-10-29"
+labelled: "2026-10-30"
 spec_path: "analysis/specs/rag_eval.yml"
 corpus_spec: "analysis/specs/rag.yml"
 
@@ -32,31 +32,31 @@ questions:
     type: answerable
     question: "What did the published estimate find for the effect of FAAC allocations on reported fatalities?"
     gold: ["card:fatalities__A"]
-    must_contain: ["+0.4793", "[-0.1132, +1.0718]"]
+    must_contain: ["+0.4678", "[-0.0833, +1.0189]"]
     reference_answer: >-
       The published Design A specification is a PPML elasticity of fatalities to the logged gross FAAC
-      allocation of +0.4793 (SE 0.3023), 95 % interval [-0.1132, +1.0718], p = 0.1129, on 3,456 state-months
-      for 36 states from 2016-12 to 2024-12. The interval crosses zero and the verdict is
+      allocation of +0.4678 (SE 0.2812), 95 % interval [-0.0833, +1.0189], p = 0.0962, on 3,888 state-months
+      for 36 states from 2016-12 to 2025-12. The interval crosses zero and the verdict is
       `estimated_not_identified`.
 
   - id: q02_fatalities_identified
     type: answerable
     question: "Is the fatality estimate identified, and which check decided that?"
     gold: ["card:fatalities__A"]
-    must_contain: ["estimated_not_identified", "the lead-shift p-value is 0.133"]
+    must_contain: ["estimated_not_identified", "the lead-shift p-value is 0.167"]
     reference_answer: >-
       No. The pre-declared rule requires a lead-shift p-value below 0.05 and a 24-month placebo smaller than
-      the estimate; the lead-shift p-value is 0.133, with 8 of 60 mis-timed doses returning an estimate at
+      the estimate; the lead-shift p-value is 0.167, with 10 of 60 mis-timed doses returning an estimate at
       least as large as the published one. The verdict is `estimated_not_identified`.
 
   - id: q03_incidents_interval
     type: answerable
     question: "What is the point estimate and 95 % interval for the effect on the number of reported incidents?"
     gold: ["card:incidents__A"]
-    must_contain: ["+0.5460", "[+0.1211, +0.9709]"]
+    must_contain: ["+0.5278", "[+0.1467, +0.9088]"]
     reference_answer: >-
-      +0.5460 with a 95 % interval of [+0.1211, +0.9709], p = 0.0118, on the same 3,456 state-months. The
-      interval excludes zero, but the same lead-shift check fails (p = 0.133), so the card still reads
+      +0.5278 with a 95 % interval of [+0.1467, +0.9088], p = 0.0066, on the same 3,888 state-months. The
+      interval excludes zero, but the same lead-shift check fails (p = 0.167), so the card still reads
       `estimated_not_identified`.
 
   - id: q04_oil_to_states
@@ -110,9 +110,9 @@ questions:
     type: answerable
     question: "How much of the monthly data series is actually observed rather than interpolated?"
     gold: ["doc:limitations#s02"]
-    must_contain: ["16.2 %"]
+    must_contain: ["16.4 %"]
     reference_answer: >-
-      1,349 of 8,350 rows are observed (16.2 %); 4,389 are interpolated and 2,612 unobserved. The app draws
+      1,373 of 8,350 rows are observed (16.4 %); 4,389 are interpolated and 2,588 unobserved. The app draws
       interpolated months dashed and Stage 7 excludes them on a robustness axis.
 
   - id: q09_tenure_comparison
@@ -132,7 +132,7 @@ questions:
     gold: ["doc:limitations#s04"]
     must_contain: ["313"]
     reference_answer: >-
-      672 series are gated: 357 ok, 313 flagged and 2 empty. A flag means a rule fired and the reason
+      674 series are gated: 359 ok, 313 flagged and 2 empty. A flag means a rule fired and the reason
       travels with the series; it does not mean the series was removed.
 
   - id: q11_cards_with_numbers

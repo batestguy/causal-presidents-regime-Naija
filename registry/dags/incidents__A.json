@@ -1,11 +1,11 @@
 {
   "dag_id": "incidents__A",
   "schema_version": "0.3.0",
-  "vintage_date": "2026-10-29",
-  "generated_at": "2026-10-29T06:39:35+0100",
+  "vintage_date": "2026-10-30",
+  "generated_at": "2026-10-30T12:16:09+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "533c2aa"
+    "git_sha": "51803ea"
   },
   "outcome": {
     "id": "incidents",
@@ -183,7 +183,7 @@
       {
         "id": "state_outcome_attribution",
         "verdict": "pass",
-        "detail": "21238 state outcome values present"
+        "detail": "22126 state outcome values present"
       },
       {
         "id": "parallel_trends_precheck",
@@ -194,31 +194,31 @@
     "blocker": "specified_dose_axis_absent:D1",
     "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
     "coverage_status": "ok",
-    "vintage": "2026-10-29",
-    "source": "registry/diagnostics/2026-10-29/diagnostics.json"
+    "vintage": "2026-10-30",
+    "source": "registry/diagnostics/2026-10-30/diagnostics.json"
   },
   "assets": {
     "svg": "registry/dags/incidents__A.svg"
   },
   "estimate": {
     "status": "estimated",
-    "model_card_ref": "registry/estimates/2026-10-29/estimates.json#specification[2]",
+    "model_card_ref": "registry/estimates/2026-10-30/estimates.json#specification[2]",
     "the_number_is_for_this_card": true,
     "specification": {
-      "artifact": "registry/estimates/2026-10-29/estimates.json",
+      "artifact": "registry/estimates/2026-10-30/estimates.json",
       "spec_index": 2,
       "design": "A",
       "outcome": "incidents",
       "coefficient_name": "elasticity_of_fatalities_to_allocation",
-      "coefficient": 0.54596889612,
-      "standard_error": 0.21679228335,
-      "ci_low": 0.12105602075,
-      "ci_high": 0.97088177148,
-      "p_value": 0.011789057444,
-      "n_obs": 3456,
+      "coefficient": 0.52775710455,
+      "standard_error": 0.19440489451,
+      "ci_low": 0.1467235113,
+      "ci_high": 0.9087906978,
+      "p_value": 0.0066329509235,
+      "n_obs": 3888,
       "n_units": 36,
       "first_month": "2016-12-01",
-      "last_month": "2024-12-01",
+      "last_month": "2025-12-01",
       "estimator": "PPML (Poisson pseudo-maximum-likelihood), fixest::fepois",
       "formula": "incidents ~ log(faac_gross_total_naira) | state_id + year_month",
       "covariance": "cluster by state (36 clusters)"
@@ -226,14 +226,14 @@
     "verdict": {
       "status": "estimated_not_identified",
       "rule": "Reported as `identified` only if the lead-shift p-value is below 0.05 **and** the 24-month placebo estimate is smaller in magnitude than the estimated coefficient. Otherwise `estimated_not_identified`, with the failed check named. Fixed before the numbers were read.",
-      "failed_checks": "the lead-shift p-value is 0.133: 8 of 60 mis-timed doses return an estimate at least as large as the estimate itself",
+      "failed_checks": "the lead-shift p-value is 0.167: 10 of 60 mis-timed doses return an estimate at least as large as the estimate itself",
       "checked_at": {
-        "artifact": "registry/estimates/2026-10-29/estimates.json",
+        "artifact": "registry/estimates/2026-10-30/estimates.json",
         "design": "A"
       }
     },
     "robustness": {
-      "artifact": "registry/robustness/2026-10-29/robustness.json",
+      "artifact": "registry/robustness/2026-10-30/robustness.json",
       "axis": "outcome",
       "preferred_specification": "A|fatalities|lag0|state_month_fe|full",
       "this_specification_is_the_preferred_one": false,
@@ -243,22 +243,22 @@
         "level": "incidents",
         "is_preferred_level": false,
         "n": 27,
-        "n_positive": 25,
-        "n_negative": 2,
-        "n_positive_ci": 11,
+        "n_positive": 27,
+        "n_negative": 0,
+        "n_positive_ci": 24,
         "n_negative_ci": 0,
-        "n_opposite": 2,
+        "n_opposite": 0,
         "flips_against_preferred": false
       },
       "design_support": {
         "n": 81,
-        "n_positive": 45,
-        "n_negative": 36,
-        "n_near_zero": 6,
-        "n_positive_ci": 13,
-        "n_negative_ci": 5
+        "n_positive": 60,
+        "n_negative": 21,
+        "n_near_zero": 2,
+        "n_positive_ci": 32,
+        "n_negative_ci": 0
       },
-      "design_flip_levels": 5,
+      "design_flip_levels": 1,
       "near_zero_band": 0.02,
       "rule": "A level flips when **more than half** of the specifications carrying it have the opposite sign to the preferred specification of its design. The minority count is published beside it (`n_opposite`) rather than discarded, because one negative cell in 27 is a corner of the grid and 20 in 27 is a region — and a rule that called both a flip would report the whole grid as unstable, which is just as uninformative as reporting none of it."
     },

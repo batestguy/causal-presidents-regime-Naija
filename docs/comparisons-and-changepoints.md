@@ -209,21 +209,21 @@ closes the C-30 trap, and it is a failure condition, not a warning.
 ```json
 {
   "schema_version": "0.1.0",
-  "vintage": "2026-10-18",
+  "vintage": "2026-10-30",
   "generator": { "script": "analysis/R/09_changepoints.R", "git_sha": "abc1234" },
-  "counts": { "outcomes_considered": 12, "outcomes_searched": 2, "outcomes_fixed_date": 6, "outcomes_refused": 4,
-              "breaks_estimated": 3, "known_breaks_passed": 5 },
+  "counts": { "outcomes_considered": 12, "outcomes_searched": 8, "outcomes_fixed_date": 0, "outcomes_refused": 4,
+              "breaks_estimated": 10, "known_breaks_passed": 4 },
   "outcomes": [{
-    "id": "fatalities", "native_frequency": "monthly", "regime": "monthly", "native_in_window": 287,
-    "span": { "first": "1999-01", "last": "2024-12" },
-    "status": "search", "method_detail": "Bai-Perron, 0-2 breaks, BIC selected 2",
+    "id": "fatalities", "native_frequency": "monthly", "regime": "monthly", "native_in_window": 299,
+    "span": { "first": "1999-01", "last": "2025-12" },
+    "status": "search", "method_detail": "Bai-Perron mean model, 0-2 breaks, BIC over 2m+1 parameters, 2 selected",
     "breaks": [
-      { "month": "2011-04", "kind": "estimated", "label": "the series changes here",
-        "statement": "Reported fatalities change level around April 2011; this is a description of the series, not an effect of an administration.",
+      { "month": "2013-04", "kind": "estimated", "label": "the series changes here",
+        "statement": "Reported fatalities change level around April 2013; this is a description of the series, not an effect of an administration.",
         "coincides_with_inauguration": null }
     ],
-    "plain_caption": "287 months with an observation; the series changes around April 2011.",
-    "figure": { "path": "registry/changepoints/2026-10-18/figures/fatalities.svg", "bytes": 48211 },
+    "plain_caption": "Security fatalities: 299 native observations; 2 marked months (2013-04, 2016-12).",
+    "figure": { "path": "registry/changepoints/2026-10-30/figures/fatalities.svg", "bytes": 42714 },
     "refused": null
   }]
 }

@@ -21,7 +21,7 @@
 #   * **Two fiscal questions are.** Both use data landed after Stage 5 ran:
 #       - **Design A** — does a state-month with a larger federal allocation see fewer conflict
 #         fatalities? The dose landed 2026-10-16 (114 months x 36 states) and the state-attributed
-#         outcome landed 2026-10-17 (UCDP GED, 1990-2024, keyless: C-45). This is the Family A estimand,
+#         outcome landed 2026-10-17 (UCDP GED, 1990-2025, keyless: C-45). This is the Family A estimand,
 #         now runnable.
 #       - **Design B** — how much of a Brent shock reaches the states, and when? National monthly,
 #         114 months, log-log local projection.
@@ -33,7 +33,7 @@
 #     size as the estimate itself. The design is therefore reported as *estimated, not identified* —
 #     a measured verdict rather than a caveat, and the reason both designs are run together.
 version: 1
-labelled: "2026-10-29"
+labelled: "2026-10-30"
 spec_path: "analysis/specs/estimation.yml"
 engine: "analysis/R/03_estimate.R"
 verifier: "tests/verify_stage6.py"
@@ -88,9 +88,11 @@ design_a:
     window: {start: "2016-12", end: null}
     why: >-
       The intersection of the two series as landed: FAAC begins 2016-12 (the OAGF/NBS archives do not
-      publish the PDP era — harmonisation.yml `state_dose_d1_coverage`) and UCDP ends 2024-12 (GED 25.1).
-      3,456 state-months. The window is a property of the data, not a choice, and it is why Design A is
-      an APC-era design whatever the card says.
+      publish the PDP era — harmonisation.yml `state_dose_d1_coverage`) and UCDP GED 26.1 publishes
+      through 2025-12, where the base marks 2026-01 onward a declared gap. 3,888 state-months for 36
+      states, 2016-12 to 2025-12; the one interior month absent is 2018-12, which the FAAC archive does
+      not cover (`dose_status = not_covered`). The window is a property of the data, not a choice, and it
+      is why Design A is an APC-era design whatever the card says.
   fixed_effects: [state_id, year_month]
   inference:
     covariance: cluster_by_state
@@ -189,7 +191,7 @@ design_c:
   # Run 2026-10-28 in its own stage (8h) with its own spec, placebos and verifier. This block is kept here
   # because Stage 6's report renders it, and it now carries a status rather than a reason for absence.
   status: estimated_not_identified
-  artifact: "registry/design_c/2026-10-18/design_c.json"
+  artifact: "registry/design_c/2026-10-30/design_c.json"
   spec: "analysis/specs/design_c.yml"
   why: >-
     The design was authorized by the 2026-10-18 gate (u5mr passes 3 of its 4 runnable windows against a
@@ -200,7 +202,7 @@ design_c:
     number is repeated here, and none is on a card, because a synthetic control has no sampling
     distribution to publish an interval from.
   next_step: null
-  gate_artifact: "registry/diagnostics/2026-10-18/diagnostics.json"
+  gate_artifact: "registry/diagnostics/2026-10-30/diagnostics.json"
 
 # ---------------------------------------------------------------------------------------------
 # Figure — the CI forest plot

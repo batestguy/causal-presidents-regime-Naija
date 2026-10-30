@@ -71,7 +71,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "--version",
         default=ADOPTED,
-        help=f"GED release (default: {ADOPTED}, the adopted release; 26.1 is available and not adopted)",
+        help=f"GED release (default: {ADOPTED}, the adopted release)",
     )
     return parser.parse_args(argv)
 

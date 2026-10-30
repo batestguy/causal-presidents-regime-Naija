@@ -26,23 +26,23 @@ reading (C-42, C-44, C-49, C-52).
 (fatalities +1.55%, incidents +2.41% in-window; 12 new months beyond it). Any fit done in earlier phases
 would have to be re-fit under the revised history anyway, so every phase below waits for this one.
 
-- [ ] **A1. Spec first, engine second.** Edit `analysis/specs/estimation.yml` BEFORE any fit: the stale
+- [x] **A1. Spec first, engine second.** Edit `analysis/specs/estimation.yml` BEFORE any fit: the stale
   window sentence ("UCDP ends 2024-12 (GED 25.1)") and the 3,456 sample count — both re-derived from the
   26.1 parse, never estimated by eye.
-- [ ] **A2. Move the adopted label.** `ingestion/clients/ucdp.py`: `ADOPTED = "25.1"` → `"26.1"`. The
+- [x] **A2. Move the adopted label.** `ingestion/clients/ucdp.py`: `ADOPTED = "25.1"` → `"26.1"`. The
   release is already landed at `data/pending/ucdp/2026-10-29/` — it moves into `data/raw/ucdp/` under the
   C-79 rule (raw = adopted claim, now true), the same move the CPI vintage made in its adoption pass.
-- [ ] **A3. Reparse, regate, rebuild.** `ingestion/parsers/ucdp_events.py` → staging regenerated from 26.1;
+- [x] **A3. Reparse, regate, rebuild.** `ingestion/parsers/ucdp_events.py` → staging regenerated from 26.1;
   `check_quality.py` publishes the new quality vintage; `dbt build` (expect the test count to move only if
   a table's contract changed — a revision moves values, not schema).
-- [ ] **A4. Re-run the R chain** in declared order (`02_diagnostics`, `01_build_dags`, `11_design_c`,
+- [x] **A4. Re-run the R chain** in declared order (`02_diagnostics`, `01_build_dags`, `11_design_c`,
   `03_estimate`, `04_robustness`, `05_registry`, `06_events`–`10_tenure`) with the stage specs' `labelled:`
   fields moved to the new date — the same eight specs the CPI adoption moved.
-- [ ] **A5. Measure the verdict movement as a revision, not a finding.** Field-by-field compare the new
+- [x] **A5. Measure the verdict movement as a revision, not a finding.** Field-by-field compare the new
   estimates/robustness/events artifacts against the 2026-10-29 family (the diff script pattern recorded in
   PROGRESS 2026-10-29). A moved coefficient or a moved verdict is reported **as a data revision the source
   published**, in `decisions.md` (C-82) and on `docs/limitations.md` — never as "better" or "new".
-- [ ] **A6. Exit criteria.** `validate_artifacts.py` PASS · all 24 verifiers PASS · the "the card wins"
+- [x] **A6. Exit criteria.** `validate_artifacts.py` PASS · all 24 verifiers PASS · the "the card wins"
   chain (`verify_registry`, `verify_app`, `verify_site`) PASS on numbers that are the 26.1 numbers ·
   `data/pending/` empty except whatever the next phase parks. **Do not proceed to Phase B until all green.**
 

@@ -15,11 +15,23 @@ plan: presidents-completion-plan.md
 phases:
   - id: A
     title: adopt GED 26.1 (the data revision pass)
-    status: not_started
-    evidence: []
+    status: done
+    evidence:
+      - check: "scripts/validate_artifacts.py PASS (74 registry documents, every stage describing the 2026-10-30 gate report)"
+        date: "2026-10-30"
+      - check: "all 23 tests/verify_*.py PASS (quality, stage5, stage6, stage7, registry, harmonisation, faac, nbs_cpi, dags, events, series, comparisons, changepoints, tenure, design_c, provenance, rag, intent, answer, answer_quality, app, site, answer_js)"
+        date: "2026-10-30"
+      - check: "dbt build 178/178 PASS on the 26.1 staging (schema unchanged: a revision moves values, not columns)"
+        date: "2026-10-30"
+      - check: "R chain re-run in declared order 02 -> 01 -> 11 -> 03 -> 04 -> 05 -> 06..10, every stage green"
+        date: "2026-10-30"
+      - check: "RAG corpus rebuilt with --embed (485 chunks), eval_rag / eval_intent / eval_answer / eval_answer_quality re-measured"
+        date: "2026-10-30"
+      - check: "data/pending/ empty; raw vintage 2026-10-30 sha256 8c941d84... equals the parked copy; field-by-field diff vs the 2026-10-29 family recorded as C-82"
+        date: "2026-10-30"
   - id: B
     title: the monthly inflation outcome in Design B (the subsidy estimand)
-    status: not_started
+    status: in_progress
     evidence: []
   - id: C
     title: close or permanently record every not-estimated reason

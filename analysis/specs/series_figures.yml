@@ -25,7 +25,7 @@
 #
 # ---------------------------------------------------------------------------------------------
 version: 1
-labelled: "2026-10-29"
+labelled: "2026-10-30"
 spec_path: "analysis/specs/series_figures.yml"
 engine: "analysis/R/07_series_figures.R"
 verifier: "tests/verify_series_figures.py"

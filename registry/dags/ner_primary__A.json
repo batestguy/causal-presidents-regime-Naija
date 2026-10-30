@@ -1,11 +1,11 @@
 {
   "dag_id": "ner_primary__A",
   "schema_version": "0.3.0",
-  "vintage_date": "2026-10-29",
-  "generated_at": "2026-10-29T06:39:35+0100",
+  "vintage_date": "2026-10-30",
+  "generated_at": "2026-10-30T12:16:09+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "533c2aa"
+    "git_sha": "51803ea"
   },
   "outcome": {
     "id": "ner_primary",
@@ -202,7 +202,7 @@
       {
         "id": "state_outcome_attribution",
         "verdict": "pass",
-        "detail": "21238 state outcome values present"
+        "detail": "22126 state outcome values present"
       },
       {
         "id": "parallel_trends_precheck",
@@ -213,8 +213,8 @@
     "blocker": "specified_dose_axis_absent:D1",
     "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
     "coverage_status": "declared_gap",
-    "vintage": "2026-10-29",
-    "source": "registry/diagnostics/2026-10-29/diagnostics.json"
+    "vintage": "2026-10-30",
+    "source": "registry/diagnostics/2026-10-30/diagnostics.json"
   },
   "assets": {
     "svg": "registry/dags/ner_primary__A.svg"

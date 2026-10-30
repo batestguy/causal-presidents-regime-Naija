@@ -38,18 +38,21 @@ ARCHIVES = {
 # 26.1 adds the 2025 calendar year (Nigeria: 7,418 -> 8,255 events, last month 2024-12 -> 2025-12)
 # and the column set is unchanged at 49, so the parser reads it without an adapter.
 #
-# **`ADOPTED` is the release this project's chain lands by default, and it is deliberately not the
-# newest one.** 26.1 is in `ARCHIVES` and can be fetched by name, but it is not adopted: it revises 173
-# historical state-month cells inside Design A's estimation window (+1.55% fatalities, +2.41%
-# incidents), so adopting it re-fits every design on revised history and is its own accountable pass.
-# See docs/decisions.md C-77. Keeping the *default* on the adopted release also matters operationally:
-# `scripts/verify.sh` calls `pull_ucdp.py` with no arguments in the weekly `data` job, and a default of
-# "newest" would have made that job adopt 26.1 against a registry that describes 25.1.
+# **`ADOPTED` is the release this project's chain lands by default, and it is a claim about which
+# history the published artifacts describe.** 26.1 was landed on 2026-10-29 and *parked* (`data/pending/`)
+# because it is not an append: it revises 173 of the 175 changed state-month cells inside Design A's
+# estimation window (+1.55 % fatalities, +2.41 % incidents, C-77). It was **adopted on 2026-10-30**
+# (C-82) — landed as raw vintage `2026-10-30`, reparsed, regated, rebuilt and re-fitted, with every
+# moved number reported as a revision the source published, never as a finding.
 #
-# Adoption is still recorded by which raw vintage was parsed into `data/staging` and echoed in
+# The default matters operationally: `scripts/verify.sh` calls `pull_ucdp.py` with no arguments in the
+# weekly `data` job, so a default left on 25.1 would have re-landed the superseded release under a new
+# date and left the registry describing a history the code no longer reads.
+#
+# Adoption is recorded by which raw vintage was parsed into `data/staging` and echoed in
 # `registry/quality/<vintage>/report.json -> source_vintages`; this constant only decides what a bare
-# run fetches. Moving it to "26.1" is the first step of the adoption pass, not a side effect of it.
-ADOPTED = "25.1"
+# run fetches.
+ADOPTED = "26.1"
 
 
 def attribution(version: str) -> str:

@@ -51,9 +51,9 @@ Two series landed after Stage 5 ran its verdicts, and both are monthly:
 | Series | Grain | Span | Source |
 |---|---|---|---|
 | FAAC state allocation (the dose) | state × month, 36 states | 2016-12 → 2026-06 (114 months) | OAGF + NBS disbursement documents (2026-10-16) |
-| Conflict fatalities and incidents (the outcome) | state × month, 37 units | 1990-09 → 2024-12 (331 active months) | UCDP GED bulk archive (2026-10-17, C-45) |
+| Conflict fatalities and incidents (the outcome) | state × month, 37 units | 1990-09 → 2025-12 (343 active months) | UCDP GED bulk archive (26.1, adopted 2026-10-30, C-82) |
 
-Their intersection is **3,456 state-months** (2016-12 → 2024-12), which is the first sample in this
+Their intersection is **3,888 state-months** (2016-12 → 2025-12), which is the first sample in this
 project big enough to estimate anything at all. Two questions were pre-declared against it
 (`analysis/specs/estimation.yml`), each with the check that could kill it.
 
@@ -64,16 +64,16 @@ checks, and both are published.
 
 | Outcome | Elasticity | 95 % CI | n |
 |---|---|---|---|
-| fatalities | +0.479 | [−0.113, +1.072] | 3,456 |
-| incidents | +0.546 | [+0.121, +0.971] | 3,456 |
-| fatalities_civilians | +0.310 | [−0.615, +1.234] | 3,168 |
+| fatalities | +0.468 | [−0.083, +1.019] | 3,888 |
+| incidents | +0.528 | [+0.147, +0.909] | 3,888 |
+| fatalities_civilians | +0.343 | [−0.620, +1.305] | 3,564 |
 
 Why the verdict is not "identified":
 
 * **A mis-timed dose is as good as the timed one.** Refitting the same estimator with each state's dose
-  series shifted by any non-zero offset from −30 to +30 months, **8 of 60 offsets return an estimate at
-  least as large** as the estimate itself (p = 0.133). The deterministic 24-month placebo returns
-  **+0.302** against the estimate's **+0.479**.
+  series shifted by any non-zero offset from −30 to +30 months, **10 of 60 offsets return an estimate at
+  least as large** as the estimate itself (p = 0.167). The deterministic 24-month placebo returns
+  **+0.310** against the estimate's **+0.468**.
 * **The identifying variation is a commodity price.** What survives state and month fixed effects in the
   dose is concentrated in the oil-producing states: residual sd **0.50 in Delta, 0.50 in Bayelsa, 0.47 in
   Rivers** against **0.11** in Sokoto, Bauchi, Adamawa, Kaduna and Taraba. That is the 13 % derivation
@@ -89,15 +89,16 @@ estimates is in `estimates.json`, so a reader can check the claim rather than ta
 violence, and this design cannot distinguish that from any other timing. The question is *asked* and
 *answered as unanswerable at this identification*, which is a different thing from "there is no effect".
 
-#### Stage 7 pushed on this, and the sign did not survive
+#### Stage 7 pushed on this: the grid now mostly agrees on the sign, and the verdict still fails
 
-`docs/robustness.md` refits this question 81 ways (`registry/robustness/2026-10-18/`). The result:
-**45 specifications positive, 36 negative**, and the estimate is negative in all three windows when the
-dose is lagged one month rather than contemporaneous — while the pre-registered same-month specification
-is positive. The 36 leave-one-state-out refits do *not* flip the sign (range [0.1234, 0.6254]), so the
-problem is not one unit; it is that the dose's timing and the adjustment set each decide the direction.
-A verdict of *estimated, not identified* therefore understates what Stage 6 found: the number is not a
-direction, and the robustness grid is where that became visible.
+`docs/robustness.md` refits this question 81 ways (`registry/robustness/2026-10-30/`). The result:
+**60 specifications positive, 21 negative**, and the check that fails is still the lead-shift placebo
+(p = 0.167, 10 of 60 mis-timed doses at least as large as the published estimate). The 36
+leave-one-state-out refits do *not* flip the sign (range [0.1429, 0.5950]), so the estimate is not carried
+by one unit. The grid's sign share moved when the UCDP history was revised (25.1 → 26.1, C-82): under 25.1
+it was 45 positive against 36 negative, and the lagged dose was negative in all three windows. A grid that
+agrees on a sign is not an identification strategy — the verdict is still *estimated, not identified*, and
+it is the lead-shift check rather than the count that makes it so.
 
 ### Design B — how much of a Brent shock reaches the states, and when?
 
@@ -179,5 +180,5 @@ is exactly why the FAAC dose and the UCDP outcome were worth acquiring.
 | Tenure effects on health and education | Sub-national monthly health/education outcomes | DHIS2 credentials; NEMIS/NBS series stop in 2010 — a declared gap, not a fetching problem |
 | Design A, identified rather than estimated | An exposure that varies within state for reasons unrelated to oil | The dose *is* oil revenue; a non-oil fiscal instrument (state IGR, VAT distribution) would be a different design |
 | The naira channel separated from the price channel | Monthly NGN/USD | No keyless publisher: FRED has none (verified 2026-10-17), CBN is the only source and a monthly series has to be assembled by hand (C-46) |
-| The last 22 months of the security outcome | GED 26.x (the archive ends 2024-12) | Publication cycle — the series is complete to its own last release |
+| The security record after 2025-12 | The next GED release | Publication cycle — the adopted archive (26.1) is complete to 2025-12 |
 | Design A before 2016 | A monthly FAAC series back to 1999 | Neither OAGF nor NBS publishes the PDP era online (declared gap `state_dose_d1_coverage`) |

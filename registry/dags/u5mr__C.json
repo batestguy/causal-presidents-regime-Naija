@@ -1,11 +1,11 @@
 {
   "dag_id": "u5mr__C",
   "schema_version": "0.3.0",
-  "vintage_date": "2026-10-29",
-  "generated_at": "2026-10-29T06:39:35+0100",
+  "vintage_date": "2026-10-30",
+  "generated_at": "2026-10-30T12:16:09+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "533c2aa"
+    "git_sha": "51803ea"
   },
   "outcome": {
     "id": "u5mr",
@@ -186,8 +186,8 @@
     "blocker": null,
     "note": "Pre-treatment fit passes at window(s): yaradua",
     "coverage_status": "partial",
-    "vintage": "2026-10-29",
-    "source": "registry/diagnostics/2026-10-29/diagnostics.json"
+    "vintage": "2026-10-30",
+    "source": "registry/diagnostics/2026-10-30/diagnostics.json"
   },
   "assets": {
     "svg": "registry/dags/u5mr__C.svg"
@@ -200,7 +200,7 @@
       "code": "design_estimated_not_identified",
       "detail": "The design was run for this outcome in its own stage and is reported as estimated but not identified. A synthetic control has no sampling distribution, so there is no interval to put beside a point estimate, and the design-level artifact carries the gap, its placebos and the check that failed instead of a card number the honesty layer could not support."
     },
-    "published_result": "registry/design_c/2026-10-29/design_c.json",
+    "published_result": "registry/design_c/2026-10-30/design_c.json",
     "note": "No estimate on this card for (u5mr, C). The synthetic control was fitted for this outcome in stage 8h: 4 of 5 windows estimated, none identified. The mean gap runs from -11.56 to +18.53 deaths per 1,000 live births against the synthetic counterfactual, and the in-space placebo rank from p = 0.17 to 0.50 over 99 placebos. A synthetic control has no sampling distribution, so there is no interval to publish and the honesty layer keeps a number without one off the card. The artifact carries every gap path, the placebos and the check that failed."
   }
 }

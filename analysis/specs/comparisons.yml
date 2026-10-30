@@ -71,7 +71,7 @@ groupings:
       not 37) so no group is empty and a tie cannot move a boundary
     window:
       first: "2016-12"
-      last: "2024-12"
+      last: "2025-12"
     outcome_source: "main_analytics.state_panel.<outcome> where security_status = 'observed'"
     note: >-
       the nominal axis is what exists: the per-capita axis D1 is 0 of 12,358 rows for want of the population

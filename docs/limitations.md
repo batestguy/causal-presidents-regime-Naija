@@ -40,8 +40,8 @@ five-yearly and non-redistributable. That is a data wall, not a modelling choice
 
 ## 2. Most of the monthly spine is not observed
 
-The analytical base holds **8,350 rows** (25 metrics × 334 months). Of those, **1,349 rows (16.2 %) are
-observed**, 4,389 are interpolated and 2,612 are unobserved. The monthly series the app draws is
+The analytical base holds **8,350 rows** (25 metrics × 334 months). Of those, **1,373 rows (16.4 %) are
+observed**, 4,389 are interpolated and 2,588 are unobserved. The monthly series the app draws is
 therefore a picture of the interpolation rule in most cells, which is why the base carries
 `observation_type` on every row and why the app must render interpolated segments dashed.
 
@@ -61,7 +61,7 @@ therefore a picture of the interpolation rule in most cells, which is why the ba
 | FAAC state allocation (the dose) | 2016-12 → 2026-06, 36 states, 174 documents | Nothing before 2016-12: the PDP era is a declared gap. `dose_status` is `observed` on **4,104** of 12,358 state-months, `declared_gap` on **8,218**, `not_covered` on 36 | `state_panel`; C-39…C-43 |
 | D1 — FAAC **per capita** | **0 of 12,358** rows | The axis Family A's estimand is written on. X-09 (the population denominator) is an unmade decision | S5-10, S6-06, X-09 |
 | D2 — FAAC share of state revenue | **0 rows** | The NBS state-IGR half is not parsed | diagnostics `dose` block |
-| UCDP GED (security outcome) | state × month, 1990-09 → 2024-12 | The last 22 months of the security record; a reported-events archive, not a census | C-45 |
+| UCDP GED (security outcome) | state × month, 1990-09 → 2025-12 (GED 26.1) | The 10 months after 2025-12; a reported-events archive, not a census | C-45, C-82 |
 | ACLED | not wired | Richer event data, but OAuth registration, a 12-month embargo and no redistribution | Stage 1 register |
 | DHIS2 immunisation | unverified tenant | Monthly health outcome | Stage 1 register |
 | Education (NEMIS/NEDI, UNESCO) | unreachable / 404 | Annual completion and literacy after 2010 | C-11, C-12 |
@@ -93,14 +93,14 @@ series added on 2026-10-29 are the NBS monthly CPI's index and year-on-year chan
 
 | Outcome | Coefficient | SE | 95 % CI | p |
 |---|---|---|---|---|
-| fatalities | **+0.4793** | 0.3023 | **[−0.1132, +1.0718]** | 0.113 |
-| incidents | +0.5460 | 0.2168 | [+0.1211, +0.9709] | 0.012 |
-| civilian fatalities | +0.3095 | 0.4718 | [−0.6153, +1.2342] | 0.512 |
+| fatalities | **+0.4678** | 0.2812 | **[−0.0833, +1.0189]** | 0.096 |
+| incidents | +0.5278 | 0.1944 | [+0.1467, +0.9088] | 0.007 |
+| civilian fatalities | +0.3427 | 0.4911 | [−0.6198, +1.3052] | 0.485 |
 
 Read the first row before any sentence that uses the number: **the interval crosses zero on its own**, and
 the design's own decisive check fails. A dose shifted 24 months forward within each state returns
-**+0.3021** against the published **+0.4793**, and across 60 non-zero lead shifts **8 return an estimate
-at least as large** (p = **0.133**). The verdict is `estimated_not_identified`, and it is the artifact's,
+**+0.3101** against the published **+0.4678**, and across 60 non-zero lead shifts **10 return an estimate
+at least as large** (p = **0.167**). The verdict is `estimated_not_identified`, and it is the artifact's,
 not this page's.
 
 **Why the identification fails, measured rather than asserted:** after state and month fixed effects, the
@@ -182,11 +182,13 @@ the gate's own 0.10 threshold**, so the pre-fit gate does not discriminate on th
 
 **105 specifications** were declared before any was fitted and all are published.
 
-- **Design A: 45 positive against 36 negative** of 81, with six inside the declared near-zero band.
-  **Five axis levels flip by majority**, including the pre-registered `outcome = fatalities` level (14 of
-  27). The sharpest is the dose lag: lagged one month, the estimate is negative in all three windows. The
-  36 leave-one-state-out refits do not flip the sign ([0.1234, 0.6254], 0 flips), so the fragility is the
-  identification and the timing rather than one unit.
+- **Design A: 60 positive against 21 negative** of 81, with two inside the declared near-zero band.
+  **One axis level flips by majority** — `outcome = fatalities_civilians`, 15 of 27. The pre-registered
+  `outcome = fatalities` level does **not** flip (6 of 27), and neither does the dose lag any more
+  (10 of 27): under the superseded 25.1 history it was negative in all three windows and is now positive in
+  two of three. The 36 leave-one-state-out refits do not flip the sign ([0.1429, 0.5950], 0 flips), so the
+  fragility is the identification rather than one unit. The verdict is unchanged because the check that
+  decides it — the lead-shift placebo — still fails (C-82).
 - **Design B: 24 of 24** specifications keep the sign and every interval excludes zero, with coefficients
   from 0.397 to 2.398. The pre-registered cell reproduces Stage 6 to 4.3e-12. The timing remains the weak
   part.
@@ -246,7 +248,7 @@ series.
 | D2 — FAAC share of state revenue | NBS state IGR parsed | Acquisition, same parser family as FAAC |
 | The 2023 window monthly | Monthly NBS CPI | Annual CPI landed; the monthly series is a parser |
 | An identified synthetic counterfactual | A donor pool that is not rich enough to interpolate the pre-period, or a shorter fit window | Built and measured: no window survives its placebos, and 304 of 396 placebos clear the same pre-fit gate |
-| The last 22 months of security | GED 26.x | Publication cycle — the archive ends 2024-12 |
+| The security record after 2025-12 | The next GED release | Publication cycle — the adopted archive (26.1) is complete to 2025-12 |
 | Tenure effects on health and education | Sub-national monthly outcomes | DHIS2 credentials; NEMIS/NEDI and UNESCO unreachable |
 | The naira channel separated | Monthly NGN/USD | No keyless publisher; CBN by hand |
 
@@ -256,13 +258,13 @@ The claims that can be recomputed are registered as claims, not trusted as prose
 
 | Claim | Artifact | Check |
 |---|---|---|
-| Observed share 1,349 / 8,350 (16.2 %) | `registry/diagnostics/2026-10-18/diagnostics.json → grain_decision` | `tests/verify_stage5.py`, and the memo's number is checked against it |
+| Observed share 1,373 / 8,350 (16.4 %) | `registry/diagnostics/2026-10-30/diagnostics.json → grain_decision` | `tests/verify_stage5.py`, and the memo's number is checked against it |
 | 2 of 36 cards carry a number; 34 by reason | `registry/dags/index.json → registry.card_estimate_counts` | `tests/verify_registry.py` |
-| Design A coefficient, interval, placebo, lead-shift p | `registry/estimates/2026-10-18/estimates.json` | `tests/verify_stage6.py`; doc claims in `tests/verify_registry.py` |
+| Design A coefficient, interval, placebo, lead-shift p | `registry/estimates/2026-10-30/estimates.json` | `tests/verify_stage6.py`; doc claims in `tests/verify_registry.py` |
 | Design B peak and its interval | same | `tests/verify_stage6.py`, `tests/verify_stage7.py` |
-| 45 positive / 36 negative; 24 of 24 | `registry/robustness/2026-10-18/robustness.json` | `scripts/validate_artifacts.py` recomputes the counts from the rows |
-| 2 / 3 / 2 / 1 event cells | `registry/events/2026-10-18/events.json` | `tests/verify_events.py` re-fits and re-derives every verdict |
-| 672 gated series, 357 / 313 / 2 | `registry/quality/2026-10-18/report.json` | `tests/verify_quality.py` |
+| 60 positive / 21 negative; 24 of 24 | `registry/robustness/2026-10-30/robustness.json` | `scripts/validate_artifacts.py` recomputes the counts from the rows |
+| 2 / 3 / 2 / 1 event cells | `registry/events/2026-10-30/events.json` | `tests/verify_events.py` re-fits and re-derives every verdict |
+| 674 gated series, 359 / 313 / 2 | `registry/quality/2026-10-30/report.json` | `tests/verify_quality.py` |
 
 Two stale prose facts were found while writing this page and are corrected with it: **`docs/events.md`
 said four cells fail the pre-trend** when the artifact has three failing and two that cannot be checked

@@ -69,38 +69,43 @@ Oster's delta is reported and **does not have its usual reading here**: β runs 
 it were a robustness certification would be a misuse of the statistic, so the artifact says which case
 it is in.
 
-## 3. Design A is not robust, and that is the finding
+## 3. Design A's sign survives most of the grid; its identification still fails
 
-**45 of 81 specifications are positive and 36 are negative**, and five axis levels have a *majority* on the
-opposite side of zero from the pre-registered specification:
+**60 of 81 specifications are positive and 21 are negative**, and **one** axis level has a *majority* on
+the opposite side of zero from the pre-registered specification:
 
 | Axis level | Specifications opposite the preferred sign |
 |---|---|
-| `outcome = fatalities_civilians` | 20 of 27 |
-| `dose_lag_months = 1` | 17 of 27 |
-| `adjustment_set = state_fe` (no month effects) | 16 of 27 |
-| `outcome = fatalities` (the preferred outcome itself) | 14 of 27 |
-| `adjustment_set = state_month_fe_state_trend` | 14 of 27 |
+| `outcome = fatalities_civilians` | 15 of 27 |
+| `adjustment_set = state_month_fe_state_trend` | 12 of 27 |
+| `dose_lag_months = 1` | 10 of 27 |
+| `window = post_2019` | 9 of 27 |
+| `outcome = fatalities` (the preferred outcome itself) | 6 of 27 |
 
 The count is not the whole story in either direction, which is why the minority is published beside it:
-6 of the 105 specifications sit **within ±0.02 of zero** (6 Design A, 0 Design B) — the band is declared in
-`robustness.yml` rather than chosen after the fact — and outside it the split is 42 positive / 33 negative
+2 of the 105 specifications sit **within ±0.02 of zero** (2 Design A, 0 Design B) — the band is declared in
+`robustness.yml` rather than chosen after the fact — and outside it the split is 58 positive / 21 negative
 for Design A. A specification that is numerically zero is reported as a near-zero cell, not absorbed into
 the sign counts as if it were a direction.
 
-The one that matters most is the **dose lag**. With the dose lagged one month and state and month effects,
-the estimate is negative in all three windows while the pre-registered same-month specification is
-positive. A quantity whose sign depends on a one-month timing choice is not a direction.
+The axis that used to decide this section — the **dose lag** — no longer does. With the dose lagged one
+month and state and month effects, the estimate keeps the positive sign in two of the three windows
+(+0.036 full, +0.028 excluding COVID) and reverses it only in the post-2019 window (−0.132). Under the
+superseded 25.1 history it was negative in all three. The sign of this design is more stable across the
+declared grid than it was, and the design was **not** declared identified on the strength of it: the
+check that decides the verdict is the lead-shift placebo, and that still fails (p = 0.167, §Design A in
+`docs/estimates.md`). A grid that agrees on a sign is not an identification strategy, and the revision is
+recorded as a revision rather than as a result (C-82).
 
-Two sensitivities sharpen it rather than rescue it:
+Two sensitivities, both recomputed on the revised history:
 
-- **Leave-one-state-out (36 refits):** coefficients range [0.1234, 0.6254] around 0.4793 with **0** sign
+- **Leave-one-state-out (36 refits):** coefficients range [0.1429, 0.5950] around 0.4678 with **0** sign
   flips. The estimate is not carried by one state — but dropping the three oil-producing states named in
-  the spec (Delta, Bayelsa, Rivers) raises it to **0.6663**, because those states carry most of the dose's
+  the spec (Delta, Bayelsa, Rivers) raises it to **0.6401**, because those states carry most of the dose's
   variation (C-47).
 - **Oster delta on the linear analogue** (log(1 + fatalities), the only form with an R²): the control set
-  **flips the sign of the estimate**, from −0.1023 without controls to +0.0882 with state and month
-  effects. δ = −1.53 therefore has no attenuation reading; it is the amount of unobserved selection that
+  **flips the sign of the estimate**, from −0.0662 without controls to +0.0868 with state and month
+  effects. δ = −1.885 therefore has no attenuation reading; it is the amount of unobserved selection that
   would have to act *against* the observed controls to zero the estimate. This is a bound on the analogue,
   not on the PPML estimate, and the artifact says so beside the number.
 

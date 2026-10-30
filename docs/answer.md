@@ -124,7 +124,7 @@ What is still declined, and why:
 ## 3. Plain language, and the key it does not need
 
 The contract answer is precise and hard to read. `not statistically distinguishable from zero`, `standard
-error`, `n = 3,456 state-months` and `p = 0.1129` are the right words for the record and the wrong words for
+error`, `n = 3,888 state-months` and `p = 0.0962` are the right words for the record and the wrong words for
 a reader. The plain reading is built from the same quoted passage:
 
 - **Short answer** — the direction of the coefficient, whether the interval includes zero, and the sample,

@@ -250,6 +250,14 @@ pref_b <- b_rows[[which(vapply(b_rows, function(r) isTRUE(r$preferred), logical(
 # name. A drift here means the grid or the base moved, and the report would otherwise present a
 # specification curve around a number the estimate artifact does not contain.
 estimates_path <- file.path(REPO_ROOT, spec$upstream$estimates)
+# The declaration must name *this* vintage's Stage 6 artifact. A path left on a superseded vintage made
+# this check answer "does the grid reproduce a number from two passes ago?", which is green whenever the
+# revision happens not to move the coefficient and red for the wrong reason when it does (C-83).
+if (basename(dirname(estimates_path)) != vintage) {
+  stop(sprintf(paste0("upstream.estimates names vintage %s but this stage writes %s: the reproduction ",
+                      "check would compare the grid against a superseded artifact (C-83)"),
+               basename(dirname(estimates_path)), vintage))
+}
 stage6_check <- list(checked = FALSE, why = "no estimates artifact at the declared path")
 if (file.exists(estimates_path)) {
   estimates <- jsonlite::fromJSON(estimates_path, simplifyVector = FALSE)

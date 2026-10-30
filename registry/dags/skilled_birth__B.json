@@ -1,11 +1,11 @@
 {
   "dag_id": "skilled_birth__B",
   "schema_version": "0.3.0",
-  "vintage_date": "2026-10-29",
-  "generated_at": "2026-10-29T06:39:35+0100",
+  "vintage_date": "2026-10-30",
+  "generated_at": "2026-10-30T12:16:09+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "533c2aa"
+    "git_sha": "51803ea"
   },
   "outcome": {
     "id": "skilled_birth",
@@ -257,8 +257,8 @@
     "blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly",
     "note": "Runs, but not as base spec section 9 specifies; the deviations are listed above.",
     "coverage_status": "partial",
-    "vintage": "2026-10-29",
-    "source": "registry/diagnostics/2026-10-29/diagnostics.json"
+    "vintage": "2026-10-30",
+    "source": "registry/diagnostics/2026-10-30/diagnostics.json"
   },
   "assets": {
     "svg": "registry/dags/skilled_birth__B.svg"

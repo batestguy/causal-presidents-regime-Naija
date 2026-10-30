@@ -1,9 +1,6 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-10-29 (twentieth session) — this session's record is the last section of this file · **Stage:** 9 — **Design C (stage 8h) fitted and closed as
-not identified**, the gate re-frozen at v4, and the whole chain re-run · **verified at vintage 2026-10-18**:
-dbt build (165/165), every R stage, the corpus, both evals and all **twenty-three** verifiers, one step at a time
-with `HF_HUB_OFFLINE=1` and the RAG interpreter; `all checks passed`
+**Last updated:** 2026-10-30 (twenty-first session) — this session's record is the last section of this file · **Stage:** 9, and the **completion plan's Phase A is closed**: GED 26.1 adopted in its own accountable pass, every Design A number moved and **no verdict moved** · **verified at vintage 2026-10-30**: `dbt build` (178/178), every R stage, the corpus, all four evals and **all twenty-three** verifiers, plus `validate_artifacts` and the phase gate; `all checks passed` equivalent, one step at a time with `HF_HUB_OFFLINE=1` and the RAG interpreter
 
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
@@ -2599,3 +2596,128 @@ Phase A, A1-A6):**
 **Standing reminders for any session:** the ds-general interpreter for Python, R 4.5.2 for the stages,
 the drlca-rag env only for the corpus rebuild; measure in a served browser before writing CSS (file://
 is blocked); commit + push after each unit; `data/raw/` is never edited, superseded vintages are kept.
+
+## 2026-10-30 — Phase A: GED 26.1 adopted, and the revision moved one published conclusion
+
+**The pass the plan ordered first, done in its declared order and closed on measured evidence.** The rule
+that orders the completion plan is that no phase begins until the previous one's exit checks are green, and
+this session was that check for Phase A: the release was landed, reparsed, regated, rebuilt, re-fitted and
+every dependent artifact re-measured, **before** any later phase was touched. The phase gate now reads
+`Phase A done / frontier B` (`presidents-completion-state.yml`, six evidence entries, each naming the check
+and the date).
+
+**The adoption mechanics, recorded because the alternative would have broken a standing rule.** 26.1 was
+parked at `data/pending/ucdp/2026-10-29/` (C-79). Moving it into `data/raw/` would have made the newest raw
+vintage 2026-10-29 — the label the committed `estimates`, `robustness`, `events` and `series` families
+already carry — so the re-fit would have overwritten a committed vintage in place. Instead the archive was
+**fetched again on 2026-10-30** and landed as raw vintage `2026-10-30`: same `sha256` (`8c941d84…`), same
+39,122,522 bytes, and a `coverage.json` differing only in `vintage_date`; the park was deleted after that
+comparison, so `data/pending/` is empty (C-84). `ADOPTED` moved to `"26.1"` with its comment rewritten —
+the old one asserted the release "is not adopted", which stopped being true at 14:0x.
+
+**Every declared input moved with the data, before anything was fitted (A1).** `estimation.yml`'s sample
+sentence now derives from the base rather than from memory: **3,888 state-months, 36 states, 2016-12 →
+2025-12**, whose one interior absent month is **2018-12** (`dose_status = not_covered` in the FAAC
+archive). `events.yml`'s series window moved to 2025-12 and its blank-month sentence to "25 of the 324
+months"; `comparisons.yml`'s state-dose window, `robustness.yml`'s two sample counts, `outcomes.yml`'s UCDP
+coverage note and eleven `labelled:`-adjacent paths moved with it. The eight stage specs moved
+2026-10-29 → **2026-10-30**, which is a *new* vintage in both layers rather than an edit to the old one.
+
+**The chain, in the plan's order:** `02_diagnostics` → `01_build_dags` → `11_design_c` → `03_estimate` →
+`04_robustness` → `05_registry` → `06_events` → `07_series_figures` → `08_comparisons` →
+`09_changepoints` → `10_tenure`, then the corpus with `--embed`, then `eval_rag`, `eval_intent`,
+`eval_answer`, `eval_answer_quality`. `dbt build` is **178/178** — the count is the CPI pass's, not this
+one's, because 26.1 changes no column and adds no model, which is what "a revision moves values, not
+schema" means in practice.
+
+**What moved, and it all moved the same way — under the published verdicts.** Design A's sample grew by
+432 state-months and all three coefficients moved: **fatalities +0.4793 → +0.4678** (SE 0.3023 → 0.2812,
+interval [−0.1132, +1.0718] → [−0.0833, +1.0189], p 0.1129 → 0.0962), **incidents +0.5460 → +0.5278**,
+**civilian fatalities +0.3095 → +0.3427**. The decisive check got worse for the design and still fails:
+**lead-shift p 0.133 → 0.167**, 8 → **10 of 60** mis-timed doses at least as large, and the 24-month
+placebo **+0.3021 → +0.3101**. Design B is **identical to 1e-12** — its sample is FAAC × Brent and 26.1
+does not touch it — and Design C's artifact is identical because under-5 mortality is not a UCDP outcome.
+**No verdict moved**: A `estimated_not_identified`, B `estimated`, C `estimated_not_identified`, and the
+card split is still 2 carrying a number and 34 naming a reason, in the same 10/9/12/2/1 proportions.
+
+**The movement that matters is in Stage 7, and it reverses a published sentence.** The grid's support went
+**69 positive / 36 negative → 84 / 21** (Design A **45/36 → 60/21**), near-zero cells **6 → 2**, and
+majority sign-flip levels **5 → 1**. The pre-registered `outcome = fatalities` level no longer flips
+(**14 of 27 opposite → 6 of 27**), and the dose-lag claim **inverted**: it was negative in all three
+windows under 25.1 and is **positive in two of three** under 26.1 (+0.036 full, +0.028 excluding COVID,
+−0.132 post-2019). Leave-one-state-out moved with it, [0.1234, 0.6254] → **[0.1429, 0.5950]**, and
+dropping the three oil states now gives 0.6401 (was 0.6663). `docs/robustness.md` §3, `docs/estimates.md`'s
+"the sign did not survive" subsection, `docs/limitations.md` §9 and the README were rewritten to the new
+numbers and to the new conclusion — **the grid now mostly agrees on a sign, and the design is still not
+identified, because the lead-shift placebo, not the count, is what decides it.** `docs/decisions.md` C-82
+records the reversal explicitly and names C-50 as superseded by the revision rather than by a new analysis.
+
+**The rest of the movement, in one line each.** Events: all **8 verdicts unchanged**, the series is 324
+months (1999-01 → 2025-12), Tinubu's post-window is **19 → 31 months** (h=24 was already fitted under both
+— see the defect below). Series panels: **764 → 788 observed** (fatalities and incidents 287 → 299),
+1,418 → 1,394 unobserved. Changepoints: fatalities **2013-03 → 2013-04** and **2016-10 → 2016-12**,
+incidents **2010-10 → 2011-01** and **2014-05 → 2014-09**; the other six series did not move. Tenure: 2 of 8
+deviations and **20 of 68 contrasts** moved (Jonathan − Yar'Adua fatalities +202.9 → **+210.0**). Quality
+gate: **674 series, 359/313/2 — unchanged**, because 26.1 adds months to existing series, not new series.
+Spine: **1,373 of 8,350 observed (16.4 %)**, was 1,349 (16.2 %).
+
+**Four defects were found by the pass, and three of them were prose that had passed every verifier.**
+
+- **Stage 7's reproduction check was pinned to `estimates/2026-10-17` (C-83).** It fired on this pass with
+  a 0.0115 gap that was *the revision itself*, not a disagreement. The check had been answering "does the
+  grid reproduce a number from two passes ago?" — green for two re-fits only because the coefficient had
+  not moved. The declaration now names its own vintage, and **both** `04_robustness.R` and
+  `tests/verify_stage7.py` refuse a path whose vintage is not `labelled`.
+- **`events.yml`'s Tinubu note claimed "h=12 only", which the fitted rows never supported** — 19 months
+  cleared the declared 75 % floor for h=24 under 25.1 too. Rewritten as the window rule plus the correction.
+- **`robustness.yml` carried two typed numbers that were never the artifact's**: "70 of 81 are positive"
+  (the artifact said 69/36 before this pass and 84/21 after) and the coefficient "(0.4793)" inside the
+  near-zero band's justification. Both are gone; the note now says the tally is read from the fitted rows.
+- **`docs/comparisons-and-changepoints.md`'s "minimal example" was a stylised artifact** — counts and break
+  months that matched no vintage. It is now a real excerpt of the 2026-10-30 artifact, bytes included.
+
+**The retrieval and answer layers were re-measured, not carried forward.** The corpus is **485 chunks from
+53 attributed sources** at 2026-10-30 (was 488 — the prose that quotes the numbers changed length), recall@5
+**0.944** unchanged, gold coverage 0.432 → **0.429**, MRR **0.718**, BM25 baseline **0.833 → 0.778**. The
+answer layer answers **36 of 38 (0.947)**, unchanged, with needles **22 of 25** and the same two declines
+(q06's "what did its placebos find?" is still the published lexical decline). The answer-quality measurement
+was **re-run against the new corpus** rather than copied: faithfulness **0.965**, answer relevancy **0.809**,
+context precision **1.000**, context recall **0.820** — and this run is worse in the place that matters,
+`q05_design_b_robust` scoring **0.000** context recall and `q04_oil_to_states` 0.250, where earlier runs had
+0.500 each. That is published in `docs/rag.md` as the corpus it describes, not smoothed.
+
+**What this pass did not do.** No phase after A was started: `presidents-completion-state.yml` now reads
+`A done / B in_progress` and nothing in B has been declared or fitted. The README's older drift (441 chunks,
+"the chat tab is not built", two refusal gates described as failing) is **not** fixed here — Phase E1 owns
+it, and it was already stale before this pass. The `docs/limits`-style pages that quote no moved number were
+not touched. And the 23 verifier scripts are 23, not the 24 the plan's A6 names: the count in the plan
+included `scripts/validate_artifacts.py`, which is the 24th check and ran green (74 registry documents).
+
+## Next session starts here (written 2026-10-30, end of session)
+
+**Phase A is done and the gate accepts the move: `[x] Phase A`, `[~] Phase B`, `frontier: B`.** Everything
+above is committed; `data/pending/` is empty; the registry's newest vintage is **2026-10-30** in every
+family, and the 2026-10-29 family is intact as the 25.1 record.
+
+**Phase B is "the monthly inflation outcome in Design B (the subsidy estimand)", and its first move is a
+declaration, not a fit** (`presidents-completion-plan.md` Phase B, B1–B4):
+
+1. **B1 — decide and record before any code.** Does Design B read `nbs_cpi_national_monthly` (the monthly
+   CPI index / YoY, landed and gated 2026-10-29, C-81) as the inflation outcome for a declared
+   specification, keeping `cpi_yoy` (annual) as the annual cross-check? The base already carries the series
+   unspined; the declaration is the catalogue entry plus the estimation-spec entry.
+2. **B2 — Stage 5 first.** `02_diagnostics.R` must pass (or fail, on record) the integration/cointegration
+   checks at the series' native grain before an estimate exists. The series is monthly-native to **2024-10**
+   — the elibrary listing ends there — so the 2023-06 → 2023-12 subsidy window is inside it, which is the
+   whole point.
+3. **B3 — fit and publish.** Stage 6/7 re-run at a **new** vintage label; the question the card must answer
+   is whether that window is estimable at monthly grain, and a declared refusal with its reason is a
+   publishable answer.
+4. **B4 — the same battery as A6**, plus `validate_artifacts`' C-44 invariant (Stage 5 newest == quality
+   newest). Then set B done and C in_progress in the state file.
+
+**Standing reminders for any session:** the ds-general interpreter for Python, R 4.5.2 for the stages, the
+drlca-rag env only for the corpus rebuild (`HF_HUB_OFFLINE=1`); `GOOGLE_API_KEY` is in the **environment**,
+not `.env`, and the answer-quality measurement needs it; every spec's `upstream:` path must name its own
+`labelled` vintage (C-83); measure in a served browser before writing CSS (file:// is blocked); commit +
+push after each unit; `data/raw/` is never edited, superseded vintages are kept.

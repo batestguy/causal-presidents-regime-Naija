@@ -63,8 +63,8 @@ rather than evidence its fit is real. No other card clears its gate. That is the
 ## 1. The grain the tests run on
 
 Every test runs on the **native observation** a source actually published — never on the monthly
-spine. The spine used by the app is only **16.2 % observed** (1,349 of 8,350 rows; 4,389 interpolated,
-2,612 empty — it was 10.1 % of 7,682 before the monthly Brent, FAAC and UCDP landings). A unit-root or
+spine. The spine used by the app is only **16.4 % observed** (1,373 of 8,350 rows; 4,389 interpolated,
+2,588 empty — it was 10.1 % of 7,682 before the monthly Brent, FAAC and UCDP landings). A unit-root or
 cointegration test on interpolated rows reports the properties of the interpolator, not of the data:
 linear interpolation induces near-perfect serial correlation by construction, so ADF would fail to reject
 stationarity for a series that is strongly mean-reverting, and Johansen would find rank in a system of

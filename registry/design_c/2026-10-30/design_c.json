@@ -1,0 +1,3062 @@
+{
+  "schema_version": "0.1.0",
+  "stage": "8h",
+  "layer": "Design C: synthetic control with in-space and in-time placebos - an effect estimate only where its placebos support one",
+  "vintage": "2026-10-30",
+  "generated_at": "2026-10-30T12:16:54+0100",
+  "generator": {
+    "script": "analysis/R/11_design_c.R",
+    "git_sha": "51803ea"
+  },
+  "spec": {
+    "path": "analysis/specs/design_c.yml",
+    "md5": "47b0dd9a0cc68a73ac3913ff0f003414",
+    "stamp": "declared 2026-10-28, before any weight was fitted",
+    "estimator": "simplex-constrained least squares on the pre-treatment outcome path (quadprog), fixed objective",
+    "verdict_rule": "A window is `identified` only if **all three** hold: (1) its pre-fit ratio is at or below 0.10, the gate's own threshold, carried rather than re-decided; (2) the in-space rank p is at or below 0.05, i.e. the treated unit's post/pre RMSPE ratio is the largest among itself and the placebos; and (3) every in-time placebo that could be run returns a mean gap smaller in absolute value than **half** the estimated gap. Otherwise the window is `estimated_not_identified` and each failed check is named. A window the gate refused is `refused` with the gate's reason and no number. Report the gap and its placebos either way. Declared 2026-10-28, before any weight was fitted.",
+    "refusals": ["no standard error, confidence interval or p-value other than the rank p — a synthetic control has no sampling distribution", "no significance claim from the pre-fit ratio alone; the ratio is a fit diagnostic, and with 99 donors it is interpolation", "no per-president wording: windows are keyed by tenure id, and the artifact prints no surname"],
+    "not_claimed": ["This is not the effect of a president. It is the gap between Nigeria's path and a weighted combination of other countries' paths after a transition.", "The counterfactual is not observed. A low pre-fit ratio shows the donors can reproduce the pre-period, not that they would have reproduced the post-period without the transition.", "The donor pool is countries, not Nigerian states: it cannot hold constant anything Nigeria-specific — the oil cycle, the naira, the security environment.", "The windows overlap in their pre-periods and are not additive: a later window's counterfactual already contains the earlier tenures.", "The pre-fit gate does not discriminate on this pool: 99 donors and 8 to 16 pre-years make the fit underdetermined, so the placebos carry the verdict."]
+  },
+  "input": {
+    "database": "data/analytics.duckdb",
+    "donor_table": "main_analytics.fact_donor_panel",
+    "native_table": "main_analytics.fact_observation_native",
+    "outcome": "u5mr",
+    "treated_iso3": "NGA",
+    "donor_pool": {
+      "n": 99,
+      "artifact": "registry/donors/2026-10-18/panel.json"
+    },
+    "treated_series": "fact_observation_native, native_frequency = 'annual'",
+    "window_years": "1999-2024",
+    "pre_fit_threshold": 0.1
+  },
+  "counts": {
+    "windows": 5,
+    "estimated": 4,
+    "refused": 1,
+    "identified": 0,
+    "not_identified": 4,
+    "donors": 99,
+    "placebos_in_space": 396,
+    "placebos_in_time": 7,
+    "placebos_passing_pre_fit": 304,
+    "loo_fits": 396
+  },
+  "windows": [
+    {
+      "id": "obasanjo",
+      "status": "refused",
+      "refused": {
+        "reason": "gate_window_not_runnable",
+        "detail": "0 pre and 8 post years against the declared minima of 8 and 2 (the year belongs to the administration in office on 1 July)"
+      },
+      "pre_years": 0,
+      "post_years": 8
+    },
+    {
+      "id": "yaradua",
+      "status": "estimated_not_identified",
+      "first_year": 2007,
+      "last_year": 2009,
+      "pre_years": 8,
+      "post_years": 3,
+      "n_donors_used": 99,
+      "n_donors_with_weight": 8,
+      "path": [
+        {
+          "year": 2007,
+          "treated": 136.5,
+          "synthetic": 135.8518559,
+          "gap": 0.6481440559
+        },
+        {
+          "year": 2008,
+          "treated": 132.5,
+          "synthetic": 130.7860316,
+          "gap": 1.713968356
+        },
+        {
+          "year": 2009,
+          "treated": 129.2,
+          "synthetic": 125.2394404,
+          "gap": 3.960559584
+        }
+      ],
+      "pre_rmse": 0.02590140527,
+      "pre_sd": 15.18598978,
+      "pre_ratio": 0.001705611925,
+      "post_rmse": 2.519511227,
+      "post_pre_ratio": 97.27314794,
+      "mean_gap": 2.107557332,
+      "weights": [
+        {
+          "donor": "COD",
+          "weight": 0.008076299125
+        },
+        {
+          "donor": "GIN",
+          "weight": 0.1228520139
+        },
+        {
+          "donor": "LKA",
+          "weight": 0.002697932624
+        },
+        {
+          "donor": "LSO",
+          "weight": 0.06415415827
+        },
+        {
+          "donor": "NER",
+          "weight": 0.06951221913
+        },
+        {
+          "donor": "RWA",
+          "weight": 0.280796842
+        },
+        {
+          "donor": "SLE",
+          "weight": 0.05252102093
+        },
+        {
+          "donor": "SOM",
+          "weight": 0.3993895128
+        }
+      ],
+      "n_weights_published": 8,
+      "in_space": {
+        "n_placebos": 99,
+        "p_value": 0.5,
+        "n_at_least_as_extreme": 49,
+        "n_placebos_passing_pre_fit": 82,
+        "distribution": [
+          {
+            "donor": "AGO",
+            "pre_ratio": 0.0385659,
+            "post_pre_ratio": 9.23789,
+            "mean_gap": -8.77945
+          },
+          {
+            "donor": "ARE",
+            "pre_ratio": 0.173444,
+            "post_pre_ratio": 7.2924,
+            "mean_gap": -0.560019
+          },
+          {
+            "donor": "AZE",
+            "pre_ratio": 8.59491e-06,
+            "post_pre_ratio": 3974.52,
+            "mean_gap": -0.308819
+          },
+          {
+            "donor": "BDI",
+            "pre_ratio": 0.00167904,
+            "post_pre_ratio": 12.4097,
+            "mean_gap": -0.244223
+          },
+          {
+            "donor": "BEN",
+            "pre_ratio": 6.90025e-05,
+            "post_pre_ratio": 3534.39,
+            "mean_gap": 1.45472
+          },
+          {
+            "donor": "BFA",
+            "pre_ratio": 0.000466921,
+            "post_pre_ratio": 853.244,
+            "mean_gap": -2.41526
+          },
+          {
+            "donor": "BGD",
+            "pre_ratio": 4.23935e-05,
+            "post_pre_ratio": 1122.86,
+            "mean_gap": -0.495738
+          },
+          {
+            "donor": "BOL",
+            "pre_ratio": 3.6533e-05,
+            "post_pre_ratio": 858.162,
+            "mean_gap": -0.220872
+          },
+          {
+            "donor": "BRA",
+            "pre_ratio": 0.000688106,
+            "post_pre_ratio": 24.3476,
+            "mean_gap": -0.080362
+          },
+          {
+            "donor": "BRN",
+            "pre_ratio": 0.445703,
+            "post_pre_ratio": 4.0864,
+            "mean_gap": 0.706661
+          },
+          {
+            "donor": "BWA",
+            "pre_ratio": 0.0331084,
+            "post_pre_ratio": 15.3098,
+            "mean_gap": 2.36552
+          },
+          {
+            "donor": "CAF",
+            "pre_ratio": 0.00244109,
+            "post_pre_ratio": 9801.54,
+            "mean_gap": 118.992
+          },
+          {
+            "donor": "CIV",
+            "pre_ratio": 7.80258e-06,
+            "post_pre_ratio": 116616,
+            "mean_gap": -5.29057
+          },
+          {
+            "donor": "CMR",
+            "pre_ratio": 0.000149557,
+            "post_pre_ratio": 27147.1,
+            "mean_gap": -18.462
+          },
+          {
+            "donor": "COD",
+            "pre_ratio": 0.258328,
+            "post_pre_ratio": 0.971187,
+            "mean_gap": 5.51643
+          },
+          {
+            "donor": "COG",
+            "pre_ratio": 0.0430313,
+            "post_pre_ratio": 2.38226,
+            "mean_gap": -1.19368
+          },
+          {
+            "donor": "COL",
+            "pre_ratio": 0.00524039,
+            "post_pre_ratio": 33.0912,
+            "mean_gap": 0.265733
+          },
+          {
+            "donor": "CPV",
+            "pre_ratio": 0.161164,
+            "post_pre_ratio": 2.51182,
+            "mean_gap": 1.77331
+          },
+          {
+            "donor": "DJI",
+            "pre_ratio": 7.47095e-05,
+            "post_pre_ratio": 2200.97,
+            "mean_gap": 0.423386
+          },
+          {
+            "donor": "DOM",
+            "pre_ratio": 0.000479598,
+            "post_pre_ratio": 1545.33,
+            "mean_gap": 1.10283
+          },
+          {
+            "donor": "DZA",
+            "pre_ratio": 1.71243e-05,
+            "post_pre_ratio": 4092.12,
+            "mean_gap": 0.175623
+          },
+          {
+            "donor": "ECU",
+            "pre_ratio": 0.000557856,
+            "post_pre_ratio": 369.669,
+            "mean_gap": -0.584799
+          },
+          {
+            "donor": "EGY",
+            "pre_ratio": 9.23644e-05,
+            "post_pre_ratio": 471.177,
+            "mean_gap": -0.196913
+          },
+          {
+            "donor": "ERI",
+            "pre_ratio": 0.000384445,
+            "post_pre_ratio": 46.8734,
+            "mean_gap": 0.185879
+          },
+          {
+            "donor": "ETH",
+            "pre_ratio": 2.62643e-05,
+            "post_pre_ratio": 7094.96,
+            "mean_gap": -1.64402
+          },
+          {
+            "donor": "GAB",
+            "pre_ratio": 0.00225403,
+            "post_pre_ratio": 42.6635,
+            "mean_gap": -0.0480293
+          },
+          {
+            "donor": "GHA",
+            "pre_ratio": 7.94812e-05,
+            "post_pre_ratio": 1417.98,
+            "mean_gap": -0.898307
+          },
+          {
+            "donor": "GIN",
+            "pre_ratio": 0.00677998,
+            "post_pre_ratio": 25.5305,
+            "mean_gap": 2.14378
+          },
+          {
+            "donor": "GMB",
+            "pre_ratio": 0.00012305,
+            "post_pre_ratio": 477.89,
+            "mean_gap": 0.48312
+          },
+          {
+            "donor": "GNQ",
+            "pre_ratio": 0.000119357,
+            "post_pre_ratio": 630.764,
+            "mean_gap": 0.610738
+          },
+          {
+            "donor": "GTM",
+            "pre_ratio": 0.000144149,
+            "post_pre_ratio": 14966.5,
+            "mean_gap": -5.7917
+          },
+          {
+            "donor": "GUY",
+            "pre_ratio": 0.000214205,
+            "post_pre_ratio": 1852.17,
+            "mean_gap": 0.766817
+          },
+          {
+            "donor": "HND",
+            "pre_ratio": 0.000122229,
+            "post_pre_ratio": 357.973,
+            "mean_gap": -0.153163
+          },
+          {
+            "donor": "IDN",
+            "pre_ratio": 2.53401e-05,
+            "post_pre_ratio": 20149.5,
+            "mean_gap": -1.69611
+          },
+          {
+            "donor": "IND",
+            "pre_ratio": 0.000429016,
+            "post_pre_ratio": 127.863,
+            "mean_gap": 0.129798
+          },
+          {
+            "donor": "IRN",
+            "pre_ratio": 0.0028258,
+            "post_pre_ratio": 9.6822,
+            "mean_gap": -0.110121
+          },
+          {
+            "donor": "IRQ",
+            "pre_ratio": 3.65211e-05,
+            "post_pre_ratio": 4624.06,
+            "mean_gap": 0.120304
+          },
+          {
+            "donor": "JAM",
+            "pre_ratio": 0.0441908,
+            "post_pre_ratio": 18.3995,
+            "mean_gap": 0.457982
+          },
+          {
+            "donor": "JOR",
+            "pre_ratio": 0.00163615,
+            "post_pre_ratio": 58.4866,
+            "mean_gap": 0.135113
+          },
+          {
+            "donor": "KAZ",
+            "pre_ratio": 0.000616977,
+            "post_pre_ratio": 1014.89,
+            "mean_gap": -2.32711
+          },
+          {
+            "donor": "KEN",
+            "pre_ratio": 1.20004e-05,
+            "post_pre_ratio": 25853.6,
+            "mean_gap": -2.5629
+          },
+          {
+            "donor": "KGZ",
+            "pre_ratio": 0.00111336,
+            "post_pre_ratio": 244.199,
+            "mean_gap": -1.40126
+          },
+          {
+            "donor": "KHM",
+            "pre_ratio": 0.0241829,
+            "post_pre_ratio": 0.507363,
+            "mean_gap": -0.104761
+          },
+          {
+            "donor": "KWT",
+            "pre_ratio": 0.0119362,
+            "post_pre_ratio": 23.2794,
+            "mean_gap": 0.112956
+          },
+          {
+            "donor": "LAO",
+            "pre_ratio": 3.21802e-05,
+            "post_pre_ratio": 1354.98,
+            "mean_gap": -0.345236
+          },
+          {
+            "donor": "LBR",
+            "pre_ratio": 0.0123749,
+            "post_pre_ratio": 12.0509,
+            "mean_gap": 3.96786
+          },
+          {
+            "donor": "LBY",
+            "pre_ratio": 0.00626633,
+            "post_pre_ratio": 37.7951,
+            "mean_gap": -0.540771
+          },
+          {
+            "donor": "LKA",
+            "pre_ratio": 0.897658,
+            "post_pre_ratio": 1.06488,
+            "mean_gap": 0.798364
+          },
+          {
+            "donor": "LSO",
+            "pre_ratio": 0.346692,
+            "post_pre_ratio": 6.17188,
+            "mean_gap": 5.94282
+          },
+          {
+            "donor": "MAR",
+            "pre_ratio": 4.33154e-05,
+            "post_pre_ratio": 2687.97,
+            "mean_gap": -0.580174
+          },
+          {
+            "donor": "MDG",
+            "pre_ratio": 0.000608786,
+            "post_pre_ratio": 293.299,
+            "mean_gap": 1.38335
+          },
+          {
+            "donor": "MEX",
+            "pre_ratio": 0.000253359,
+            "post_pre_ratio": 89.1214,
+            "mean_gap": 0.0427242
+          },
+          {
+            "donor": "MLI",
+            "pre_ratio": 9.5628e-05,
+            "post_pre_ratio": 17253.3,
+            "mean_gap": -13.8699
+          },
+          {
+            "donor": "MMR",
+            "pre_ratio": 7.95609e-05,
+            "post_pre_ratio": 39450.6,
+            "mean_gap": 11.4489
+          },
+          {
+            "donor": "MNG",
+            "pre_ratio": 5.79366e-05,
+            "post_pre_ratio": 706.475,
+            "mean_gap": -0.406646
+          },
+          {
+            "donor": "MOZ",
+            "pre_ratio": 0.00462323,
+            "post_pre_ratio": 63.9466,
+            "mean_gap": -5.5465
+          },
+          {
+            "donor": "MRT",
+            "pre_ratio": 1.60589e-05,
+            "post_pre_ratio": 4107.58,
+            "mean_gap": 0.574075
+          },
+          {
+            "donor": "MWI",
+            "pre_ratio": 0.573484,
+            "post_pre_ratio": 0.24025,
+            "mean_gap": 6.0605
+          },
+          {
+            "donor": "MYS",
+            "pre_ratio": 1.08759,
+            "post_pre_ratio": 1.47926,
+            "mean_gap": -1.4
+          },
+          {
+            "donor": "NAM",
+            "pre_ratio": 0.000257004,
+            "post_pre_ratio": 3145.76,
+            "mean_gap": -3.08148
+          },
+          {
+            "donor": "NER",
+            "pre_ratio": 0.310909,
+            "post_pre_ratio": 1.13287,
+            "mean_gap": -9.53367
+          },
+          {
+            "donor": "NIC",
+            "pre_ratio": 0.000564103,
+            "post_pre_ratio": 60.1552,
+            "mean_gap": -0.10203
+          },
+          {
+            "donor": "NPL",
+            "pre_ratio": 5.81112e-05,
+            "post_pre_ratio": 399.015,
+            "mean_gap": -0.17644
+          },
+          {
+            "donor": "OMN",
+            "pre_ratio": 0.00807506,
+            "post_pre_ratio": 13.6858,
+            "mean_gap": 0.14533
+          },
+          {
+            "donor": "PAK",
+            "pre_ratio": 3.92718e-05,
+            "post_pre_ratio": 4423.13,
+            "mean_gap": 0.816598
+          },
+          {
+            "donor": "PER",
+            "pre_ratio": 0.000779043,
+            "post_pre_ratio": 19.5838,
+            "mean_gap": -0.082252
+          },
+          {
+            "donor": "PHL",
+            "pre_ratio": 7.87078e-05,
+            "post_pre_ratio": 5796.91,
+            "mean_gap": 0.747041
+          },
+          {
+            "donor": "PNG",
+            "pre_ratio": 8.37591e-05,
+            "post_pre_ratio": 8080.11,
+            "mean_gap": -1.22294
+          },
+          {
+            "donor": "PRY",
+            "pre_ratio": 0.000490759,
+            "post_pre_ratio": 4147.63,
+            "mean_gap": -2.17025
+          },
+          {
+            "donor": "QAT",
+            "pre_ratio": 0.0868621,
+            "post_pre_ratio": 1.99785,
+            "mean_gap": -0.169327
+          },
+          {
+            "donor": "ROU",
+            "pre_ratio": 0.0895638,
+            "post_pre_ratio": 11.669,
+            "mean_gap": -1.9202
+          },
+          {
+            "donor": "RWA",
+            "pre_ratio": 0.253989,
+            "post_pre_ratio": 2.21113,
+            "mean_gap": -21.4251
+          },
+          {
+            "donor": "SAU",
+            "pre_ratio": 0.0037365,
+            "post_pre_ratio": 20.8154,
+            "mean_gap": -0.187144
+          },
+          {
+            "donor": "SDN",
+            "pre_ratio": 0.469014,
+            "post_pre_ratio": 0.722802,
+            "mean_gap": -2.32641
+          },
+          {
+            "donor": "SEN",
+            "pre_ratio": 0.00569434,
+            "post_pre_ratio": 9.29449,
+            "mean_gap": -0.97124
+          },
+          {
+            "donor": "SLE",
+            "pre_ratio": 0.982435,
+            "post_pre_ratio": 1.73521,
+            "mean_gap": 24.8042
+          },
+          {
+            "donor": "SLV",
+            "pre_ratio": 0.00172557,
+            "post_pre_ratio": 19.6444,
+            "mean_gap": -0.123247
+          },
+          {
+            "donor": "SOM",
+            "pre_ratio": 35.1472,
+            "post_pre_ratio": 2.47866,
+            "mean_gap": 18.322
+          },
+          {
+            "donor": "SSD",
+            "pre_ratio": 7.89614e-06,
+            "post_pre_ratio": 33466.9,
+            "mean_gap": -3.65576
+          },
+          {
+            "donor": "SWZ",
+            "pre_ratio": 0.591865,
+            "post_pre_ratio": 1.57422,
+            "mean_gap": -3.96371
+          },
+          {
+            "donor": "SYR",
+            "pre_ratio": 0.00375372,
+            "post_pre_ratio": 65.4459,
+            "mean_gap": 0.299803
+          },
+          {
+            "donor": "TCD",
+            "pre_ratio": 0.00325141,
+            "post_pre_ratio": 832.973,
+            "mean_gap": -12.4959
+          },
+          {
+            "donor": "TGO",
+            "pre_ratio": 1.49992e-05,
+            "post_pre_ratio": 55032.5,
+            "mean_gap": -3.75007
+          },
+          {
+            "donor": "THA",
+            "pre_ratio": 0.00228419,
+            "post_pre_ratio": 13.2676,
+            "mean_gap": -0.0347407
+          },
+          {
+            "donor": "TJK",
+            "pre_ratio": 0.000967938,
+            "post_pre_ratio": 73.3622,
+            "mean_gap": 0.796848
+          },
+          {
+            "donor": "TLS",
+            "pre_ratio": 0.520634,
+            "post_pre_ratio": 0.483135,
+            "mean_gap": 9.39307
+          },
+          {
+            "donor": "TTO",
+            "pre_ratio": 0.00137347,
+            "post_pre_ratio": 711.709,
+            "mean_gap": 0.701237
+          },
+          {
+            "donor": "TUN",
+            "pre_ratio": 0.00116315,
+            "post_pre_ratio": 71.4462,
+            "mean_gap": 0.26258
+          },
+          {
+            "donor": "TUR",
+            "pre_ratio": 0.000939519,
+            "post_pre_ratio": 53.4506,
+            "mean_gap": -0.259732
+          },
+          {
+            "donor": "TZA",
+            "pre_ratio": 1.28834e-06,
+            "post_pre_ratio": 64797.7,
+            "mean_gap": -1.34089
+          },
+          {
+            "donor": "UGA",
+            "pre_ratio": 0.000340034,
+            "post_pre_ratio": 195.416,
+            "mean_gap": 0.785436
+          },
+          {
+            "donor": "UKR",
+            "pre_ratio": 0.00775069,
+            "post_pre_ratio": 33.2637,
+            "mean_gap": -0.421932
+          },
+          {
+            "donor": "UZB",
+            "pre_ratio": 6.0864e-05,
+            "post_pre_ratio": 2352.55,
+            "mean_gap": -0.957465
+          },
+          {
+            "donor": "VEN",
+            "pre_ratio": 0.000740852,
+            "post_pre_ratio": 580.843,
+            "mean_gap": 0.536345
+          },
+          {
+            "donor": "VNM",
+            "pre_ratio": 0.000727719,
+            "post_pre_ratio": 323.704,
+            "mean_gap": 0.457899
+          },
+          {
+            "donor": "YEM",
+            "pre_ratio": 1.26421e-05,
+            "post_pre_ratio": 27552.6,
+            "mean_gap": -2.36601
+          },
+          {
+            "donor": "ZAF",
+            "pre_ratio": 0.505252,
+            "post_pre_ratio": 4.20344,
+            "mean_gap": -8.21012
+          },
+          {
+            "donor": "ZMB",
+            "pre_ratio": 0.0111296,
+            "post_pre_ratio": 7.92796,
+            "mean_gap": 1.98974
+          },
+          {
+            "donor": "ZWE",
+            "pre_ratio": 0.138374,
+            "post_pre_ratio": 12.3684,
+            "mean_gap": 7.06402
+          }
+        ]
+      },
+      "in_time": [
+        {
+          "backdated_years": 3,
+          "status": "not_run",
+          "detail": "5 pre and 3 post years against the declared minima of 8 and 2"
+        },
+        {
+          "backdated_years": 5,
+          "status": "not_run",
+          "detail": "3 pre and 5 post years against the declared minima of 8 and 2"
+        },
+        {
+          "backdated_years": 7,
+          "status": "not_run",
+          "detail": "1 pre and 7 post years against the declared minima of 8 and 2"
+        }
+      ],
+      "solver_sensitivity": {
+        "ridge_relative": 0.0001,
+        "mean_gap": -2.595613202,
+        "pre_ratio": 0.01409186,
+        "p_value": 0.25,
+        "gap_shift": -4.703170535,
+        "n_weights_with_ridge": 24
+      },
+      "leave_one_out": {
+        "n_fits": 99,
+        "min": 0.1428748349,
+        "max": 2.443893095,
+        "n_sign_flips": 0
+      },
+      "verdict": {
+        "status": "estimated_not_identified",
+        "rule": "A window is `identified` only if **all three** hold: (1) its pre-fit ratio is at or below 0.10, the gate's own threshold, carried rather than re-decided; (2) the in-space rank p is at or below 0.05, i.e. the treated unit's post/pre RMSPE ratio is the largest among itself and the placebos; and (3) every in-time placebo that could be run returns a mean gap smaller in absolute value than **half** the estimated gap. Otherwise the window is `estimated_not_identified` and each failed check is named. A window the gate refused is `refused` with the gate's reason and no number. Report the gap and its placebos either way. Declared 2026-10-28, before any weight was fitted.",
+        "failed_checks": [
+          "the in-space rank p is 0.5000: 49 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio"
+        ]
+      },
+      "balance": [
+        {
+          "metric": "cpi_yoy",
+          "status": "not_balanced",
+          "detail": "0 years where every unit has data"
+        },
+        {
+          "metric": "gdp_growth",
+          "status": "not_balanced",
+          "detail": "0 years where every unit has data"
+        },
+        {
+          "metric": "oil_rents",
+          "status": "not_balanced",
+          "detail": "0 years where every unit has data"
+        },
+        {
+          "metric": "population",
+          "status": "balanced",
+          "n_years": 8,
+          "treated": 135639830,
+          "synthetic": 9148899.0999999996,
+          "donor_min": 342800.75,
+          "donor_max": 1106499700
+        }
+      ]
+    },
+    {
+      "id": "jonathan",
+      "status": "estimated_not_identified",
+      "first_year": 2010,
+      "last_year": 2014,
+      "pre_years": 11,
+      "post_years": 5,
+      "n_donors_used": 99,
+      "n_donors_with_weight": 10,
+      "path": [
+        {
+          "year": 2010,
+          "treated": 126.3,
+          "synthetic": 132.6535494,
+          "gap": -6.353549441
+        },
+        {
+          "year": 2011,
+          "treated": 123.8,
+          "synthetic": 181.2427484,
+          "gap": -57.4427484
+        },
+        {
+          "year": 2012,
+          "treated": 121.6,
+          "synthetic": 127.9642866,
+          "gap": -6.364286648
+        },
+        {
+          "year": 2013,
+          "treated": 119.9,
+          "synthetic": 114.1933182,
+          "gap": 5.706681785
+        },
+        {
+          "year": 2014,
+          "treated": 118.7,
+          "synthetic": 112.0386636,
+          "gap": 6.66133638
+        }
+      ],
+      "pre_rmse": 0.02652228988,
+      "pre_sd": 18.51417639,
+      "pre_ratio": 0.001432539548,
+      "post_rmse": 26.29631418,
+      "post_pre_ratio": 991.479782,
+      "mean_gap": -11.55851326,
+      "weights": [
+        {
+          "donor": "CAF",
+          "weight": 0.003211528428
+        },
+        {
+          "donor": "COD",
+          "weight": 0.01032385102
+        },
+        {
+          "donor": "GIN",
+          "weight": 0.3063126849
+        },
+        {
+          "donor": "LBR",
+          "weight": 0.09244083431
+        },
+        {
+          "donor": "MMR",
+          "weight": 0.01050619331
+        },
+        {
+          "donor": "NER",
+          "weight": 0.1377066111
+        },
+        {
+          "donor": "RWA",
+          "weight": 0.0880491254
+        },
+        {
+          "donor": "SOM",
+          "weight": 0.2885448346
+        },
+        {
+          "donor": "ZMB",
+          "weight": 0.02455395472
+        },
+        {
+          "donor": "ZWE",
+          "weight": 0.03835038358
+        }
+      ],
+      "n_weights_published": 10,
+      "in_space": {
+        "n_placebos": 99,
+        "p_value": 0.32,
+        "n_at_least_as_extreme": 31,
+        "n_placebos_passing_pre_fit": 79,
+        "distribution": [
+          {
+            "donor": "AGO",
+            "pre_ratio": 0.091223,
+            "post_pre_ratio": 3.5682,
+            "mean_gap": -11.268
+          },
+          {
+            "donor": "ARE",
+            "pre_ratio": 0.320867,
+            "post_pre_ratio": 5.40892,
+            "mean_gap": -1.05066
+          },
+          {
+            "donor": "AZE",
+            "pre_ratio": 9.22697e-06,
+            "post_pre_ratio": 8252.88,
+            "mean_gap": -0.65157
+          },
+          {
+            "donor": "BDI",
+            "pre_ratio": 0.00102247,
+            "post_pre_ratio": 82.9055,
+            "mean_gap": -1.16047
+          },
+          {
+            "donor": "BEN",
+            "pre_ratio": 0.000197443,
+            "post_pre_ratio": 6185.41,
+            "mean_gap": -3.30207
+          },
+          {
+            "donor": "BFA",
+            "pre_ratio": 0.000547367,
+            "post_pre_ratio": 1340.74,
+            "mean_gap": -5.3378
+          },
+          {
+            "donor": "BGD",
+            "pre_ratio": 5.05792e-05,
+            "post_pre_ratio": 2351.04,
+            "mean_gap": -0.964756
+          },
+          {
+            "donor": "BOL",
+            "pre_ratio": 6.83186e-05,
+            "post_pre_ratio": 562.168,
+            "mean_gap": -0.28079
+          },
+          {
+            "donor": "BRA",
+            "pre_ratio": 0.000632708,
+            "post_pre_ratio": 193.797,
+            "mean_gap": 0.698569
+          },
+          {
+            "donor": "BRN",
+            "pre_ratio": 0.903208,
+            "post_pre_ratio": 5.60254,
+            "mean_gap": 1.73435
+          },
+          {
+            "donor": "BWA",
+            "pre_ratio": 0.0291449,
+            "post_pre_ratio": 27.8987,
+            "mean_gap": 5.46022
+          },
+          {
+            "donor": "CAF",
+            "pre_ratio": 0.98697,
+            "post_pre_ratio": 1.1272,
+            "mean_gap": -59.66
+          },
+          {
+            "donor": "CIV",
+            "pre_ratio": 5.95065e-05,
+            "post_pre_ratio": 33685.1,
+            "mean_gap": -13.9327
+          },
+          {
+            "donor": "CMR",
+            "pre_ratio": 0.000210391,
+            "post_pre_ratio": 8378.68,
+            "mean_gap": -12.4922
+          },
+          {
+            "donor": "COD",
+            "pre_ratio": 0.182444,
+            "post_pre_ratio": 2.78047,
+            "mean_gap": 16.497
+          },
+          {
+            "donor": "COG",
+            "pre_ratio": 0.0282883,
+            "post_pre_ratio": 10.0514,
+            "mean_gap": 4.84216
+          },
+          {
+            "donor": "COL",
+            "pre_ratio": 0.00496021,
+            "post_pre_ratio": 27.8349,
+            "mean_gap": 0.126764
+          },
+          {
+            "donor": "CPV",
+            "pre_ratio": 0.182989,
+            "post_pre_ratio": 2.28364,
+            "mean_gap": 1.57576
+          },
+          {
+            "donor": "DJI",
+            "pre_ratio": 0.000203411,
+            "post_pre_ratio": 8297.56,
+            "mean_gap": -5.25487
+          },
+          {
+            "donor": "DOM",
+            "pre_ratio": 0.00390745,
+            "post_pre_ratio": 884.499,
+            "mean_gap": -1.87599
+          },
+          {
+            "donor": "DZA",
+            "pre_ratio": 1.18592e-05,
+            "post_pre_ratio": 6236.95,
+            "mean_gap": 0.348671
+          },
+          {
+            "donor": "ECU",
+            "pre_ratio": 0.000957255,
+            "post_pre_ratio": 163.119,
+            "mean_gap": -0.403512
+          },
+          {
+            "donor": "EGY",
+            "pre_ratio": 0.000150536,
+            "post_pre_ratio": 3398.77,
+            "mean_gap": -0.645741
+          },
+          {
+            "donor": "ERI",
+            "pre_ratio": 0.000351515,
+            "post_pre_ratio": 24.4198,
+            "mean_gap": -0.0471538
+          },
+          {
+            "donor": "ETH",
+            "pre_ratio": 3.52331e-05,
+            "post_pre_ratio": 2310.55,
+            "mean_gap": -1.20211
+          },
+          {
+            "donor": "GAB",
+            "pre_ratio": 0.00228401,
+            "post_pre_ratio": 1180.48,
+            "mean_gap": -9.82719
+          },
+          {
+            "donor": "GHA",
+            "pre_ratio": 0.000202566,
+            "post_pre_ratio": 8723.6,
+            "mean_gap": -12.12
+          },
+          {
+            "donor": "GIN",
+            "pre_ratio": 0.0134006,
+            "post_pre_ratio": 137.998,
+            "mean_gap": -9.87619
+          },
+          {
+            "donor": "GMB",
+            "pre_ratio": 0.000280289,
+            "post_pre_ratio": 1479.33,
+            "mean_gap": -3.90911
+          },
+          {
+            "donor": "GNQ",
+            "pre_ratio": 0.000142043,
+            "post_pre_ratio": 1630.77,
+            "mean_gap": 0.310913
+          },
+          {
+            "donor": "GTM",
+            "pre_ratio": 0.000167156,
+            "post_pre_ratio": 1339.69,
+            "mean_gap": -1.09332
+          },
+          {
+            "donor": "GUY",
+            "pre_ratio": 0.00056293,
+            "post_pre_ratio": 3059.37,
+            "mean_gap": -1.9174
+          },
+          {
+            "donor": "HND",
+            "pre_ratio": 0.000163654,
+            "post_pre_ratio": 821.741,
+            "mean_gap": 0.600059
+          },
+          {
+            "donor": "IDN",
+            "pre_ratio": 0.0548954,
+            "post_pre_ratio": 12.8995,
+            "mean_gap": 4.7587
+          },
+          {
+            "donor": "IND",
+            "pre_ratio": 0.000841069,
+            "post_pre_ratio": 963.064,
+            "mean_gap": -5.69649
+          },
+          {
+            "donor": "IRN",
+            "pre_ratio": 0.00202355,
+            "post_pre_ratio": 28.6391,
+            "mean_gap": 0.0308642
+          },
+          {
+            "donor": "IRQ",
+            "pre_ratio": 4.8314e-05,
+            "post_pre_ratio": 23228.9,
+            "mean_gap": -1.87161
+          },
+          {
+            "donor": "JAM",
+            "pre_ratio": 0.0705974,
+            "post_pre_ratio": 37.427,
+            "mean_gap": 1.79177
+          },
+          {
+            "donor": "JOR",
+            "pre_ratio": 0.00150693,
+            "post_pre_ratio": 344.617,
+            "mean_gap": -1.11602
+          },
+          {
+            "donor": "KAZ",
+            "pre_ratio": 0.00876191,
+            "post_pre_ratio": 42.5216,
+            "mean_gap": -2.34497
+          },
+          {
+            "donor": "KEN",
+            "pre_ratio": 0.00596912,
+            "post_pre_ratio": 67.8144,
+            "mean_gap": 5.76586
+          },
+          {
+            "donor": "KGZ",
+            "pre_ratio": 0.0103265,
+            "post_pre_ratio": 2.81074,
+            "mean_gap": -0.182909
+          },
+          {
+            "donor": "KHM",
+            "pre_ratio": 0.0183702,
+            "post_pre_ratio": 2.50462,
+            "mean_gap": -0.816357
+          },
+          {
+            "donor": "KWT",
+            "pre_ratio": 0.00900525,
+            "post_pre_ratio": 76.0039,
+            "mean_gap": -0.346476
+          },
+          {
+            "donor": "LAO",
+            "pre_ratio": 0.000204694,
+            "post_pre_ratio": 2431.49,
+            "mean_gap": -4.626
+          },
+          {
+            "donor": "LBR",
+            "pre_ratio": 0.0197961,
+            "post_pre_ratio": 5.76418,
+            "mean_gap": 3.81689
+          },
+          {
+            "donor": "LBY",
+            "pre_ratio": 0.00925818,
+            "post_pre_ratio": 47.282,
+            "mean_gap": 0.700226
+          },
+          {
+            "donor": "LKA",
+            "pre_ratio": 0.829917,
+            "post_pre_ratio": 0.735508,
+            "mean_gap": -2.90061
+          },
+          {
+            "donor": "LSO",
+            "pre_ratio": 0.580246,
+            "post_pre_ratio": 17.4793,
+            "mean_gap": -29.8556
+          },
+          {
+            "donor": "MAR",
+            "pre_ratio": 5.77261e-05,
+            "post_pre_ratio": 1692.16,
+            "mean_gap": -0.469888
+          },
+          {
+            "donor": "MDG",
+            "pre_ratio": 0.000693141,
+            "post_pre_ratio": 320.318,
+            "mean_gap": 2.40029
+          },
+          {
+            "donor": "MEX",
+            "pre_ratio": 0.00052815,
+            "post_pre_ratio": 386.417,
+            "mean_gap": 0.607616
+          },
+          {
+            "donor": "MLI",
+            "pre_ratio": 0.000128822,
+            "post_pre_ratio": 7427.58,
+            "mean_gap": -10.518
+          },
+          {
+            "donor": "MMR",
+            "pre_ratio": 0.79034,
+            "post_pre_ratio": 0.451024,
+            "mean_gap": -3.0463
+          },
+          {
+            "donor": "MNG",
+            "pre_ratio": 0.000444634,
+            "post_pre_ratio": 6.08887,
+            "mean_gap": 0.00980865
+          },
+          {
+            "donor": "MOZ",
+            "pre_ratio": 0.0126946,
+            "post_pre_ratio": 28.3447,
+            "mean_gap": -4.09409
+          },
+          {
+            "donor": "MRT",
+            "pre_ratio": 1.42572e-05,
+            "post_pre_ratio": 10143.7,
+            "mean_gap": 2.16874
+          },
+          {
+            "donor": "MWI",
+            "pre_ratio": 0.476163,
+            "post_pre_ratio": 0.138247,
+            "mean_gap": -1.21792
+          },
+          {
+            "donor": "MYS",
+            "pre_ratio": 1.32911,
+            "post_pre_ratio": 1.99579,
+            "mean_gap": -2.16
+          },
+          {
+            "donor": "NAM",
+            "pre_ratio": 0.0091187,
+            "post_pre_ratio": 95.9614,
+            "mean_gap": 6.9277
+          },
+          {
+            "donor": "NER",
+            "pre_ratio": 0.24032,
+            "post_pre_ratio": 0.782163,
+            "mean_gap": 4.73384
+          },
+          {
+            "donor": "NIC",
+            "pre_ratio": 0.000838952,
+            "post_pre_ratio": 223.955,
+            "mean_gap": -0.81548
+          },
+          {
+            "donor": "NPL",
+            "pre_ratio": 5.99813e-05,
+            "post_pre_ratio": 5716.66,
+            "mean_gap": -3.04539
+          },
+          {
+            "donor": "OMN",
+            "pre_ratio": 0.00768729,
+            "post_pre_ratio": 51.7297,
+            "mean_gap": 0.752103
+          },
+          {
+            "donor": "PAK",
+            "pre_ratio": 0.000101352,
+            "post_pre_ratio": 21658.7,
+            "mean_gap": -8.27706
+          },
+          {
+            "donor": "PER",
+            "pre_ratio": 0.000690101,
+            "post_pre_ratio": 126.551,
+            "mean_gap": 0.504459
+          },
+          {
+            "donor": "PHL",
+            "pre_ratio": 0.000577187,
+            "post_pre_ratio": 742.768,
+            "mean_gap": 0.727216
+          },
+          {
+            "donor": "PNG",
+            "pre_ratio": 7.95349e-05,
+            "post_pre_ratio": 22978.3,
+            "mean_gap": -2.80663
+          },
+          {
+            "donor": "PRY",
+            "pre_ratio": 0.00181764,
+            "post_pre_ratio": 1283.76,
+            "mean_gap": -3.44338
+          },
+          {
+            "donor": "QAT",
+            "pre_ratio": 0.0858177,
+            "post_pre_ratio": 1.87293,
+            "mean_gap": -0.17636
+          },
+          {
+            "donor": "ROU",
+            "pre_ratio": 0.171521,
+            "post_pre_ratio": 2.196,
+            "mean_gap": -1.06778
+          },
+          {
+            "donor": "RWA",
+            "pre_ratio": 0.263356,
+            "post_pre_ratio": 1.0738,
+            "mean_gap": -12.689
+          },
+          {
+            "donor": "SAU",
+            "pre_ratio": 0.00662069,
+            "post_pre_ratio": 19.8973,
+            "mean_gap": -0.427973
+          },
+          {
+            "donor": "SDN",
+            "pre_ratio": 0.262835,
+            "post_pre_ratio": 5.01447,
+            "mean_gap": 13.668
+          },
+          {
+            "donor": "SEN",
+            "pre_ratio": 0.00527269,
+            "post_pre_ratio": 8.71229,
+            "mean_gap": 1.07842
+          },
+          {
+            "donor": "SLE",
+            "pre_ratio": 0.816171,
+            "post_pre_ratio": 0.581576,
+            "mean_gap": 4.6794
+          },
+          {
+            "donor": "SLV",
+            "pre_ratio": 0.00135318,
+            "post_pre_ratio": 47.3097,
+            "mean_gap": -0.273002
+          },
+          {
+            "donor": "SOM",
+            "pre_ratio": 2.40608,
+            "post_pre_ratio": 11.9078,
+            "mean_gap": 63.8014
+          },
+          {
+            "donor": "SSD",
+            "pre_ratio": 1.24457e-05,
+            "post_pre_ratio": 135667,
+            "mean_gap": 11.1103
+          },
+          {
+            "donor": "SWZ",
+            "pre_ratio": 0.310361,
+            "post_pre_ratio": 10.1171,
+            "mean_gap": -22.9194
+          },
+          {
+            "donor": "SYR",
+            "pre_ratio": 0.00335086,
+            "post_pre_ratio": 2433.61,
+            "mean_gap": 12.1995
+          },
+          {
+            "donor": "TCD",
+            "pre_ratio": 0.00337017,
+            "post_pre_ratio": 1103.11,
+            "mean_gap": -21.4684
+          },
+          {
+            "donor": "TGO",
+            "pre_ratio": 4.18929e-05,
+            "post_pre_ratio": 14263.2,
+            "mean_gap": -3.72627
+          },
+          {
+            "donor": "THA",
+            "pre_ratio": 0.00299649,
+            "post_pre_ratio": 58.1201,
+            "mean_gap": -0.429791
+          },
+          {
+            "donor": "TJK",
+            "pre_ratio": 0.00082926,
+            "post_pre_ratio": 195.755,
+            "mean_gap": 2.43367
+          },
+          {
+            "donor": "TLS",
+            "pre_ratio": 0.48669,
+            "post_pre_ratio": 0.473152,
+            "mean_gap": 8.07494
+          },
+          {
+            "donor": "TTO",
+            "pre_ratio": 0.00976994,
+            "post_pre_ratio": 183.06,
+            "mean_gap": -0.512187
+          },
+          {
+            "donor": "TUN",
+            "pre_ratio": 0.00127414,
+            "post_pre_ratio": 265.72,
+            "mean_gap": 1.28921
+          },
+          {
+            "donor": "TUR",
+            "pre_ratio": 0.00182567,
+            "post_pre_ratio": 4.52502,
+            "mean_gap": -0.0393272
+          },
+          {
+            "donor": "TZA",
+            "pre_ratio": 1.69519e-05,
+            "post_pre_ratio": 7333.65,
+            "mean_gap": -1.35868
+          },
+          {
+            "donor": "UGA",
+            "pre_ratio": 0.00040359,
+            "post_pre_ratio": 121.747,
+            "mean_gap": -0.863109
+          },
+          {
+            "donor": "UKR",
+            "pre_ratio": 0.0108435,
+            "post_pre_ratio": 11.2076,
+            "mean_gap": -0.253861
+          },
+          {
+            "donor": "UZB",
+            "pre_ratio": 0.00165958,
+            "post_pre_ratio": 103.932,
+            "mean_gap": -1.55489
+          },
+          {
+            "donor": "VEN",
+            "pre_ratio": 0.00127358,
+            "post_pre_ratio": 880.194,
+            "mean_gap": 1.96529
+          },
+          {
+            "donor": "VNM",
+            "pre_ratio": 0.00114521,
+            "post_pre_ratio": 315.116,
+            "mean_gap": 0.936427
+          },
+          {
+            "donor": "YEM",
+            "pre_ratio": 1.35549e-05,
+            "post_pre_ratio": 4856.03,
+            "mean_gap": 0.471467
+          },
+          {
+            "donor": "ZAF",
+            "pre_ratio": 0.442021,
+            "post_pre_ratio": 1.01478,
+            "mean_gap": -2.93999
+          },
+          {
+            "donor": "ZMB",
+            "pre_ratio": 0.0130138,
+            "post_pre_ratio": 2.72558,
+            "mean_gap": -0.37426
+          },
+          {
+            "donor": "ZWE",
+            "pre_ratio": 0.280301,
+            "post_pre_ratio": 32.0733,
+            "mean_gap": -24.8823
+          }
+        ]
+      },
+      "in_time": [
+        {
+          "backdated_years": 3,
+          "status": "estimated",
+          "pre_years": 8,
+          "post_years": 3,
+          "mean_gap": 2.1075573321,
+          "ratio_to_estimated": 0.18233809867
+        },
+        {
+          "backdated_years": 5,
+          "status": "not_run",
+          "detail": "6 pre and 5 post years against the declared minima of 8 and 2"
+        },
+        {
+          "backdated_years": 7,
+          "status": "not_run",
+          "detail": "4 pre and 7 post years against the declared minima of 8 and 2"
+        }
+      ],
+      "solver_sensitivity": {
+        "ridge_relative": 0.0001,
+        "mean_gap": -0.370934959,
+        "pre_ratio": 0.01313499065,
+        "p_value": 0.19,
+        "gap_shift": 11.18757831,
+        "n_weights_with_ridge": 23
+      },
+      "leave_one_out": {
+        "n_fits": 99,
+        "min": -13.11320045,
+        "max": 1.283154582,
+        "n_sign_flips": 1
+      },
+      "verdict": {
+        "status": "estimated_not_identified",
+        "rule": "A window is `identified` only if **all three** hold: (1) its pre-fit ratio is at or below 0.10, the gate's own threshold, carried rather than re-decided; (2) the in-space rank p is at or below 0.05, i.e. the treated unit's post/pre RMSPE ratio is the largest among itself and the placebos; and (3) every in-time placebo that could be run returns a mean gap smaller in absolute value than **half** the estimated gap. Otherwise the window is `estimated_not_identified` and each failed check is named. A window the gate refused is `refused` with the gate's reason and no number. Report the gap and its placebos either way. Declared 2026-10-28, before any weight was fitted.",
+        "failed_checks": [
+          "the in-space rank p is 0.3200: 31 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio"
+        ]
+      },
+      "balance": [
+        {
+          "metric": "cpi_yoy",
+          "status": "not_balanced",
+          "detail": "0 years where every unit has data"
+        },
+        {
+          "metric": "gdp_growth",
+          "status": "not_balanced",
+          "detail": "0 years where every unit has data"
+        },
+        {
+          "metric": "oil_rents",
+          "status": "not_balanced",
+          "detail": "0 years where every unit has data"
+        },
+        {
+          "metric": "population",
+          "status": "balanced",
+          "n_years": 11,
+          "treated": 141639130,
+          "synthetic": 10538863,
+          "donor_min": 352365.82,
+          "donor_max": 1134193500
+        }
+      ]
+    },
+    {
+      "id": "buhari",
+      "status": "estimated_not_identified",
+      "first_year": 2015,
+      "last_year": 2022,
+      "pre_years": 16,
+      "post_years": 8,
+      "n_donors_used": 99,
+      "n_donors_with_weight": 8,
+      "path": [
+        {
+          "year": 2015,
+          "treated": 117.8,
+          "synthetic": 117.2348133,
+          "gap": 0.5651866829
+        },
+        {
+          "year": 2016,
+          "treated": 117.4,
+          "synthetic": 115.1390479,
+          "gap": 2.260952052
+        },
+        {
+          "year": 2017,
+          "treated": 117.2,
+          "synthetic": 113.2954542,
+          "gap": 3.904545817
+        },
+        {
+          "year": 2018,
+          "treated": 117.2,
+          "synthetic": 109.9816363,
+          "gap": 7.218363708
+        },
+        {
+          "year": 2019,
+          "treated": 117.4,
+          "synthetic": 107.4363537,
+          "gap": 9.963646294
+        },
+        {
+          "year": 2020,
+          "treated": 117.4,
+          "synthetic": 105.0409386,
+          "gap": 12.35906135
+        },
+        {
+          "year": 2021,
+          "treated": 117.6,
+          "synthetic": 102.6112431,
+          "gap": 14.98875695
+        },
+        {
+          "year": 2022,
+          "treated": 117.5,
+          "synthetic": 100.0551965,
+          "gap": 17.44480349
+        }
+      ],
+      "pre_rmse": 0.0889042632,
+      "pre_sd": 21.40502959,
+      "pre_ratio": 0.004153428653,
+      "post_rmse": 10.33069602,
+      "post_pre_ratio": 116.2002321,
+      "mean_gap": 8.588164544,
+      "weights": [
+        {
+          "donor": "CAF",
+          "weight": 7.229544513e-05
+        },
+        {
+          "donor": "DOM",
+          "weight": 0.007332812565
+        },
+        {
+          "donor": "GIN",
+          "weight": 0.5607260955
+        },
+        {
+          "donor": "NER",
+          "weight": 0.2051636073
+        },
+        {
+          "donor": "SSD",
+          "weight": 0.007592251344
+        },
+        {
+          "donor": "SYR",
+          "weight": 0.02236258678
+        },
+        {
+          "donor": "TCD",
+          "weight": 0.1913245882
+        },
+        {
+          "donor": "ZAF",
+          "weight": 0.005425763401
+        }
+      ],
+      "n_weights_published": 8,
+      "in_space": {
+        "n_placebos": 99,
+        "p_value": 0.17,
+        "n_at_least_as_extreme": 16,
+        "n_placebos_passing_pre_fit": 73,
+        "distribution": [
+          {
+            "donor": "AGO",
+            "pre_ratio": 0.102101,
+            "post_pre_ratio": 0.915552,
+            "mean_gap": -3.80607
+          },
+          {
+            "donor": "ARE",
+            "pre_ratio": 0.294763,
+            "post_pre_ratio": 6.15076,
+            "mean_gap": -1.58716
+          },
+          {
+            "donor": "AZE",
+            "pre_ratio": 4.64692e-05,
+            "post_pre_ratio": 1264.9,
+            "mean_gap": -0.7101
+          },
+          {
+            "donor": "BDI",
+            "pre_ratio": 0.0114998,
+            "post_pre_ratio": 13.8684,
+            "mean_gap": -4.34692
+          },
+          {
+            "donor": "BEN",
+            "pre_ratio": 0.00531082,
+            "post_pre_ratio": 2.986,
+            "mean_gap": 0.00149457
+          },
+          {
+            "donor": "BFA",
+            "pre_ratio": 0.00946907,
+            "post_pre_ratio": 6.63714,
+            "mean_gap": -1.48378
+          },
+          {
+            "donor": "BGD",
+            "pre_ratio": 4.67016e-05,
+            "post_pre_ratio": 822.607,
+            "mean_gap": -0.522022
+          },
+          {
+            "donor": "BOL",
+            "pre_ratio": 0.000322146,
+            "post_pre_ratio": 386.687,
+            "mean_gap": -1.51777
+          },
+          {
+            "donor": "BRA",
+            "pre_ratio": 0.000734336,
+            "post_pre_ratio": 73.221,
+            "mean_gap": 0.164775
+          },
+          {
+            "donor": "BRN",
+            "pre_ratio": 1.30252,
+            "post_pre_ratio": 1.49561,
+            "mean_gap": 0.695214
+          },
+          {
+            "donor": "BWA",
+            "pre_ratio": 0.038529,
+            "post_pre_ratio": 10.4462,
+            "mean_gap": -3.97086
+          },
+          {
+            "donor": "CAF",
+            "pre_ratio": 1.00712,
+            "post_pre_ratio": 1.45917,
+            "mean_gap": 71.2
+          },
+          {
+            "donor": "CIV",
+            "pre_ratio": 0.0040152,
+            "post_pre_ratio": 18.8493,
+            "mean_gap": 1.2094
+          },
+          {
+            "donor": "CMR",
+            "pre_ratio": 0.0148623,
+            "post_pre_ratio": 15.8245,
+            "mean_gap": -3.81511
+          },
+          {
+            "donor": "COD",
+            "pre_ratio": 0.15458,
+            "post_pre_ratio": 1.47715,
+            "mean_gap": 7.16445
+          },
+          {
+            "donor": "COG",
+            "pre_ratio": 0.0247111,
+            "post_pre_ratio": 4.54715,
+            "mean_gap": -1.39556
+          },
+          {
+            "donor": "COL",
+            "pre_ratio": 0.00425852,
+            "post_pre_ratio": 22.5102,
+            "mean_gap": -0.241118
+          },
+          {
+            "donor": "CPV",
+            "pre_ratio": 0.159576,
+            "post_pre_ratio": 7.98281,
+            "mean_gap": -5.65514
+          },
+          {
+            "donor": "DJI",
+            "pre_ratio": 0.000829142,
+            "post_pre_ratio": 72.3556,
+            "mean_gap": -0.541866
+          },
+          {
+            "donor": "DOM",
+            "pre_ratio": 0.126839,
+            "post_pre_ratio": 11.16,
+            "mean_gap": 2.15188
+          },
+          {
+            "donor": "DZA",
+            "pre_ratio": 6.83141e-05,
+            "post_pre_ratio": 2353.94,
+            "mean_gap": 0.716335
+          },
+          {
+            "donor": "ECU",
+            "pre_ratio": 0.000745248,
+            "post_pre_ratio": 251.371,
+            "mean_gap": 0.780212
+          },
+          {
+            "donor": "EGY",
+            "pre_ratio": 0.000336808,
+            "post_pre_ratio": 387.052,
+            "mean_gap": 0.8581
+          },
+          {
+            "donor": "ERI",
+            "pre_ratio": 0.000301133,
+            "post_pre_ratio": 244.997,
+            "mean_gap": -1.02535
+          },
+          {
+            "donor": "ETH",
+            "pre_ratio": 0.000910246,
+            "post_pre_ratio": 383.964,
+            "mean_gap": 3.32706
+          },
+          {
+            "donor": "GAB",
+            "pre_ratio": 0.00399548,
+            "post_pre_ratio": 7.09571,
+            "mean_gap": 0.089311
+          },
+          {
+            "donor": "GHA",
+            "pre_ratio": 0.00104215,
+            "post_pre_ratio": 30.8394,
+            "mean_gap": 0.382308
+          },
+          {
+            "donor": "GIN",
+            "pre_ratio": 0.0854481,
+            "post_pre_ratio": 3.14259,
+            "mean_gap": 3.27587
+          },
+          {
+            "donor": "GMB",
+            "pre_ratio": 0.000289485,
+            "post_pre_ratio": 260.618,
+            "mean_gap": -0.685635
+          },
+          {
+            "donor": "GNQ",
+            "pre_ratio": 0.000271914,
+            "post_pre_ratio": 196.364,
+            "mean_gap": -0.921667
+          },
+          {
+            "donor": "GTM",
+            "pre_ratio": 0.000145414,
+            "post_pre_ratio": 215.449,
+            "mean_gap": 0.151169
+          },
+          {
+            "donor": "GUY",
+            "pre_ratio": 0.00468856,
+            "post_pre_ratio": 24.1204,
+            "mean_gap": -0.433848
+          },
+          {
+            "donor": "HND",
+            "pre_ratio": 0.000274867,
+            "post_pre_ratio": 103.915,
+            "mean_gap": -0.108603
+          },
+          {
+            "donor": "IDN",
+            "pre_ratio": 0.0598188,
+            "post_pre_ratio": 2.35156,
+            "mean_gap": -1.0124
+          },
+          {
+            "donor": "IND",
+            "pre_ratio": 0.00122856,
+            "post_pre_ratio": 121.142,
+            "mean_gap": -1.95127
+          },
+          {
+            "donor": "IRN",
+            "pre_ratio": 0.00163452,
+            "post_pre_ratio": 16.1883,
+            "mean_gap": 0.141372
+          },
+          {
+            "donor": "IRQ",
+            "pre_ratio": 0.00253319,
+            "post_pre_ratio": 31.9637,
+            "mean_gap": -0.274267
+          },
+          {
+            "donor": "JAM",
+            "pre_ratio": 0.217241,
+            "post_pre_ratio": 5.44074,
+            "mean_gap": 0.594422
+          },
+          {
+            "donor": "JOR",
+            "pre_ratio": 0.00111961,
+            "post_pre_ratio": 67.2707,
+            "mean_gap": -0.215171
+          },
+          {
+            "donor": "KAZ",
+            "pre_ratio": 0.0931027,
+            "post_pre_ratio": 1.87282,
+            "mean_gap": -1.61003
+          },
+          {
+            "donor": "KEN",
+            "pre_ratio": 0.0107252,
+            "post_pre_ratio": 7.01675,
+            "mean_gap": 0.687596
+          },
+          {
+            "donor": "KGZ",
+            "pre_ratio": 0.00710582,
+            "post_pre_ratio": 3.01096,
+            "mean_gap": -0.151562
+          },
+          {
+            "donor": "KHM",
+            "pre_ratio": 0.0164015,
+            "post_pre_ratio": 9.92924,
+            "mean_gap": -3.92264
+          },
+          {
+            "donor": "KWT",
+            "pre_ratio": 0.0328052,
+            "post_pre_ratio": 29.7642,
+            "mean_gap": 0.947746
+          },
+          {
+            "donor": "LAO",
+            "pre_ratio": 0.000827514,
+            "post_pre_ratio": 76.3765,
+            "mean_gap": -0.946925
+          },
+          {
+            "donor": "LBR",
+            "pre_ratio": 0.0290766,
+            "post_pre_ratio": 3.24343,
+            "mean_gap": -0.0280604
+          },
+          {
+            "donor": "LBY",
+            "pre_ratio": 0.0555596,
+            "post_pre_ratio": 3.70036,
+            "mean_gap": 0.880442
+          },
+          {
+            "donor": "LKA",
+            "pre_ratio": 0.712086,
+            "post_pre_ratio": 0.904934,
+            "mean_gap": -2.64919
+          },
+          {
+            "donor": "LSO",
+            "pre_ratio": 0.33742,
+            "post_pre_ratio": 0.464451,
+            "mean_gap": 0.117532
+          },
+          {
+            "donor": "MAR",
+            "pre_ratio": 0.00128336,
+            "post_pre_ratio": 25.1088,
+            "mean_gap": -0.277409
+          },
+          {
+            "donor": "MDG",
+            "pre_ratio": 0.00306822,
+            "post_pre_ratio": 79.0401,
+            "mean_gap": 2.52687
+          },
+          {
+            "donor": "MEX",
+            "pre_ratio": 0.00286159,
+            "post_pre_ratio": 15.182,
+            "mean_gap": 0.152004
+          },
+          {
+            "donor": "MLI",
+            "pre_ratio": 0.0160786,
+            "post_pre_ratio": 13.1307,
+            "mean_gap": -4.99988
+          },
+          {
+            "donor": "MMR",
+            "pre_ratio": 0.472763,
+            "post_pre_ratio": 0.254045,
+            "mean_gap": -1.4214
+          },
+          {
+            "donor": "MNG",
+            "pre_ratio": 0.000342961,
+            "post_pre_ratio": 251.286,
+            "mean_gap": -1.10097
+          },
+          {
+            "donor": "MOZ",
+            "pre_ratio": 0.01752,
+            "post_pre_ratio": 2.57541,
+            "mean_gap": 0.440141
+          },
+          {
+            "donor": "MRT",
+            "pre_ratio": 0.003713,
+            "post_pre_ratio": 22.8997,
+            "mean_gap": -1.36571
+          },
+          {
+            "donor": "MWI",
+            "pre_ratio": 0.376739,
+            "post_pre_ratio": 0.208413,
+            "mean_gap": -3.82829
+          },
+          {
+            "donor": "MYS",
+            "pre_ratio": 1.36329,
+            "post_pre_ratio": 1.72866,
+            "mean_gap": 1.63005
+          },
+          {
+            "donor": "NAM",
+            "pre_ratio": 0.0415965,
+            "post_pre_ratio": 7.07913,
+            "mean_gap": 3.30398
+          },
+          {
+            "donor": "NER",
+            "pre_ratio": 0.19553,
+            "post_pre_ratio": 2.93684,
+            "mean_gap": 20.6771
+          },
+          {
+            "donor": "NIC",
+            "pre_ratio": 0.00137397,
+            "post_pre_ratio": 53.2502,
+            "mean_gap": 0.106116
+          },
+          {
+            "donor": "NPL",
+            "pre_ratio": 0.000250944,
+            "post_pre_ratio": 431.894,
+            "mean_gap": -1.04716
+          },
+          {
+            "donor": "OMN",
+            "pre_ratio": 0.0130458,
+            "post_pre_ratio": 4.93546,
+            "mean_gap": 0.101591
+          },
+          {
+            "donor": "PAK",
+            "pre_ratio": 0.00650374,
+            "post_pre_ratio": 10.3458,
+            "mean_gap": -0.658748
+          },
+          {
+            "donor": "PER",
+            "pre_ratio": 0.00117442,
+            "post_pre_ratio": 47.3076,
+            "mean_gap": 0.361696
+          },
+          {
+            "donor": "PHL",
+            "pre_ratio": 0.00126947,
+            "post_pre_ratio": 353.815,
+            "mean_gap": 1.07266
+          },
+          {
+            "donor": "PNG",
+            "pre_ratio": 0.00580711,
+            "post_pre_ratio": 54.517,
+            "mean_gap": -0.0252013
+          },
+          {
+            "donor": "PRY",
+            "pre_ratio": 0.00271001,
+            "post_pre_ratio": 62.5546,
+            "mean_gap": -0.585449
+          },
+          {
+            "donor": "QAT",
+            "pre_ratio": 0.0703428,
+            "post_pre_ratio": 3.65541,
+            "mean_gap": -0.370461
+          },
+          {
+            "donor": "ROU",
+            "pre_ratio": 0.118562,
+            "post_pre_ratio": 1.60104,
+            "mean_gap": -0.787852
+          },
+          {
+            "donor": "RWA",
+            "pre_ratio": 0.232122,
+            "post_pre_ratio": 0.485431,
+            "mean_gap": -5.57613
+          },
+          {
+            "donor": "SAU",
+            "pre_ratio": 0.0496115,
+            "post_pre_ratio": 3.7733,
+            "mean_gap": -0.781301
+          },
+          {
+            "donor": "SDN",
+            "pre_ratio": 0.203353,
+            "post_pre_ratio": 0.653937,
+            "mean_gap": -1.8189
+          },
+          {
+            "donor": "SEN",
+            "pre_ratio": 0.00711204,
+            "post_pre_ratio": 5.93701,
+            "mean_gap": -0.476376
+          },
+          {
+            "donor": "SLE",
+            "pre_ratio": 0.488568,
+            "post_pre_ratio": 1.13606,
+            "mean_gap": -12.3385
+          },
+          {
+            "donor": "SLV",
+            "pre_ratio": 0.00165511,
+            "post_pre_ratio": 55.942,
+            "mean_gap": -0.455924
+          },
+          {
+            "donor": "SOM",
+            "pre_ratio": 1.14574,
+            "post_pre_ratio": 0.364851,
+            "mean_gap": 15.3815
+          },
+          {
+            "donor": "SSD",
+            "pre_ratio": 0.603005,
+            "post_pre_ratio": 5.26646,
+            "mean_gap": 61.5278
+          },
+          {
+            "donor": "SWZ",
+            "pre_ratio": 0.208492,
+            "post_pre_ratio": 1.09487,
+            "mean_gap": -4.8326
+          },
+          {
+            "donor": "SYR",
+            "pre_ratio": 0.984818,
+            "post_pre_ratio": 1.27677,
+            "mean_gap": 5.40049
+          },
+          {
+            "donor": "TCD",
+            "pre_ratio": 0.295413,
+            "post_pre_ratio": 1.76573,
+            "mean_gap": 8.31419
+          },
+          {
+            "donor": "TGO",
+            "pre_ratio": 0.000621746,
+            "post_pre_ratio": 72.2798,
+            "mean_gap": -0.556845
+          },
+          {
+            "donor": "THA",
+            "pre_ratio": 0.00350327,
+            "post_pre_ratio": 25.7433,
+            "mean_gap": -0.253923
+          },
+          {
+            "donor": "TJK",
+            "pre_ratio": 0.00833744,
+            "post_pre_ratio": 16.4816,
+            "mean_gap": 1.90781
+          },
+          {
+            "donor": "TLS",
+            "pre_ratio": 0.432783,
+            "post_pre_ratio": 0.154483,
+            "mean_gap": 2.16603
+          },
+          {
+            "donor": "TTO",
+            "pre_ratio": 0.0286145,
+            "post_pre_ratio": 9.53937,
+            "mean_gap": -0.479024
+          },
+          {
+            "donor": "TUN",
+            "pre_ratio": 0.00438867,
+            "post_pre_ratio": 82.9654,
+            "mean_gap": -1.24073
+          },
+          {
+            "donor": "TUR",
+            "pre_ratio": 0.00155995,
+            "post_pre_ratio": 16.4467,
+            "mean_gap": -0.179323
+          },
+          {
+            "donor": "TZA",
+            "pre_ratio": 0.000352909,
+            "post_pre_ratio": 99.193,
+            "mean_gap": -0.297735
+          },
+          {
+            "donor": "UGA",
+            "pre_ratio": 0.00248706,
+            "post_pre_ratio": 13.225,
+            "mean_gap": 0.622809
+          },
+          {
+            "donor": "UKR",
+            "pre_ratio": 0.0100423,
+            "post_pre_ratio": 18.6383,
+            "mean_gap": 0.466298
+          },
+          {
+            "donor": "UZB",
+            "pre_ratio": 0.0090349,
+            "post_pre_ratio": 14.8763,
+            "mean_gap": -1.7188
+          },
+          {
+            "donor": "VEN",
+            "pre_ratio": 0.0460552,
+            "post_pre_ratio": 85.5678,
+            "mean_gap": 6.25777
+          },
+          {
+            "donor": "VNM",
+            "pre_ratio": 0.0031727,
+            "post_pre_ratio": 62.2545,
+            "mean_gap": -0.50584
+          },
+          {
+            "donor": "YEM",
+            "pre_ratio": 0.00014391,
+            "post_pre_ratio": 1881.52,
+            "mean_gap": 4.01574
+          },
+          {
+            "donor": "ZAF",
+            "pre_ratio": 0.20107,
+            "post_pre_ratio": 0.378762,
+            "mean_gap": 0.106048
+          },
+          {
+            "donor": "ZMB",
+            "pre_ratio": 0.0155874,
+            "post_pre_ratio": 4.70642,
+            "mean_gap": -2.17464
+          },
+          {
+            "donor": "ZWE",
+            "pre_ratio": 0.228139,
+            "post_pre_ratio": 2.16134,
+            "mean_gap": 4.00378
+          }
+        ]
+      },
+      "in_time": [
+        {
+          "backdated_years": 3,
+          "status": "estimated",
+          "pre_years": 13,
+          "post_years": 3,
+          "mean_gap": 0.97405308195,
+          "ratio_to_estimated": 0.11341807402
+        },
+        {
+          "backdated_years": 5,
+          "status": "estimated",
+          "pre_years": 11,
+          "post_years": 5,
+          "mean_gap": -11.5585132645,
+          "ratio_to_estimated": 1.3458653715
+        },
+        {
+          "backdated_years": 7,
+          "status": "estimated",
+          "pre_years": 9,
+          "post_years": 7,
+          "mean_gap": -7.843010005,
+          "ratio_to_estimated": 0.91323471563
+        }
+      ],
+      "solver_sensitivity": {
+        "ridge_relative": 0.0001,
+        "mean_gap": 9.375701467,
+        "pre_ratio": 0.01788849656,
+        "p_value": 0.05,
+        "gap_shift": 0.7875369229,
+        "n_weights_with_ridge": 10
+      },
+      "leave_one_out": {
+        "n_fits": 99,
+        "min": 8.405292669,
+        "max": 10.64889374,
+        "n_sign_flips": 0
+      },
+      "verdict": {
+        "status": "estimated_not_identified",
+        "rule": "A window is `identified` only if **all three** hold: (1) its pre-fit ratio is at or below 0.10, the gate's own threshold, carried rather than re-decided; (2) the in-space rank p is at or below 0.05, i.e. the treated unit's post/pre RMSPE ratio is the largest among itself and the placebos; and (3) every in-time placebo that could be run returns a mean gap smaller in absolute value than **half** the estimated gap. Otherwise the window is `estimated_not_identified` and each failed check is named. A window the gate refused is `refused` with the gate's reason and no number. Report the gap and its placebos either way. Declared 2026-10-28, before any weight was fitted.",
+        "failed_checks": [
+          "the in-space rank p is 0.1700: 16 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio",
+          "an in-time placebo returns a gap at least half the size of the estimated gap"
+        ]
+      },
+      "balance": [
+        {
+          "metric": "cpi_yoy",
+          "status": "not_balanced",
+          "detail": "0 years where every unit has data"
+        },
+        {
+          "metric": "gdp_growth",
+          "status": "not_balanced",
+          "detail": "0 years where every unit has data"
+        },
+        {
+          "metric": "oil_rents",
+          "status": "not_balanced",
+          "detail": "0 years where every unit has data"
+        },
+        {
+          "metric": "population",
+          "status": "balanced",
+          "n_years": 16,
+          "treated": 152449990,
+          "synthetic": 11409580,
+          "donor_min": 368828.38,
+          "donor_max": 1179226000
+        }
+      ]
+    },
+    {
+      "id": "tinubu",
+      "status": "estimated_not_identified",
+      "first_year": 2023,
+      "last_year": 2024,
+      "pre_years": 24,
+      "post_years": 2,
+      "n_donors_used": 99,
+      "n_donors_with_weight": 5,
+      "path": [
+        {
+          "year": 2023,
+          "treated": 116.8,
+          "synthetic": 99.08823357,
+          "gap": 17.71176643
+        },
+        {
+          "year": 2024,
+          "treated": 115.6,
+          "synthetic": 96.24385755,
+          "gap": 19.35614245
+        }
+      ],
+      "pre_rmse": 4.249722728,
+      "pre_sd": 21.4203885,
+      "pre_ratio": 0.1983961555,
+      "post_rmse": 18.55218209,
+      "post_pre_ratio": 4.365504123,
+      "mean_gap": 18.53395444,
+      "weights": [
+        {
+          "donor": "CAF",
+          "weight": 0.02961790023
+        },
+        {
+          "donor": "GIN",
+          "weight": 0.7290073575
+        },
+        {
+          "donor": "NER",
+          "weight": 0.2185830413
+        },
+        {
+          "donor": "SOM",
+          "weight": 0.0101032075
+        },
+        {
+          "donor": "SSD",
+          "weight": 0.01268849347
+        }
+      ],
+      "n_weights_published": 5,
+      "in_space": {
+        "n_placebos": 99,
+        "p_value": 0.33,
+        "n_at_least_as_extreme": 32,
+        "n_placebos_passing_pre_fit": 70,
+        "distribution": [
+          {
+            "donor": "AGO",
+            "pre_ratio": 0.0890691,
+            "post_pre_ratio": 0.209133,
+            "mean_gap": -0.882465
+          },
+          {
+            "donor": "ARE",
+            "pre_ratio": 0.362921,
+            "post_pre_ratio": 2.79795,
+            "mean_gap": -1.72478
+          },
+          {
+            "donor": "AZE",
+            "pre_ratio": 0.000625997,
+            "post_pre_ratio": 12.7733,
+            "mean_gap": -0.139406
+          },
+          {
+            "donor": "BDI",
+            "pre_ratio": 0.0355503,
+            "post_pre_ratio": 1.72655,
+            "mean_gap": -2.18985
+          },
+          {
+            "donor": "BEN",
+            "pre_ratio": 0.00532284,
+            "post_pre_ratio": 1.9119,
+            "mean_gap": -0.175968
+          },
+          {
+            "donor": "BFA",
+            "pre_ratio": 0.00926519,
+            "post_pre_ratio": 0.324071,
+            "mean_gap": 0.0971694
+          },
+          {
+            "donor": "BGD",
+            "pre_ratio": 0.0043087,
+            "post_pre_ratio": 25.3845,
+            "mean_gap": 1.97741
+          },
+          {
+            "donor": "BOL",
+            "pre_ratio": 0.0122045,
+            "post_pre_ratio": 4.22868,
+            "mean_gap": -0.914312
+          },
+          {
+            "donor": "BRA",
+            "pre_ratio": 0.0213257,
+            "post_pre_ratio": 1.52974,
+            "mean_gap": 0.208525
+          },
+          {
+            "donor": "BRN",
+            "pre_ratio": 1.17219,
+            "post_pre_ratio": 0.550215,
+            "mean_gap": 0.271966
+          },
+          {
+            "donor": "BWA",
+            "pre_ratio": 0.0557242,
+            "post_pre_ratio": 0.09762,
+            "mean_gap": -0.0675528
+          },
+          {
+            "donor": "CAF",
+            "pre_ratio": 1.10747,
+            "post_pre_ratio": 0.0879331,
+            "mean_gap": -8.92316
+          },
+          {
+            "donor": "CIV",
+            "pre_ratio": 0.00392094,
+            "post_pre_ratio": 0.785661,
+            "mean_gap": 0.0510949
+          },
+          {
+            "donor": "CMR",
+            "pre_ratio": 0.019465,
+            "post_pre_ratio": 0.436888,
+            "mean_gap": 0.21446
+          },
+          {
+            "donor": "COD",
+            "pre_ratio": 0.154482,
+            "post_pre_ratio": 1.39327,
+            "mean_gap": 7.54673
+          },
+          {
+            "donor": "COG",
+            "pre_ratio": 0.0511035,
+            "post_pre_ratio": 0.32127,
+            "mean_gap": -0.34637
+          },
+          {
+            "donor": "COL",
+            "pre_ratio": 0.00429159,
+            "post_pre_ratio": 7.02882,
+            "mean_gap": -0.124247
+          },
+          {
+            "donor": "CPV",
+            "pre_ratio": 0.20434,
+            "post_pre_ratio": 0.856754,
+            "mean_gap": -1.33903
+          },
+          {
+            "donor": "DJI",
+            "pre_ratio": 0.00221999,
+            "post_pre_ratio": 4.02166,
+            "mean_gap": -0.00217802
+          },
+          {
+            "donor": "DOM",
+            "pre_ratio": 0.305379,
+            "post_pre_ratio": 1.00534,
+            "mean_gap": -0.57168
+          },
+          {
+            "donor": "DZA",
+            "pre_ratio": 0.00188788,
+            "post_pre_ratio": 27.0197,
+            "mean_gap": 0.328782
+          },
+          {
+            "donor": "ECU",
+            "pre_ratio": 0.00112934,
+            "post_pre_ratio": 20.5849,
+            "mean_gap": 0.102917
+          },
+          {
+            "donor": "EGY",
+            "pre_ratio": 0.00149527,
+            "post_pre_ratio": 3.76157,
+            "mean_gap": -0.0382474
+          },
+          {
+            "donor": "ERI",
+            "pre_ratio": 0.000695162,
+            "post_pre_ratio": 25.1365,
+            "mean_gap": -0.106089
+          },
+          {
+            "donor": "ETH",
+            "pre_ratio": 0.123365,
+            "post_pre_ratio": 2.94356,
+            "mean_gap": -10.1114
+          },
+          {
+            "donor": "GAB",
+            "pre_ratio": 0.005002,
+            "post_pre_ratio": 7.8434,
+            "mean_gap": 0.504935
+          },
+          {
+            "donor": "GHA",
+            "pre_ratio": 0.00358613,
+            "post_pre_ratio": 0.63171,
+            "mean_gap": 0.013419
+          },
+          {
+            "donor": "GIN",
+            "pre_ratio": 0.122286,
+            "post_pre_ratio": 2.11271,
+            "mean_gap": 5.42018
+          },
+          {
+            "donor": "GMB",
+            "pre_ratio": 0.000561499,
+            "post_pre_ratio": 19.0119,
+            "mean_gap": 0.179793
+          },
+          {
+            "donor": "GNQ",
+            "pre_ratio": 0.00113396,
+            "post_pre_ratio": 2.25118,
+            "mean_gap": 0.0666074
+          },
+          {
+            "donor": "GTM",
+            "pre_ratio": 0.000480268,
+            "post_pre_ratio": 8.85262,
+            "mean_gap": -0.00240862
+          },
+          {
+            "donor": "GUY",
+            "pre_ratio": 0.00485283,
+            "post_pre_ratio": 3.55791,
+            "mean_gap": -0.107797
+          },
+          {
+            "donor": "HND",
+            "pre_ratio": 0.00166669,
+            "post_pre_ratio": 1.57337,
+            "mean_gap": 0.0173674
+          },
+          {
+            "donor": "IDN",
+            "pre_ratio": 0.0432627,
+            "post_pre_ratio": 3.64965,
+            "mean_gap": -1.71119
+          },
+          {
+            "donor": "IND",
+            "pre_ratio": 0.0249678,
+            "post_pre_ratio": 4.29317,
+            "mean_gap": -2.21574
+          },
+          {
+            "donor": "IRN",
+            "pre_ratio": 0.00281115,
+            "post_pre_ratio": 12.9667,
+            "mean_gap": -0.242046
+          },
+          {
+            "donor": "IRQ",
+            "pre_ratio": 0.00336524,
+            "post_pre_ratio": 2.44697,
+            "mean_gap": -0.0566125
+          },
+          {
+            "donor": "JAM",
+            "pre_ratio": 0.327227,
+            "post_pre_ratio": 3.10523,
+            "mean_gap": 0.629075
+          },
+          {
+            "donor": "JOR",
+            "pre_ratio": 0.0021324,
+            "post_pre_ratio": 10.9856,
+            "mean_gap": -0.0687824
+          },
+          {
+            "donor": "KAZ",
+            "pre_ratio": 0.102843,
+            "post_pre_ratio": 0.530504,
+            "mean_gap": -0.622754
+          },
+          {
+            "donor": "KEN",
+            "pre_ratio": 0.0112287,
+            "post_pre_ratio": 11.5074,
+            "mean_gap": -1.85418
+          },
+          {
+            "donor": "KGZ",
+            "pre_ratio": 0.00562185,
+            "post_pre_ratio": 10.3556,
+            "mean_gap": 0.646416
+          },
+          {
+            "donor": "KHM",
+            "pre_ratio": 0.0604256,
+            "post_pre_ratio": 2.02918,
+            "mean_gap": -3.44684
+          },
+          {
+            "donor": "KWT",
+            "pre_ratio": 0.10234,
+            "post_pre_ratio": 0.734326,
+            "mean_gap": -0.0146793
+          },
+          {
+            "donor": "LAO",
+            "pre_ratio": 0.000851407,
+            "post_pre_ratio": 9.30709,
+            "mean_gap": 0.166619
+          },
+          {
+            "donor": "LBR",
+            "pre_ratio": 0.0321053,
+            "post_pre_ratio": 4.72186,
+            "mean_gap": 5.55216
+          },
+          {
+            "donor": "LBY",
+            "pre_ratio": 0.0538187,
+            "post_pre_ratio": 45.1148,
+            "mean_gap": 10.2929
+          },
+          {
+            "donor": "LKA",
+            "pre_ratio": 0.591929,
+            "post_pre_ratio": 0.27375,
+            "mean_gap": -0.849258
+          },
+          {
+            "donor": "LSO",
+            "pre_ratio": 0.201015,
+            "post_pre_ratio": 0.222903,
+            "mean_gap": 0.89082
+          },
+          {
+            "donor": "MAR",
+            "pre_ratio": 0.00127193,
+            "post_pre_ratio": 22.5414,
+            "mean_gap": -0.332672
+          },
+          {
+            "donor": "MDG",
+            "pre_ratio": 0.0456654,
+            "post_pre_ratio": 2.95024,
+            "mean_gap": 1.92304
+          },
+          {
+            "donor": "MEX",
+            "pre_ratio": 0.00247585,
+            "post_pre_ratio": 4.61394,
+            "mean_gap": 0.00919282
+          },
+          {
+            "donor": "MLI",
+            "pre_ratio": 0.0410791,
+            "post_pre_ratio": 2.61818,
+            "mean_gap": -3.83399
+          },
+          {
+            "donor": "MMR",
+            "pre_ratio": 0.305504,
+            "post_pre_ratio": 0.288122,
+            "mean_gap": -1.62939
+          },
+          {
+            "donor": "MNG",
+            "pre_ratio": 0.00807512,
+            "post_pre_ratio": 4.43571,
+            "mean_gap": -0.587845
+          },
+          {
+            "donor": "MOZ",
+            "pre_ratio": 0.0156022,
+            "post_pre_ratio": 4.27272,
+            "mean_gap": -2.24346
+          },
+          {
+            "donor": "MRT",
+            "pre_ratio": 0.0062722,
+            "post_pre_ratio": 0.526551,
+            "mean_gap": 0.055787
+          },
+          {
+            "donor": "MWI",
+            "pre_ratio": 0.308159,
+            "post_pre_ratio": 0.163967,
+            "mean_gap": 2.49357
+          },
+          {
+            "donor": "MYS",
+            "pre_ratio": 1.50859,
+            "post_pre_ratio": 1.45186,
+            "mean_gap": 1.40407
+          },
+          {
+            "donor": "NAM",
+            "pre_ratio": 0.0709412,
+            "post_pre_ratio": 3.02147,
+            "mean_gap": -2.68527
+          },
+          {
+            "donor": "NER",
+            "pre_ratio": 0.273695,
+            "post_pre_ratio": 1.94944,
+            "mean_gap": 20.3869
+          },
+          {
+            "donor": "NIC",
+            "pre_ratio": 0.00918705,
+            "post_pre_ratio": 21.1354,
+            "mean_gap": -1.03706
+          },
+          {
+            "donor": "NPL",
+            "pre_ratio": 0.000923256,
+            "post_pre_ratio": 7.72012,
+            "mean_gap": -0.0331909
+          },
+          {
+            "donor": "OMN",
+            "pre_ratio": 0.0167514,
+            "post_pre_ratio": 0.944779,
+            "mean_gap": 0.0165127
+          },
+          {
+            "donor": "PAK",
+            "pre_ratio": 0.0052778,
+            "post_pre_ratio": 0.923434,
+            "mean_gap": 0.0400405
+          },
+          {
+            "donor": "PER",
+            "pre_ratio": 0.00208316,
+            "post_pre_ratio": 11.6575,
+            "mean_gap": -0.195671
+          },
+          {
+            "donor": "PHL",
+            "pre_ratio": 0.0316392,
+            "post_pre_ratio": 1.25111,
+            "mean_gap": -0.12587
+          },
+          {
+            "donor": "PNG",
+            "pre_ratio": 0.0827683,
+            "post_pre_ratio": 1.31661,
+            "mean_gap": -1.05418
+          },
+          {
+            "donor": "PRY",
+            "pre_ratio": 0.00347861,
+            "post_pre_ratio": 4.57391,
+            "mean_gap": -0.0761498
+          },
+          {
+            "donor": "QAT",
+            "pre_ratio": 0.068979,
+            "post_pre_ratio": 2.54191,
+            "mean_gap": 0.360498
+          },
+          {
+            "donor": "ROU",
+            "pre_ratio": 0.0983531,
+            "post_pre_ratio": 1.39223,
+            "mean_gap": 0.687296
+          },
+          {
+            "donor": "RWA",
+            "pre_ratio": 0.197936,
+            "post_pre_ratio": 0.352354,
+            "mean_gap": -3.45786
+          },
+          {
+            "donor": "SAU",
+            "pre_ratio": 0.0702734,
+            "post_pre_ratio": 2.84923,
+            "mean_gap": -1.03648
+          },
+          {
+            "donor": "SDN",
+            "pre_ratio": 0.133039,
+            "post_pre_ratio": 5.81902,
+            "mean_gap": 13.6405
+          },
+          {
+            "donor": "SEN",
+            "pre_ratio": 0.0140322,
+            "post_pre_ratio": 6.17802,
+            "mean_gap": -2.49872
+          },
+          {
+            "donor": "SLE",
+            "pre_ratio": 0.349433,
+            "post_pre_ratio": 1.13467,
+            "mean_gap": -16.7989
+          },
+          {
+            "donor": "SLV",
+            "pre_ratio": 0.00241145,
+            "post_pre_ratio": 39.5766,
+            "mean_gap": -0.498917
+          },
+          {
+            "donor": "SOM",
+            "pre_ratio": 0.999206,
+            "post_pre_ratio": 0.116302,
+            "mean_gap": 5.57866
+          },
+          {
+            "donor": "SSD",
+            "pre_ratio": 1.02302,
+            "post_pre_ratio": 0.040621,
+            "mean_gap": -1.7349
+          },
+          {
+            "donor": "SWZ",
+            "pre_ratio": 0.156852,
+            "post_pre_ratio": 0.721924,
+            "mean_gap": -3.1642
+          },
+          {
+            "donor": "SYR",
+            "pre_ratio": 0.874905,
+            "post_pre_ratio": 0.344469,
+            "mean_gap": -1.84909
+          },
+          {
+            "donor": "TCD",
+            "pre_ratio": 0.194803,
+            "post_pre_ratio": 1.05739,
+            "mean_gap": 5.25259
+          },
+          {
+            "donor": "TGO",
+            "pre_ratio": 0.000716865,
+            "post_pre_ratio": 5.83726,
+            "mean_gap": 0.0417719
+          },
+          {
+            "donor": "THA",
+            "pre_ratio": 0.00387722,
+            "post_pre_ratio": 1.50607,
+            "mean_gap": -0.0161179
+          },
+          {
+            "donor": "TJK",
+            "pre_ratio": 0.0153247,
+            "post_pre_ratio": 1.08357,
+            "mean_gap": -0.249199
+          },
+          {
+            "donor": "TLS",
+            "pre_ratio": 0.371502,
+            "post_pre_ratio": 0.0422229,
+            "mean_gap": -0.412654
+          },
+          {
+            "donor": "TTO",
+            "pre_ratio": 0.0223389,
+            "post_pre_ratio": 2.78846,
+            "mean_gap": -0.178892
+          },
+          {
+            "donor": "TUN",
+            "pre_ratio": 0.0702283,
+            "post_pre_ratio": 6.12638,
+            "mean_gap": -1.87271
+          },
+          {
+            "donor": "TUR",
+            "pre_ratio": 0.00199678,
+            "post_pre_ratio": 124.397,
+            "mean_gap": 1.58264
+          },
+          {
+            "donor": "TZA",
+            "pre_ratio": 0.00279164,
+            "post_pre_ratio": 3.04845,
+            "mean_gap": -0.245775
+          },
+          {
+            "donor": "UGA",
+            "pre_ratio": 0.00313773,
+            "post_pre_ratio": 17.776,
+            "mean_gap": 1.83085
+          },
+          {
+            "donor": "UKR",
+            "pre_ratio": 0.0191704,
+            "post_pre_ratio": 1.49154,
+            "mean_gap": -0.0979891
+          },
+          {
+            "donor": "UZB",
+            "pre_ratio": 0.0349869,
+            "post_pre_ratio": 2.11841,
+            "mean_gap": -1.21817
+          },
+          {
+            "donor": "VEN",
+            "pre_ratio": 0.923825,
+            "post_pre_ratio": 2.54862,
+            "mean_gap": 6.72338
+          },
+          {
+            "donor": "VNM",
+            "pre_ratio": 0.00455328,
+            "post_pre_ratio": 11.1023,
+            "mean_gap": -0.105325
+          },
+          {
+            "donor": "YEM",
+            "pre_ratio": 0.0197742,
+            "post_pre_ratio": 3.67185,
+            "mean_gap": -1.22414
+          },
+          {
+            "donor": "ZAF",
+            "pre_ratio": 0.139872,
+            "post_pre_ratio": 1.52163,
+            "mean_gap": 3.88063
+          },
+          {
+            "donor": "ZMB",
+            "pre_ratio": 0.0207655,
+            "post_pre_ratio": 2.19374,
+            "mean_gap": 1.52829
+          },
+          {
+            "donor": "ZWE",
+            "pre_ratio": 0.204509,
+            "post_pre_ratio": 4.49243,
+            "mean_gap": 14.9235
+          }
+        ]
+      },
+      "in_time": [
+        {
+          "backdated_years": 3,
+          "status": "estimated",
+          "pre_years": 21,
+          "post_years": 3,
+          "mean_gap": 12.3474184488,
+          "ratio_to_estimated": 0.66620528761
+        },
+        {
+          "backdated_years": 5,
+          "status": "estimated",
+          "pre_years": 19,
+          "post_years": 5,
+          "mean_gap": 12.2873300177,
+          "ratio_to_estimated": 0.66296321473
+        },
+        {
+          "backdated_years": 7,
+          "status": "estimated",
+          "pre_years": 17,
+          "post_years": 7,
+          "mean_gap": 9.6690209827,
+          "ratio_to_estimated": 0.52169228178
+        }
+      ],
+      "solver_sensitivity": {
+        "ridge_relative": 0.0001,
+        "mean_gap": 18.50234273,
+        "pre_ratio": 0.1984277756,
+        "p_value": 0.23,
+        "gap_shift": -0.0316117081,
+        "n_weights_with_ridge": 5
+      },
+      "leave_one_out": {
+        "n_fits": 99,
+        "min": 18.13146555,
+        "max": 21.34468558,
+        "n_sign_flips": 0
+      },
+      "verdict": {
+        "status": "estimated_not_identified",
+        "rule": "A window is `identified` only if **all three** hold: (1) its pre-fit ratio is at or below 0.10, the gate's own threshold, carried rather than re-decided; (2) the in-space rank p is at or below 0.05, i.e. the treated unit's post/pre RMSPE ratio is the largest among itself and the placebos; and (3) every in-time placebo that could be run returns a mean gap smaller in absolute value than **half** the estimated gap. Otherwise the window is `estimated_not_identified` and each failed check is named. A window the gate refused is `refused` with the gate's reason and no number. Report the gap and its placebos either way. Declared 2026-10-28, before any weight was fitted.",
+        "failed_checks": [
+          "the pre-fit ratio is 0.1984 against the declared 0.10 threshold",
+          "the in-space rank p is 0.3300: 32 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio",
+          "an in-time placebo returns a gap at least half the size of the estimated gap"
+        ]
+      },
+      "balance": [
+        {
+          "metric": "cpi_yoy",
+          "status": "not_balanced",
+          "detail": "0 years where every unit has data"
+        },
+        {
+          "metric": "gdp_growth",
+          "status": "not_balanced",
+          "detail": "0 years where every unit has data"
+        },
+        {
+          "metric": "oil_rents",
+          "status": "not_balanced",
+          "detail": "0 years where every unit has data"
+        },
+        {
+          "metric": "population",
+          "status": "balanced",
+          "n_years": 24,
+          "treated": 170652950,
+          "synthetic": 12011742,
+          "donor_min": 392449.46,
+          "donor_max": 1246049000
+        }
+      ]
+    }
+  ]
+}

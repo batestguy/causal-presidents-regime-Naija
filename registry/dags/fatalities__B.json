@@ -1,11 +1,11 @@
 {
   "dag_id": "fatalities__B",
   "schema_version": "0.3.0",
-  "vintage_date": "2026-10-29",
-  "generated_at": "2026-10-29T06:39:35+0100",
+  "vintage_date": "2026-10-30",
+  "generated_at": "2026-10-30T12:16:09+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "533c2aa"
+    "git_sha": "51803ea"
   },
   "outcome": {
     "id": "fatalities",
@@ -17,7 +17,7 @@
     "frequency": "monthly",
     "source": "UCDP GED (bulk archive, keyless)",
     "coverage_status": "ok",
-    "coverage_note": "**Landed 2026-10-17.** 7,418 Nigeria events 1990-09 to 2024-12, state-attributed (`adm_1`), so the state panel carries a 37-unit outcome and the national spine carries a monthly one from 1999-01. The World Bank series is unusable (homicides: 3 observations, C-10) and ACLED remains licence-blocked (C-13), but neither was needed: the UCDP API wants a token (C-14) while the UCDP **bulk archive** does not, and UCDP GED is CC-BY 4.0. 80 % of state-months are zero and every state series is flagged by the Stage 3 spike gate, which is what a monthly conflict count does — see `analysis/specs/quality.yml` `document_sources.ucdp.spike_note`."
+    "coverage_note": "**Landed 2026-10-17; re-landed 26.1 on 2026-10-30 (C-82).** 8,255 Nigeria events 1990-09 to 2025-12, state-attributed (`adm_1`), so the state panel carries a 37-unit outcome and the national spine carries a monthly one from 1999-01. The World Bank series is unusable (homicides: 3 observations, C-10) and ACLED remains licence-blocked (C-13), but neither was needed: the UCDP API wants a token (C-14) while the UCDP **bulk archive** does not, and UCDP GED is CC-BY 4.0. 80 % of state-months are zero and every state series is flagged by the Stage 3 spike gate, which is what a monthly conflict count does — see `analysis/specs/quality.yml` `document_sources.ucdp.spike_note`."
   },
   "design": {
     "id": "B",
@@ -244,8 +244,8 @@
     "blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly",
     "note": "Runs, but not as base spec section 9 specifies; the deviations are listed above.",
     "coverage_status": "ok",
-    "vintage": "2026-10-29",
-    "source": "registry/diagnostics/2026-10-29/diagnostics.json"
+    "vintage": "2026-10-30",
+    "source": "registry/diagnostics/2026-10-30/diagnostics.json"
   },
   "assets": {
     "svg": "registry/dags/fatalities__B.svg"

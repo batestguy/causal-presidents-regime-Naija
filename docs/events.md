@@ -34,7 +34,7 @@ windows, statistic and controls — rather than by a t-statistic that would assu
 
 ## 2. The series and the events
 
-- **312 months**, 1999-01 → 2024-12, UCDP GED national monthly counts (fatalities and incidents).
+- **324 months**, 1999-01 → 2025-12, UCDP GED national monthly counts (fatalities and incidents).
 - **25 absent months filled with zero** under the declared rule, all before 2010-01. This is the one
   discretionary step in the series: UCDP emits no row when no event was recorded, and dropping those months
   would silently turn "no reported event" into "not in the sample".
@@ -45,7 +45,7 @@ windows, statistic and controls — rather than by a t-statistic that would assu
 | Yar'Adua sworn in | 2007-05 | 100 | 2010-04 | no |
 | Jonathan sworn in | 2010-05 | 136 | 2015-04 | no |
 | Buhari sworn in | 2015-05 | 196 | 2023-04 | no |
-| Tinubu sworn in | 2023-05 | 292 | 2024-12 | **yes** (20 of 24 months exist) |
+| Tinubu sworn in | 2023-05 | 292 | 2025-12 | no |
 
 A fifth transition exists in the base and is **excluded with its reason on the artifact**: Obasanjo's
 1999-05 inauguration cannot be compared because the series begins four months before it and the design needs
