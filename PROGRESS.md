@@ -2702,10 +2702,19 @@ family, and the 2026-10-29 family is intact as the 25.1 record.
 **Phase B is "the monthly inflation outcome in Design B (the subsidy estimand)", and its first move is a
 declaration, not a fit** (`presidents-completion-plan.md` Phase B, B1–B4):
 
-1. **B1 — decide and record before any code.** Does Design B read `nbs_cpi_national_monthly` (the monthly
-   CPI index / YoY, landed and gated 2026-10-29, C-81) as the inflation outcome for a declared
-   specification, keeping `cpi_yoy` (annual) as the annual cross-check? The base already carries the series
-   unspined; the declaration is the catalogue entry plus the estimation-spec entry.
+1. **B1 — decided, recorded as C-85; the declaration and the engine change are the first unit.** Design B
+   gains `nbs_cpi_national_monthly.cpi_index` as a **second outcome family** (same `log_cumulative_change`
+   transform, so a coefficient is "the cumulative log change in the price level h months after a 1 % Brent
+   shock"), with `cpi_yoy` (annual) kept as the cross-check and `cpi_mom_pct` rejected (a different
+   weighting from log differences of the level). The series is 2016-12 → **2024-10**, native monthly, so
+   the 2023-06 → 2023-12 subsidy window is inside it and 2024-11 onward is absent, not interpolated. The
+   robustness grid takes the outcome as a **fourth axis for Design B** (24 → 48 cells; total 105 → **129**),
+   decided in C-85 so that the CPI rows are never published without the grid that could move them. The
+   engine work that follows: `03_estimate.R`'s Design B block reads `$outcome` singular and must loop over
+   a declared list (per-outcome national frame, per-outcome peak/placebo/verdict, distinct
+   `coefficient_name`); `04_robustness.R`'s B grid gains the outcome axis; `05_registry.R` and the site's
+   "105 specifications" move with it; `tests/verify_stage6.py`/`verify_stage7.py` re-derive the new rows;
+   and `02_diagnostics.R` must test the monthly series at native grain before any of it is fitted.
 2. **B2 — Stage 5 first.** `02_diagnostics.R` must pass (or fail, on record) the integration/cointegration
    checks at the series' native grain before an estimate exists. The series is monthly-native to **2024-10**
    — the elibrary listing ends there — so the 2023-06 → 2023-12 subsidy window is inside it, which is the
