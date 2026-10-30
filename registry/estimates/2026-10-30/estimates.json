@@ -2,7 +2,7 @@
   "stage": 6,
   "layer": "estimation",
   "vintage": "2026-10-30",
-  "generated_at": "2026-10-30T12:17:48+0100",
+  "generated_at": "2026-10-30T15:28:15+0100",
   "generator": "analysis/R/03_estimate.R",
   "spec": "analysis/specs/estimation.yml",
   "verifier": "tests/verify_stage6.py",
@@ -22,9 +22,30 @@
       "window_source": "The intersection of the two series as landed: FAAC begins 2016-12 (the OAGF/NBS archives do not publish the PDP era — harmonisation.yml `state_dose_d1_coverage`) and UCDP GED 26.1 publishes through 2025-12, where the base marks 2026-01 onward a declared gap. 3,888 state-months for 36 states, 2016-12 to 2025-12; the one interior month absent is 2018-12, which the FAAC archive does not cover (`dose_status = not_covered`). The window is a property of the data, not a choice, and it is why Design A is an APC-era design whatever the card says."
     },
     "design_b": {
-      "n_obs": 114,
-      "first_month": "2016-12-01",
-      "last_month": "2026-06-01"
+      "faac": {
+        "n_obs": 114,
+        "first_month": "2016-12-01",
+        "last_month": "2026-06-01",
+        "window": {
+          "start": "2016-12",
+          "end": {}
+        },
+        "transform": "log_cumulative_change",
+        "table": "main_analytics.faac_national_monthly",
+        "column": "gross_total_naira"
+      },
+      "cpi": {
+        "n_obs": 310,
+        "first_month": "1999-01-01",
+        "last_month": "2024-10-01",
+        "window": {
+          "start": "1999-01",
+          "end": {}
+        },
+        "transform": "log_cumulative_change",
+        "table": "main_analytics.nbs_cpi_national_monthly",
+        "column": "cpi_index"
+      }
     }
   },
   "designs": [
@@ -488,13 +509,249 @@
     },
     {
       "id": "B",
+      "preferred_outcome": "faac",
       "status": "estimated",
       "verdict": {
         "status": "estimated",
-        "rule": "`estimated` if the cumulative response is positive at the declared horizon band with a HAC t above 1.96 at some horizon in it, and the lead placebo at 6 months is smaller in magnitude. Reported with its confidence bounds either way; a null is a result.",
+        "rule": "Applied **per outcome family**, never pooled: `estimated` if the cumulative response is positive at the declared horizon band with a HAC t above 1.96 at some horizon in it, and the lead placebo at 6 months is smaller in magnitude. Reported with its confidence bounds either way; a null is a result.",
         "failed_checks": {}
       },
+      "outcomes": [
+        {
+          "outcome_id": "faac",
+          "family": "fiscal_channel",
+          "label": "cumulative log change in national FAAC",
+          "status": "estimated",
+          "verdict": {
+            "status": "estimated",
+            "rule": "Applied **per outcome family**, never pooled: `estimated` if the cumulative response is positive at the declared horizon band with a HAC t above 1.96 at some horizon in it, and the lead placebo at 6 months is smaller in magnitude. Reported with its confidence bounds either way; a null is a result.",
+            "failed_checks": {}
+          },
+          "checks": {
+            "outcome_id": "faac",
+            "outcome_family": "fiscal_channel",
+            "label": "cumulative log change in national FAAC",
+            "window": {
+              "start": "2016-12",
+              "end": {}
+            },
+            "peak_horizon": 2,
+            "expected_band": [2, 4],
+            "significant_horizons": [2, 3],
+            "placebo": {
+              "lead_months": 6,
+              "coefficient": 0.0953014756,
+              "standard_error": 0.15172564647,
+              "n_obs": 107,
+              "note": "a future shock regressed on today's allocation; a comparable size means trend, not transmission"
+            },
+            "horizon_path": [
+              {
+                "horizon": 0,
+                "coefficient": -0.15995169851,
+                "standard_error": 0.12346066382,
+                "ci_low": -0.40193459959,
+                "ci_high": 0.082031202577,
+                "t_statistic": -1.295568107,
+                "n_obs": 113
+              },
+              {
+                "horizon": 1,
+                "coefficient": 0.15710321667,
+                "standard_error": 0.12777906331,
+                "ci_low": -0.093343747414,
+                "ci_high": 0.40755018075,
+                "t_statistic": 1.2294910653,
+                "n_obs": 112
+              },
+              {
+                "horizon": 2,
+                "coefficient": 0.51811762897,
+                "standard_error": 0.16642068273,
+                "ci_low": 0.19193309083,
+                "ci_high": 0.84430216712,
+                "t_statistic": 3.1133007057,
+                "n_obs": 111
+              },
+              {
+                "horizon": 3,
+                "coefficient": 0.46977378446,
+                "standard_error": 0.15760525731,
+                "ci_low": 0.16086748014,
+                "ci_high": 0.77868008879,
+                "t_statistic": 2.9806986929,
+                "n_obs": 110
+              },
+              {
+                "horizon": 4,
+                "coefficient": 0.16078008044,
+                "standard_error": 0.16172699712,
+                "ci_low": -0.15620483391,
+                "ci_high": 0.47776499479,
+                "t_statistic": 0.99414496842,
+                "n_obs": 109
+              },
+              {
+                "horizon": 5,
+                "coefficient": 0.032708100571,
+                "standard_error": 0.18848267062,
+                "ci_low": -0.33671793384,
+                "ci_high": 0.40213413498,
+                "t_statistic": 0.1735337284,
+                "n_obs": 108
+              },
+              {
+                "horizon": 6,
+                "coefficient": 0.23130198727,
+                "standard_error": 0.21832096113,
+                "ci_low": -0.19660709655,
+                "ci_high": 0.65921107109,
+                "t_statistic": 1.0594584509,
+                "n_obs": 107
+              },
+              {
+                "horizon": 9,
+                "coefficient": 0.39608182992,
+                "standard_error": 0.30192182143,
+                "ci_low": -0.19568494009,
+                "ci_high": 0.98784859993,
+                "t_statistic": 1.3118688409,
+                "n_obs": 104
+              },
+              {
+                "horizon": 12,
+                "coefficient": 0.32449710934,
+                "standard_error": 0.31875958011,
+                "ci_low": -0.30027166768,
+                "ci_high": 0.94926588636,
+                "t_statistic": 1.0179995507,
+                "n_obs": 101
+              }
+            ]
+          }
+        },
+        {
+          "outcome_id": "cpi",
+          "family": "price_level",
+          "label": "cumulative log change in the NBS CPI index",
+          "status": "estimated_null_at_the_declared_band",
+          "verdict": {
+            "status": "estimated_null_at_the_declared_band",
+            "rule": "Applied **per outcome family**, never pooled: `estimated` if the cumulative response is positive at the declared horizon band with a HAC t above 1.96 at some horizon in it, and the lead placebo at 6 months is smaller in magnitude. Reported with its confidence bounds either way; a null is a result.",
+            "failed_checks": "no horizon in the declared peak band has |t| > 1.96"
+          },
+          "checks": {
+            "outcome_id": "cpi",
+            "outcome_family": "price_level",
+            "label": "cumulative log change in the NBS CPI index",
+            "window": {
+              "start": "1999-01",
+              "end": {}
+            },
+            "peak_horizon": 0,
+            "expected_band": [2, 4],
+            "significant_horizons": [],
+            "placebo": {
+              "lead_months": 6,
+              "coefficient": -0.0030749049187,
+              "standard_error": 0.0074629086515,
+              "n_obs": 303,
+              "note": "a future shock regressed on today's price level; a comparable size means trend, not transmission"
+            },
+            "horizon_path": [
+              {
+                "horizon": 0,
+                "coefficient": 0.0043233960026,
+                "standard_error": 0.0055847637678,
+                "ci_low": -0.0066227409824,
+                "ci_high": 0.015269532988,
+                "t_statistic": 0.77414124971,
+                "n_obs": 309
+              },
+              {
+                "horizon": 1,
+                "coefficient": 0.0035455654491,
+                "standard_error": 0.010190508224,
+                "ci_low": -0.016427830669,
+                "ci_high": 0.023518961567,
+                "t_statistic": 0.34792822608,
+                "n_obs": 308
+              },
+              {
+                "horizon": 2,
+                "coefficient": -0.0021019565876,
+                "standard_error": 0.015485003802,
+                "ci_low": -0.03245256404,
+                "ci_high": 0.028248650865,
+                "t_statistic": -0.13574143181,
+                "n_obs": 307
+              },
+              {
+                "horizon": 3,
+                "coefficient": -0.0041011115209,
+                "standard_error": 0.018331860525,
+                "ci_low": -0.04003155815,
+                "ci_high": 0.031829335108,
+                "t_statistic": -0.22371496419,
+                "n_obs": 306
+              },
+              {
+                "horizon": 4,
+                "coefficient": -0.0020192849782,
+                "standard_error": 0.022197816067,
+                "ci_low": -0.04552700447,
+                "ci_high": 0.041488434513,
+                "t_statistic": -0.090967731784,
+                "n_obs": 305
+              },
+              {
+                "horizon": 5,
+                "coefficient": -0.0090912477007,
+                "standard_error": 0.026634063252,
+                "ci_low": -0.061294011674,
+                "ci_high": 0.043111516273,
+                "t_statistic": -0.34133911956,
+                "n_obs": 304
+              },
+              {
+                "horizon": 6,
+                "coefficient": -0.0079760534112,
+                "standard_error": 0.027343774844,
+                "ci_low": -0.061569852105,
+                "ci_high": 0.045617745283,
+                "t_statistic": -0.29169540258,
+                "n_obs": 303
+              },
+              {
+                "horizon": 9,
+                "coefficient": -0.014262153664,
+                "standard_error": 0.027459937776,
+                "ci_low": -0.068083631704,
+                "ci_high": 0.039559324377,
+                "t_statistic": -0.5193804072,
+                "n_obs": 300
+              },
+              {
+                "horizon": 12,
+                "coefficient": -0.001584417184,
+                "standard_error": 0.0288831663,
+                "ci_low": -0.058195423132,
+                "ci_high": 0.055026588764,
+                "t_statistic": -0.054856076634,
+                "n_obs": 297
+              }
+            ]
+          }
+        }
+      ],
       "checks": {
+        "outcome_id": "faac",
+        "outcome_family": "fiscal_channel",
+        "label": "cumulative log change in national FAAC",
+        "window": {
+          "start": "2016-12",
+          "end": {}
+        },
         "peak_horizon": 2,
         "expected_band": [2, 4],
         "significant_horizons": [2, 3],
@@ -669,7 +926,7 @@
   ],
   "figure": {
     "path": "forest_plot.svg",
-    "bytes": 12947,
+    "bytes": 17000,
     "layout": "two panels side by side, one per design, each with its own axis. One row per published specification: the estimate as a filled point with its 95 % interval, and the zero rule. The decisive check of each design is drawn **hollow** beside its estimate (A: the 24-month mis-timed dose that returns an estimate as large as the published one; B: the 6-month lead placebo), because a forest plot of estimates alone would show a number whose own artifact says it is not identified without showing why."
   },
   "specifications": [
@@ -744,10 +1001,12 @@
     },
     {
       "design": "B",
-      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
       "outcome": "cumulative log change in national FAAC at h=0",
+      "outcome_id": "faac",
+      "outcome_family": "fiscal_channel",
       "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=0",
-      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "formula": "diff(log(gross_total_naira), lag = h, leading) ~ diff(log(oil)) + month_of_year",
       "fixed_effects": "none (local projection on the national series)",
       "controls": "month-of-year dummies",
       "n_obs": 113,
@@ -764,10 +1023,12 @@
     },
     {
       "design": "B",
-      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
       "outcome": "cumulative log change in national FAAC at h=1",
+      "outcome_id": "faac",
+      "outcome_family": "fiscal_channel",
       "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=1",
-      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "formula": "diff(log(gross_total_naira), lag = h, leading) ~ diff(log(oil)) + month_of_year",
       "fixed_effects": "none (local projection on the national series)",
       "controls": "month-of-year dummies",
       "n_obs": 112,
@@ -784,10 +1045,12 @@
     },
     {
       "design": "B",
-      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
       "outcome": "cumulative log change in national FAAC at h=2",
+      "outcome_id": "faac",
+      "outcome_family": "fiscal_channel",
       "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=2",
-      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "formula": "diff(log(gross_total_naira), lag = h, leading) ~ diff(log(oil)) + month_of_year",
       "fixed_effects": "none (local projection on the national series)",
       "controls": "month-of-year dummies",
       "n_obs": 111,
@@ -804,10 +1067,12 @@
     },
     {
       "design": "B",
-      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
       "outcome": "cumulative log change in national FAAC at h=3",
+      "outcome_id": "faac",
+      "outcome_family": "fiscal_channel",
       "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=3",
-      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "formula": "diff(log(gross_total_naira), lag = h, leading) ~ diff(log(oil)) + month_of_year",
       "fixed_effects": "none (local projection on the national series)",
       "controls": "month-of-year dummies",
       "n_obs": 110,
@@ -824,10 +1089,12 @@
     },
     {
       "design": "B",
-      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
       "outcome": "cumulative log change in national FAAC at h=4",
+      "outcome_id": "faac",
+      "outcome_family": "fiscal_channel",
       "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=4",
-      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "formula": "diff(log(gross_total_naira), lag = h, leading) ~ diff(log(oil)) + month_of_year",
       "fixed_effects": "none (local projection on the national series)",
       "controls": "month-of-year dummies",
       "n_obs": 109,
@@ -844,10 +1111,12 @@
     },
     {
       "design": "B",
-      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
       "outcome": "cumulative log change in national FAAC at h=5",
+      "outcome_id": "faac",
+      "outcome_family": "fiscal_channel",
       "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=5",
-      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "formula": "diff(log(gross_total_naira), lag = h, leading) ~ diff(log(oil)) + month_of_year",
       "fixed_effects": "none (local projection on the national series)",
       "controls": "month-of-year dummies",
       "n_obs": 108,
@@ -864,10 +1133,12 @@
     },
     {
       "design": "B",
-      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
       "outcome": "cumulative log change in national FAAC at h=6",
+      "outcome_id": "faac",
+      "outcome_family": "fiscal_channel",
       "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=6",
-      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "formula": "diff(log(gross_total_naira), lag = h, leading) ~ diff(log(oil)) + month_of_year",
       "fixed_effects": "none (local projection on the national series)",
       "controls": "month-of-year dummies",
       "n_obs": 107,
@@ -884,10 +1155,12 @@
     },
     {
       "design": "B",
-      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
       "outcome": "cumulative log change in national FAAC at h=9",
+      "outcome_id": "faac",
+      "outcome_family": "fiscal_channel",
       "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=9",
-      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "formula": "diff(log(gross_total_naira), lag = h, leading) ~ diff(log(oil)) + month_of_year",
       "fixed_effects": "none (local projection on the national series)",
       "controls": "month-of-year dummies",
       "n_obs": 104,
@@ -904,10 +1177,12 @@
     },
     {
       "design": "B",
-      "design_name": "Brent crude to state allocations: how much of an oil shock reaches the states, and when?",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
       "outcome": "cumulative log change in national FAAC at h=12",
+      "outcome_id": "faac",
+      "outcome_family": "fiscal_channel",
       "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=12",
-      "formula": "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "formula": "diff(log(gross_total_naira), lag = h, leading) ~ diff(log(oil)) + month_of_year",
       "fixed_effects": "none (local projection on the national series)",
       "controls": "month-of-year dummies",
       "n_obs": 101,
@@ -920,6 +1195,204 @@
       "ci_low": -0.30027166768,
       "ci_high": 0.94926588636,
       "p_value": 0.31118479564,
+      "covariance": "Newey-West, 12 lags"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
+      "outcome": "cumulative log change in the NBS CPI index at h=0",
+      "outcome_id": "cpi",
+      "outcome_family": "price_level",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=0",
+      "formula": "diff(log(cpi_index), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 309,
+      "n_units": 1,
+      "first_month": "1999-02-01",
+      "last_month": "2024-10-01",
+      "coefficient_name": "cumulative_pass_through_cpi_h0",
+      "coefficient": 0.0043233960026,
+      "standard_error": 0.0055847637678,
+      "ci_low": -0.0066227409824,
+      "ci_high": 0.015269532988,
+      "p_value": 0.43944496301,
+      "covariance": "Newey-West, 12 lags"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
+      "outcome": "cumulative log change in the NBS CPI index at h=1",
+      "outcome_id": "cpi",
+      "outcome_family": "price_level",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=1",
+      "formula": "diff(log(cpi_index), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 308,
+      "n_units": 1,
+      "first_month": "1999-02-01",
+      "last_month": "2024-09-01",
+      "coefficient_name": "cumulative_pass_through_cpi_h1",
+      "coefficient": 0.0035455654491,
+      "standard_error": 0.010190508224,
+      "ci_low": -0.016427830669,
+      "ci_high": 0.023518961567,
+      "p_value": 0.72813408782,
+      "covariance": "Newey-West, 12 lags"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
+      "outcome": "cumulative log change in the NBS CPI index at h=2",
+      "outcome_id": "cpi",
+      "outcome_family": "price_level",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=2",
+      "formula": "diff(log(cpi_index), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 307,
+      "n_units": 1,
+      "first_month": "1999-02-01",
+      "last_month": "2024-08-01",
+      "coefficient_name": "cumulative_pass_through_cpi_h2",
+      "coefficient": -0.0021019565876,
+      "standard_error": 0.015485003802,
+      "ci_low": -0.03245256404,
+      "ci_high": 0.028248650865,
+      "p_value": 0.89211553212,
+      "covariance": "Newey-West, 12 lags"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
+      "outcome": "cumulative log change in the NBS CPI index at h=3",
+      "outcome_id": "cpi",
+      "outcome_family": "price_level",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=3",
+      "formula": "diff(log(cpi_index), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 306,
+      "n_units": 1,
+      "first_month": "1999-02-01",
+      "last_month": "2024-07-01",
+      "coefficient_name": "cumulative_pass_through_cpi_h3",
+      "coefficient": -0.0041011115209,
+      "standard_error": 0.018331860525,
+      "ci_low": -0.04003155815,
+      "ci_high": 0.031829335108,
+      "p_value": 0.82312986172,
+      "covariance": "Newey-West, 12 lags"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
+      "outcome": "cumulative log change in the NBS CPI index at h=4",
+      "outcome_id": "cpi",
+      "outcome_family": "price_level",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=4",
+      "formula": "diff(log(cpi_index), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 305,
+      "n_units": 1,
+      "first_month": "1999-02-01",
+      "last_month": "2024-06-01",
+      "coefficient_name": "cumulative_pass_through_cpi_h4",
+      "coefficient": -0.0020192849782,
+      "standard_error": 0.022197816067,
+      "ci_low": -0.04552700447,
+      "ci_high": 0.041488434513,
+      "p_value": 0.9275785371,
+      "covariance": "Newey-West, 12 lags"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
+      "outcome": "cumulative log change in the NBS CPI index at h=5",
+      "outcome_id": "cpi",
+      "outcome_family": "price_level",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=5",
+      "formula": "diff(log(cpi_index), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 304,
+      "n_units": 1,
+      "first_month": "1999-02-01",
+      "last_month": "2024-05-01",
+      "coefficient_name": "cumulative_pass_through_cpi_h5",
+      "coefficient": -0.0090912477007,
+      "standard_error": 0.026634063252,
+      "ci_low": -0.061294011674,
+      "ci_high": 0.043111516273,
+      "p_value": 0.73308645876,
+      "covariance": "Newey-West, 12 lags"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
+      "outcome": "cumulative log change in the NBS CPI index at h=6",
+      "outcome_id": "cpi",
+      "outcome_family": "price_level",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=6",
+      "formula": "diff(log(cpi_index), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 303,
+      "n_units": 1,
+      "first_month": "1999-02-01",
+      "last_month": "2024-04-01",
+      "coefficient_name": "cumulative_pass_through_cpi_h6",
+      "coefficient": -0.0079760534112,
+      "standard_error": 0.027343774844,
+      "ci_low": -0.061569852105,
+      "ci_high": 0.045617745283,
+      "p_value": 0.77072112093,
+      "covariance": "Newey-West, 12 lags"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
+      "outcome": "cumulative log change in the NBS CPI index at h=9",
+      "outcome_id": "cpi",
+      "outcome_family": "price_level",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=9",
+      "formula": "diff(log(cpi_index), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 300,
+      "n_units": 1,
+      "first_month": "1999-02-01",
+      "last_month": "2024-01-01",
+      "coefficient_name": "cumulative_pass_through_cpi_h9",
+      "coefficient": -0.014262153664,
+      "standard_error": 0.027459937776,
+      "ci_low": -0.068083631704,
+      "ci_high": 0.039559324377,
+      "p_value": 0.60388232295,
+      "covariance": "Newey-West, 12 lags"
+    },
+    {
+      "design": "B",
+      "design_name": "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?",
+      "outcome": "cumulative log change in the NBS CPI index at h=12",
+      "outcome_id": "cpi",
+      "outcome_family": "price_level",
+      "estimator": "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=12",
+      "formula": "diff(log(cpi_index), lag = h, leading) ~ diff(log(oil)) + month_of_year",
+      "fixed_effects": "none (local projection on the national series)",
+      "controls": "month-of-year dummies",
+      "n_obs": 297,
+      "n_units": 1,
+      "first_month": "1999-02-01",
+      "last_month": "2023-10-01",
+      "coefficient_name": "cumulative_pass_through_cpi_h12",
+      "coefficient": -0.001584417184,
+      "standard_error": 0.0288831663,
+      "ci_low": -0.058195423132,
+      "ci_high": 0.055026588764,
+      "p_value": 0.95629038323,
       "covariance": "Newey-West, 12 lags"
     }
   ],

@@ -54,7 +54,7 @@ def fail(failures: list[str], message: str) -> None:
     failures.append(message)
 
 
-def load_base(spec: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
+def load_base(spec: dict) -> tuple[pd.DataFrame, dict[str, pd.DataFrame]]:
     con = duckdb.connect(str(REPO_ROOT / spec["input"]["database"]), read_only=True)
     try:
         q = spec["design_a"]["sample"]
@@ -70,26 +70,31 @@ def load_base(spec: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
             order by state_id, period_month
             """
         ).df()
-        national = con.sql(
-            f"""
-            select f.period_month, f.gross_total_naira as faac, m.value as oil
-            from {spec['input']['national_faac_table']} f
-            join {spec['input']['fact_metric_table']} m
-              on m.metric_id = '{spec['input']['oil_metric_id']}'
-             and m.period_month = f.period_month
-            order by f.period_month
-            """
-        ).df()
+        # Design B has one frame per outcome family (C-85), each read from its own declared table.
+        frames = {}
+        for o in spec["design_b"]["outcomes"]:
+            frames[o["id"]] = con.sql(
+                f"""
+                select t.period_month, t.{o['column']} as outcome_value, m.value as oil
+                from {o['table']} t
+                join {spec['input']['fact_metric_table']} m
+                  on m.metric_id = '{spec['input']['oil_metric_id']}'
+                 and m.period_month = t.period_month
+                where t.{o['column']} is not null and m.value is not null
+                order by t.period_month
+                """
+            ).df()
     finally:
         con.close()
     panel["period_month"] = pd.to_datetime(panel["period_month"])
     panel["log_dose"] = np.log(panel["dose"])
     panel["ym"] = panel["period_month"].dt.strftime("%Y-%m")
-    national["period_month"] = pd.to_datetime(national["period_month"])
-    national["log_faac"] = np.log(national["faac"])
-    national["log_oil"] = np.log(national["oil"])
-    national["d_oil"] = national["log_oil"].diff()
-    return panel, national
+    for frame in frames.values():
+        frame["period_month"] = pd.to_datetime(frame["period_month"])
+        frame["log_outcome"] = np.log(frame["outcome_value"])
+        frame["log_oil"] = np.log(frame["oil"])
+        frame["d_oil"] = frame["log_oil"].diff()
+    return panel, frames
 
 
 def ppml(frame: pd.DataFrame, outcome: str, dose: str = "log_dose") -> tuple[float, float, int]:
@@ -116,9 +121,9 @@ def ppml(frame: pd.DataFrame, outcome: str, dose: str = "log_dose") -> tuple[flo
 
 
 def horizon_spec(national: pd.DataFrame, h: int, shock: str = "d_oil") -> dict:
-    """Cumulative local projection at horizon h: log FAAC(t+h) - log FAAC(t-1) on the shock."""
+    """Cumulative local projection at horizon h: log outcome(t+h) - log outcome(t-1) on the shock."""
     frame = national.copy()
-    frame["y"] = frame["log_faac"].shift(-h) - frame["log_faac"].shift(1)
+    frame["y"] = frame["log_outcome"].shift(-h) - frame["log_outcome"].shift(1)
     frame["month_of_year"] = frame["period_month"].dt.month.astype("category")
     frame = frame.dropna(subset=["y", shock])
     design = pd.concat(
@@ -150,7 +155,7 @@ def main() -> int:
     print(f"estimates {report['vintage']} | {len(report['specifications'])} specifications | "
           f"generated {report['generated_at']}")
 
-    panel, national = load_base(spec)
+    panel, b_frames = load_base(spec)
 
     # ---- 1. the sample is the declared sample -------------------------------------------
     declared = report["samples"]["design_a"]
@@ -159,14 +164,20 @@ def main() -> int:
         (declared["n_units"], panel["state_id"].nunique(), "design A units"),
         (declared["first_month"], str(panel["period_month"].min().date()), "design A first month"),
         (declared["last_month"], str(panel["period_month"].max().date()), "design A last month"),
-        (report["samples"]["design_b"]["n_obs"], len(national), "design B rows"),
     ]
+    for oid, frame in b_frames.items():
+        got = report["samples"]["design_b"][oid]
+        checks.append((got["n_obs"], len(frame), f"design B[{oid}] rows"))
+        checks.append((got["first_month"], str(frame["period_month"].min().date()),
+                       f"design B[{oid}] first month"))
+        checks.append((got["last_month"], str(frame["period_month"].max().date()),
+                       f"design B[{oid}] last month"))
     for got, want, label in checks:
         if got != want:
             fail(failures, f"sample: {label} is {got} in the report and {want} in the base")
     print(f"\nsample: {len(panel)} state-months x {panel['state_id'].nunique()} states "
           f"({panel['period_month'].min().date()} -> {panel['period_month'].max().date()}); "
-          f"{len(national)} national months")
+          + "; ".join(f"{oid} {len(fr)} national months" for oid, fr in b_frames.items()))
 
     # ---- 2. Design A reproduces ----------------------------------------------------------
     rows = {(s["design"], s["outcome"], s["coefficient_name"]): s for s in report["specifications"]}
@@ -241,59 +252,78 @@ def main() -> int:
           f"{p_lead_shift:.4f} (reported {reported_shift['p_value']:.4f})")
     print(f"design A verdict from the declared rule: {expected_status}")
 
-    # ---- 4. Design B reproduces ------------------------------------------------------------
-    print(f"\n{'horizon':<9}{'reported':>11}{'recomputed':>12}{'diff':>10}  {'SE reported':>12}{'SE recomputed':>14}")
-    print("-" * 72)
-    for h in spec["design_b"]["horizons"]:
-        key = ("B", f"cumulative log change in national FAAC at h={h}",
-               f"cumulative_pass_through_h{h}")
-        row = rows.get(key)
-        if row is None:
-            fail(failures, f"design B: no published specification at h={h}")
-            continue
-        got = horizon_spec(national, h)
-        delta = abs(got["coefficient"] - row["coefficient"])
-        verdict = "ok"
-        if delta > COEF_TOL:
-            verdict = "FAIL"
-            fail(failures, f"design B h={h}: reported {row['coefficient']:.6f} vs recomputed "
-                           f"{got['coefficient']:.6f}")
-        if row["n_obs"] != got["n_obs"]:
-            verdict = "FAIL"
-            fail(failures, f"design B h={h}: reported n {row['n_obs']} vs recomputed {got['n_obs']}")
-        se_gap = abs(got["standard_error"] - row["standard_error"]) / max(row["standard_error"], 1e-12)
-        if se_gap > SE_TOL_REL:
-            verdict = "FAIL"
-            fail(failures, f"design B h={h}: HAC SE differs by {100 * se_gap:.1f}% "
-                           f"({row['standard_error']:.4f} vs {got['standard_error']:.4f})")
-        print(f"{h:<9}{row['coefficient']:>11.4f}{got['coefficient']:>12.4f}{delta:>10.2e}  "
-              f"{row['standard_error']:>12.4f}{got['standard_error']:>14.4f}  {verdict}")
-
+    # ---- 4. Design B reproduces, per outcome family -----------------------------------------
     lead_b = spec["design_b"]["checks"]["placebo_lead_months"]
-    placebo_national = national.copy()
-    placebo_national["d_oil_lead"] = placebo_national["d_oil"].shift(-lead_b)
-    got_placebo = horizon_spec(placebo_national, 0, shock="d_oil_lead")
-    reported_b_placebo = report["designs"][1]["checks"]["placebo"]
-    if abs(got_placebo["coefficient"] - reported_b_placebo["coefficient"]) > 1e-3:
-        fail(failures, f"design B lead placebo: reported {reported_b_placebo['coefficient']:.4f} vs "
-                       f"recomputed {got_placebo['coefficient']:.4f}")
-
-    horizon_path = {r["horizon"]: r for r in report["designs"][1]["checks"]["horizon_path"]}
-    peak = max(horizon_path.values(), key=lambda r: r["coefficient"])["horizon"]
-    if peak != report["designs"][1]["checks"]["peak_horizon"]:
-        fail(failures, f"design B: reported peak horizon {report['designs'][1]['checks']['peak_horizon']} "
-                       f"vs recomputed {peak}")
-
-    # ---- 5. the verdicts follow the rules ---------------------------------------------------
-    b_status = next(d["status"] for d in report["designs"] if d["id"] == "B")
     band = spec["design_b"]["checks"]["expect_peak_horizon"]
-    band_rows = [horizon_path[h] for h in band if h in horizon_path]
-    significant = [r for r in band_rows if abs(r["t_statistic"]) > 1.96]
-    largest = max(abs(r["coefficient"]) for r in band_rows) if band_rows else 0.0
-    b_expected = "estimated" if significant and abs(got_placebo["coefficient"]) < largest \
-        else "estimated_null_at_the_declared_band"
-    if b_status != b_expected:
-        fail(failures, f"design B: the declared rule gives '{b_expected}' and the report says '{b_status}'")
+    b_block = next(d for d in report["designs"] if d["id"] == "B")
+    reported_outcomes = {o["outcome_id"]: o for o in b_block["outcomes"]}
+    if sorted(reported_outcomes) != sorted(o["id"] for o in spec["design_b"]["outcomes"]):
+        fail(failures, f"design B: the artifact publishes outcome families "
+                       f"{sorted(reported_outcomes)} but the spec declares "
+                       f"{sorted(o['id'] for o in spec['design_b']['outcomes'])}")
+    for o in spec["design_b"]["outcomes"]:
+        oid = o["id"]
+        frame = b_frames[oid]
+        print(f"\n{'horizon':<9}{'reported':>11}{'recomputed':>12}{'diff':>10}  "
+              f"{'SE reported':>12}{'SE recomputed':>14}   [{oid}]")
+        print("-" * 72)
+        for h in spec["design_b"]["horizons"]:
+            name = f"{o['coefficient_name']}_h{h}"
+            row = next((s for s in report["specifications"]
+                        if s["design"] == "B" and s["coefficient_name"] == name), None)
+            if row is None:
+                fail(failures, f"design B[{oid}]: no published specification at h={h}")
+                continue
+            got = horizon_spec(frame, h)
+            delta = abs(got["coefficient"] - row["coefficient"])
+            verdict = "ok"
+            if delta > COEF_TOL:
+                verdict = "FAIL"
+                fail(failures, f"design B[{oid}] h={h}: reported {row['coefficient']:.6f} vs recomputed "
+                               f"{got['coefficient']:.6f}")
+            if row["n_obs"] != got["n_obs"]:
+                verdict = "FAIL"
+                fail(failures, f"design B[{oid}] h={h}: reported n {row['n_obs']} vs recomputed "
+                               f"{got['n_obs']}")
+            se_gap = abs(got["standard_error"] - row["standard_error"]) / max(row["standard_error"], 1e-12)
+            if se_gap > SE_TOL_REL:
+                verdict = "FAIL"
+                fail(failures, f"design B[{oid}] h={h}: HAC SE differs by {100 * se_gap:.1f}% "
+                               f"({row['standard_error']:.4f} vs {got['standard_error']:.4f})")
+            print(f"{h:<9}{row['coefficient']:>11.4f}{got['coefficient']:>12.4f}{delta:>10.2e}  "
+                  f"{row['standard_error']:>12.4f}{got['standard_error']:>14.4f}  {verdict}")
+
+        checks_b = reported_outcomes[oid]["checks"]
+        placebo_frame = frame.copy()
+        placebo_frame["d_oil_lead"] = placebo_frame["d_oil"].shift(-lead_b)
+        got_placebo = horizon_spec(placebo_frame, 0, shock="d_oil_lead")
+        placed = checks_b["placebo"]
+        if abs(got_placebo["coefficient"] - placed["coefficient"]) > 1e-3:
+            fail(failures, f"design B[{oid}] lead placebo: reported {placed['coefficient']:.4f} vs "
+                           f"recomputed {got_placebo['coefficient']:.4f}")
+
+        path = {r["horizon"]: r for r in checks_b["horizon_path"]}
+        peak = max(path.values(), key=lambda r: r["coefficient"])["horizon"]
+        if peak != checks_b["peak_horizon"]:
+            fail(failures, f"design B[{oid}]: reported peak horizon {checks_b['peak_horizon']} vs "
+                           f"recomputed {peak}")
+
+        # ---- 5. the verdict follows the declared rule, per family ---------------------------
+        band_rows = [path[h] for h in band if h in path]
+        significant = [r for r in band_rows if abs(r["t_statistic"]) > 1.96]
+        largest = max(abs(r["coefficient"]) for r in band_rows) if band_rows else 0.0
+        expected = "estimated" if significant and abs(got_placebo["coefficient"]) < largest \
+            else "estimated_null_at_the_declared_band"
+        if reported_outcomes[oid]["status"] != expected:
+            fail(failures, f"design B[{oid}]: the declared rule gives '{expected}' and the report says "
+                           f"'{reported_outcomes[oid]['status']}'")
+
+    # the design-level headline must be the family the spec pre-registers, not whichever passed
+    preferred = spec["design_b"]["outcomes"][0]["id"]
+    headline = next(d["status"] for d in report["designs"] if d["id"] == "B")
+    if headline != reported_outcomes[preferred]["status"]:
+        fail(failures, f"design B: the headline status {headline!r} is not the pre-registered family's "
+                       f"({preferred}: {reported_outcomes[preferred]['status']!r})")
 
     c = next(d for d in report["designs"] if d["id"] == "C")
     # Design C is fitted in its own stage (8h). This artifact carries its status and a pointer, never a second
@@ -314,18 +344,23 @@ def main() -> int:
     elif c["status"] != "not_run" or not c.get("why"):
         fail(failures, "design C: reported as estimated with no artifact, or as not_run without a reason")
 
-    print(f"\ndesign B verdict from the declared rule: {b_expected} "
-          f"(peak h={peak}; significant in band {[r['horizon'] for r in significant]}; "
-          f"lead placebo {got_placebo['coefficient']:+.4f})")
+    print("\ndesign B verdicts from the declared rule: " + "; ".join(
+        f"{oid} {reported_outcomes[oid]['status']} (peak h={reported_outcomes[oid]['checks']['peak_horizon']}, "
+        f"lead placebo {reported_outcomes[oid]['checks']['placebo']['coefficient']:+.4f})"
+        for oid in reported_outcomes))
 
     # ---- 6. every published specification is declared --------------------------------------
     declared_outcomes = set(spec["design_a"]["robustness_outcomes"]) | {spec["design_a"]["outcome"]}
+    declared_b = {o["id"] for o in spec["design_b"]["outcomes"]}
     for s in report["specifications"]:
         if s["design"] == "A" and s["outcome"] not in declared_outcomes:
             fail(failures, f"design A publishes an outcome the spec does not declare: {s['outcome']}")
         if s["design"] == "A" and abs(s["coefficient"]) > 5:
             fail(failures, f"design A / {s['outcome']}: |coefficient| {s['coefficient']:.3f} is out of "
                            "range for a count elasticity — check for a units or scale error")
+        if s["design"] == "B" and s.get("outcome_id") not in declared_b:
+            fail(failures, f"design B publishes an outcome family the spec does not declare: "
+                           f"{s.get('outcome_id')!r}")
 
     # ---- 7. the forest plot is this artifact's own figure ----------------------------------
     # The figure is declared in the spec and rendered by the engine from `specs`, so the checks here are

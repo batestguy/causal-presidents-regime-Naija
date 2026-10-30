@@ -2,12 +2,12 @@
  "schema_version": 2,
  "layer": "Stage 9 — the pre-retrieval intent gate",
  "vintage": "2026-10-30",
- "generated_at": "2026-10-30T13:09:55+00:00",
+ "generated_at": "2026-10-30T15:03:59+00:00",
  "generator": {
   "script": "scripts/eval_intent.py",
   "spec": "analysis/specs/intent_gate.yml",
   "eval_spec": "analysis/specs/intent_gate_eval_v4.yml",
-  "git_sha": "ad720fc66ee8c7fa202645ca1746dce0e3f13c21"
+  "git_sha": "7e630a0f9bcb56f274539a19d14ef1abd3eb361b"
  },
  "specs": {
   "gate": {
@@ -23,8 +23,8 @@
  },
  "corpus": {
   "path": "registry/rag/2026-10-30/corpus.json",
-  "sha256": "158a77db9395402b164912dcdd5af71e419b5123fdbfc879e78455c3aa29d1a6",
-  "chunks": 485,
+  "sha256": "49ffc59d11758a6f9131260fdd9458b6f83bc9fc37c207bbbe14e4877e7fe480",
+  "chunks": 492,
   "vintage": "2026-10-30"
  },
  "rules": [
@@ -1269,27 +1269,27 @@
     "expected_refusal_cite": null,
     "route_matches_cite": true,
     "carries_a_needle": false,
-    "first_gold_rank": 1,
+    "first_gold_rank": 2,
     "retrieved": [
      {
-      "chunk_id": "result:B",
-      "score": 0.679299
+      "chunk_id": "doc:estimates#s02#p5",
+      "score": 0.630825
      },
      {
-      "chunk_id": "doc:estimates#s02#p5",
-      "score": 0.631243
+      "chunk_id": "result:B",
+      "score": 0.61184
      },
      {
       "chunk_id": "doc:estimates#s02#p10",
-      "score": 0.607771
+      "score": 0.574363
      },
      {
-      "chunk_id": "doc:estimates#s02#p4",
-      "score": 0.492179
+      "chunk_id": "doc:estimates#s02#p11",
+      "score": 0.505218
      },
      {
-      "chunk_id": "doc:estimates#s02#p8",
-      "score": 0.480896
+      "chunk_id": "doc:estimates#s02#p9",
+      "score": 0.496096
      }
     ]
    },
@@ -1304,27 +1304,27 @@
     "expected_refusal_cite": null,
     "route_matches_cite": true,
     "carries_a_needle": false,
-    "first_gold_rank": 2,
+    "first_gold_rank": 5,
     "retrieved": [
      {
       "chunk_id": "doc:robustness#s01#p2",
       "score": 0.60539
      },
      {
-      "chunk_id": "doc:robustness#s02",
-      "score": 0.603855
-     },
-     {
-      "chunk_id": "doc:robustness#s03#p2",
-      "score": 0.590254
-     },
-     {
       "chunk_id": "doc:robustness#s05#p2",
       "score": 0.589645
      },
      {
+      "chunk_id": "doc:robustness#s03#p2",
+      "score": 0.588571
+     },
+     {
       "chunk_id": "doc:robustness#s01",
-      "score": 0.588936
+      "score": 0.588449
+     },
+     {
+      "chunk_id": "doc:robustness#s02#p3",
+      "score": 0.582553
      }
     ]
    },
@@ -1347,7 +1347,7 @@
      },
      {
       "chunk_id": "doc:limitations#s07#p3",
-      "score": 0.49229
+      "score": 0.492291
      },
      {
       "chunk_id": "doc:design-memo#s04#p6",
@@ -1495,7 +1495,7 @@
      },
      {
       "chunk_id": "doc:estimates#s02",
-      "score": 0.369744
+      "score": 0.369774
      },
      {
       "chunk_id": "doc:estimates#s03",
@@ -1638,8 +1638,8 @@
       "score": 0.417317
      },
      {
-      "chunk_id": "result:B#p6",
-      "score": 0.408992
+      "chunk_id": "result:B#p9",
+      "score": 0.402924
      }
     ]
    },
@@ -1797,6 +1797,14 @@
     "first_gold_rank": null,
     "retrieved": [
      {
+      "chunk_id": "doc:estimates#s02#p11",
+      "score": 0.424976
+     },
+     {
+      "chunk_id": "doc:estimates#s02#p13",
+      "score": 0.40978
+     },
+     {
       "chunk_id": "card:cpi_yoy__B#p3",
       "score": 0.403889
      },
@@ -1807,14 +1815,6 @@
      {
       "chunk_id": "card:cpi_yoy__B",
       "score": 0.393074
-     },
-     {
-      "chunk_id": "card:cpi_yoy__A",
-      "score": 0.375944
-     },
-     {
-      "chunk_id": "card:cpi_yoy__C",
-      "score": 0.372851
      }
     ]
    },
@@ -1840,16 +1840,16 @@
       "score": 0.329623
      },
      {
-      "chunk_id": "doc:estimates#s02#p8",
-      "score": 0.325905
-     },
-     {
       "chunk_id": "estimate:u5mr__C#p2",
       "score": 0.324319
      },
      {
       "chunk_id": "card:gdp_growth__C#p2",
       "score": 0.322868
+     },
+     {
+      "chunk_id": "doc:data-dictionary#fact-donor-panel-and-state-panel",
+      "score": 0.322801
      }
     ]
    },
@@ -1903,7 +1903,7 @@
     "retrieved": [
      {
       "chunk_id": "doc:estimates#s02#p2",
-      "score": 0.425857
+      "score": 0.426204
      },
      {
       "chunk_id": "doc:data-dictionary#faac-state-allocation-the-fiscal-dose",

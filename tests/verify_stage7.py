@@ -54,7 +54,7 @@ def fail(failures: list[str], message: str) -> None:
     failures.append(message)
 
 
-def load_base(spec: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
+def load_base(spec: dict, outcome_defs: list[dict]) -> tuple[pd.DataFrame, dict[str, pd.DataFrame]]:
     con = duckdb.connect(str(REPO_ROOT / spec["input"]["database"]), read_only=True)
     try:
         q = spec["design_a"]["sample"]
@@ -69,16 +69,21 @@ def load_base(spec: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
             order by state_id, period_month
             """
         ).df()
-        national = con.sql(
-            f"""
-            select f.period_month, f.gross_total_naira as faac, m.value as oil
-            from {spec['input']['national_faac_table']} f
-            join {spec['input']['fact_metric_table']} m
-              on m.metric_id = '{spec['input']['oil_metric_id']}'
-             and m.period_month = f.period_month
-            order by f.period_month
-            """
-        ).df()
+        # One frame per outcome family (C-85), each from its own declared table — the mapping lives in
+        # estimation.yml, which robustness.yml names as its upstream.
+        frames: dict[str, pd.DataFrame] = {}
+        for o in outcome_defs:
+            frames[o["id"]] = con.sql(
+                f"""
+                select t.period_month, t.{o['column']} as outcome_value, m.value as oil
+                from {o['table']} t
+                join {spec['input']['fact_metric_table']} m
+                  on m.metric_id = '{spec['input']['oil_metric_id']}'
+                 and m.period_month = t.period_month
+                where t.{o['column']} is not null and m.value is not null
+                order by t.period_month
+                """
+            ).df()
     finally:
         con.close()
 
@@ -92,20 +97,21 @@ def load_base(spec: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
     for lag in (0, 1, 2):
         panel[f"log_dose_lag{lag}"] = panel.groupby("state_id")["log_dose"].shift(lag)
 
-    national["period_month"] = pd.to_datetime(national["period_month"])
-    national["faac"] = national["faac"].astype(float)
-    national["oil"] = national["oil"].astype(float)
-    national["log_faac"] = np.log(national["faac"])
-    national["log_oil"] = np.log(national["oil"])
-    national["d_log_oil_1m"] = national["log_oil"].diff(1)
-    national["d_log_oil_3m"] = national["log_oil"].diff(3) / 3
-    national["month_of_year"] = national["period_month"].dt.month.astype("category")
-    national["covid"] = (
-        (national["period_month"] >= "2020-03-01") & (national["period_month"] <= "2021-12-01")
-    ).astype(int)
-    for shock in ("d_log_oil_1m", "d_log_oil_3m"):
-        national[f"lag_{shock}"] = national[shock].shift(1)
-    return panel, national
+    for frame in frames.values():
+        frame["period_month"] = pd.to_datetime(frame["period_month"])
+        frame["outcome_value"] = frame["outcome_value"].astype(float)
+        frame["oil"] = frame["oil"].astype(float)
+        frame["log_outcome"] = np.log(frame["outcome_value"])
+        frame["log_oil"] = np.log(frame["oil"])
+        frame["d_log_oil_1m"] = frame["log_oil"].diff(1)
+        frame["d_log_oil_3m"] = frame["log_oil"].diff(3) / 3
+        frame["month_of_year"] = frame["period_month"].dt.month.astype("category")
+        frame["covid"] = (
+            (frame["period_month"] >= "2020-03-01") & (frame["period_month"] <= "2021-12-01")
+        ).astype(int)
+        for shock in ("d_log_oil_1m", "d_log_oil_3m"):
+            frame[f"lag_{shock}"] = frame[shock].shift(1)
+    return panel, frames
 
 
 def base_fingerprints(spec: dict) -> dict[str, str]:
@@ -189,7 +195,7 @@ def lp(frame: pd.DataFrame, shock: str, controls: str, h: int, maxlags: int = 12
     h-month lead from the far side of the gap.
     """
     frame = frame.copy()
-    frame["y"] = frame["log_faac"].shift(-h) - frame["log_faac"].shift(1)
+    frame["y"] = frame["log_outcome"].shift(-h) - frame["log_outcome"].shift(1)
     frame = frame.dropna(subset=["y", shock])
     if window is not None:
         frame = frame[window_mask(frame, window, spec)]
@@ -249,14 +255,15 @@ def main() -> int:
     print(f"robustness {report['vintage']} | {len(report['specifications'])} specifications | "
           f"generated {report['generated_at']}")
 
-    panel, national = load_base(spec)
+    panel, b_frames = load_base(spec, yaml.safe_load(
+        (REPO_ROOT / spec["upstream"]["estimation_spec"]).read_text(encoding="utf-8"))["design_b"]["outcomes"])
     by_id = {row["spec_id"]: row for row in report["specifications"]}
 
     # ---- 1. the grid is complete and nothing undeclared was published -----------------------
     declared = (len(spec["design_a"]["axes"]["outcome"]) * len(spec["design_a"]["axes"]["dose_lag_months"])
                 * len(spec["design_a"]["axes"]["adjustment_set"]) * len(spec["design_a"]["axes"]["window"]))
-    declared += (len(spec["design_b"]["axes"]["shock"]) * len(spec["design_b"]["axes"]["controls"])
-                 * len(spec["design_b"]["axes"]["window"]))
+    declared += (len(spec["design_b"]["axes"]["outcome"]) * len(spec["design_b"]["axes"]["shock"])
+                 * len(spec["design_b"]["axes"]["controls"]) * len(spec["design_b"]["axes"]["window"]))
     if len(report["specifications"]) != declared:
         fail(failures, f"grid: {len(report['specifications'])} specifications published, {declared} declared")
     if report["grid"]["n_total"] != declared:
@@ -306,7 +313,7 @@ def main() -> int:
     # rather than against the published rows, so a grid fitted on something else is caught.
     b_refitted: list[dict] = []
     for row in sorted((r for r in report["specifications"] if r["design"] == "B"), key=lambda r: r["spec_id"]):
-        got = lp(national, row["shock"], row["controls"], row["horizon"],
+        got = lp(b_frames[row["outcome"]], row["shock"], row["controls"], row["horizon"],
                  spec["design_b"]["inference"]["maxlags"], window=row["window"], spec=spec)
         b_refitted.append({**row, "coefficient": got["coefficient"]})
         delta = abs(got["coefficient"] - row["coefficient"])
@@ -358,7 +365,7 @@ def main() -> int:
     pref_sign = {d: next(r["coefficient"] for r in report["specifications"]
                          if r["design"] == d and r["preferred"]) > 0 for d in ("A", "B")}
     axes = {"A": ["outcome", "dose_lag_months", "adjustment_set", "window"],
-            "B": ["shock", "controls", "window"]}
+            "B": ["outcome", "shock", "controls", "window"]}
     expected_levels = {}
     for design, axis_list in axes.items():
         rows = [r for r in report["specifications"] if r["design"] == design]
@@ -392,44 +399,89 @@ def main() -> int:
     # ---- 4b. the spread decomposition the report and the docs quote ---------------------------
     # Computed from the re-fitted Design B coefficients, not from the published ones: the point of
     # publishing the decomposition is that the prose stops quoting a typed number, so the check has
-    # to reach past the published rows to the fitted grid.
-    def within_cell_range(keys: tuple[str, ...]) -> tuple[float, int]:
-        cells: dict[tuple, list[float]] = {}
-        for r in b_refitted:
-            cells.setdefault(tuple(r[k] for k in keys), []).append(r["coefficient"])
-        return float(np.mean([max(v) - min(v) for v in cells.values()])), len(cells)
+    # to reach past the published rows to the fitted grid. **Per outcome family**, because pooling two
+    # estimands into one min/max publishes a range no single outcome produces (C-85).
+    def spread_of(rows: list[dict]) -> dict:
+        def within_cell_range(keys: tuple[str, ...]) -> tuple[float, int]:
+            cells: dict[tuple, list[float]] = {}
+            for r in rows:
+                cells.setdefault(tuple(r[k] for k in keys), []).append(r["coefficient"])
+            return float(np.mean([max(v) - min(v) for v in cells.values()])), len(cells)
 
-    across_covariate_sets, n_shock_cells = within_cell_range(("shock", "window"))
-    across_shock_definitions, n_control_cells = within_cell_range(("controls", "window"))
-    expected_spread = {
-        "n": len(b_refitted),
-        "n_cells_holding_shock": n_shock_cells,
-        "n_cells_holding_controls": n_control_cells,
-        "coefficient_min": min(r["coefficient"] for r in b_refitted),
-        "coefficient_min_spec": min(b_refitted, key=lambda r: r["coefficient"])["spec_id"],
-        "coefficient_max": max(r["coefficient"] for r in b_refitted),
-        "coefficient_max_spec": max(b_refitted, key=lambda r: r["coefficient"])["spec_id"],
-        "across_covariate_sets": across_covariate_sets,
-        "across_shock_definitions": across_shock_definitions,
-    }
+        across_covariate_sets, n_shock_cells = within_cell_range(("shock", "window"))
+        across_shock_definitions, n_control_cells = within_cell_range(("controls", "window"))
+        return {
+            "n": len(rows),
+            "n_cells_holding_shock": n_shock_cells,
+            "n_cells_holding_controls": n_control_cells,
+            "coefficient_min": min(r["coefficient"] for r in rows),
+            "coefficient_min_spec": min(rows, key=lambda r: r["coefficient"])["spec_id"],
+            "coefficient_max": max(r["coefficient"] for r in rows),
+            "coefficient_max_spec": max(rows, key=lambda r: r["coefficient"])["spec_id"],
+            "across_covariate_sets": across_covariate_sets,
+            "across_shock_definitions": across_shock_definitions,
+        }
+
     published_spread = report.get("spread", {}).get("design_b")
     if not published_spread:
         fail(failures, "spread / design B: the artifact publishes no spread decomposition")
     else:
+        # the top-level fields are the pre-registered family's, and `by_outcome` carries both
+        preferred_id = spec["design_b"]["preferred"]["outcome"]
+        expected_spread = spread_of([r for r in b_refitted if r["outcome"] == preferred_id])
         for key, want in expected_spread.items():
             got = published_spread.get(key)
             if got is None:
                 fail(failures, f"spread / design B: {key} is missing from the artifact")
+            elif key.endswith("_spec"):
+                # A specification id is tie-sensitive: two cells can share the minimum coefficient to
+                # floating precision, and which one `which.min` names first is not a claim about the
+                # grid. The claim is that the *named* cell attains the published extreme, so that is
+                # what is checked.
+                named = by_id.get(got)
+                extreme = published_spread.get(key.replace("_spec", ""))
+                if named is None:
+                    fail(failures, f"spread / design B / {key}: {got!r} is not a published specification")
+                elif named["outcome"] != preferred_id:
+                    fail(failures, f"spread / design B / {key}: {got!r} is not in the pre-registered family")
+                elif abs(named["coefficient"] - extreme) > 1e-9:
+                    fail(failures, f"spread / design B / {key}: {got!r} has coefficient "
+                                   f"{named['coefficient']:.6f}, not the published extreme {extreme:.6f}")
             elif isinstance(want, float):
                 if abs(got - want) > 1e-6:
                     fail(failures, f"spread / design B / {key}: published {got:.6f} vs recomputed "
                                    f"{want:.6f} — the magnitude claim is not the fitted grid's")
             elif got != want:
                 fail(failures, f"spread / design B / {key}: published {got} vs recomputed {want}")
-    print(f"\nspread (Design B, recomputed): {expected_spread['coefficient_min']:.4f} .. "
+        by_outcome = published_spread.get("by_outcome") or {}
+        for oid in sorted({r["outcome"] for r in b_refitted}):
+            want = spread_of([r for r in b_refitted if r["outcome"] == oid])
+            if oid not in by_outcome:
+                fail(failures, f"spread / design B: no decomposition published for outcome {oid}")
+                continue
+            for key, value in want.items():
+                got = by_outcome[oid].get(key)
+                if key.endswith("_spec"):
+                    named = by_id.get(got)
+                    extreme = by_outcome[oid].get(key.replace("_spec", ""))
+                    if named is None or named["outcome"] != oid:
+                        fail(failures, f"spread / design B[{oid}] / {key}: {got!r} is not a "
+                                       f"specification of this family")
+                    elif extreme is not None and abs(named["coefficient"] - extreme) > 1e-9:
+                        fail(failures, f"spread / design B[{oid}] / {key}: {got!r} has coefficient "
+                                       f"{named['coefficient']:.6f}, not the published extreme "
+                                       f"{extreme:.6f}")
+                elif isinstance(value, float):
+                    if got is None or abs(got - value) > 1e-6:
+                        fail(failures, f"spread / design B[{oid}] / {key}: published {got} vs "
+                                       f"recomputed {value:.6f}")
+                elif got != value:
+                    fail(failures, f"spread / design B[{oid}] / {key}: published {got} vs recomputed {value}")
+    print(f"\nspread (Design B[{preferred_id}], recomputed): {expected_spread['coefficient_min']:.4f} .. "
           f"{expected_spread['coefficient_max']:.4f}; across the covariate sets "
-          f"{across_covariate_sets:.4f} (mean over {n_shock_cells} shock x window cells), across the two "
-          f"shock definitions {across_shock_definitions:.4f} (mean over {n_control_cells} cells)")
+          f"{expected_spread['across_covariate_sets']:.4f} (mean over "
+          f"{expected_spread['n_cells_holding_shock']} shock x window cells), across the two "
+          f"shock definitions {expected_spread['across_shock_definitions']:.4f}")
 
     # ---- 5. the pre-registered cell is the published Stage 6 estimate -------------------------
     upstream = report["upstream"]
@@ -510,8 +562,8 @@ def main() -> int:
           f"{flips} sign flip(s); dropping {'/'.join(oil_states)} -> {drop_oil[0]:+.4f}")
 
     # Oster on Design B
-    pref_b_frame = national.copy()
-    pref_b_frame["y"] = pref_b_frame["log_faac"].shift(-h_focus) - pref_b_frame["log_faac"].shift(1)
+    pref_b_frame = b_frames[spec["design_b"]["preferred"]["outcome"]].copy()
+    pref_b_frame["y"] = pref_b_frame["log_outcome"].shift(-h_focus) - pref_b_frame["log_outcome"].shift(1)
     shock = spec["design_b"]["preferred"]["shock"]
     pref_b_frame = pref_b_frame.dropna(subset=["y", shock])
     pref_b_frame = pref_b_frame[
@@ -535,7 +587,7 @@ def main() -> int:
     shifted, observed_same_rows = [], []
     preferred_window = spec["design_b"]["preferred"]["window"]
     for k in in_time["offsets"]:
-        frame = national.copy()
+        frame = b_frames[spec["design_b"]["preferred"]["outcome"]].copy()
         frame["placebo_shock"] = frame[shock].shift(k)
         frame = frame[frame["placebo_shock"].notna()]
         shifted.append(lp(frame, "placebo_shock", spec["design_b"]["preferred"]["controls"], h_focus,
@@ -552,7 +604,7 @@ def main() -> int:
 
     # HAC bandwidth
     for entry in report["sensitivity"]["design_b"]["hac_bandwidth"]:
-        got = lp(national, shock, spec["design_b"]["preferred"]["controls"], h_focus,
+        got = lp(b_frames[spec["design_b"]["preferred"]["outcome"]], shock, spec["design_b"]["preferred"]["controls"], h_focus,
                  maxlags=entry["maxlags"], window=preferred_window, spec=spec)
         if abs(got["standard_error"] - entry["standard_error"]) / entry["standard_error"] > NP_SE_TOL_REL:
             fail(failures, f"HAC bandwidth {entry['maxlags']}: published SE {entry['standard_error']:.6f} vs "

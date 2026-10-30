@@ -162,16 +162,16 @@ design_a:
 # ---------------------------------------------------------------------------------------------
 design_b:
   id: B
-  name: "Brent crude to state allocations: how much of an oil shock reaches the states, and when?"
+  name: "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?"
   estimator: "local projection (Jorda), OLS, Newey-West standard errors"
   focus_horizon: 2
   # The preferred specification's full path is published beside the grid. The grid itself is compared at
   # the focus horizon, because a curve over horizons would confound "specification" with "time".
   horizons: [0, 1, 2, 3, 4, 5, 6, 9, 12]
   focus_horizon_why: >-
-    h = 2 is where Stage 6's estimate peaks and where the disbursement calendar says the response should
-    arrive. It was chosen before this grid was fitted; the grid reports whether other specifications put
-    the response somewhere else, not whether a different focus would look better.
+    h = 2 is where Stage 6's fiscal estimate peaks and where the disbursement calendar says the response
+    should arrive. It was chosen before this grid was fitted; the grid reports whether other
+    specifications put the response somewhere else, not whether a different focus would look better.
   # The magnitude claim ("the spread is mostly the shock definition") is a claim about which axis moves
   # the coefficient, so it is computed from the fitted rows and published in the artifact rather than
   # typed into the prose. Two decompositions, each holding everything else fixed:
@@ -181,7 +181,10 @@ design_b:
     averaged over the twelve covariate-set x window cells (`across_shock_definitions`). A mean of
     within-cell ranges rather than a single pair of specifications, because one pair would make the
     claim depend on which pair was picked.
+  # C-85's fourth axis: the outcome family. Both families are fitted under every declared shock, control
+  # set and window, so neither is published without the grid that could move it.
   axes:
+    outcome: [faac, cpi]
     shock: [d_log_oil_1m, d_log_oil_3m]
     controls: [none, month_of_year, month_of_year_plus_lagged_shock, month_of_year_plus_covid]
     window: [full, exclude_covid, post_2019]
@@ -212,6 +215,7 @@ design_b:
       formula: "y ~ shock + factor(month_of_year) + covid"
       why: "a level shift for 2020-03 -> 2021-12, kept separate from the window axis"
   preferred:
+    outcome: faac
     shock: d_log_oil_1m
     controls: month_of_year
     window: full

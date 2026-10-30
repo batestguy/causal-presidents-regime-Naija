@@ -31,11 +31,23 @@ phases:
         date: "2026-10-30"
   - id: B
     title: the monthly inflation outcome in Design B (the subsidy estimand)
-    status: in_progress
-    evidence: []
+    status: done
+    evidence:
+      - check: "02_diagnostics.R green: log(cpi_index) I(1) inconclusive-at-diff, monthly Johansen rank 0 under conservative-min (C-86)"
+        date: "2026-10-30"
+      - check: "03_estimate.R: 21 specifications (3 A + 18 B over two families); fiscal family bit-identical to the committed artifact (0.00e+00)"
+        date: "2026-10-30"
+      - check: "04_robustness.R: 129 specifications (81 A + 48 B), 24 of 129 in the declared near-zero band, spread per family"
+        date: "2026-10-30"
+      - check: "05_registry.R + site: 36 cards, 2 with a published number, index and technical page moved to 129 specifications"
+        date: "2026-10-30"
+      - check: "all 23 tests/verify_*.py PASS and scripts/validate_artifacts.py PASS (74 documents, C-44 invariant)"
+        date: "2026-10-30"
+      - check: "corpus rebuilt with --embed (492 chunks); eval_rag / eval_intent / eval_answer / eval_answer_quality re-measured"
+        date: "2026-10-30"
   - id: C
     title: close or permanently record every not-estimated reason
-    status: not_started
+    status: in_progress
     evidence: []
   - id: D
     title: optional RAGAS library run on Colab

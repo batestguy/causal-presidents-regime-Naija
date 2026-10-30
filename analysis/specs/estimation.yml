@@ -140,10 +140,14 @@ design_a:
 # ---------------------------------------------------------------------------------------------
 design_b:
   id: B
-  name: "Brent crude to state allocations: how much of an oil shock reaches the states, and when?"
+  name: "Brent crude to the states and to the price level: how much of an oil shock passes through, and when?"
   estimand: >-
-    The cumulative elasticity of the national monthly FAAC allocation to the 36 states with respect to
-    a Brent crude shock: the proportional change in the allocation h months after a 1 % price move.
+    Two outcome families sharing one shock, one control set and one inference: (i) the **fiscal channel** —
+    the cumulative elasticity of the national monthly FAAC allocation to the 36 states with respect to a
+    Brent crude shock, i.e. the proportional change in the allocation h months after a 1 % price move; and
+    (ii) the **price level** (C-85) — the cumulative log change in the NBS all-items CPI index h months
+    after the same move, i.e. the inflation that passes through. They are not one estimand: one asks
+    whether the money reaches the states, the other whether the shock reaches prices.
   unit: national-month
   exposure:
     column: oil
@@ -153,14 +157,37 @@ design_b:
       two trending series reports a relationship that is mostly shared trend, and Nigeria's own output
       decisions cannot move Brent: the country is a price taker in a market two orders of magnitude
       larger than its exports, which is what makes the direction of causation defensible here.
-  outcome:
-    column: gross_total_naira
-    table: main_analytics.faac_national_monthly
-    transform: log_cumulative_change
+  # One entry per outcome family. `coefficient_name` is the published key, so the fiscal family keeps the
+  # name the registry and the robustness grid already reference and the new family gets its own rather
+  # than colliding with it on (design, coefficient_name).
+  outcomes:
+    - id: faac
+      label: "cumulative log change in national FAAC"
+      family: fiscal_channel
+      column: gross_total_naira
+      table: main_analytics.faac_national_monthly
+      transform: log_cumulative_change
+      coefficient_name: cumulative_pass_through
+      window: {start: "2016-12", end: null}
+      why: >-
+        The channel C-48 published: the allocation is the money that reaches the states, and the question
+        is how much of a shock arrives and after how long.
+    - id: cpi
+      label: "cumulative log change in the NBS CPI index"
+      family: price_level
+      column: cpi_index
+      table: main_analytics.nbs_cpi_national_monthly
+      transform: log_cumulative_change
+      coefficient_name: cumulative_pass_through_cpi
+      window: {start: "1999-01", end: null}
+      why: >-
+        C-85's outcome, and the reason the whole family exists: the NBS monthly CPI is native monthly to
+        2024-10, so the 2023-06 -> 2023-12 subsidy-removal window is visible inside it rather than
+        interpolated across. Stage 5 (C-86) measured log(cpi) as I(1) — inconclusive at the second step,
+        carried conservatively — and found **no cointegration with log Brent under the conservative rank
+        rule**, which is the branch under which a cumulative-response projection is a statement about
+        short-run pass-through and not a deviation from a long-run path.
   estimator: "local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC"
-  sample:
-    require: "a FAAC month with an oil month and a full h-month lead"
-    window: {start: "2016-12", end: null}
   horizons: [0, 1, 2, 3, 4, 5, 6, 9, 12]
   controls: [month_of_year]
   inference:
@@ -169,19 +196,22 @@ design_b:
     why: >-
       12 lags is the conventional bandwidth for monthly data and it covers the fiscal year; the
       overlapping-horizon residuals in a local projection are autocorrelated by construction, so a
-      heteroskedasticity-only standard error would be wrong in a way that flatters the estimate.
+      heteroskedasticity-only standard error would be wrong in a way that flatters the estimate. The
+      bandwidth is shared by both families so their intervals are comparable.
   checks:
     # The allocation is published for revenue accrued in an earlier month, so a positive response at
-    # h=0 with no lag structure would be evidence of a leak, not of transmission.
+    # h=0 with no lag structure would be evidence of a leak, not of transmission. The band was declared
+    # for the fiscal family and is applied to both: an oil shock that moves the price level with no lag
+    # at all is the same implausibility, and the same rule should be able to say so.
     expect_peak_horizon: [2, 4]
     placebo_lead_months: 6
     why: >-
-      The lead placebo tests the direction: if a future oil shock "predicts" today's allocation, the
+      The lead placebo tests the direction: if a future oil shock "predicts" today's outcome, the
       relationship is a common trend rather than a transmission channel.
   verdict_rule: >-
-    `estimated` if the cumulative response is positive at the declared horizon band with a HAC t above
-    1.96 at some horizon in it, and the lead placebo at 6 months is smaller in magnitude. Reported with
-    its confidence bounds either way; a null is a result.
+    Applied **per outcome family**, never pooled: `estimated` if the cumulative response is positive at
+    the declared horizon band with a HAC t above 1.96 at some horizon in it, and the lead placebo at 6
+    months is smaller in magnitude. Reported with its confidence bounds either way; a null is a result.
 
 # ---------------------------------------------------------------------------------------------
 # Design C — synthetic control on annual outcomes

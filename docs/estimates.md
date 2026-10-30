@@ -100,12 +100,17 @@ it was 45 positive against 36 negative, and the lagged dose was negative in all 
 agrees on a sign is not an identification strategy — the verdict is still *estimated, not identified*, and
 it is the lead-shift check rather than the count that makes it so.
 
-### Design B — how much of a Brent shock reaches the states, and when?
+### Design B — how much of a Brent shock reaches the states, and the price level?
 
-**Estimated.** This is the design that works, because the direction of causation is defensible: Nigeria
-is a price taker in a market two orders of magnitude larger than its exports, so the Brent shock can be
-treated as exogenous to Nigerian fiscal outcomes. Local projection, cumulative response, Newey-West
-(12 lags):
+**Two outcome families share one shock, one control set and one bandwidth** (C-85): the fiscal channel,
+which is the design's pre-registered headline, and the price level, which is the question the subsidy
+removal made urgent. They are reported separately because their verdicts differ.
+
+#### The fiscal channel — estimated
+
+This is the design that works, because the direction of causation is defensible: Nigeria is a price
+taker in a market two orders of magnitude larger than its exports, so the Brent shock can be treated as
+exogenous to Nigerian fiscal outcomes. Local projection, cumulative response, Newey-West (12 lags):
 
 | Horizon (months) | Cumulative elasticity | SE | 95 % CI |
 |---|---|---|---|
@@ -126,10 +131,36 @@ surprising result. The lead placebo — regressing today's allocation on a *futu
 Before h = 2 the response is zero (−0.160 at h = 0), which is the substantive claim of this design: the
 oil channel reaches state budgets through an administrative lag, not a market one.
 
-**What this does not establish:** the response is measured in naira against a dollar price, so the
-elasticity mixes the price channel with the exchange-rate channel, and the naira moved twice inside the
-window. A monthly NGN/USD series would separate them; it does not exist on any keyless source
-(C-46). The confidence bounds are also wide, and 114 months is not many.
+#### The price level — estimated as a null at the declared band
+
+The same shock, on the NBS all-items CPI index (native monthly, 1999-01 → 2024-10, 310 months). The
+cumulative coefficient is the log change in the price level h months after a 1 % Brent move, so it reads
+as the inflation that passes through:
+
+| Horizon (months) | Cumulative log change | SE | 95 % CI | p |
+|---|---|---|---|---|
+| 0 | +0.004 | 0.006 | [−0.007, +0.015] | 0.439 |
+| 1 | +0.004 | 0.010 | [−0.016, +0.024] | 0.728 |
+| 2 | −0.002 | 0.016 | [−0.033, +0.028] | 0.892 |
+| 3 | −0.004 | 0.018 | [−0.040, +0.032] | 0.823 |
+| 4 | −0.002 | 0.022 | [−0.046, +0.042] | 0.928 |
+| 6 | −0.008 | 0.027 | [−0.062, +0.046] | 0.771 |
+| 12 | −0.002 | 0.029 | [−0.058, +0.055] | 0.956 |
+
+**Nothing here is distinguishable from zero, and the declared rule says so rather than leaving it to a
+reader:** no horizon in the two-to-four-month band reaches |t| > 1.96, so the family's verdict is
+`estimated_null_at_the_declared_band`, with the lead placebo at −0.003. That is a result about *this*
+channel, not about the 2023 inflation surge: the surge coincides with the subsidy withdrawal and the
+devaluation, neither of which is a Brent shock, and Stage 5 measured the price level as sharing no
+long-run path with Brent under the conservative rank rule (C-86). A design that can see the window and
+still finds no oil-price pass-through is telling you the window's driver was domestic.
+
+**What this does not establish:** for the fiscal family, the response is measured in naira against a
+dollar price, so the elasticity mixes the price channel with the exchange-rate channel, and the naira
+moved twice inside the window. A monthly NGN/USD series would separate them; it does not exist on any
+keyless source (C-46). The confidence bounds are also wide, and 114 months is not many. For the
+price-level family, the series ends in 2024-10, so nothing after it is claimed, and a null at monthly
+frequency with 310 observations is not the same as a null on annual data.
 
 ### Design C — synthetic control: estimated, and not identified
 

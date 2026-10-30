@@ -81,27 +81,53 @@ panel[, log_dose_lag1 := shift(log_dose, 1), by = state_id]
 panel[, log_dose_lag2 := shift(log_dose, 2), by = state_id]
 
 oil_id <- spec$input$oil_metric_id
-national <- as.data.table(DBI::dbGetQuery(con, sprintf("
-  select f.period_month, f.gross_total_naira as faac, m.value as oil
-  from %s f
-  join %s m on m.metric_id = '%s' and m.period_month = f.period_month
-  order by f.period_month
-", spec$input$national_faac_table, spec$input$fact_metric_table, oil_id)))
-national[, period_month := as.Date(period_month)]
-national[, log_faac := log(faac)]
-national[, log_oil := log(oil)]
-national[, d_log_oil_1m := log_oil - shift(log_oil, 1)]
-national[, d_log_oil_3m := (log_oil - shift(log_oil, 3)) / 3]
-national[, month_of_year := factor(format(period_month, "%m"))]
-national[, covid := as.integer(period_month >= as.Date("2020-03-01") &
-                                 period_month <= as.Date("2021-12-01"))]
-national[, lag_d_log_oil_1m := shift(d_log_oil_1m, 1)]
-national[, lag_d_log_oil_3m := shift(d_log_oil_3m, 1)]
+# One frame per outcome family (C-85). The mapping from a family id to its table, column and transform is
+# declared **once**, in `estimation.yml` — `robustness.yml` declares the axis levels by id and this stage
+# reads the definitions from the spec it already names as its upstream. Duplicating the map here would be
+# two declarations of the same table, which is how a grid ends up fitting a column the estimate did not.
+est_spec <- yaml::read_yaml(file.path(REPO_ROOT, spec$upstream$estimation_spec))
+b_outcome_defs <- Filter(function(o) as.character(o$id) %in% unlist(spec$design_b$axes$outcome),
+                         est_spec$design_b$outcomes)
+if (length(b_outcome_defs) != length(unlist(spec$design_b$axes$outcome))) {
+  stop(sprintf("robustness.yml declares outcome levels %s but estimation.yml defines %s",
+               paste(unlist(spec$design_b$axes$outcome), collapse = ", "),
+               paste(vapply(est_spec$design_b$outcomes, function(o) as.character(o$id), character(1)),
+                     collapse = ", ")))
+}
+build_b_frame <- function(o) {
+  df <- as.data.table(DBI::dbGetQuery(con, sprintf("
+    select t.period_month, t.%s as outcome_value, m.value as oil
+    from %s t
+    join %s m on m.metric_id = '%s' and m.period_month = t.period_month
+    where t.%s is not null and m.value is not null
+    order by t.period_month
+  ", o$column, o$table, spec$input$fact_metric_table, oil_id, o$column)))
+  df[, period_month := as.Date(period_month)]
+  df[, log_outcome := log(outcome_value)]
+  df[, log_oil := log(oil)]
+  df[, d_log_oil_1m := log_oil - shift(log_oil, 1)]
+  df[, d_log_oil_3m := (log_oil - shift(log_oil, 3)) / 3]
+  df[, month_of_year := factor(format(period_month, "%m"))]
+  df[, covid := as.integer(period_month >= as.Date("2020-03-01") &
+                             period_month <= as.Date("2021-12-01"))]
+  df[, lag_d_log_oil_1m := shift(d_log_oil_1m, 1)]
+  df[, lag_d_log_oil_3m := shift(d_log_oil_3m, 1)]
+  df
+}
+b_frames <- stats::setNames(
+  lapply(b_outcome_defs, build_b_frame),
+  vapply(b_outcome_defs, function(o) as.character(o$id), character(1)))
+preferred_b_id <- as.character(spec$design_b$preferred$outcome)
+# The sensitivity blocks below (Oster, in-time placebo, bandwidth) are computed on the pre-registered
+# family, which is the one the grid's preferred cell marks.
+national <- b_frames[[preferred_b_id]]
 
 message(sprintf("design A base: %d state-months, %d states, %s -> %s",
                 nrow(panel), uniqueN(panel$state_id), min(panel$period_month), max(panel$period_month)))
-message(sprintf("design B base: %d months, %s -> %s",
-                nrow(national), min(national$period_month), max(national$period_month)))
+for (oid in names(b_frames)) {
+  message(sprintf("design B base [%s]: %d months, %s -> %s", oid, nrow(b_frames[[oid]]),
+                  min(b_frames[[oid]]$period_month), max(b_frames[[oid]]$period_month)))
+}
 
 # ---------------------------------------------------------------------------------------------
 # Windows — filter estimation rows only; outcomes and lags are built on the full series
@@ -168,6 +194,9 @@ message(sprintf("design A: %d specifications fitted", nrow(a_grid)))
 # Design B — every specification in the declared grid, at the focus horizon
 # ---------------------------------------------------------------------------------------------
 h_focus <- spec$design_b$focus_horizon
+pref_b_outcome <- Filter(function(o) identical(as.character(o$id), preferred_b_id),
+                         b_outcome_defs)[[1]]
+pref_b_coef_name <- sprintf("%s_h%d", pref_b_outcome$coefficient_name, h_focus)
 hac_lags <- spec$design_b$inference$maxlags
 
 b_controls_rhs <- function(controls, shock) {
@@ -188,7 +217,7 @@ b_controls_rhs <- function(controls, shock) {
 # check caught before anything was published.
 lp_row <- function(dt, shock, controls, h, window_name) {
   frame <- copy(dt)
-  frame[, y := shift(log_faac, h, type = "lead") - shift(log_faac, 1)]
+  frame[, y := shift(log_outcome, h, type = "lead") - shift(log_outcome, 1)]
   frame <- frame[!is.na(y) & !is.na(get(shock))]
   if (!is.null(window_name)) frame <- frame[window_mask(frame, window_name)]
   rhs <- b_controls_rhs(controls, shock)
@@ -201,17 +230,18 @@ lp_row <- function(dt, shock, controls, h, window_name) {
 }
 
 b_axes <- spec$design_b$axes
-b_grid <- CJ(shock = unlist(b_axes$shock),
+b_grid <- CJ(outcome = unlist(b_axes$outcome),
+             shock = unlist(b_axes$shock),
              controls = unlist(b_axes$controls),
              window = unlist(b_axes$window), sorted = FALSE)
 
 b_rows <- vector("list", nrow(b_grid))
 for (i in seq_len(nrow(b_grid))) {
   g <- b_grid[i]
-  got <- lp_row(national, g$shock, g$controls, h_focus, g$window)
+  got <- lp_row(b_frames[[g$outcome]], g$shock, g$controls, h_focus, g$window)
   b_rows[[i]] <- list(
-    spec_id = sprintf("B|%s|%s|%s", g$shock, g$controls, g$window),
-    design = "B", shock = g$shock, controls = g$controls, window = g$window,
+    spec_id = sprintf("B|%s|%s|%s|%s", g$outcome, g$shock, g$controls, g$window),
+    design = "B", outcome = g$outcome, shock = g$shock, controls = g$controls, window = g$window,
     horizon = as.integer(h_focus),
     estimator = sprintf("%s, h=%d", spec$design_b$estimator, h_focus),
     formula = got$formula,
@@ -263,7 +293,7 @@ if (file.exists(estimates_path)) {
   estimates <- jsonlite::fromJSON(estimates_path, simplifyVector = FALSE)
   stage6_b <- NULL
   for (s in estimates$specifications) {
-    if (identical(s$design, "B") && identical(s$coefficient_name, sprintf("cumulative_pass_through_h%d", h_focus))) {
+    if (identical(s$design, "B") && identical(s$coefficient_name, pref_b_coef_name)) {
       stage6_b <- s
     }
   }
@@ -322,7 +352,7 @@ names(support_by_design) <- c("A", "B")
 support_overall <- count_signs(rows_dt)
 
 axis_names <- list(A = c("outcome", "dose_lag_months", "adjustment_set", "window"),
-                   B = c("shock", "controls", "window"))
+                   B = c("outcome", "shock", "controls", "window"))
 pref_sign <- c(A = pref_a$coefficient > 0, B = pref_b$coefficient > 0)
 
 by_axis_level <- list()
@@ -453,7 +483,7 @@ message(sprintf("leave-one-state-out: %d refits, range [%.4f, %.4f], %d sign fli
 
 # Design B: Oster on the preferred local projection at the focus horizon.
 frame_b <- copy(national)
-frame_b[, y := shift(log_faac, h_focus, type = "lead") - shift(log_faac, 1)]
+frame_b[, y := shift(log_outcome, h_focus, type = "lead") - shift(log_outcome, 1)]
 frame_b <- frame_b[!is.na(y) & !is.na(get(spec$design_b$preferred$shock)) &
                      window_mask(frame_b, spec$design_b$preferred$window)]
 oster_b <- oster_bound(frame_b, "y", spec$design_b$preferred$shock, "month_of_year")
@@ -607,7 +637,7 @@ svglite::svglite(svg_path, width = 11, height = 13)
 layout(matrix(c(1, 2, 3, 4), nrow = 4), heights = c(3.4, 2.6, 3.4, 1.6))
 draw_panel(all_rows, "A", "Design A — state dose-response (PPML elasticity), 81 specifications")
 draw_strip(all_rows, "A", unlist(axis_names$A))
-draw_panel(all_rows, "B", sprintf("Design B — national fiscal transmission, cumulative elasticity at h=%d, 24 specifications", h_focus))
+draw_panel(all_rows, "B", sprintf("Design B - oil to the states and to prices, cumulative response at h=%d, %d specifications", h_focus, nrow(b_rows)))
 draw_strip(all_rows, "B", unlist(axis_names$B))
 invisible(dev.off())
 # The figure's size is recorded on its *canonical* bytes (CRLF collapsed to LF), because `.gitattributes`
@@ -638,19 +668,28 @@ sign_flip_levels <- Filter(function(x) isTRUE(x$flips_against_preferred), by_axi
 # claim about the grid, so it is computed here from the fitted rows and published in the artifact;
 # the deck of numbers the prose quotes then comes from one read, the defect C-49 named.
 b_rows <- rows_dt[design == "B"]
-b_hold_shock <- b_rows[, .(range = max(coefficient) - min(coefficient)), by = .(shock, window)]
-b_hold_controls <- b_rows[, .(range = max(coefficient) - min(coefficient)), by = .(controls, window)]
-spread_b <- list(
-  rule = spec$design_b$spread_rule,
-  n = nrow(b_rows),
-  n_cells_holding_shock = nrow(b_hold_shock),
-  n_cells_holding_controls = nrow(b_hold_controls),
-  coefficient_min = min(b_rows$coefficient),
-  coefficient_min_spec = b_rows[which.min(coefficient)]$spec_id,
-  coefficient_max = max(b_rows$coefficient),
-  coefficient_max_spec = b_rows[which.max(coefficient)]$spec_id,
-  across_covariate_sets = mean(b_hold_shock$range),
-  across_shock_definitions = mean(b_hold_controls$range)
+# The spread is computed **per outcome family**: pooling two estimands into one min/max would publish a
+# range that no single outcome produces. The top-level fields stay the pre-registered family's, so every
+# existing consumer reads the number it read before, and `by_outcome` carries both.
+spread_one <- function(sub) {
+  hold_shock <- sub[, .(range = max(coefficient) - min(coefficient)), by = .(shock, window)]
+  hold_controls <- sub[, .(range = max(coefficient) - min(coefficient)), by = .(controls, window)]
+  list(n = nrow(sub), n_cells_holding_shock = nrow(hold_shock),
+       n_cells_holding_controls = nrow(hold_controls),
+       coefficient_min = min(sub$coefficient), coefficient_min_spec = sub[which.min(coefficient)]$spec_id,
+       coefficient_max = max(sub$coefficient), coefficient_max_spec = sub[which.max(coefficient)]$spec_id,
+       across_covariate_sets = mean(hold_shock$range),
+       across_shock_definitions = mean(hold_controls$range))
+}
+spread_by_outcome <- lapply(sort(unique(as.character(b_rows$outcome))), function(oid) {
+  c(list(outcome = oid), spread_one(b_rows[outcome == oid]))
+})
+names(spread_by_outcome) <- sort(unique(as.character(b_rows$outcome)))
+spread_b <- c(
+  list(rule = spec$design_b$spread_rule, preferred_outcome = preferred_b_id,
+       n_grid = nrow(b_rows), n = unname(spread_one(b_rows[outcome == preferred_b_id])$n),
+       by_outcome = spread_by_outcome),
+  spread_one(b_rows[outcome == preferred_b_id])[setdiff(names(spread_one(b_rows[outcome == preferred_b_id])), "n")]
 )
 
 robustness <- list(

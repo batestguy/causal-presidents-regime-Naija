@@ -180,7 +180,7 @@ the gate's own 0.10 threshold**, so the pre-fit gate does not discriminate on th
 
 ## 9. Robustness: the sign survives for one design and not the other
 
-**105 specifications** were declared before any was fitted and all are published.
+**129 specifications** were declared before any was fitted and all are published (81 for Design A, 48 for Design B across its two outcome families).
 
 - **Design A: 60 positive against 21 negative** of 81, with two inside the declared near-zero band.
   **One axis level flips by majority** — `outcome = fatalities_civilians`, 15 of 27. The pre-registered
@@ -189,9 +189,12 @@ the gate's own 0.10 threshold**, so the pre-fit gate does not discriminate on th
   two of three. The 36 leave-one-state-out refits do not flip the sign ([0.1429, 0.5950], 0 flips), so the
   fragility is the identification rather than one unit. The verdict is unchanged because the check that
   decides it — the lead-shift placebo — still fails (C-82).
-- **Design B: 24 of 24** specifications keep the sign and every interval excludes zero, with coefficients
-  from 0.397 to 2.398. The pre-registered cell reproduces Stage 6 to 4.3e-12. The timing remains the weak
-  part.
+- **Design B: 36 of 48** specifications are positive across its two outcome families. The **fiscal**
+  family is **24 of 24**, with every interval excluding zero and coefficients from 0.397 to 2.398; the
+  pre-registered cell reproduces Stage 6 to 4.3e-12. The **price-level** family (C-85) is 12 positive and
+  12 negative, and no coefficient in it is distinguishable from zero at any horizon — which is the same
+  answer Stage 6 gives for that family, reached 24 ways. The timing remains the weak part of the fiscal
+  one.
 - **Four axes are declared dead with their reasons** rather than dropped: imputation handling, index
   anchor, donor pool, event window. A fifth — the per-capita dose — is live in principle and unbuilt in
   fact, so every cell of the curve is the nominal dose.
@@ -224,7 +227,7 @@ the gate's own 0.10 threshold**, so the pre-fit gate does not discriminate on th
 After all of the above, four things survive:
 
 1. **A fiscal transmission channel:** a 10 % Brent move reaches the states as roughly 5 % more money two
-   to three months later (Design B, sign robust in 24 of 24 specifications, timing p = 0.0625).
+   to three months later (Design B, sign robust in all 24 fiscal specifications; the price-level family is a null at every horizon; timing p = 0.0625).
 2. **Two published cards** of 36 — the two Design A outcomes that have a card — each carrying its interval
    and its `estimated_not_identified` verdict. **34 cards carry a reason, not a number** (12
    `outcome_series_absent`, 10 `no_specification_declared`, 9 `design_result_is_channel_level`, 3
@@ -262,7 +265,7 @@ The claims that can be recomputed are registered as claims, not trusted as prose
 | 2 of 36 cards carry a number; 34 by reason | `registry/dags/index.json → registry.card_estimate_counts` | `tests/verify_registry.py` |
 | Design A coefficient, interval, placebo, lead-shift p | `registry/estimates/2026-10-30/estimates.json` | `tests/verify_stage6.py`; doc claims in `tests/verify_registry.py` |
 | Design B peak and its interval | same | `tests/verify_stage6.py`, `tests/verify_stage7.py` |
-| 60 positive / 21 negative; 24 of 24 | `registry/robustness/2026-10-30/robustness.json` | `scripts/validate_artifacts.py` recomputes the counts from the rows |
+| 60 positive / 21 negative; 36 of 48 | `registry/robustness/2026-10-30/robustness.json` | `scripts/validate_artifacts.py` recomputes the counts from the rows |
 | 2 / 3 / 2 / 1 event cells | `registry/events/2026-10-30/events.json` | `tests/verify_events.py` re-fits and re-derives every verdict |
 | 674 gated series, 359 / 313 / 2 | `registry/quality/2026-10-30/report.json` | `tests/verify_quality.py` |
 

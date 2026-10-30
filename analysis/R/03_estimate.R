@@ -71,22 +71,35 @@ panel[, ym := as.factor(ym)]
 setorder(panel, state_id, period_month)
 
 oil_id <- spec$input$oil_metric_id
-national <- as.data.table(DBI::dbGetQuery(con, sprintf("
-  select f.period_month, f.gross_total_naira as faac, m.value as oil
-  from %s f
-  join %s m on m.metric_id = '%s' and m.period_month = f.period_month
-  order by f.period_month
-", spec$input$national_faac_table, spec$input$fact_metric_table, oil_id)))
-national[, period_month := as.Date(period_month)]
-national[, log_faac := log(faac)]
-national[, log_oil := log(oil)]
-national[, d_oil := log_oil - shift(log_oil)]
-national[, month_of_year := as.factor(format(period_month, "%m"))]
+# One frame per outcome family (C-85). The outcome and the shock are built on the **full** series and
+# the family's window is applied to estimation rows later: filtering first would make the row at the
+# window's edge take its h-month lead from the far side of the gap.
+build_b_frame <- function(o) {
+  df <- as.data.table(DBI::dbGetQuery(con, sprintf("
+    select t.period_month, t.%s as outcome_value, m.value as oil
+    from %s t
+    join %s m on m.metric_id = '%s' and m.period_month = t.period_month
+    where t.%s is not null and m.value is not null
+    order by t.period_month
+  ", o$column, o$table, spec$input$fact_metric_table, oil_id, o$column)))
+  df[, period_month := as.Date(period_month)]
+  df[, log_outcome := log(outcome_value)]
+  df[, log_oil := log(oil)]
+  df[, d_oil := log_oil - shift(log_oil)]
+  df[, month_of_year := as.factor(format(period_month, "%m"))]
+  df
+}
+b_frames <- stats::setNames(
+  lapply(spec$design_b$outcomes, build_b_frame),
+  vapply(spec$design_b$outcomes, function(o) as.character(o$id), character(1)))
 
 message(sprintf("design A sample: %d state-months, %d states, %s -> %s",
                 nrow(panel), uniqueN(panel$state_id), min(panel$period_month), max(panel$period_month)))
-message(sprintf("design B sample: %d months, %s -> %s",
-                nrow(national), min(national$period_month), max(national$period_month)))
+for (oid in names(b_frames)) {
+  fr <- b_frames[[oid]]
+  message(sprintf("design B sample [%s]: %d months, %s -> %s",
+                  oid, nrow(fr), min(fr$period_month), max(fr$period_month)))
+}
 
 specs <- list()
 checks <- list()
@@ -245,78 +258,111 @@ hac_se <- function(model, term, maxlags) {
   list(se = unname(sqrt(diag(V))[term]), vcov = V)
 }
 
-lp_rows <- list()
-for (h in unlist(design_b$horizons)) {
-  frame <- copy(national)
-  # Cumulative response: log FAAC at t+h against its level at t-1. The cumulative form is the one whose
-  # coefficient is "the fraction of the shock that has reached the states by h".
-  frame[, y := log_faac[seq_len(.N) + h] - shift(log_faac)]
-  frame <- frame[!is.na(y) & !is.na(d_oil)]
-  model <- lm(y ~ d_oil + month_of_year, data = frame)
-  se <- hac_se(model, "d_oil", design_b$inference$maxlags)
-  est <- unname(coef(model)["d_oil"])
-  lp_rows[[as.character(h)]] <- list(
-    horizon = as.integer(h), coefficient = est, standard_error = se$se,
-    ci_low = est - 1.96 * se$se, ci_high = est + 1.96 * se$se,
-    t_statistic = est / se$se, n_obs = as.integer(stats::nobs(model))
-  )
-  add_spec(
-    design = design_b$id, design_name = design_b$name,
-    outcome = sprintf("cumulative log change in national FAAC at h=%d", h),
-    estimator = sprintf("%s, h=%d", design_b$estimator, h),
-    formula = "diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year",
-    fixed_effects = "none (local projection on the national series)",
-    controls = "month-of-year dummies",
-    n_obs = as.integer(stats::nobs(model)), n_units = 1L,
-    first_month = as.character(min(frame$period_month)), last_month = as.character(max(frame$period_month)),
-    coefficient_name = sprintf("cumulative_pass_through_h%d", h),
-    coefficient = est, standard_error = se$se,
-    ci_low = est - 1.96 * se$se, ci_high = est + 1.96 * se$se,
-    p_value = 2 * pt(-abs(est / se$se), df = stats::nobs(model) - 3),
-    covariance = sprintf("Newey-West, %d lags", design_b$inference$maxlags)
-  )
+# ---------------------------------------------------------------------------------------------
+# Design B — one shock, two outcome families (C-85)
+# ---------------------------------------------------------------------------------------------
+b_checks <- list()
+b_samples <- list()
+b_horizons <- unlist(design_b$horizons)
+peak_band <- unlist(design_b$checks$expect_peak_horizon)
+lead_b <- design_b$checks$placebo_lead_months
+
+window_keep <- function(dt, w) {
+  keep <- rep(TRUE, nrow(dt))
+  if (!is.null(w$start)) keep <- keep & format(dt$period_month, "%Y-%m") >= w$start
+  if (!is.null(w$end)) keep <- keep & format(dt$period_month, "%Y-%m") <= w$end
+  keep
 }
 
-peak_band <- unlist(design_b$checks$expect_peak_horizon)
-band_rows <- Filter(function(r) r$horizon >= peak_band[1] && r$horizon <= peak_band[2], lp_rows)
-peak_sig <- Filter(function(r) abs(r$t_statistic) > 1.96, band_rows)
+for (o in design_b$outcomes) {
+  oid <- as.character(o$id)
+  base_frame <- b_frames[[oid]]
+  w <- o$window
+  lp_rows <- list()
+  for (h in b_horizons) {
+    frame <- copy(base_frame)
+    # Cumulative response: log outcome at t+h against its level at t-1. The cumulative form is the one
+    # whose coefficient is "the fraction of the shock that has reached the outcome by h".
+    frame[, y := shift(log_outcome, h, type = "lead") - shift(log_outcome, 1)]
+    frame <- frame[!is.na(y) & !is.na(d_oil)]
+    frame <- frame[window_keep(frame, w)]
+    model <- lm(y ~ d_oil + month_of_year, data = frame)
+    se <- hac_se(model, "d_oil", design_b$inference$maxlags)
+    est <- unname(coef(model)["d_oil"])
+    lp_rows[[as.character(h)]] <- list(
+      horizon = as.integer(h), coefficient = est, standard_error = se$se,
+      ci_low = est - 1.96 * se$se, ci_high = est + 1.96 * se$se,
+      t_statistic = est / se$se, n_obs = as.integer(stats::nobs(model))
+    )
+    add_spec(
+      design = design_b$id, design_name = design_b$name,
+      outcome = sprintf("%s at h=%d", o$label, h),
+      outcome_id = oid, outcome_family = as.character(o$family),
+      estimator = sprintf("%s, h=%d", design_b$estimator, h),
+      formula = sprintf("diff(log(%s), lag = h, leading) ~ diff(log(oil)) + month_of_year", o$column),
+      fixed_effects = "none (local projection on the national series)",
+      controls = "month-of-year dummies",
+      n_obs = as.integer(stats::nobs(model)), n_units = 1L,
+      first_month = as.character(min(frame$period_month)), last_month = as.character(max(frame$period_month)),
+      coefficient_name = sprintf("%s_h%d", o$coefficient_name, h),
+      coefficient = est, standard_error = se$se,
+      ci_low = est - 1.96 * se$se, ci_high = est + 1.96 * se$se,
+      p_value = 2 * pt(-abs(est / se$se), df = stats::nobs(model) - 3),
+      covariance = sprintf("Newey-West, %d lags", design_b$inference$maxlags)
+    )
+  }
 
-# Lead placebo: does a *future* oil shock move today's allocation?
-lead_b <- design_b$checks$placebo_lead_months
-pframe <- copy(national)
-pframe[, d_oil_lead := shift(d_oil, lead_b, type = "lead")]
-pframe[, y := log_faac - shift(log_faac)]
-pframe <- pframe[!is.na(y) & !is.na(d_oil_lead)]
-pmodel <- lm(y ~ d_oil_lead + month_of_year, data = pframe)
-pest <- unname(coef(pmodel)["d_oil_lead"])
-pse <- hac_se(pmodel, "d_oil_lead", design_b$inference$maxlags)$se
+  band_rows <- Filter(function(r) r$horizon >= peak_band[1] && r$horizon <= peak_band[2], lp_rows)
+  peak_sig <- Filter(function(r) abs(r$t_statistic) > 1.96, band_rows)
 
-peak_h <- if (length(lp_rows)) {
-  unlist(lapply(lp_rows, function(r) r$horizon))[which.max(unlist(lapply(lp_rows, function(r) r$coefficient)))]
-} else NA_integer_
+  # Lead placebo: does a *future* oil shock move today's outcome?
+  pframe <- copy(base_frame)
+  pframe[, d_oil_lead := shift(d_oil, lead_b, type = "lead")]
+  pframe[, y := log_outcome - shift(log_outcome)]
+  pframe <- pframe[!is.na(y) & !is.na(d_oil_lead)]
+  pframe <- pframe[window_keep(pframe, w)]
+  pmodel <- lm(y ~ d_oil_lead + month_of_year, data = pframe)
+  pest <- unname(coef(pmodel)["d_oil_lead"])
+  pse <- hac_se(pmodel, "d_oil_lead", design_b$inference$maxlags)$se
 
-checks$design_b <- list(
-  peak_horizon = as.integer(peak_h),
-  expected_band = as.integer(peak_band),
-  significant_horizons = as.integer(unlist(lapply(peak_sig, function(r) r$horizon))),
-  placebo = list(
-    lead_months = lead_b, coefficient = pest, standard_error = pse, n_obs = as.integer(stats::nobs(pmodel)),
-    note = "a future shock regressed on today's allocation; a comparable size means trend, not transmission"
-  ),
-  # Unnamed so it serialises as a JSON array rather than an object keyed by "0", "1", …: a reader (and
-  # the verifier) should be able to iterate the path, and jsonlite turns a named list into an object.
-  horizon_path = unname(lapply(lp_rows, function(r) r))
-)
-b_ok <- length(peak_sig) > 0 && abs(pest) < max(abs(unlist(lapply(band_rows, function(r) r$coefficient))))
-checks$design_b$verdict <- list(
-  status = if (b_ok) "estimated" else "estimated_null_at_the_declared_band",
-  rule = design_b$verdict_rule,
-  failed_checks = c(
-    if (length(peak_sig) == 0) "no horizon in the declared peak band has |t| > 1.96" else NULL,
-    if (abs(pest) < max(abs(unlist(lapply(band_rows, function(r) r$coefficient))))) NULL else
-      "the lead placebo is at least as large as the estimated response"
+  peak_h <- if (length(lp_rows)) {
+    unlist(lapply(lp_rows, function(r) r$horizon))[which.max(unlist(lapply(lp_rows, function(r) r$coefficient)))]
+  } else NA_integer_
+
+  b_ok <- length(peak_sig) > 0 && abs(pest) < max(abs(unlist(lapply(band_rows, function(r) r$coefficient))))
+  b_checks[[oid]] <- list(
+    outcome_id = oid, outcome_family = as.character(o$family), label = o$label,
+    window = w,
+    peak_horizon = as.integer(peak_h),
+    expected_band = as.integer(peak_band),
+    significant_horizons = as.integer(unlist(lapply(peak_sig, function(r) r$horizon))),
+    placebo = list(
+      lead_months = lead_b, coefficient = pest, standard_error = pse, n_obs = as.integer(stats::nobs(pmodel)),
+      note = sprintf("a future shock regressed on today's %s; a comparable size means trend, not transmission",
+                     if (identical(oid, "faac")) "allocation" else "price level")
+    ),
+    # Unnamed so it serialises as a JSON array rather than an object keyed by "0", "1", …: a reader (and
+    # the verifier) should be able to iterate the path, and jsonlite turns a named list into an object.
+    horizon_path = unname(lapply(lp_rows, function(r) r))
   )
-)
+  b_checks[[oid]]$verdict <- list(
+    status = if (b_ok) "estimated" else "estimated_null_at_the_declared_band",
+    rule = design_b$verdict_rule,
+    failed_checks = c(
+      if (length(peak_sig) == 0) "no horizon in the declared peak band has |t| > 1.96" else NULL,
+      if (abs(pest) < max(abs(unlist(lapply(band_rows, function(r) r$coefficient))))) NULL else
+        "the lead placebo is at least as large as the estimated response"
+    )
+  )
+  b_samples[[oid]] <- list(
+    n_obs = nrow(base_frame), first_month = as.character(min(base_frame$period_month)),
+    last_month = as.character(max(base_frame$period_month)), window = w,
+    transform = as.character(o$transform), table = as.character(o$table), column = as.character(o$column)
+  )
+  message(sprintf("design B [%s]: peak h=%s, placebo %+.4f, verdict %s",
+                  oid, peak_h, pest, b_checks[[oid]]$verdict$status))
+}
+checks$design_b <- b_checks
 
 # ---------------------------------------------------------------------------------------------
 # Figure — the CI forest plot
@@ -335,28 +381,31 @@ par(mfrow = c(1, 2), mar = c(4.2, 11.5, 3.4, 1.2))
 
 # `par("usr")` is only meaningful after a plot exists, so each panel takes its x-limits from its own rows
 # and pads them by the widest interval, which keeps a row's whisker off the frame edge.
-forest_panel <- function(rows, placebo_row, main, xlab, band = NULL) {
+forest_panel <- function(rows, placebo_rows, main, xlab, band = NULL) {
   est <- vapply(rows, function(r) r$coefficient, numeric(1))
   lo <- vapply(rows, function(r) r$ci_low, numeric(1))
   hi <- vapply(rows, function(r) r$ci_high, numeric(1))
   labs <- vapply(rows, function(r) r$label, character(1))
+  # One placebo or several: Design B now publishes two outcome families, so each family's decisive
+  # check is drawn as its own hollow row rather than picking one and leaving the other unshown.
+  if (!is.null(placebo_rows) && !is.null(placebo_rows$coefficient)) placebo_rows <- list(placebo_rows)
   # Top row first: a reader scans a forest plot downward, so the first published row must be at the top.
   y <- rev(seq_along(est))
-  vals <- c(lo, hi, 0, if (!is.null(placebo_row)) placebo_row$coefficient else NULL)
+  vals <- c(lo, hi, 0, if (length(placebo_rows)) vapply(placebo_rows, function(r) r$coefficient, numeric(1)) else NULL)
   pad <- max(diff(range(vals)) * 0.06, 0.05)
-  plot(NA, xlim = range(vals) + c(-pad, pad), ylim = c(0.4, length(est) + 1.6), yaxt = "n",
-       xlab = xlab, ylab = "", main = main)
+  plot(NA, xlim = range(vals) + c(-pad, pad), ylim = c(0.4, length(est) + 0.6 + length(placebo_rows)),
+       yaxt = "n", xlab = xlab, ylab = "", main = main)
   if (!is.null(band))
     rect(par("usr")[1], min(y[band]) - 0.5, par("usr")[2], max(y[band]) + 0.5,
          col = "#f0f0f0", border = NA)
   abline(v = 0, col = "grey50")
   segments(lo, y, hi, y, lwd = 2, col = "black")
   points(est, y, pch = 19, cex = 1.1)
-  if (!is.null(placebo_row)) {
-    py <- length(est) + 1
-    segments(placebo_row$coefficient, py, placebo_row$coefficient, py, lwd = 2)
-    points(placebo_row$coefficient, py, pch = 1, cex = 1.2, lwd = 1.6)
-    labs <- c(paste0(placebo_row$label, " (hollow)"), labs)
+  for (j in seq_along(placebo_rows)) {
+    pr <- placebo_rows[[j]]
+    py <- length(est) + j
+    points(pr$coefficient, py, pch = 1, cex = 1.2, lwd = 1.6)
+    labs <- c(paste0(pr$label, " (hollow)"), labs)
     y <- c(py, y)
   }
   axis(2, at = y, labels = labs, las = 1, cex.axis = 0.78)
@@ -378,23 +427,29 @@ mtext(sprintf("verdict: %s", gsub("_", " ", checks$design_a$verdict$status)), si
       adj = 0.02, cex = 0.75, col = "#b2182b")
 
 # The horizon lives in `lp_rows` and in the coefficient's name, not in the specification row, so it is
-# read back out of the name rather than assumed to be present.
+# read back out of the name rather than assumed to be present. With two outcome families the label also
+# carries the family, because "h = 2" appears twice in the panel and a reader must be able to tell which.
 b_rows <- Filter(function(s) s$design == "B", specs)
-for (i in seq_along(b_rows))
+for (i in seq_along(b_rows)) {
   b_rows[[i]]$horizon <- as.integer(sub("^.*_h", "", b_rows[[i]]$coefficient_name))
-for (i in seq_along(b_rows)) b_rows[[i]]$label <- sprintf("h = %d", b_rows[[i]]$horizon)
+  b_rows[[i]]$label <- sprintf("%s h = %d", b_rows[[i]]$outcome_id, b_rows[[i]]$horizon)
+}
 band_idx <- which(vapply(b_rows, function(r) r$horizon >= peak_band[1] && r$horizon <= peak_band[2], logical(1)))
 forest_panel(
   b_rows,
-  list(label = sprintf("%d-month lead placebo", lead_b), coefficient = pest),
-  main = sprintf("B — oil to state allocations\n(%d national months, %s to %s)",
-                 nrow(national), format(min(national$period_month), "%Y-%m"),
-                 format(max(national$period_month), "%Y-%m")),
-  xlab = "cumulative response of the allocation to a 1 % oil move (log-points)",
+  lapply(names(b_checks), function(id) list(
+    label = sprintf("%s %d-month lead placebo", id, lead_b),
+    coefficient = b_checks[[id]]$placebo$coefficient)),
+  main = sprintf("B — oil to the states and to prices\n(%s)",
+                 paste(sprintf("%s %d months", names(b_frames),
+                               vapply(b_frames, nrow, integer(1))), collapse = ", ")),
+  xlab = "cumulative response to a 1 % oil move (log-points)",
   band = band_idx
 )
 mtext(sprintf("verdict: %s (declared peak band h = %d-%d, shaded)",
-              gsub("_", " ", checks$design_b$verdict$status), peak_band[1], peak_band[2]),
+              paste(sprintf("%s %s", names(b_checks),
+                            vapply(b_checks, function(x) gsub("_", " ", x$verdict$status), character(1))),
+                    collapse = " · "), peak_band[1], peak_band[2]),
       side = 3, line = -1.4, adj = 0.02, cex = 0.75)
 mtext("filled = published estimate with its 95 % CI · hollow = the design's decisive check",
       side = 1, line = 2.6, adj = 0, cex = 0.72, col = "grey30")
@@ -464,16 +519,26 @@ estimates <- list(
       first_month = as.character(min(panel$period_month)), last_month = as.character(max(panel$period_month)),
       window_source = q$why
     ),
-    design_b = list(
-      n_obs = nrow(national), first_month = as.character(min(national$period_month)),
-      last_month = as.character(max(national$period_month))
-    )
+    design_b = b_samples
   ),
   designs = list(
     list(id = "A", status = checks$design_a$verdict$status, verdict = checks$design_a$verdict,
          checks = checks$design_a[setdiff(names(checks$design_a), "verdict")]),
-    list(id = "B", status = checks$design_b$verdict$status, verdict = checks$design_b$verdict,
-         checks = checks$design_b[setdiff(names(checks$design_b), "verdict")]),
+    list(id = "B",
+         # The design's headline stays the fiscal family it was pre-registered with, and the price-level
+         # family is published beside it: two estimands, one shock, and a reader must be able to see that
+         # their verdicts can differ (C-85).
+         preferred_outcome = as.character(design_b$outcomes[[1]]$id),
+         status = checks$design_b[[as.character(design_b$outcomes[[1]]$id)]]$verdict$status,
+         verdict = checks$design_b[[as.character(design_b$outcomes[[1]]$id)]]$verdict,
+         outcomes = lapply(names(checks$design_b), function(id) list(
+           outcome_id = id, family = checks$design_b[[id]]$outcome_family,
+           label = checks$design_b[[id]]$label,
+           status = checks$design_b[[id]]$verdict$status,
+           verdict = checks$design_b[[id]]$verdict,
+           checks = checks$design_b[[id]][setdiff(names(checks$design_b[[id]]), "verdict")])),
+         checks = checks$design_b[[as.character(design_b$outcomes[[1]]$id)]][
+           setdiff(names(checks$design_b[[as.character(design_b$outcomes[[1]]$id)]]), "verdict")]),
     c_block
   ),
   # The figure block is the artifact's own record that the picture it ships was rendered from these rows:
@@ -515,8 +580,10 @@ md <- c(
   "|---|---|---|",
   sprintf("| A | Does a larger federal allocation reduce conflict fatalities in the state that receives it? | **%s** |",
           checks$design_a$verdict$status),
-  sprintf("| B | How much of a Brent shock reaches the states, and when? | **%s** |",
-          checks$design_b$verdict$status),
+  sprintf("| B | How much of a Brent shock reaches the states, and the price level? | **%s** |",
+          paste(sprintf("%s %s", names(checks$design_b),
+                        vapply(checks$design_b, function(x) x$verdict$status, character(1))),
+                collapse = " · ")),
   sprintf("| C | Did the tenures move an outcome, against a synthetic counterfactual? | **%s** |",
           c_block$status),
   "",
@@ -551,7 +618,7 @@ md <- c(
          "fixed state characteristic is not the randomised-looking exposure a dose-response design ",
          "assumes, and the placebo says the same thing from the other side."),
   "",
-  "## Design B — Brent crude to state allocations",
+  "## Design B — Brent crude to the states and to prices",
   "",
   sprintf("Estimand: *%s*", design_b$estimand),
   "",
@@ -559,14 +626,19 @@ md <- c(
   "|---|---|---|---|---|---|---|",
   vapply(Filter(function(s) s$design == "B", specs), design_row, character(1)),
   "",
-  sprintf("Peak response at h = %d (declared band %d–%d). Lead placebo at %d months: %+.4f (SE %.4f).",
-          peak_h, peak_band[1], peak_band[2], lead_b, pest, pse),
+  vapply(names(b_checks), function(id) sprintf(
+    paste0("- **%s** — %s: peak response at h = %d (declared band %d–%d); lead placebo at %d months ",
+           "%+.4f (SE %.4f); verdict **%s**."),
+    id, b_checks[[id]]$label, b_checks[[id]]$peak_horizon, peak_band[1], peak_band[2],
+    lead_b, b_checks[[id]]$placebo$coefficient, b_checks[[id]]$placebo$standard_error,
+    b_checks[[id]]$verdict$status), character(1)),
   "",
-  "A positive response at a lag of two to four months is what the disbursement calendar implies: the",
-  "allocation published for a month is revenue accrued in an earlier one, so an immediate response would",
-  "be the surprising result, not a lagged one. The confidence bounds are wide — this is 114 monthly",
-  "observations of a series the naira's two devaluations also move, and the FX channel is annual grain",
-  "(the monthly NGN/USD series has no keyless source: `docs/decisions.md` C-46).",
+  "A positive response at a lag of two to four months is what the disbursement calendar implies for the",
+  "fiscal family: the allocation published for a month is revenue accrued in an earlier one, so an",
+  "immediate response would be the surprising result, not a lagged one. The price-level family shares",
+  "the shock, the controls and the bandwidth — so its interval is comparable — but it is a different",
+  "estimand with its own verdict, and Stage 5 measured it as usable only as short-run pass-through",
+  "(no cointegration with Brent under the conservative rank rule: C-86).",
   "",
   "## Design C — the synthetic control",
   "",
@@ -594,5 +666,7 @@ md <- c(
 writeLines(md, file.path(out_dir, "report.md"))
 
 message(sprintf("\ndesign A verdict: %s", checks$design_a$verdict$status))
-message(sprintf("design B verdict: %s", checks$design_b$verdict$status))
+for (id in names(checks$design_b)) {
+  message(sprintf("design B verdict [%s]: %s", id, checks$design_b[[id]]$verdict$status))
+}
 message(sprintf("written: %s", file.path(spec$output$root, vintage, "estimates.json")))

@@ -549,7 +549,7 @@ def build_context(root: Path) -> dict:
         {
             "design": "B",
             "estimator": design_b["estimator"],
-            "outcome": f"national {design_b['outcome']['column']} (log cumulative change)",
+            "outcome": "; ".join(f"national {o['column']} (log cumulative change)" for o in design_b["outcomes"]),
             "treatment": "Δ log Brent",
             "controls": ", ".join(design_b["controls"]),
             "inference": f"Newey–West, {design_b['inference']['maxlags']} lags",

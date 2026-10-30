@@ -14,12 +14,12 @@ not.**
 
 ## 1. The grid
 
-105 specifications, declared in `robustness.yml` before any of them was fitted:
+129 specifications, declared in `robustness.yml` before any of them was fitted:
 
 | Design | Axes (levels) | Specifications |
 |---|---|---|
 | A — state dose-response (PPML) | outcome (3) × dose lag (3) × adjustment set (3) × sample window (3) | 81 |
-| B — national transmission (local projection) | shock definition (2) × covariate set (4) × sample window (3) | 24 |
+| B — national transmission (local projection) | **outcome (2)** × shock definition (2) × covariate set (4) × sample window (3) | 48 |
 
 The design spec (§5.4) names eight axes. Four are live here; four are not, and the dead ones are declared with
 their reason rather than quietly dropped: **imputation handling** (no imputed value enters either design — the
@@ -36,22 +36,34 @@ every specification in this curve is the **nominal** dose. That is stated on the
 and here, because a curve that silently narrowed to the axes it happens to have would look more complete
 than the analysis is.
 
-## 2. Design B is robust in sign, and the timing is its weak part
+## 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part
 
-All **24 of 24** specifications are positive, and **all 24 intervals exclude zero**. The pre-registered
+The grid now carries **two outcome families** (C-85): the fiscal channel and the price level, each fitted
+under every declared shock × control × window cell — 48 cells in total, and neither family is published
+without the grid that could move it.
+
+**The fiscal family: 24 of 24 positive, and all 24 intervals exclude zero.** The pre-registered
 specification is the published one — +0.5181 (SE 0.1664, 95 % CI [+0.1919, +0.8443]) on 111 months — and
 the grid reproduces Stage 6's artifact to 4.3e-12, so the curve is drawn around the published estimate
 rather than a neighbour of it.
 
-Across the grid the coefficient at h = 2 runs from **+0.3968** to **+2.3976**. Which choice moves it is
-a claim about the grid, so it is computed from the fitted rows and published in the artifact
-(`robustness.json` → `spread.design_b`) rather than typed here: holding the shock definition and the
-window fixed, the range across the four covariate sets averages **0.4073** (mean of the six shock × window
-cells); holding the covariate set and the window fixed, the gap between the two shock definitions averages
-**0.7548** (mean of the twelve covariate-set × window cells). So the *magnitude* is a choice — mostly the
-shock definition, a three-month average being a smoother and therefore larger-coefficient regressor —
-while the *sign* is not. The decomposition is a mean of within-cell ranges rather than one chosen pair,
-because a single pair would make the claim depend on which pair was picked.
+**The price-level family: 12 positive and 12 negative, and no coefficient distinguishable from zero at any
+horizon.** That is not a failure of the grid; it is the grid agreeing with Stage 6, which publishes the
+family as `estimated_null_at_the_declared_band` because no horizon in the declared two-to-four-month band
+reaches |t| > 1.96. A Brent shock does not move the Nigerian CPI in this specification, twenty-four ways of
+asking included. The family is reported with its own verdict rather than folded into the design's headline,
+which stays the fiscal channel it was pre-registered with.
+
+Across the fiscal grid the coefficient at h = 2 runs from **+0.3968** to **+2.3976**. Which choice moves it
+is a claim about the grid, so it is computed from the fitted rows and published in the artifact
+(`robustness.json` → `spread.design_b`, with a `by_outcome` decomposition beside the headline one) rather
+than typed here: holding the shock definition and the window fixed, the range across the four covariate
+sets averages **0.4073** (mean of the six shock × window cells); holding the covariate set and the window
+fixed, the gap between the two shock definitions averages **0.7548** (mean of the twelve covariate-set ×
+window cells). So the *magnitude* is a choice — mostly the shock definition, a three-month average being a
+smoother and therefore larger-coefficient regressor — while the *sign* is not. The decomposition is a mean
+of within-cell ranges rather than one chosen pair, because a single pair would make the claim depend on
+which pair was picked.
 
 Two checks say where the weakness is:
 
@@ -83,7 +95,7 @@ the opposite side of zero from the pre-registered specification:
 | `outcome = fatalities` (the preferred outcome itself) | 6 of 27 |
 
 The count is not the whole story in either direction, which is why the minority is published beside it:
-2 of the 105 specifications sit **within ±0.02 of zero** (2 Design A, 0 Design B) — the band is declared in
+2 of the 129 specifications sit **within ±0.02 of zero** (2 Design A, 0 Design B) — the band is declared in
 `robustness.yml` rather than chosen after the fact — and outside it the split is 58 positive / 21 negative
 for Design A. A specification that is numerically zero is reported as a near-zero cell, not absorbed into
 the sign counts as if it were a direction.
@@ -133,7 +145,7 @@ how they should be read.
 ## 5. Reproducing it
 
 ```bash
-Rscript analysis/R/04_robustness.R            # fits the 105 specifications, writes the curve
+Rscript analysis/R/04_robustness.R            # fits the 129 specifications, writes the curve
 python tests/verify_stage7.py                 # re-fits every one of them independently
 python scripts/validate_artifacts.py          # contracts: counts recomputed from the artifact's own rows
 scripts/verify.sh                             # the whole chain, Stages 3-7

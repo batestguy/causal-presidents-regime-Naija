@@ -2766,6 +2766,55 @@ a declared outcome list with a per-outcome frame, peak band, lead placebo and ve
 grid takes the outcome as its fourth axis (24 → 48 cells, total 105 → 129); `05_registry.R`, the site's
 "105 specifications" and the specification curve move with it.
 
+**Then, same session — Phase B3: Design B's second family is fitted, and it is a null.** The estimator
+learned to loop: `estimation.yml` declares `design_b.outcomes` (faac, cpi) with a per-family table, column,
+window and `coefficient_name`, `03_estimate.R` fits each family's nine horizons, and `04_robustness.R` takes
+the outcome as a **fourth axis** — 48 cells, the grid rising 105 → **129**.
+
+**The fiscal family came through the refactor unchanged to 0.00e+00.** Every coefficient, SE, interval and
+p-value in its nine rows is bit-identical to the committed artifact, which is the proof that this was a
+loop and not a re-fit. **The price-level family is a clean null:** cumulative log change in the NBS CPI
+index, 1999-01 → 2024-10, 310 months; every coefficient lies between **−0.0143 and +0.0043** and every 95 %
+interval crosses zero (h=2 −0.0021, [−0.0325, +0.0282], p 0.892; h=12 −0.0016, p 0.956). The declared rule
+gives **`estimated_null_at_the_declared_band`** — the peak is at h=0, not in the two-to-four-month band, no
+band horizon reaches |t| > 1.96, and the lead placebo is −0.0031.
+
+**That null is the finding, not the absence of one.** The 2023-06 → 2023-12 subsidy window is visible in this
+series — that was the whole reason to build the family — and the design can see it and finds no oil-price
+pass-through. So the window's driver was domestic (the withdrawal itself and the devaluation), not a Brent
+move. Stage 7 agrees from the other side: **36 of 48** specifications positive (fiscal 24 of 24, price level
+12 of 24), **24 of 129** cells inside the ±0.02 band (Design B 22 — the null showing up as a count), one
+majority flip level, and a spread decomposition published **per family** so nobody reads a pooled range.
+
+**Three declaration consequences, all recorded.** The design-level block keeps the fiscal family as its
+headline and publishes both families under `outcomes` — a reader must be able to see that a design's two
+estimands can have different verdicts. `robustness.yml` now reads the outcome map from
+`upstream.estimation_spec` instead of duplicating a table name, which is the defect class where a grid fits
+a column the estimate did not. And the RAG eval's q05 needle moved from "24 of 24" to **"36 of 48"** because
+the design-level count itself moved — a data-driven eval update against the passage the answer cites, not a
+widened target.
+
+**The corpus and the evals were re-measured, and one number got worse.** 492 chunks (was 492 before the
+final edits: the design result and the docs grew), recall@5 **0.944** unchanged, gold coverage 0.424, and
+**MRR 0.718 → 0.673** — the design-result chunk now carries two families' counts and ranks lower against
+the question that used to be answered by a shorter one. BM25 0.616. Answers hold at **36 of 38 (0.947)**,
+needles 22 of 25. Answer quality was re-run fresh against the new corpus (the cached-score trap from the
+documentation pass was avoided deliberately): faithfulness **0.952**, relevancy 0.810, precision 0.989,
+recall 0.848 — with `q04_oil_to_states` at 0.000 context recall and `q05` at 0.286 faithfulness, both
+published rather than smoothed.
+
+**Vintage discipline, restated for a declaration-only pass (C-88).** B3 changes no datum, so the family it
+regenerates is still the **2026-10-30** data vintage's, and the C-44 invariant leaves no alternative — a
+Stage 6 artifact labelled 2026-10-31 would describe a gate report that does not exist. The 2026-10-30 family
+was regenerated in place, and the supersession is bounded by measurement: the fiscal rows are bit-identical
+and Design A is untouched, so the diff is exactly the addition. What that costs is the ability to read "the
+2026-10-30 estimates before B3" from the registry alone; what pays for it is C-87 plus this commit.
+
+**B's exit criteria are met.** All 23 verifiers PASS, `validate_artifacts` PASS (74 documents, the C-44
+invariant included), the eight R stages green in declared order, the corpus rebuilt and all four evals
+re-measured. Phase B closes and Phase C — "close or permanently record every not-estimated reason" — is the
+frontier.
+
 ## Next session starts here (written 2026-10-30, end of session)
 
 **Phase A is done and the gate accepts the move: `[x] Phase A`, `[~] Phase B`, `frontier: B`.** Everything
@@ -2793,11 +2842,16 @@ declaration, not a fit** (`presidents-completion-plan.md` Phase B, B1–B4):
    declared conservative-min rule gives **rank 0 → no cointegration → short-run pass-through**, which is
    the branch the design claims. The first pass tested the raw level and read a rank of 2 of 2; both were
    artefacts and are corrected, with C-85's span fixed.
-3. **B3 — fit and publish.** Stage 6/7 re-run at a **new** vintage label; the question the card must answer
-   is whether that window is estimable at monthly grain, and a declared refusal with its reason is a
-   publishable answer.
-4. **B4 — the same battery as A6**, plus `validate_artifacts`' C-44 invariant (Stage 5 newest == quality
-   newest). Then set B done and C in_progress in the state file.
+3. **B3 — DONE (C-87).** `03_estimate.R` loops the declared families, `04_robustness.R` takes the outcome
+   as a fourth axis (105 → 129 cells), `05_registry.R` and the site's technical page follow. The fiscal
+   family reproduces **bit-for-bit** (0.00e+00); the price-level family is a **null at every horizon**
+   (coefficients −0.0143 … +0.0043, every interval crossing zero) and its verdict is
+   `estimated_null_at_the_declared_band` — the peak is at h=0, not in the declared band. Stage 7: 36 of 48
+   positive, 24 of 129 in the near-zero band, one flip level, spread published per family.
+4. **B4 — DONE.** All 23 verifiers PASS, `validate_artifacts` PASS (74 documents, the C-44 invariant
+   included), the corpus re-built (492 chunks) and all four evals re-measured. **Phase B is closed; Phase C
+   is the frontier** and its first move is C1: the 10 cards whose reason is `no_specification_declared` —
+   declare the specification or record the refusal, pair by pair, with nothing left "open".
 
 **Standing reminders for any session:** the ds-general interpreter for Python, R 4.5.2 for the stages, the
 drlca-rag env only for the corpus rebuild (`HF_HUB_OFFLINE=1`); `GOOGLE_API_KEY` is in the **environment**,

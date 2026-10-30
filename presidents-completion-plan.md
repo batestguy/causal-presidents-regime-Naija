@@ -51,18 +51,18 @@ would have to be re-fit under the revised history anyway, so every phase below w
 **Why it is second.** The acquisition is done and gated (C-81); what remains is a *decision*, then a fit.
 Phase A first because B's sample would otherwise be re-fit on the revised security history once more.
 
-- [ ] **B1. Declare, then fit.** The choice to record in `decisions.md` first: does Design B read the
+- [x] **B1. Declare, then fit.** The choice to record in `decisions.md` first: does Design B read the
   monthly NBS series as the inflation outcome for a declared specification, with `cpi_yoy` (annual)
   retained as the annual cross-check reference? The base already carries
   `nbs_cpi_national_monthly` unspined; the catalogue entry (`raw_metric_catalogue`) plus the estimation
   spec entry are the declaration, not code changes.
 - [x] **B2. Stage 5 re-run on the new pair** (`02_diagnostics.R`): the monthly series must pass (or fail,
   on record) integration/cointegration checks at its native grain before any estimate exists.
-- [ ] **B3. Fit and publish.** Stage 6/7 re-run; the card answers whether the 2023-06→2023-12
+- [x] **B3. Fit and publish.** Stage 6/7 re-run; the card answers whether the 2023-06→2023-12
   subsidy-removal window is estimable — either a declared refusal with its reason from the closed set, or
   the first outcome card that works at monthly grain. `docs/limitations.md`, `docs/estimates.md` move with
   it if prose quotes counts.
-- [ ] **B4. Exit criteria.** Same full-gate battery as A6; plus `validate_artifacts`' C-44 invariant
+- [x] **B4. Exit criteria.** Same full-gate battery as A6; plus `validate_artifacts`' C-44 invariant
   (Stage 5 newest == quality newest). **Do not proceed to Phase C until all green.**
 
 ## Phase C — close or permanently record every not-estimated reason

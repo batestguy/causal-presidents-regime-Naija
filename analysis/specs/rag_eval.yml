@@ -74,11 +74,13 @@ questions:
     type: answerable
     question: "Did Design B's result survive the robustness grid?"
     gold: ["result:B", "doc:robustness#s02"]
-    must_contain: ["24 of 24"]
+    must_contain: ["36 of 48"]
     reference_answer: >-
-      Its sign did: 24 of 24 specifications are positive and all 24 intervals exclude zero. Its timing is
-      weaker — the in-time placebo over 48 shifted alignments returns p = 0.0625, published as a bound
-      rather than widened until it passed.
+      Its fiscal family did: all 24 of its 24 specifications are positive and every interval excludes
+      zero. Across both outcome families the grid is 36 of 48 positive — the price-level family is 12
+      positive and 12 negative with no interval excluding zero. Its timing is weaker — the in-time
+      placebo over 48 shifted alignments returns p = 0.0625, published as a bound rather than widened
+      until it passed.
 
   - id: q06_design_c_status
     type: answerable

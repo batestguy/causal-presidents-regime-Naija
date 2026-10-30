@@ -2,11 +2,11 @@
  "schema_version": "0.1.0",
  "layer": "retrieval corpus (one card per model card, plus the results, the tables and the narrative)",
  "vintage": "2026-10-30",
- "generated_at": "2026-10-30T13:08:57+00:00",
+ "generated_at": "2026-10-30T15:03:02+00:00",
  "generator": {
   "script": "scripts/build_rag_corpus.py",
   "spec": "analysis/specs/rag.yml",
-  "git_sha": "ad720fc"
+  "git_sha": "7e630a0"
  },
  "registry": {
   "index": "registry/dags/index.json",
@@ -53,9 +53,9 @@
   "dim": 384,
   "normalised": true,
   "metric": "cosine",
-  "sha256": "62c21b38f3602ea8d6cf3c8e95bfe87fa18de080216ed95f11bace58e99a469f",
-  "bytes": 725881,
-  "n_chunk_vectors": 485,
+  "sha256": "2eb94d44cc557745961dbab5157529b73c61c98ce9d93a9866a0b00e70eb3832",
+  "bytes": 735860,
+  "n_chunk_vectors": 492,
   "n_query_vectors": 22,
   "library": {
    "sentence-transformers": "5.1.2",
@@ -111,8 +111,8 @@
   {
    "path": "docs/estimates.md",
    "role": "methodology",
-   "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce",
-   "bytes": 12660,
+   "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05",
+   "bytes": 14661,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -139,22 +139,22 @@
   {
    "path": "docs/limitations.md",
    "role": "methodology",
-   "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae",
-   "bytes": 19551,
+   "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278",
+   "bytes": 19981,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "docs/registry.md",
    "role": "methodology",
-   "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb",
-   "bytes": 8088,
+   "sha256": "c92b3a4f2bb1493523371802426226018cbc6563be4052fdb318547160738e4f",
+   "bytes": 8163,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "docs/robustness.md",
    "role": "methodology",
-   "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a",
-   "bytes": 10398,
+   "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff",
+   "bytes": 11343,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -265,8 +265,8 @@
   {
    "path": "registry/dags/index.json",
    "role": "registry_index",
-   "sha256": "d8f10b5ecc5cb6590adbcfbc73059176b13d5cc91020d326b0defa52ae36d7f3",
-   "bytes": 60075,
+   "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f",
+   "bytes": 67863,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -419,8 +419,8 @@
   {
    "path": "registry/estimates/2026-10-30/estimates.json",
    "role": "estimates",
-   "sha256": "1260f55aa453f976e5c0d8ce00f7e8962e725d0659423ae4793b43ac30503da5",
-   "bytes": 34415,
+   "sha256": "c0367e799d88c765d25d86aab5185817d5d29331ea93ee146d7652c5229a2185",
+   "bytes": 53634,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -439,21 +439,21 @@
   }
  ],
  "counts": {
-  "chunks": 485,
+  "chunks": 492,
   "by_doc_type": {
    "administration": 5,
    "card_estimate": 38,
    "coverage": 2,
    "data_dictionary": 47,
    "event_study": 12,
-   "methodology": 187,
+   "methodology": 191,
    "model_card": 178,
-   "published_result": 11,
+   "published_result": 14,
    "scope": 2,
    "shock": 3
   },
   "chars": {
-   "total": 335580,
+   "total": 342405,
    "max": 1598,
    "min": 156
   }
@@ -1683,7 +1683,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "registry.card_estimate_counts",
-    "sha256": "d8f10b5ecc5cb6590adbcfbc73059176b13d5cc91020d326b0defa52ae36d7f3"
+    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
    },
    "citation": "Registry coverage — how many cards carry a published number — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -4370,7 +4370,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s01",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 1. The presidential-tenure question is not answerable, and no estimator makes it so — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
@@ -4391,7 +4391,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s01",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 1. The presidential-tenure question is not answerable, and no estimator makes it so — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
@@ -4412,7 +4412,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s01",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 1. The presidential-tenure question is not answerable, and no estimator makes it so — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
@@ -4428,316 +4428,379 @@
    "chunk_id": "doc:estimates#s02",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 1 of 15]\n\nTwo series landed after Stage 5 ran its verdicts, and both are monthly:\n\n| Series | Grain | Span | Source |\n|---|---|---|---|\n| FAAC state allocation (the dose) | state × month, 36 states | 2016-12 → 2026-06 (114 months) | OAGF + NBS disbursement documents (2026-10-16) |\n| Conflict fatalities and incidents (the outcome) | state × month, 37 units | 1990-09 → 2025-12 (343 active months) | UCDP GED bulk archive (26.1, adopted 2026-10-30, C-82) |",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 1 of 18]\n\nTwo series landed after Stage 5 ran its verdicts, and both are monthly:\n\n| Series | Grain | Span | Source |\n|---|---|---|---|\n| FAAC state allocation (the dose) | state × month, 36 states | 2016-12 → 2026-06 (114 months) | OAGF + NBS disbursement documents (2026-10-16) |\n| Conflict fatalities and incidents (the outcome) | state × month, 37 units | 1990-09 → 2025-12 (343 active months) | UCDP GED bulk archive (26.1, adopted 2026-10-30, C-82) |",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 1,
-    "n_parts": 15
+    "n_parts": 18
    },
    "chars": 647,
-   "text_sha256": "bdecaa59ddda26d41a295b858c0549a57d4ba4954f71e559cf7f4da12c966784"
+   "text_sha256": "57818a4a85035b0ffd6f69941f1a11d0df4b8439b509cea16dda3913fdc4db16"
   },
   {
    "chunk_id": "doc:estimates#s02#p10",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 10 of 15]\n\n**A 10 % rise in Brent reaches the states as roughly a 5 % larger allocation, two to three months\nlater.** The lag is what the disbursement calendar implies rather than a curiosity: the allocation\npublished for a month is revenue accrued in an earlier one, so an immediate response would have been the\nsurprising result. The lead placebo — regressing today's allocation on a *future* oil shock — is\n+0.095 (SE 0.152), an order of magnitude smaller than the peak response at h = 2.\n\nBefore h = 2 the response is zero (−0.160 at h = 0), which is the substantive claim of this design: the\noil channel reaches state budgets through an administrative lag, not a market one.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 10 of 18]\n\n**A 10 % rise in Brent reaches the states as roughly a 5 % larger allocation, two to three months\nlater.** The lag is what the disbursement calendar implies rather than a curiosity: the allocation\npublished for a month is revenue accrued in an earlier one, so an immediate response would have been the\nsurprising result. The lead placebo — regressing today's allocation on a *future* oil shock — is\n+0.095 (SE 0.152), an order of magnitude smaller than the peak response at h = 2.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 10,
-    "n_parts": 15
+    "n_parts": 18
    },
-   "chars": 870,
-   "text_sha256": "4d6a5d424e885f9ac26bf695f151a83758957c487145b191566ccdd76ff872ad"
+   "chars": 682,
+   "text_sha256": "3ab6d23a880173673992afcf9e8e19f8054755cf3552f1688ef408d2e6930f8d"
   },
   {
    "chunk_id": "doc:estimates#s02#p11",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 11 of 15]\n\n**What this does not establish:** the response is measured in naira against a dollar price, so the\nelasticity mixes the price channel with the exchange-rate channel, and the naira moved twice inside the\nwindow. A monthly NGN/USD series would separate them; it does not exist on any keyless source\n(C-46). The confidence bounds are also wide, and 114 months is not many. ### Design C — synthetic control: estimated, and not identified",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 11 of 18]\n\nBefore h = 2 the response is zero (−0.160 at h = 0), which is the substantive claim of this design: the\noil channel reaches state budgets through an administrative lag, not a market one. #### The price level — estimated as a null at the declared band\n\nThe same shock, on the NBS all-items CPI index (native monthly, 1999-01 → 2024-10, 310 months). The\ncumulative coefficient is the log change in the price level h months after a 1 % Brent move, so it reads\nas the inflation that passes through:",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 11,
-    "n_parts": 15
+    "n_parts": 18
    },
-   "chars": 635,
-   "text_sha256": "11eb0cc853cb443b0f173e1f554ba3e274f8ff8dfd4198db5f3f919e4a09f04e"
+   "chars": 696,
+   "text_sha256": "127f5271005e36b7ef0c922da58c270a60e1aaa0134acbfc6174c7991c900767"
   },
   {
    "chunk_id": "doc:estimates#s02#p12",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 12 of 15]\n\nThe design moved twice. Stage 5 first recorded `infeasible`: the pre-treatment fit failed on every outcome and\nevery window against a 13-country pool, with the best single donor beating the fitted simplex. The pool was\nthen widened to **99 candidates** screened on oil dependence, region/income band and coverage, and the gate\nre-run passed **`u5mr` on 3 of its 4 runnable windows** (ratios 0.0014–0.0042 against the declared 0.10\nthreshold). That pass was permission to build the design, not evidence that its fit was real — and the\nwarning was earned.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 12 of 18]\n\n| Horizon (months) | Cumulative log change | SE | 95 % CI | p |\n|---|---|---|---|---|\n| 0 | +0.004 | 0.006 | [−0.007, +0.015] | 0.439 |\n| 1 | +0.004 | 0.010 | [−0.016, +0.024] | 0.728 |\n| 2 | −0.002 | 0.016 | [−0.033, +0.028] | 0.892 |\n| 3 | −0.004 | 0.018 | [−0.040, +0.032] | 0.823 |\n| 4 | −0.002 | 0.022 | [−0.046, +0.042] | 0.928 |\n| 6 | −0.008 | 0.027 | [−0.062, +0.046] | 0.771 |\n| 12 | −0.002 | 0.029 | [−0.058, +0.055] | 0.956 |",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 12,
-    "n_parts": 15
+    "n_parts": 18
    },
-   "chars": 755,
-   "text_sha256": "63ab9d2efc4401e062feb433aa061fb50e4aab61550cc17f4b03f108b68b8d45"
+   "chars": 638,
+   "text_sha256": "e5a93a32f62e64d00b7a6fd3be397dfbc51729885be80bad309da3f92976d2d3"
   },
   {
    "chunk_id": "doc:estimates#s02#p13",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 13 of 15]\n\nThe estimator and its placebos now exist (`analysis/specs/design_c.yml`, `analysis/R/11_design_c.R`,\n`registry/design_c/2026-10-18/`). **Four windows were estimated and none is identified.** The in-space rank p\nruns from 0.17 to 0.50, the in-time placebo fails in the one window long enough to run it, and the declared\npre-fit gate turns out not to discriminate at all: **304 of the 396 placebo fits also clear the same 0.10\nthreshold.** A 99-donor simplex can interpolate any 8-to-24-year pre-period, so the gate's pass says almost\nnothing about whether the fit is a counterfactual.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 13 of 18]\n\n**Nothing here is distinguishable from zero, and the declared rule says so rather than leaving it to a\nreader:** no horizon in the two-to-four-month band reaches |t| > 1.96, so the family's verdict is\n`estimated_null_at_the_declared_band`, with the lead placebo at −0.003. That is a result about *this*\nchannel, not about the 2023 inflation surge: the surge coincides with the subsidy withdrawal and the\ndevaluation, neither of which is a Brent shock, and Stage 5 measured the price level as sharing no\nlong-run path with Brent under the conservative rank rule (C-86). A design that can see the window and\nstill finds no oil-price pass-through is telling you the window's driver was domestic.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 13,
-    "n_parts": 15
+    "n_parts": 18
    },
-   "chars": 785,
-   "text_sha256": "442ef5643867c6e5ed60d8cbe0398377a6617c31155d3ac623edb62ae49e45b9"
+   "chars": 894,
+   "text_sha256": "8cb184ecc7899d631f1b3103724145d4c988b3298423a5c38314a62ce8302c28"
   },
   {
    "chunk_id": "doc:estimates#s02#p14",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 14 of 15]\n\nTwo numbers travel with the gaps because the declared problem is underdetermined. With 99 donors and 8 to 24\npre-years, a face of weight vectors fits the pre-period equally well and they disagree about the post-period;\nthe artifact publishes the vertex the declared solver returns **and** a unique ridge refit beside it. For the\nfirst window the two disagree in sign (+2.1 against −2.6 deaths per 1,000), which is the clearest statement\nthe design can make about itself: that estimate belongs to the solver, not to the data.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 14 of 18]\n\n**What this does not establish:** for the fiscal family, the response is measured in naira against a\ndollar price, so the elasticity mixes the price channel with the exchange-rate channel, and the naira\nmoved twice inside the window. A monthly NGN/USD series would separate them; it does not exist on any\nkeyless source (C-46). The confidence bounds are also wide, and 114 months is not many. For the\nprice-level family, the series ends in 2024-10, so nothing after it is claimed, and a null at monthly\nfrequency with 310 observations is not the same as a null on annual data. ### Design C — synthetic control: estimated, and not identified",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 14,
-    "n_parts": 15
+    "n_parts": 18
    },
-   "chars": 726,
-   "text_sha256": "7b51dfe46f6e0ef041e975566f5b6b4da6ec5d374c3395af836d19e20bc36d5c"
+   "chars": 842,
+   "text_sha256": "bd79ad619b19f27b03e97e036e7f996cacbbc453d390a5175a722d80762a36b3"
   },
   {
    "chunk_id": "doc:estimates#s02#p15",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 15 of 15]\n\nNo gap is on a card, because a synthetic control has no sampling distribution and the honesty layer publishes\nno point estimate without an interval. The `u5mr` card carries `design_estimated_not_identified` and points at\nthe artifact.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 15 of 18]\n\nThe design moved twice. Stage 5 first recorded `infeasible`: the pre-treatment fit failed on every outcome and\nevery window against a 13-country pool, with the best single donor beating the fitted simplex. The pool was\nthen widened to **99 candidates** screened on oil dependence, region/income band and coverage, and the gate\nre-run passed **`u5mr` on 3 of its 4 runnable windows** (ratios 0.0014–0.0042 against the declared 0.10\nthreshold). That pass was permission to build the design, not evidence that its fit was real — and the\nwarning was earned.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 15,
-    "n_parts": 15
+    "n_parts": 18
+   },
+   "chars": 755,
+   "text_sha256": "a62950cd522406b05148c1328240e1be78d7b7f2734e8acda723286b633e147a"
+  },
+  {
+   "chunk_id": "doc:estimates#s02#p16",
+   "doc_type": "methodology",
+   "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 16 of 18]\n\nThe estimator and its placebos now exist (`analysis/specs/design_c.yml`, `analysis/R/11_design_c.R`,\n`registry/design_c/2026-10-18/`). **Four windows were estimated and none is identified.** The in-space rank p\nruns from 0.17 to 0.50, the in-time placebo fails in the one window long enough to run it, and the declared\npre-fit gate turns out not to discriminate at all: **304 of the 396 placebo fits also clear the same 0.10\nthreshold.** A 99-donor simplex can interpolate any 8-to-24-year pre-period, so the gate's pass says almost\nnothing about whether the fit is a counterfactual.",
+   "vintage": "2026-10-30",
+   "source": {
+    "path": "docs/estimates.md",
+    "anchor": "s02",
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
+   },
+   "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
+   "metadata": {
+    "document": "docs/estimates.md",
+    "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
+    "part": 16,
+    "n_parts": 18
+   },
+   "chars": 785,
+   "text_sha256": "454ce89468b70cfa534246cce3da51196d6c9058575d20c47cbad033ffcdf7d4"
+  },
+  {
+   "chunk_id": "doc:estimates#s02#p17",
+   "doc_type": "methodology",
+   "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 17 of 18]\n\nTwo numbers travel with the gaps because the declared problem is underdetermined. With 99 donors and 8 to 24\npre-years, a face of weight vectors fits the pre-period equally well and they disagree about the post-period;\nthe artifact publishes the vertex the declared solver returns **and** a unique ridge refit beside it. For the\nfirst window the two disagree in sign (+2.1 against −2.6 deaths per 1,000), which is the clearest statement\nthe design can make about itself: that estimate belongs to the solver, not to the data.",
+   "vintage": "2026-10-30",
+   "source": {
+    "path": "docs/estimates.md",
+    "anchor": "s02",
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
+   },
+   "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
+   "metadata": {
+    "document": "docs/estimates.md",
+    "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
+    "part": 17,
+    "n_parts": 18
+   },
+   "chars": 726,
+   "text_sha256": "3a5e440e02ddd4eb6d2479146bc341a3a88f4aa60df9e126032b2de698ab1b60"
+  },
+  {
+   "chunk_id": "doc:estimates#s02#p18",
+   "doc_type": "methodology",
+   "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 18 of 18]\n\nNo gap is on a card, because a synthetic control has no sampling distribution and the honesty layer publishes\nno point estimate without an interval. The `u5mr` card carries `design_estimated_not_identified` and points at\nthe artifact.",
+   "vintage": "2026-10-30",
+   "source": {
+    "path": "docs/estimates.md",
+    "anchor": "s02",
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
+   },
+   "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
+   "metadata": {
+    "document": "docs/estimates.md",
+    "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
+    "part": 18,
+    "n_parts": 18
    },
    "chars": 436,
-   "text_sha256": "2d52d76549917461667235c19d3194febcf8923c4a884b14c601eba6fedbd3f7"
+   "text_sha256": "5dab68f813009bc8a4fcedc01912f619a380648890e22af1e7bf34785e5ff64d"
   },
   {
    "chunk_id": "doc:estimates#s02#p2",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 2 of 15]\n\nTheir intersection is **3,888 state-months** (2016-12 → 2025-12), which is the first sample in this\nproject big enough to estimate anything at all. Two questions were pre-declared against it\n(`analysis/specs/estimation.yml`), each with the check that could kill it. ### Design A — does a larger federal allocation reduce conflict where it lands?\n\n**Estimated, and not identified.** The coefficient is reported with its bounds; the design fails its own\nchecks, and both are published.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 2 of 18]\n\nTheir intersection is **3,888 state-months** (2016-12 → 2025-12), which is the first sample in this\nproject big enough to estimate anything at all. Two questions were pre-declared against it\n(`analysis/specs/estimation.yml`), each with the check that could kill it. ### Design A — does a larger federal allocation reduce conflict where it lands?\n\n**Estimated, and not identified.** The coefficient is reported with its bounds; the design fails its own\nchecks, and both are published.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 2,
-    "n_parts": 15
+    "n_parts": 18
    },
    "chars": 684,
-   "text_sha256": "6c9dff22039a1c8a393b43142be92bf1ee0c3309a7ef9b07737caad88d490e2a"
+   "text_sha256": "44258c2fe41ffa878f6c5edc65129bb42a8ef22d663b6cd958deebbf95b6856d"
   },
   {
    "chunk_id": "doc:estimates#s02#p3",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 3 of 15]\n\n| Outcome | Elasticity | 95 % CI | n |\n|---|---|---|---|\n| fatalities | +0.468 | [−0.083, +1.019] | 3,888 |\n| incidents | +0.528 | [+0.147, +0.909] | 3,888 |\n| fatalities_civilians | +0.343 | [−0.620, +1.305] | 3,564 | Why the verdict is not \"identified\":",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 3 of 18]\n\n| Outcome | Elasticity | 95 % CI | n |\n|---|---|---|---|\n| fatalities | +0.468 | [−0.083, +1.019] | 3,888 |\n| incidents | +0.528 | [+0.147, +0.909] | 3,888 |\n| fatalities_civilians | +0.343 | [−0.620, +1.305] | 3,564 | Why the verdict is not \"identified\":",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 3,
-    "n_parts": 15
+    "n_parts": 18
    },
    "chars": 456,
-   "text_sha256": "0c9e100511cefa954cb2ac58db12e801bbf6bbd0ff447adb9415fd066b6bd43c"
+   "text_sha256": "690b26295d4cc606d85417c10cd1eee366b7ac2eba18c23916cc08c5a47820a9"
   },
   {
    "chunk_id": "doc:estimates#s02#p4",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 4 of 15]\n\n* **A mis-timed dose is as good as the timed one.** Refitting the same estimator with each state's dose\n  series shifted by any non-zero offset from −30 to +30 months, **10 of 60 offsets return an estimate at\n  least as large** as the estimate itself (p = 0.167). The deterministic 24-month placebo returns\n  **+0.310** against the estimate's **+0.468**. * **The identifying variation is a commodity price.** What survives state and month fixed effects in the\n  dose is concentrated in the oil-producing states: residual sd **0.50 in Delta, 0.50 in Bayelsa, 0.47 in\n  Rivers** against **0.11** in Sokoto, Bauchi, Adamawa, Kaduna and Taraba.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 4 of 18]\n\n* **A mis-timed dose is as good as the timed one.** Refitting the same estimator with each state's dose\n  series shifted by any non-zero offset from −30 to +30 months, **10 of 60 offsets return an estimate at\n  least as large** as the estimate itself (p = 0.167). The deterministic 24-month placebo returns\n  **+0.310** against the estimate's **+0.468**. * **The identifying variation is a commodity price.** What survives state and month fixed effects in the\n  dose is concentrated in the oil-producing states: residual sd **0.50 in Delta, 0.50 in Bayelsa, 0.47 in\n  Rivers** against **0.11** in Sokoto, Bauchi, Adamawa, Kaduna and Taraba.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 4,
-    "n_parts": 15
+    "n_parts": 18
    },
    "chars": 841,
-   "text_sha256": "e5bff8ca579f38162e67dc0daa5236cee0fecda24722789b71435bbf7bacfeef"
+   "text_sha256": "efa3023a891cb178811ce67228cfd6451d413b86227acbf05d4bbcb0ea9ad880"
   },
   {
    "chunk_id": "doc:estimates#s02#p5",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 5 of 15]\n\nThat is the 13 % derivation\n  share moving with the oil price and with production volumes — a national shock interacted with a fixed\n  state characteristic, which is not the as-good-as-random exposure a dose-response design assumes.\n\nA secondary null — shuffling the dose across states within each month — returns p = 0.000, and it is\npublished *because* it was run, not as a rescue: that null destroys the cross-state mean, which the state\nfixed effects already absorb, so it is far too easy to beat. The full distribution of all 60 mis-timed\nestimates is in `estimates.json`, so a reader can check the claim rather than take it.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 5 of 18]\n\nThat is the 13 % derivation\n  share moving with the oil price and with production volumes — a national shock interacted with a fixed\n  state characteristic, which is not the as-good-as-random exposure a dose-response design assumes.\n\nA secondary null — shuffling the dose across states within each month — returns p = 0.000, and it is\npublished *because* it was run, not as a rescue: that null destroys the cross-state mean, which the state\nfixed effects already absorb, so it is far too easy to beat. The full distribution of all 60 mis-timed\nestimates is in `estimates.json`, so a reader can check the claim rather than take it.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 5,
-    "n_parts": 15
+    "n_parts": 18
    },
    "chars": 831,
-   "text_sha256": "edab8f45dec7473647b7f094ea5e6d40f2c6c88256dd285e809bb17033500c0c"
+   "text_sha256": "fb83f3378ee2d6fe7371526695b33622431eb4c949741fb22d2ead1d66ff7e63"
   },
   {
    "chunk_id": "doc:estimates#s02#p6",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 6 of 15]\n\n**The honest statement:** a state that received more federal money in a month did not visibly see less\nviolence, and this design cannot distinguish that from any other timing. The question is *asked* and\n*answered as unanswerable at this identification*, which is a different thing from \"there is no effect\".\n\n#### Stage 7 pushed on this: the grid now mostly agrees on the sign, and the verdict still fails",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 6 of 18]\n\n**The honest statement:** a state that received more federal money in a month did not visibly see less\nviolence, and this design cannot distinguish that from any other timing. The question is *asked* and\n*answered as unanswerable at this identification*, which is a different thing from \"there is no effect\".\n\n#### Stage 7 pushed on this: the grid now mostly agrees on the sign, and the verdict still fails",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 6,
-    "n_parts": 15
+    "n_parts": 18
    },
    "chars": 607,
-   "text_sha256": "fddfda8725e127304166bc43da86ac0bef4e9841c03785548fea5573832a838d"
+   "text_sha256": "5fb0704cdfd39e9ab8c6e3a4401adfb70f6357b1078ccfe3ba48286df7c0e27f"
   },
   {
    "chunk_id": "doc:estimates#s02#p7",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 7 of 15]\n\n`docs/robustness.md` refits this question 81 ways (`registry/robustness/2026-10-30/`). The result:\n**60 specifications positive, 21 negative**, and the check that fails is still the lead-shift placebo\n(p = 0.167, 10 of 60 mis-timed doses at least as large as the published estimate). The 36\nleave-one-state-out refits do *not* flip the sign (range [0.1429, 0.5950]), so the estimate is not carried\nby one unit. The grid's sign share moved when the UCDP history was revised (25.1 → 26.1, C-82): under 25.1\nit was 45 positive against 36 negative, and the lagged dose was negative in all three windows.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 7 of 18]\n\n`docs/robustness.md` refits this question 81 ways (`registry/robustness/2026-10-30/`). The result:\n**60 specifications positive, 21 negative**, and the check that fails is still the lead-shift placebo\n(p = 0.167, 10 of 60 mis-timed doses at least as large as the published estimate). The 36\nleave-one-state-out refits do *not* flip the sign (range [0.1429, 0.5950]), so the estimate is not carried\nby one unit. The grid's sign share moved when the UCDP history was revised (25.1 → 26.1, C-82): under 25.1\nit was 45 positive against 36 negative, and the lagged dose was negative in all three windows.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 7,
-    "n_parts": 15
+    "n_parts": 18
    },
    "chars": 800,
-   "text_sha256": "1a851e63a10add3fcf7e3b8bf5a7805367bbc4065379665dc309430b3cb7ca23"
+   "text_sha256": "391d6dbce6e3b335eab099aa7e1ab29950511c9e8cd1fcaac88236a77bf2637f"
   },
   {
    "chunk_id": "doc:estimates#s02#p8",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 8 of 15]\n\nA grid that\nagrees on a sign is not an identification strategy — the verdict is still *estimated, not identified*, and\nit is the lead-shift check rather than the count that makes it so. ### Design B — how much of a Brent shock reaches the states, and when?\n\n**Estimated.** This is the design that works, because the direction of causation is defensible: Nigeria\nis a price taker in a market two orders of magnitude larger than its exports, so the Brent shock can be\ntreated as exogenous to Nigerian fiscal outcomes. Local projection, cumulative response, Newey-West\n(12 lags):",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 8 of 18]\n\nA grid that\nagrees on a sign is not an identification strategy — the verdict is still *estimated, not identified*, and\nit is the lead-shift check rather than the count that makes it so.\n\n### Design B — how much of a Brent shock reaches the states, and the price level?\n\n**Two outcome families share one shock, one control set and one bandwidth** (C-85): the fiscal channel,\nwhich is the design's pre-registered headline, and the price level, which is the question the subsidy\nremoval made urgent. They are reported separately because their verdicts differ. #### The fiscal channel — estimated",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 8,
-    "n_parts": 15
+    "n_parts": 18
    },
-   "chars": 777,
-   "text_sha256": "4feb88332ad3803bd5acef73d1c0ba4d129e06dcffa8205605496ffb1658c1a4"
+   "chars": 793,
+   "text_sha256": "68354db78912b99ca8ae8f0747a54116dfc2590a23891708824888556c9d2f69"
   },
   {
    "chunk_id": "doc:estimates#s02#p9",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 9 of 15]\n\n| Horizon (months) | Cumulative elasticity | SE | 95 % CI |\n|---|---|---|---|\n| 0 | −0.160 | 0.124 | [−0.402, +0.082] |\n| 1 | +0.157 | 0.128 | [−0.093, +0.408] |\n| **2** | **+0.518** | **0.166** | **[+0.192, +0.844]** |\n| **3** | **+0.470** | **0.158** | **[+0.161, +0.779]** |\n| 4 | +0.161 | 0.162 | [−0.156, +0.478] |\n| 6 | +0.231 | 0.218 | [−0.197, +0.659] |\n| 12 | +0.325 | 0.319 | [−0.300, +0.949] |",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 9 of 18]\n\nThis is the design that works, because the direction of causation is defensible: Nigeria is a price\ntaker in a market two orders of magnitude larger than its exports, so the Brent shock can be treated as\nexogenous to Nigerian fiscal outcomes. Local projection, cumulative response, Newey-West (12 lags):\n\n| Horizon (months) | Cumulative elasticity | SE | 95 % CI |\n|---|---|---|---|\n| 0 | −0.160 | 0.124 | [−0.402, +0.082] |\n| 1 | +0.157 | 0.128 | [−0.093, +0.408] |\n| **2** | **+0.518** | **0.166** | **[+0.192, +0.844]** |\n| **3** | **+0.470** | **0.158** | **[+0.161, +0.779]** |\n| 4 | +0.161 | 0.162 | [−0.156, +0.478] |\n| 6 | +0.231 | 0.218 | [−0.197, +0.659] |\n| 12 | +0.325 | 0.319 | [−0.300, +0.949] |",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/estimates.md",
     "section": "2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
     "part": 9,
-    "n_parts": 15
+    "n_parts": 18
    },
-   "chars": 605,
-   "text_sha256": "0cb30a873223e1692fbf8f79b87de94bd5c09b5175254fc2e577c20b043b8c9c"
+   "chars": 910,
+   "text_sha256": "668b0406a5ad497d87ac522553b7e15cea2a9d8e47702d226ce6c24f792d891e"
   },
   {
    "chunk_id": "doc:estimates#s03",
@@ -4748,7 +4811,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s03",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 3. The answer, in one paragraph — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
@@ -4769,7 +4832,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s03",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 3. The answer, in one paragraph — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
@@ -4790,7 +4853,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s04",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 4. What would change these answers — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
@@ -4811,7 +4874,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s04",
-    "sha256": "8078d640930f1459afa0630a93bddb6df48b60fd4ed826bf3658b2146d86d2ce"
+    "sha256": "3e0ee812155e919c6c9f40b24274e9dfcb372a8d8ff0f2e7d4712dde04409b05"
    },
    "citation": "estimates — 4. What would change these answers — docs/estimates.md (vintage 2026-10-30)",
    "metadata": {
@@ -5420,7 +5483,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s01",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 1. The question this project was asked is not answerable with this data — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5441,7 +5504,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s01",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 1. The question this project was asked is not answerable with this data — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5462,7 +5525,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s01",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 1. The question this project was asked is not answerable with this data — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5483,7 +5546,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s01",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 1. The question this project was asked is not answerable with this data — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5504,7 +5567,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s02",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 2. Most of the monthly spine is not observed — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5525,7 +5588,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s02",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 2. Most of the monthly spine is not observed — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5546,7 +5609,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s03",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 3. Coverage limits, node by node — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5567,7 +5630,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s03",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 3. Coverage limits, node by node — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5588,7 +5651,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s03",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 3. Coverage limits, node by node — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5609,7 +5672,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s04",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 4. The quality gates flagged almost half the landed series — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5630,7 +5693,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s04",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 4. The quality gates flagged almost half the landed series — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5651,7 +5714,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5672,7 +5735,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5693,7 +5756,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5714,7 +5777,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5735,7 +5798,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5756,7 +5819,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s06",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 6. Design B's channel is estimated; its timing and its decomposition are not — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5777,7 +5840,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s06",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 6. Design B's channel is estimated; its timing and its decomposition are not — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5798,7 +5861,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s06",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 6. Design B's channel is estimated; its timing and its decomposition are not — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5819,7 +5882,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s07",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 7. Design C was built, and it did not identify an effect — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5840,7 +5903,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s07",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 7. Design C was built, and it did not identify an effect — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5861,7 +5924,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s07",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 7. Design C was built, and it did not identify an effect — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5882,7 +5945,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s08",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 8. Inference floors that no interval can hide — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5903,7 +5966,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s08",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 8. Inference floors that no interval can hide — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -5919,64 +5982,85 @@
    "chunk_id": "doc:limitations#s09",
    "doc_type": "methodology",
    "title": "limitations — 9. Robustness: the sign survives for one design and not the other",
-   "text": "What this project cannot say — the limitations, written before the findings\n\n## 9. Robustness: the sign survives for one design and not the other\n\n[limitations — 9. Robustness: the sign survives f — part 1 of 3]\n\n**105 specifications** were declared before any was fitted and all are published.",
+   "text": "What this project cannot say — the limitations, written before the findings\n\n## 9. Robustness: the sign survives for one design and not the other\n\n[limitations — 9. Robustness: the sign survives f — part 1 of 4]\n\n**129 specifications** were declared before any was fitted and all are published (81 for Design A, 48 for Design B across its two outcome families).",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s09",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 9. Robustness: the sign survives for one design and not the other — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/limitations.md",
     "section": "9. Robustness: the sign survives for one design and not the other",
     "part": 1,
-    "n_parts": 3
+    "n_parts": 4
    },
-   "chars": 294,
-   "text_sha256": "5238f2179f05f61747b3e60c1f2c1e39fc5f457b02ce3995f9ebbbb7a7c0dee1"
+   "chars": 361,
+   "text_sha256": "9e70cccddd24ef40904a7c2a02b8b6c2545850668a9afc457c9a85c41ff18247"
   },
   {
    "chunk_id": "doc:limitations#s09#p2",
    "doc_type": "methodology",
    "title": "limitations — 9. Robustness: the sign survives for one design and not the other",
-   "text": "What this project cannot say — the limitations, written before the findings\n\n## 9. Robustness: the sign survives for one design and not the other\n\n[limitations — 9. Robustness: the sign survives f — part 2 of 3]\n\n- **Design A: 60 positive against 21 negative** of 81, with two inside the declared near-zero band. **One axis level flips by majority** — `outcome = fatalities_civilians`, 15 of 27. The pre-registered\n  `outcome = fatalities` level does **not** flip (6 of 27), and neither does the dose lag any more\n  (10 of 27): under the superseded 25.1 history it was negative in all three windows and is now positive in\n  two of three. The 36 leave-one-state-out refits do not flip the sign ([0.1429, 0.5950], 0 flips), so the\n  fragility is the identification rather than one unit. The verdict is unchanged because the check that\n  decides it — the lead-shift placebo — still fails (C-82).",
+   "text": "What this project cannot say — the limitations, written before the findings\n\n## 9. Robustness: the sign survives for one design and not the other\n\n[limitations — 9. Robustness: the sign survives f — part 2 of 4]\n\n- **Design A: 60 positive against 21 negative** of 81, with two inside the declared near-zero band. **One axis level flips by majority** — `outcome = fatalities_civilians`, 15 of 27. The pre-registered\n  `outcome = fatalities` level does **not** flip (6 of 27), and neither does the dose lag any more\n  (10 of 27): under the superseded 25.1 history it was negative in all three windows and is now positive in\n  two of three. The 36 leave-one-state-out refits do not flip the sign ([0.1429, 0.5950], 0 flips), so the\n  fragility is the identification rather than one unit. The verdict is unchanged because the check that\n  decides it — the lead-shift placebo — still fails (C-82).",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s09",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 9. Robustness: the sign survives for one design and not the other — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/limitations.md",
     "section": "9. Robustness: the sign survives for one design and not the other",
     "part": 2,
-    "n_parts": 3
+    "n_parts": 4
    },
    "chars": 892,
-   "text_sha256": "5806f21ff6ad3fc77d4d724af58e3e9789f4f9ecd0f3922f3c8a02267e9867ff"
+   "text_sha256": "3f5ac06b9bb63d91d45fbf24d66271edb25fd4771165a389b3b08439686b137a"
   },
   {
    "chunk_id": "doc:limitations#s09#p3",
    "doc_type": "methodology",
    "title": "limitations — 9. Robustness: the sign survives for one design and not the other",
-   "text": "What this project cannot say — the limitations, written before the findings\n\n## 9. Robustness: the sign survives for one design and not the other\n\n[limitations — 9. Robustness: the sign survives f — part 3 of 3]\n\n- **Design B: 24 of 24** specifications keep the sign and every interval excludes zero, with coefficients\n  from 0.397 to 2.398. The pre-registered cell reproduces Stage 6 to 4.3e-12. The timing remains the weak\n  part. - **Four axes are declared dead with their reasons** rather than dropped: imputation handling, index\n  anchor, donor pool, event window. A fifth — the per-capita dose — is live in principle and unbuilt in\n  fact, so every cell of the curve is the nominal dose.",
+   "text": "What this project cannot say — the limitations, written before the findings\n\n## 9. Robustness: the sign survives for one design and not the other\n\n[limitations — 9. Robustness: the sign survives f — part 3 of 4]\n\n- **Design B: 36 of 48** specifications are positive across its two outcome families. The **fiscal**\n  family is **24 of 24**, with every interval excluding zero and coefficients from 0.397 to 2.398; the\n  pre-registered cell reproduces Stage 6 to 4.3e-12. The **price-level** family (C-85) is 12 positive and\n  12 negative, and no coefficient in it is distinguishable from zero at any horizon — which is the same\n  answer Stage 6 gives for that family, reached 24 ways. The timing remains the weak part of the fiscal\n  one. - **Four axes are declared dead with their reasons** rather than dropped: imputation handling, index\n  anchor, donor pool, event window.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s09",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 9. Robustness: the sign survives for one design and not the other — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/limitations.md",
     "section": "9. Robustness: the sign survives for one design and not the other",
     "part": 3,
-    "n_parts": 3
+    "n_parts": 4
    },
-   "chars": 693,
-   "text_sha256": "ab740c2733c0a3437a608ce6122fc6185e8cb031ddeaf8396888c7906dd1f193"
+   "chars": 874,
+   "text_sha256": "adf86da0fd2d91e588d0f9d0e66a8d3e4df880980e196da00e57fbbcf396ba1a"
+  },
+  {
+   "chunk_id": "doc:limitations#s09#p4",
+   "doc_type": "methodology",
+   "title": "limitations — 9. Robustness: the sign survives for one design and not the other",
+   "text": "What this project cannot say — the limitations, written before the findings\n\n## 9. Robustness: the sign survives for one design and not the other\n\n[limitations — 9. Robustness: the sign survives f — part 4 of 4]\n\nA fifth — the per-capita dose — is live in principle and unbuilt in\n  fact, so every cell of the curve is the nominal dose.",
+   "vintage": "2026-10-30",
+   "source": {
+    "path": "docs/limitations.md",
+    "anchor": "s09",
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
+   },
+   "citation": "limitations — 9. Robustness: the sign survives for one design and not the other — docs/limitations.md (vintage 2026-10-30)",
+   "metadata": {
+    "document": "docs/limitations.md",
+    "section": "9. Robustness: the sign survives for one design and not the other",
+    "part": 4,
+    "n_parts": 4
+   },
+   "chars": 336,
+   "text_sha256": "71005507d104ba452bfea71d5f2d0d9938354cebd4326ffc1c9f55d2fe8d32bd"
   },
   {
    "chunk_id": "doc:limitations#s10",
@@ -5987,7 +6071,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s10",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 10. Measurement limits no design fixes — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6008,7 +6092,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s11",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 11. Reproduction limits — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6024,64 +6108,43 @@
    "chunk_id": "doc:limitations#s12",
    "doc_type": "methodology",
    "title": "limitations — 12. What is still claimed, stated narrowly",
-   "text": "What this project cannot say — the limitations, written before the findings\n\n## 12. What is still claimed, stated narrowly\n\n[limitations — 12. What is still claimed, stated  — part 1 of 3]\n\nAfter all of the above, four things survive:\n\n1. **A fiscal transmission channel:** a 10 % Brent move reaches the states as roughly 5 % more money two\n   to three months later (Design B, sign robust in 24 of 24 specifications, timing p = 0.0625). 2. **Two published cards** of 36 — the two Design A outcomes that have a card — each carrying its interval\n   and its `estimated_not_identified` verdict. **34 cards carry a reason, not a number** (12\n   `outcome_series_absent`, 10 `no_specification_declared`, 9 `design_result_is_channel_level`, 3\n   `design_not_run`). 3.",
+   "text": "What this project cannot say — the limitations, written before the findings\n\n## 12. What is still claimed, stated narrowly\n\n[limitations — 12. What is still claimed, stated  — part 1 of 2]\n\nAfter all of the above, four things survive:\n\n1. **A fiscal transmission channel:** a 10 % Brent move reaches the states as roughly 5 % more money two\n   to three months later (Design B, sign robust in all 24 fiscal specifications; the price-level family is a null at every horizon; timing p = 0.0625). 2. **Two published cards** of 36 — the two Design A outcomes that have a card — each carrying its interval\n   and its `estimated_not_identified` verdict. **34 cards carry a reason, not a number** (12\n   `outcome_series_absent`, 10 `no_specification_declared`, 9 `design_result_is_channel_level`, 3\n   `design_not_run`). 3.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s12",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 12. What is still claimed, stated narrowly — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/limitations.md",
     "section": "12. What is still claimed, stated narrowly",
     "part": 1,
-    "n_parts": 3
+    "n_parts": 2
    },
-   "chars": 759,
-   "text_sha256": "53e236cd23cd556dcb902ffa3384d6efc4b536c2e56e16af17662dc34e34e9b9"
+   "chars": 815,
+   "text_sha256": "c82940fe7f386338753e81aafee9b3d8b5ec435b227e332c7c84f5325da8ff8f"
   },
   {
    "chunk_id": "doc:limitations#s12#p2",
    "doc_type": "methodology",
    "title": "limitations — 12. What is still claimed, stated narrowly",
-   "text": "What this project cannot say — the limitations, written before the findings\n\n## 12. What is still claimed, stated narrowly\n\n[limitations — 12. What is still claimed, stated  — part 2 of 3]\n\n**Two of eight event-outcome cells** show a shift that survives both the placebo and the pre-trend\n   check; three fail the pre-trend, one shows no shift, and two cannot be checked at all. 4. **A boundary:** every design that failed its pre-check is dropped on the record, with the diagnostic\n   that dropped it.",
+   "text": "What this project cannot say — the limitations, written before the findings\n\n## 12. What is still claimed, stated narrowly\n\n[limitations — 12. What is still claimed, stated  — part 2 of 2]\n\n**Two of eight event-outcome cells** show a shift that survives both the placebo and the pre-trend\n   check; three fail the pre-trend, one shows no shift, and two cannot be checked at all. 4. **A boundary:** every design that failed its pre-check is dropped on the record, with the diagnostic\n   that dropped it.\n\n**What is not claimed, in the vocabulary the project refuses:** no ranking of presidents, no scorecard,\nno pooled tenure effect, no party comparison (two events against two events has no sampling\ndistribution), no causal verb without a named design, and no monthly causal statement from an annual\nseries.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s12",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 12. What is still claimed, stated narrowly — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/limitations.md",
     "section": "12. What is still claimed, stated narrowly",
     "part": 2,
-    "n_parts": 3
+    "n_parts": 2
    },
-   "chars": 502,
-   "text_sha256": "70d97d923c1dfadb07f0c5bbb3a431f549c63f113ccf581c35da45ed1a007ff0"
-  },
-  {
-   "chunk_id": "doc:limitations#s12#p3",
-   "doc_type": "methodology",
-   "title": "limitations — 12. What is still claimed, stated narrowly",
-   "text": "What this project cannot say — the limitations, written before the findings\n\n## 12. What is still claimed, stated narrowly\n\n[limitations — 12. What is still claimed, stated  — part 3 of 3]\n\n**What is not claimed, in the vocabulary the project refuses:** no ranking of presidents, no scorecard,\nno pooled tenure effect, no party comparison (two events against two events has no sampling\ndistribution), no causal verb without a named design, and no monthly causal statement from an annual\nseries.",
-   "vintage": "2026-10-30",
-   "source": {
-    "path": "docs/limitations.md",
-    "anchor": "s12",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
-   },
-   "citation": "limitations — 12. What is still claimed, stated narrowly — docs/limitations.md (vintage 2026-10-30)",
-   "metadata": {
-    "document": "docs/limitations.md",
-    "section": "12. What is still claimed, stated narrowly",
-    "part": 3,
-    "n_parts": 3
-   },
-   "chars": 494,
-   "text_sha256": "eac27759176545aa03052767dabae2f958b31a896de5540878ca7dfc3438443d"
+   "chars": 808,
+   "text_sha256": "c2e4f41a82c7fc6828098da89b1160a698e2a9df94d82cf4f7af63dd00f642a2"
   },
   {
    "chunk_id": "doc:limitations#s13",
@@ -6092,7 +6155,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s13",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 13. What would change each answer — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6113,7 +6176,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s13",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 13. What would change each answer — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6134,7 +6197,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s14",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 14. How this document is checked — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6150,12 +6213,12 @@
    "chunk_id": "doc:limitations#s14#p2",
    "doc_type": "methodology",
    "title": "limitations — 14. How this document is checked",
-   "text": "What this project cannot say — the limitations, written before the findings\n\n## 14. How this document is checked\n\n[limitations — 14. How this document is checked — part 2 of 4]\n\n| Claim | Artifact | Check |\n|---|---|---|\n| Observed share 1,373 / 8,350 (16.4 %) | `registry/diagnostics/2026-10-30/diagnostics.json → grain_decision` | `tests/verify_stage5.py`, and the memo's number is checked against it |\n| 2 of 36 cards carry a number; 34 by reason | `registry/dags/index.json → registry.card_estimate_counts` | `tests/verify_registry.py` |\n| Design A coefficient, interval, placebo, lead-shift p | `registry/estimates/2026-10-30/estimates.json` | `tests/verify_stage6.py`; doc claims in `tests/verify_registry.py` |\n| Design B peak and its interval | same | `tests/verify_stage6.py`, `tests/verify_stage7.py` |\n| 60 positive / 21 negative; 24 of 24 | `registry/robustness/2026-10-30/robustness.json` |",
+   "text": "What this project cannot say — the limitations, written before the findings\n\n## 14. How this document is checked\n\n[limitations — 14. How this document is checked — part 2 of 4]\n\n| Claim | Artifact | Check |\n|---|---|---|\n| Observed share 1,373 / 8,350 (16.4 %) | `registry/diagnostics/2026-10-30/diagnostics.json → grain_decision` | `tests/verify_stage5.py`, and the memo's number is checked against it |\n| 2 of 36 cards carry a number; 34 by reason | `registry/dags/index.json → registry.card_estimate_counts` | `tests/verify_registry.py` |\n| Design A coefficient, interval, placebo, lead-shift p | `registry/estimates/2026-10-30/estimates.json` | `tests/verify_stage6.py`; doc claims in `tests/verify_registry.py` |\n| Design B peak and its interval | same | `tests/verify_stage6.py`, `tests/verify_stage7.py` |\n| 60 positive / 21 negative; 36 of 48 | `registry/robustness/2026-10-30/robustness.json` |",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s14",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 14. How this document is checked — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6165,7 +6228,7 @@
     "n_parts": 4
    },
    "chars": 903,
-   "text_sha256": "e473eee5da5b298bace9c11d6f580cbdd4b96068fe6dcb89fc0811b544591499"
+   "text_sha256": "5f693f93267ddda987564848608af3fbc63c5d2006f1a4218a99ee6bf2c922d6"
   },
   {
    "chunk_id": "doc:limitations#s14#p3",
@@ -6176,7 +6239,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s14",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 14. How this document is checked — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6197,7 +6260,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s14",
-    "sha256": "aebc8df052dabccdbccb7a5267c3d0694c3fa6e71002e21887b69833ff9adfae"
+    "sha256": "38f5815e7fbc5b19510e7d6388697d2c0be880ab3b0c2331a25bf7df1dbc8278"
    },
    "citation": "limitations — 14. How this document is checked — docs/limitations.md (vintage 2026-10-30)",
    "metadata": {
@@ -6213,12 +6276,12 @@
    "chunk_id": "doc:registry#s01",
    "doc_type": "methodology",
    "title": "registry — 1. The problem this layer exists to solve",
-   "text": "What the app reads — Stage 8, the registry\n\n## 1. The problem this layer exists to solve\n\n[registry — 1. The problem this layer exists to s — part 1 of 3]\n\nThe registry is 36 cards (12 outcomes × 3 identification designs). Stage 6 published 12 specifications, and\nthey **do not line up with the cards** the way a reader would guess:",
+   "text": "What the app reads — Stage 8, the registry\n\n## 1. The problem this layer exists to solve\n\n[registry — 1. The problem this layer exists to s — part 1 of 3]\n\nThe registry is 36 cards (12 outcomes × 3 identification designs). Stage 6 published 21 specifications (3 Design A outcomes and 18 Design B horizons across two outcome families), and\nthey **do not line up with the cards** the way a reader would guess:",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/registry.md",
     "anchor": "s01",
-    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
+    "sha256": "c92b3a4f2bb1493523371802426226018cbc6563be4052fdb318547160738e4f"
    },
    "citation": "registry — 1. The problem this layer exists to solve — docs/registry.md (vintage 2026-10-30)",
    "metadata": {
@@ -6227,8 +6290,8 @@
     "part": 1,
     "n_parts": 3
    },
-   "chars": 332,
-   "text_sha256": "73c159aa4bcb9ede8e90ed75cc85c0c74066cb77d8ff4041239a5dd9498e7f90"
+   "chars": 407,
+   "text_sha256": "f1eece7267e54830d3dd3206210be5c3c63ad91d7b417fc0d29cfef6386e5606"
   },
   {
    "chunk_id": "doc:registry#s01#p2",
@@ -6239,7 +6302,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s01",
-    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
+    "sha256": "c92b3a4f2bb1493523371802426226018cbc6563be4052fdb318547160738e4f"
    },
    "citation": "registry — 1. The problem this layer exists to solve — docs/registry.md (vintage 2026-10-30)",
    "metadata": {
@@ -6260,7 +6323,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s01",
-    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
+    "sha256": "c92b3a4f2bb1493523371802426226018cbc6563be4052fdb318547160738e4f"
    },
    "citation": "registry — 1. The problem this layer exists to solve — docs/registry.md (vintage 2026-10-30)",
    "metadata": {
@@ -6281,7 +6344,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s02",
-    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
+    "sha256": "c92b3a4f2bb1493523371802426226018cbc6563be4052fdb318547160738e4f"
    },
    "citation": "registry — 2. What a card carries, and what it refuses to — docs/registry.md (vintage 2026-10-30)",
    "metadata": {
@@ -6302,7 +6365,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s02",
-    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
+    "sha256": "c92b3a4f2bb1493523371802426226018cbc6563be4052fdb318547160738e4f"
    },
    "citation": "registry — 2. What a card carries, and what it refuses to — docs/registry.md (vintage 2026-10-30)",
    "metadata": {
@@ -6323,7 +6386,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s02",
-    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
+    "sha256": "c92b3a4f2bb1493523371802426226018cbc6563be4052fdb318547160738e4f"
    },
    "citation": "registry — 2. What a card carries, and what it refuses to — docs/registry.md (vintage 2026-10-30)",
    "metadata": {
@@ -6344,7 +6407,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s02",
-    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
+    "sha256": "c92b3a4f2bb1493523371802426226018cbc6563be4052fdb318547160738e4f"
    },
    "citation": "registry — 2. What a card carries, and what it refuses to — docs/registry.md (vintage 2026-10-30)",
    "metadata": {
@@ -6365,7 +6428,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s03",
-    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
+    "sha256": "c92b3a4f2bb1493523371802426226018cbc6563be4052fdb318547160738e4f"
    },
    "citation": "registry — 3. The two design-level results, on the index — docs/registry.md (vintage 2026-10-30)",
    "metadata": {
@@ -6386,7 +6449,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s03",
-    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
+    "sha256": "c92b3a4f2bb1493523371802426226018cbc6563be4052fdb318547160738e4f"
    },
    "citation": "registry — 3. The two design-level results, on the index — docs/registry.md (vintage 2026-10-30)",
    "metadata": {
@@ -6407,7 +6470,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s03",
-    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
+    "sha256": "c92b3a4f2bb1493523371802426226018cbc6563be4052fdb318547160738e4f"
    },
    "citation": "registry — 3. The two design-level results, on the index — docs/registry.md (vintage 2026-10-30)",
    "metadata": {
@@ -6428,7 +6491,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s04",
-    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
+    "sha256": "c92b3a4f2bb1493523371802426226018cbc6563be4052fdb318547160738e4f"
    },
    "citation": "registry — 4. Reproducing it, and the ordering trap — docs/registry.md (vintage 2026-10-30)",
    "metadata": {
@@ -6449,7 +6512,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s04",
-    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
+    "sha256": "c92b3a4f2bb1493523371802426226018cbc6563be4052fdb318547160738e4f"
    },
    "citation": "registry — 4. Reproducing it, and the ordering trap — docs/registry.md (vintage 2026-10-30)",
    "metadata": {
@@ -6470,7 +6533,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s05",
-    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
+    "sha256": "c92b3a4f2bb1493523371802426226018cbc6563be4052fdb318547160738e4f"
    },
    "citation": "registry — 5. What this layer does not claim — docs/registry.md (vintage 2026-10-30)",
    "metadata": {
@@ -6491,7 +6554,7 @@
    "source": {
     "path": "docs/registry.md",
     "anchor": "s05",
-    "sha256": "f68c9079799bc9111d7a64d230f9f478002f0b3e6cf7ba92d5e56f1e3db062bb"
+    "sha256": "c92b3a4f2bb1493523371802426226018cbc6563be4052fdb318547160738e4f"
    },
    "citation": "registry — 5. What this layer does not claim — docs/registry.md (vintage 2026-10-30)",
    "metadata": {
@@ -6507,12 +6570,12 @@
    "chunk_id": "doc:robustness#s01",
    "doc_type": "methodology",
    "title": "robustness — 1. The grid",
-   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 1. The grid\n\n[robustness — 1. The grid — part 1 of 3]\n\n105 specifications, declared in `robustness.yml` before any of them was fitted:\n\n| Design | Axes (levels) | Specifications |\n|---|---|---|\n| A — state dose-response (PPML) | outcome (3) × dose lag (3) × adjustment set (3) × sample window (3) | 81 |\n| B — national transmission (local projection) | shock definition (2) × covariate set (4) × sample window (3) | 24 |",
+   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 1. The grid\n\n[robustness — 1. The grid — part 1 of 3]\n\n129 specifications, declared in `robustness.yml` before any of them was fitted:\n\n| Design | Axes (levels) | Specifications |\n|---|---|---|\n| A — state dose-response (PPML) | outcome (3) × dose lag (3) × adjustment set (3) × sample window (3) | 81 |\n| B — national transmission (local projection) | **outcome (2)** × shock definition (2) × covariate set (4) × sample window (3) | 48 |",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s01",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
    "citation": "robustness — 1. The grid — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
@@ -6521,8 +6584,8 @@
     "part": 1,
     "n_parts": 3
    },
-   "chars": 491,
-   "text_sha256": "d67d3b9f3b29bafbf99cdbf468600ec86b149879e1972423c5e04238589acb70"
+   "chars": 509,
+   "text_sha256": "9fb63a12f63353110f7d8d9cfb5b86b5624e1ad8e9c115a640a7dada8e1920f1"
   },
   {
    "chunk_id": "doc:robustness#s01#p2",
@@ -6533,7 +6596,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s01",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
    "citation": "robustness — 1. The grid — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
@@ -6554,7 +6617,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s01",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
    "citation": "robustness — 1. The grid — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
@@ -6569,107 +6632,128 @@
   {
    "chunk_id": "doc:robustness#s02",
    "doc_type": "methodology",
-   "title": "robustness — 2. Design B is robust in sign, and the timing is its weak part",
-   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 2. Design B is robust in sign, and the timing is its weak part\n\n[robustness — 2. Design B is robust in sign, and  — part 1 of 5]\n\nAll **24 of 24** specifications are positive, and **all 24 intervals exclude zero**. The pre-registered\nspecification is the published one — +0.5181 (SE 0.1664, 95 % CI [+0.1919, +0.8443]) on 111 months — and\nthe grid reproduces Stage 6's artifact to 4.3e-12, so the curve is drawn around the published estimate\nrather than a neighbour of it.",
+   "title": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part",
+   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part\n\n[robustness — 2. Design B is robust in sign for t — part 1 of 6]\n\nThe grid now carries **two outcome families** (C-85): the fiscal channel and the price level, each fitted\nunder every declared shock × control × window cell — 48 cells in total, and neither family is published\nwithout the grid that could move it.\n\n**The fiscal family: 24 of 24 positive, and all 24 intervals exclude zero.** The pre-registered\nspecification is the published one — +0.5181 (SE 0.1664, 95 % CI [+0.1919, +0.8443]) on 111 months — and\nthe grid reproduces Stage 6's artifact to 4.3e-12, so the curve is drawn around the published estimate\nrather than a neighbour of it.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s02",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
-   "citation": "robustness — 2. Design B is robust in sign, and the timing is its weak part — docs/robustness.md (vintage 2026-10-30)",
+   "citation": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/robustness.md",
-    "section": "2. Design B is robust in sign, and the timing is its weak part",
+    "section": "2. Design B is robust in sign for the fiscal channel, and its timing is the weak part",
     "part": 1,
-    "n_parts": 5
+    "n_parts": 6
    },
-   "chars": 543,
-   "text_sha256": "20fc95ef377bce8ee3a96963b68ebcd55044bcd10afbacad363958bd2d99483f"
+   "chars": 806,
+   "text_sha256": "df177ef539ae855b5df5b89f01e43b9bb142d39edb3426e78cbf6acd40546254"
   },
   {
    "chunk_id": "doc:robustness#s02#p2",
    "doc_type": "methodology",
-   "title": "robustness — 2. Design B is robust in sign, and the timing is its weak part",
-   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 2. Design B is robust in sign, and the timing is its weak part\n\n[robustness — 2. Design B is robust in sign, and  — part 2 of 5]\n\nAcross the grid the coefficient at h = 2 runs from **+0.3968** to **+2.3976**. Which choice moves it is\na claim about the grid, so it is computed from the fitted rows and published in the artifact\n(`robustness.json` → `spread.design_b`) rather than typed here: holding the shock definition and the\nwindow fixed, the range across the four covariate sets averages **0.4073** (mean of the six shock × window\ncells); holding the covariate set and the window fixed, the gap between the two shock definitions averages\n**0.7548** (mean of the twelve covariate-set × window cells).",
+   "title": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part",
+   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part\n\n[robustness — 2. Design B is robust in sign for t — part 2 of 6]\n\n**The price-level family: 12 positive and 12 negative, and no coefficient distinguishable from zero at any\nhorizon.** That is not a failure of the grid; it is the grid agreeing with Stage 6, which publishes the\nfamily as `estimated_null_at_the_declared_band` because no horizon in the declared two-to-four-month band\nreaches |t| > 1.96. A Brent shock does not move the Nigerian CPI in this specification, twenty-four ways of\nasking included. The family is reported with its own verdict rather than folded into the design's headline,\nwhich stays the fiscal channel it was pre-registered with.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s02",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
-   "citation": "robustness — 2. Design B is robust in sign, and the timing is its weak part — docs/robustness.md (vintage 2026-10-30)",
+   "citation": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/robustness.md",
-    "section": "2. Design B is robust in sign, and the timing is its weak part",
+    "section": "2. Design B is robust in sign for the fiscal channel, and its timing is the weak part",
     "part": 2,
-    "n_parts": 5
+    "n_parts": 6
    },
-   "chars": 774,
-   "text_sha256": "86a8102a1f5cf08038e7b290d98cb831088f497c97e5f7f36f74f5bedfaf8709"
+   "chars": 815,
+   "text_sha256": "6d354498c661cafd0c58d7fa05e9dc7d1c42142dfab27ca1562c81688d4551d9"
   },
   {
    "chunk_id": "doc:robustness#s02#p3",
    "doc_type": "methodology",
-   "title": "robustness — 2. Design B is robust in sign, and the timing is its weak part",
-   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 2. Design B is robust in sign, and the timing is its weak part\n\n[robustness — 2. Design B is robust in sign, and  — part 3 of 5]\n\nSo the *magnitude* is a choice — mostly the\nshock definition, a three-month average being a smoother and therefore larger-coefficient regressor —\nwhile the *sign* is not. The decomposition is a mean of within-cell ranges rather than one chosen pair,\nbecause a single pair would make the claim depend on which pair was picked. Two checks say where the weakness is:",
+   "title": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part",
+   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part\n\n[robustness — 2. Design B is robust in sign for t — part 3 of 6]\n\nAcross the fiscal grid the coefficient at h = 2 runs from **+0.3968** to **+2.3976**. Which choice moves it\nis a claim about the grid, so it is computed from the fitted rows and published in the artifact\n(`robustness.json` → `spread.design_b`, with a `by_outcome` decomposition beside the headline one) rather\nthan typed here: holding the shock definition and the window fixed, the range across the four covariate\nsets averages **0.4073** (mean of the six shock × window cells); holding the covariate set and the window\nfixed, the gap between the two shock definitions averages **0.7548** (mean of the twelve covariate-set ×\nwindow cells).",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s02",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
-   "citation": "robustness — 2. Design B is robust in sign, and the timing is its weak part — docs/robustness.md (vintage 2026-10-30)",
+   "citation": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/robustness.md",
-    "section": "2. Design B is robust in sign, and the timing is its weak part",
+    "section": "2. Design B is robust in sign for the fiscal channel, and its timing is the weak part",
     "part": 3,
-    "n_parts": 5
+    "n_parts": 6
    },
-   "chars": 564,
-   "text_sha256": "edc28200524dfb31f78285f67fa0ff48af473022b7139419dd99b3eee52a3bce"
+   "chars": 863,
+   "text_sha256": "42951bab89b8b32fcc21cd02675b2acd7c7a55a77360e875d3c7b63348c1a3cf"
   },
   {
    "chunk_id": "doc:robustness#s02#p4",
    "doc_type": "methodology",
-   "title": "robustness — 2. Design B is robust in sign, and the timing is its weak part",
-   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 2. Design B is robust in sign, and the timing is its weak part\n\n[robustness — 2. Design B is robust in sign, and  — part 4 of 5]\n\n- **In-time placebo: p = 0.0625.** The shock series shifted by each of 48 non-zero offsets and the\n  preferred specification refitted: 3 of 48 alignments return an estimate at least as large as the true\n  one (placebo estimates average |0.1911|, maximum |0.6446|, against the estimate's +0.5181). This does\n  **not** clear 0.05. The sign is the robust claim; the claim that the response is *specific to a two-to-\n  three-month lag* is weaker, and the placebo is the check that tests it.\n- **HAC bandwidth:** SE 0.1723 / 0.1664 / 0.1609 at 6 / 12 / 18 lags. The interval's width is not a\n  bandwidth artefact — it is the sample.",
+   "title": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part",
+   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part\n\n[robustness — 2. Design B is robust in sign for t — part 4 of 6]\n\nSo the *magnitude* is a choice — mostly the shock definition, a three-month average being a\nsmoother and therefore larger-coefficient regressor — while the *sign* is not. The decomposition is a mean\nof within-cell ranges rather than one chosen pair, because a single pair would make the claim depend on\nwhich pair was picked. Two checks say where the weakness is:",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s02",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
-   "citation": "robustness — 2. Design B is robust in sign, and the timing is its weak part — docs/robustness.md (vintage 2026-10-30)",
+   "citation": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/robustness.md",
-    "section": "2. Design B is robust in sign, and the timing is its weak part",
+    "section": "2. Design B is robust in sign for the fiscal channel, and its timing is the weak part",
     "part": 4,
-    "n_parts": 5
+    "n_parts": 6
    },
-   "chars": 828,
-   "text_sha256": "1ba5311f345533af6f6ae892986b885aba3b349a3031bb74454c169f705fae1f"
+   "chars": 587,
+   "text_sha256": "3bf46da3bb63c5b1bdf564ffda31dc01200b390062c53a4793c5beb27ce26877"
   },
   {
    "chunk_id": "doc:robustness#s02#p5",
    "doc_type": "methodology",
-   "title": "robustness — 2. Design B is robust in sign, and the timing is its weak part",
-   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 2. Design B is robust in sign, and the timing is its weak part\n\n[robustness — 2. Design B is robust in sign, and  — part 5 of 5]\n\nOster's delta is reported and **does not have its usual reading here**: β runs 0.4882 with no controls to\n0.5181 with month dummies, i.e. the controls move the estimate *away* from zero, so δ = −44.04 and Oster's\n\"δ ≥ 1\" cutoff does not apply. The bias-adjusted β\\* at δ = 1 is 0.5299. Reporting a negative delta as if\nit were a robustness certification would be a misuse of the statistic, so the artifact says which case\nit is in.",
+   "title": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part",
+   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part\n\n[robustness — 2. Design B is robust in sign for t — part 5 of 6]\n\n- **In-time placebo: p = 0.0625.** The shock series shifted by each of 48 non-zero offsets and the\n  preferred specification refitted: 3 of 48 alignments return an estimate at least as large as the true\n  one (placebo estimates average |0.1911|, maximum |0.6446|, against the estimate's +0.5181). This does\n  **not** clear 0.05. The sign is the robust claim; the claim that the response is *specific to a two-to-\n  three-month lag* is weaker, and the placebo is the check that tests it.\n- **HAC bandwidth:** SE 0.1723 / 0.1664 / 0.1609 at 6 / 12 / 18 lags. The interval's width is not a\n  bandwidth artefact — it is the sample.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s02",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
-   "citation": "robustness — 2. Design B is robust in sign, and the timing is its weak part — docs/robustness.md (vintage 2026-10-30)",
+   "citation": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
     "document": "docs/robustness.md",
-    "section": "2. Design B is robust in sign, and the timing is its weak part",
+    "section": "2. Design B is robust in sign for the fiscal channel, and its timing is the weak part",
     "part": 5,
-    "n_parts": 5
+    "n_parts": 6
    },
-   "chars": 632,
-   "text_sha256": "bb424b52c9265a2fbe1d3c9244594dfc02475a462cda3a7e0849db759436a303"
+   "chars": 851,
+   "text_sha256": "2da8cfd71f9ae030c52d2d99cd56f62cf7cb2bb4575c44b7f4518f447cc17a84"
+  },
+  {
+   "chunk_id": "doc:robustness#s02#p6",
+   "doc_type": "methodology",
+   "title": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part",
+   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part\n\n[robustness — 2. Design B is robust in sign for t — part 6 of 6]\n\nOster's delta is reported and **does not have its usual reading here**: β runs 0.4882 with no controls to\n0.5181 with month dummies, i.e. the controls move the estimate *away* from zero, so δ = −44.04 and Oster's\n\"δ ≥ 1\" cutoff does not apply. The bias-adjusted β\\* at δ = 1 is 0.5299. Reporting a negative delta as if\nit were a robustness certification would be a misuse of the statistic, so the artifact says which case\nit is in.",
+   "vintage": "2026-10-30",
+   "source": {
+    "path": "docs/robustness.md",
+    "anchor": "s02",
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+   },
+   "citation": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part — docs/robustness.md (vintage 2026-10-30)",
+   "metadata": {
+    "document": "docs/robustness.md",
+    "section": "2. Design B is robust in sign for the fiscal channel, and its timing is the weak part",
+    "part": 6,
+    "n_parts": 6
+   },
+   "chars": 655,
+   "text_sha256": "69d1c6b17af88018d173e337d7433f56e7bbcb8ab13efe8630a16e710cb380d0"
   },
   {
    "chunk_id": "doc:robustness#s03",
@@ -6680,7 +6764,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s03",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
    "citation": "robustness — 3. Design A's sign survives most of the grid; its identification still fails — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
@@ -6696,12 +6780,12 @@
    "chunk_id": "doc:robustness#s03#p2",
    "doc_type": "methodology",
    "title": "robustness — 3. Design A's sign survives most of the grid; its identification still fails",
-   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 3. Design A's sign survives most of the grid; its identification still fails\n\n[robustness — 3. Design A's sign survives most of — part 2 of 6]\n\nThe count is not the whole story in either direction, which is why the minority is published beside it:\n2 of the 105 specifications sit **within ±0.02 of zero** (2 Design A, 0 Design B) — the band is declared in\n`robustness.yml` rather than chosen after the fact — and outside it the split is 58 positive / 21 negative\nfor Design A. A specification that is numerically zero is reported as a near-zero cell, not absorbed into\nthe sign counts as if it were a direction.",
+   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 3. Design A's sign survives most of the grid; its identification still fails\n\n[robustness — 3. Design A's sign survives most of — part 2 of 6]\n\nThe count is not the whole story in either direction, which is why the minority is published beside it:\n2 of the 129 specifications sit **within ±0.02 of zero** (2 Design A, 0 Design B) — the band is declared in\n`robustness.yml` rather than chosen after the fact — and outside it the split is 58 positive / 21 negative\nfor Design A. A specification that is numerically zero is reported as a near-zero cell, not absorbed into\nthe sign counts as if it were a direction.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s03",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
    "citation": "robustness — 3. Design A's sign survives most of the grid; its identification still fails — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
@@ -6711,7 +6795,7 @@
     "n_parts": 6
    },
    "chars": 682,
-   "text_sha256": "2a2a84a213ba9004631fe5af30636facac92289845c4508af2120e40b0161072"
+   "text_sha256": "be37bec0dd11546a872bebea6be2ee9d4d4b18c4cb34036e4ae8f0479e8aa00f"
   },
   {
    "chunk_id": "doc:robustness#s03#p3",
@@ -6722,7 +6806,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s03",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
    "citation": "robustness — 3. Design A's sign survives most of the grid; its identification still fails — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
@@ -6743,7 +6827,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s03",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
    "citation": "robustness — 3. Design A's sign survives most of the grid; its identification still fails — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
@@ -6764,7 +6848,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s03",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
    "citation": "robustness — 3. Design A's sign survives most of the grid; its identification still fails — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
@@ -6785,7 +6869,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s03",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
    "citation": "robustness — 3. Design A's sign survives most of the grid; its identification still fails — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
@@ -6806,7 +6890,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s04",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
    "citation": "robustness — 4. What this changes about Stage 6 — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
@@ -6827,7 +6911,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s04",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
    "citation": "robustness — 4. What this changes about Stage 6 — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
@@ -6848,7 +6932,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s04",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
    "citation": "robustness — 4. What this changes about Stage 6 — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
@@ -6864,12 +6948,12 @@
    "chunk_id": "doc:robustness#s05",
    "doc_type": "methodology",
    "title": "robustness — 5. Reproducing it",
-   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 5. Reproducing it\n\n[robustness — 5. Reproducing it — part 1 of 3]\n\n```bash\nRscript analysis/R/04_robustness.R            # fits the 105 specifications, writes the curve\npython tests/verify_stage7.py                 # re-fits every one of them independently\npython scripts/validate_artifacts.py          # contracts: counts recomputed from the artifact's own rows\nscripts/verify.sh                             # the whole chain, Stages 3-7\n```",
+   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 5. Reproducing it\n\n[robustness — 5. Reproducing it — part 1 of 3]\n\n```bash\nRscript analysis/R/04_robustness.R            # fits the 129 specifications, writes the curve\npython tests/verify_stage7.py                 # re-fits every one of them independently\npython scripts/validate_artifacts.py          # contracts: counts recomputed from the artifact's own rows\nscripts/verify.sh                             # the whole chain, Stages 3-7\n```",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s05",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
    "citation": "robustness — 5. Reproducing it — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
@@ -6879,7 +6963,7 @@
     "n_parts": 3
    },
    "chars": 513,
-   "text_sha256": "960db6dfbe76c75ec225483b113fd1a6be3cd706031d59bde3f92a8ad53ac33e"
+   "text_sha256": "79c236082882f1dfacbe55d5a7fc0629382789e315e8de687aa9f379318487fe"
   },
   {
    "chunk_id": "doc:robustness#s05#p2",
@@ -6890,7 +6974,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s05",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
    "citation": "robustness — 5. Reproducing it — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
@@ -6911,7 +6995,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s05",
-    "sha256": "16a26b363a02689baf8f89b45acd91ccd1b79a7e3f5ca6cd61b65ab4ff2ee98a"
+    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
    },
    "citation": "robustness — 5. Reproducing it — docs/robustness.md (vintage 2026-10-30)",
    "metadata": {
@@ -11916,7 +12000,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.A",
-    "sha256": "d8f10b5ecc5cb6590adbcfbc73059176b13d5cc91020d326b0defa52ae36d7f3"
+    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
    },
    "citation": "Published result — Design A — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -11939,7 +12023,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.A",
-    "sha256": "d8f10b5ecc5cb6590adbcfbc73059176b13d5cc91020d326b0defa52ae36d7f3"
+    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
    },
    "citation": "Published result — Design A — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -11962,7 +12046,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.A",
-    "sha256": "d8f10b5ecc5cb6590adbcfbc73059176b13d5cc91020d326b0defa52ae36d7f3"
+    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
    },
    "citation": "Published result — Design A — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -11980,139 +12064,208 @@
    "chunk_id": "result:B",
    "doc_type": "published_result",
    "title": "Published result — Design B",
-   "text": "[Published result — Design B — part 1 of 6]\n\nPublished result for Design B — National VECM / ARDL time series. Brent crude to state allocations: how much of an oil shock reaches the states, and when? Estimator: local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=0. Estimand: long-run multiplier for the administration effect, oil-interacted. Status: estimated. Result is card-level: false. Verdict rule: `estimated` if the cumulative response is positive at the declared horizon band with a HAC t above 1.96 at some horizon in it, and the lead placebo at 6 months is smaller in magnitude. Reported with its confidence bounds either way; a null is a result. Failed checks: none. Headline: The largest response is +0.5181 (cumulative log change in national FAAC at h=2).",
+   "text": "[Published result — Design B — part 1 of 9]\n\nPublished result for Design B — National VECM / ARDL time series. Brent crude to the states and to the price level: how much of an oil shock passes through, and when? Estimator: local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=0. Estimand: long-run multiplier for the administration effect, oil-interacted. Status: estimated. Result is card-level: false. Verdict rule: Applied **per outcome family**, never pooled: `estimated` if the cumulative response is positive at the declared horizon band with a HAC t above 1.96 at some horizon in it, and the lead placebo at 6 months is smaller in magnitude. Reported with its confidence bounds either way; a null is a result. Failed checks: none. Headline: The largest response is +0.5181 (cumulative log change in national FAAC at h=2).",
    "vintage": "2026-10-30",
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "d8f10b5ecc5cb6590adbcfbc73059176b13d5cc91020d326b0defa52ae36d7f3"
+    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
     "design_id": "B",
     "status": "estimated",
     "result_is_card_level": false,
-    "n_specifications": 9,
+    "n_specifications": 18,
     "part": 1,
-    "n_parts": 6
+    "n_parts": 9
    },
-   "chars": 790,
-   "text_sha256": "382ce48330caa2a146f7ac64be0c1c27e977e96d94a2262d8c42b5b99d856f31"
+   "chars": 848,
+   "text_sha256": "18ebaeea9c6339efeffd98b688916bb50a47d7a15d14d148b45676b19b430a53"
   },
   {
    "chunk_id": "result:B#p2",
    "doc_type": "published_result",
    "title": "Published result — Design B",
-   "text": "[Published result — Design B — part 2 of 6]\n\nthe specifications whose 95 % interval excludes zero are cumulative log change in national FAAC at h=2 = +0.5181 [+0.1919, +0.8443]; cumulative log change in national FAAC at h=3 = +0.4698 [+0.1609, +0.7787]. 9 specification(s) published at vintage 2026-10-30:\n- cumulative log change in national FAAC at h=0: cumulative_pass_through_h0 = -0.1600, 95% interval [-0.4019, +0.0820], p = 0.1978, n = 113, 2017-01-01 to 2026-06-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=0). - cumulative log change in national FAAC at h=1: cumulative_pass_through_h1 = +0.1571, 95% interval [-0.0933, +0.4076], p = 0.2215, n = 112, 2017-01-01 to 2026-05-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=1).",
+   "text": "[Published result — Design B — part 2 of 9]\n\nthe specifications whose 95 % interval excludes zero are cumulative log change in national FAAC at h=2 = +0.5181 [+0.1919, +0.8443]; cumulative log change in national FAAC at h=3 = +0.4698 [+0.1609, +0.7787]. 18 specification(s) published at vintage 2026-10-30:\n- cumulative log change in national FAAC at h=0: cumulative_pass_through_h0 = -0.1600, 95% interval [-0.4019, +0.0820], p = 0.1978, n = 113, 2017-01-01 to 2026-06-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=0). - cumulative log change in national FAAC at h=1: cumulative_pass_through_h1 = +0.1571, 95% interval [-0.0933, +0.4076], p = 0.2215, n = 112, 2017-01-01 to 2026-05-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=1).",
    "vintage": "2026-10-30",
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "d8f10b5ecc5cb6590adbcfbc73059176b13d5cc91020d326b0defa52ae36d7f3"
+    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
     "design_id": "B",
     "status": "estimated",
     "result_is_card_level": false,
-    "n_specifications": 9,
+    "n_specifications": 18,
     "part": 2,
-    "n_parts": 6
+    "n_parts": 9
    },
-   "chars": 793,
-   "text_sha256": "c4ef6f025f072cf4d4d4e26f3ab1a281a50991325ffb390c659728b8d48c99f3"
+   "chars": 794,
+   "text_sha256": "15a3195a9e50cdb7c4deadcb0e3775983ba6eb7ecf15753361e15460935a8f76"
   },
   {
    "chunk_id": "result:B#p3",
    "doc_type": "published_result",
    "title": "Published result — Design B",
-   "text": "[Published result — Design B — part 3 of 6]\n\n- cumulative log change in national FAAC at h=2: cumulative_pass_through_h2 = +0.5181, 95% interval [+0.1919, +0.8443], p = 0.0024, n = 111, 2017-01-01 to 2026-04-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=2). - cumulative log change in national FAAC at h=3: cumulative_pass_through_h3 = +0.4698, 95% interval [+0.1609, +0.7787], p = 0.0036, n = 110, 2017-01-01 to 2026-03-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=3). - cumulative log change in national FAAC at h=4: cumulative_pass_through_h4 = +0.1608, 95% interval [-0.1562, +0.4778], p = 0.3224, n = 109, 2017-01-01 to 2026-02-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=4).",
+   "text": "[Published result — Design B — part 3 of 9]\n\n- cumulative log change in national FAAC at h=2: cumulative_pass_through_h2 = +0.5181, 95% interval [+0.1919, +0.8443], p = 0.0024, n = 111, 2017-01-01 to 2026-04-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=2). - cumulative log change in national FAAC at h=3: cumulative_pass_through_h3 = +0.4698, 95% interval [+0.1609, +0.7787], p = 0.0036, n = 110, 2017-01-01 to 2026-03-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=3). - cumulative log change in national FAAC at h=4: cumulative_pass_through_h4 = +0.1608, 95% interval [-0.1562, +0.4778], p = 0.3224, n = 109, 2017-01-01 to 2026-02-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=4).",
    "vintage": "2026-10-30",
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "d8f10b5ecc5cb6590adbcfbc73059176b13d5cc91020d326b0defa52ae36d7f3"
+    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
     "design_id": "B",
     "status": "estimated",
     "result_is_card_level": false,
-    "n_specifications": 9,
+    "n_specifications": 18,
     "part": 3,
-    "n_parts": 6
+    "n_parts": 9
    },
    "chars": 776,
-   "text_sha256": "3f3c7dd2a69bacc114fb674a7e397afea8aeec8bc68b4917a3c8041cd84b42ff"
+   "text_sha256": "946049eba34d0b8ab45f12345fbaebbe185de77116c47ae19e85a4c7a1edaac8"
   },
   {
    "chunk_id": "result:B#p4",
    "doc_type": "published_result",
    "title": "Published result — Design B",
-   "text": "[Published result — Design B — part 4 of 6]\n\n- cumulative log change in national FAAC at h=5: cumulative_pass_through_h5 = +0.0327, 95% interval [-0.3367, +0.4021], p = 0.8626, n = 108, 2017-01-01 to 2026-01-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=5). - cumulative log change in national FAAC at h=6: cumulative_pass_through_h6 = +0.2313, 95% interval [-0.1966, +0.6592], p = 0.2918, n = 107, 2017-01-01 to 2025-12-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=6). - cumulative log change in national FAAC at h=9: cumulative_pass_through_h9 = +0.3961, 95% interval [-0.1957, +0.9878], p = 0.1925, n = 104, 2017-01-01 to 2025-09-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=9).",
+   "text": "[Published result — Design B — part 4 of 9]\n\n- cumulative log change in national FAAC at h=5: cumulative_pass_through_h5 = +0.0327, 95% interval [-0.3367, +0.4021], p = 0.8626, n = 108, 2017-01-01 to 2026-01-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=5). - cumulative log change in national FAAC at h=6: cumulative_pass_through_h6 = +0.2313, 95% interval [-0.1966, +0.6592], p = 0.2918, n = 107, 2017-01-01 to 2025-12-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=6). - cumulative log change in national FAAC at h=9: cumulative_pass_through_h9 = +0.3961, 95% interval [-0.1957, +0.9878], p = 0.1925, n = 104, 2017-01-01 to 2025-09-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=9).",
    "vintage": "2026-10-30",
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "d8f10b5ecc5cb6590adbcfbc73059176b13d5cc91020d326b0defa52ae36d7f3"
+    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
     "design_id": "B",
     "status": "estimated",
     "result_is_card_level": false,
-    "n_specifications": 9,
+    "n_specifications": 18,
     "part": 4,
-    "n_parts": 6
+    "n_parts": 9
    },
    "chars": 776,
-   "text_sha256": "ec6d7604d582e535736d9e494b212e406453d2702d736e2617d97ebb4b7aa878"
+   "text_sha256": "9a93009c03d67e984d556b25f7d7945f7b80b81b8a9684919c6021f3d56a45ed"
   },
   {
    "chunk_id": "result:B#p5",
    "doc_type": "published_result",
    "title": "Published result — Design B",
-   "text": "[Published result — Design B — part 5 of 6]\n\n- cumulative log change in national FAAC at h=12: cumulative_pass_through_h12 = +0.3245, 95% interval [-0.3003, +0.9493], p = 0.3112, n = 101, 2017-01-01 to 2025-06-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=12). Formula: diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year. Covariance: Newey-West, 12 lags. The design's result measures: cumulative log change in national FAAC (the channel), national-month grain. Cards that carry no number because of this design-level result: 12. Stage 7 robustness for this design: 24 of 24 specifications positive, 0 negative, 24 with an interval above zero and 0 below it; 1 axis levels flip against the preferred specification. Oster delta on the preferred specification: -44.0380 (interpretable: false).",
+   "text": "[Published result — Design B — part 5 of 9]\n\n- cumulative log change in national FAAC at h=12: cumulative_pass_through_h12 = +0.3245, 95% interval [-0.3003, +0.9493], p = 0.3112, n = 101, 2017-01-01 to 2025-06-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=12). - cumulative log change in the NBS CPI index at h=0: cumulative_pass_through_cpi_h0 = +0.0043, 95% interval [-0.0066, +0.0153], p = 0.4394, n = 309, 1999-02-01 to 2024-10-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=0). - cumulative log change in the NBS CPI index at h=1: cumulative_pass_through_cpi_h1 = +0.0035, 95% interval [-0.0164, +0.0235], p = 0.7281, n = 308, 1999-02-01 to 2024-09-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=1).",
    "vintage": "2026-10-30",
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "d8f10b5ecc5cb6590adbcfbc73059176b13d5cc91020d326b0defa52ae36d7f3"
+    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
     "design_id": "B",
     "status": "estimated",
     "result_is_card_level": false,
-    "n_specifications": 9,
+    "n_specifications": 18,
     "part": 5,
-    "n_parts": 6
+    "n_parts": 9
    },
-   "chars": 837,
-   "text_sha256": "8b5bcf84cf7325db9be0fa1d8a7255bbfa52faa12933683b0d081c42a3db9b11"
+   "chars": 795,
+   "text_sha256": "719468fade4f6ebcb41dfd32556a086634c5eba7f14c113c005fc7575f151531"
   },
   {
    "chunk_id": "result:B#p6",
    "doc_type": "published_result",
    "title": "Published result — Design B",
-   "text": "[Published result — Design B — part 6 of 6]\n\nthe observed controls move the estimate away from zero, so delta is negative and Oster's usual cutoff (delta >= 1) does not apply; beta* at delta = 1 is reported instead\nIn-time placebo: n_draws = 48, p_value = 0.0625, shifted_mean_abs = 0.19105683478, shifted_max_abs = 0.64457712741, observed_mean_abs = 0.50621982607, observed = 0.51811762897, note = The in-time placebo for this design: shift the shock series by every non-zero offset in the interval and refit the preferred specification. A real transmission channel should be largest at the true alignment. This is the check Stage 6 ran forward (a 6-month lead) made into a distribution.. Artifacts: {\"estimates\": \"registry/estimates/2026-10-30/estimates.json\", \"robustness\": \"registry/robustness/2026-10-30/robustness.json\"}",
+   "text": "[Published result — Design B — part 6 of 9]\n\n- cumulative log change in the NBS CPI index at h=2: cumulative_pass_through_cpi_h2 = -0.0021, 95% interval [-0.0325, +0.0282], p = 0.8921, n = 307, 1999-02-01 to 2024-08-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=2). - cumulative log change in the NBS CPI index at h=3: cumulative_pass_through_cpi_h3 = -0.0041, 95% interval [-0.0400, +0.0318], p = 0.8231, n = 306, 1999-02-01 to 2024-07-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=3). - cumulative log change in the NBS CPI index at h=4: cumulative_pass_through_cpi_h4 = -0.0020, 95% interval [-0.0455, +0.0415], p = 0.9276, n = 305, 1999-02-01 to 2024-06-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=4).",
    "vintage": "2026-10-30",
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.B",
-    "sha256": "d8f10b5ecc5cb6590adbcfbc73059176b13d5cc91020d326b0defa52ae36d7f3"
+    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
    },
    "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
     "design_id": "B",
     "status": "estimated",
     "result_is_card_level": false,
-    "n_specifications": 9,
+    "n_specifications": 18,
     "part": 6,
-    "n_parts": 6
+    "n_parts": 9
+   },
+   "chars": 800,
+   "text_sha256": "e4cbd35317c33863b5953c8243013110ad8f7073875c2c6c9f404ec566458d5e"
+  },
+  {
+   "chunk_id": "result:B#p7",
+   "doc_type": "published_result",
+   "title": "Published result — Design B",
+   "text": "[Published result — Design B — part 7 of 9]\n\n- cumulative log change in the NBS CPI index at h=5: cumulative_pass_through_cpi_h5 = -0.0091, 95% interval [-0.0613, +0.0431], p = 0.7331, n = 304, 1999-02-01 to 2024-05-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=5). - cumulative log change in the NBS CPI index at h=6: cumulative_pass_through_cpi_h6 = -0.0080, 95% interval [-0.0616, +0.0456], p = 0.7707, n = 303, 1999-02-01 to 2024-04-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=6). - cumulative log change in the NBS CPI index at h=9: cumulative_pass_through_cpi_h9 = -0.0143, 95% interval [-0.0681, +0.0396], p = 0.6039, n = 300, 1999-02-01 to 2024-01-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=9).",
+   "vintage": "2026-10-30",
+   "source": {
+    "path": "registry/dags/index.json",
+    "anchor": "published_results.B",
+    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+   },
+   "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
+   "metadata": {
+    "design_id": "B",
+    "status": "estimated",
+    "result_is_card_level": false,
+    "n_specifications": 18,
+    "part": 7,
+    "n_parts": 9
+   },
+   "chars": 800,
+   "text_sha256": "3bee325e71ba28b897367f4171699f2c062b85e383047179214cf450a16d6813"
+  },
+  {
+   "chunk_id": "result:B#p8",
+   "doc_type": "published_result",
+   "title": "Published result — Design B",
+   "text": "[Published result — Design B — part 8 of 9]\n\n- cumulative log change in the NBS CPI index at h=12: cumulative_pass_through_cpi_h12 = -0.0016, 95% interval [-0.0582, +0.0550], p = 0.9563, n = 297, 1999-02-01 to 2023-10-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=12). Formula: diff(log(gross_total_naira), lag = h, leading) ~ diff(log(oil)) + month_of_year. Covariance: Newey-West, 12 lags. The design's result measures: cumulative log change in national FAAC (the channel), national-month grain. Cards that carry no number because of this design-level result: 12. Stage 7 robustness for this design: 36 of 48 specifications positive, 12 negative, 24 with an interval above zero and 0 below it; 1 axis levels flip against the preferred specification. Oster delta on the preferred specification: -44.0380 (interpretable: false).",
+   "vintage": "2026-10-30",
+   "source": {
+    "path": "registry/dags/index.json",
+    "anchor": "published_results.B",
+    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+   },
+   "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
+   "metadata": {
+    "design_id": "B",
+    "status": "estimated",
+    "result_is_card_level": false,
+    "n_specifications": 18,
+    "part": 8,
+    "n_parts": 9
+   },
+   "chars": 859,
+   "text_sha256": "47c4a7ff7eef90bd5d0c284c68354c62e3c48f9f51075d930135570da450a94a"
+  },
+  {
+   "chunk_id": "result:B#p9",
+   "doc_type": "published_result",
+   "title": "Published result — Design B",
+   "text": "[Published result — Design B — part 9 of 9]\n\nthe observed controls move the estimate away from zero, so delta is negative and Oster's usual cutoff (delta >= 1) does not apply; beta* at delta = 1 is reported instead\nIn-time placebo: n_draws = 48, p_value = 0.0625, shifted_mean_abs = 0.19105683478, shifted_max_abs = 0.64457712741, observed_mean_abs = 0.50621982607, observed = 0.51811762897, note = The in-time placebo for this design: shift the shock series by every non-zero offset in the interval and refit the preferred specification. A real transmission channel should be largest at the true alignment. This is the check Stage 6 ran forward (a 6-month lead) made into a distribution.. Artifacts: {\"estimates\": \"registry/estimates/2026-10-30/estimates.json\", \"robustness\": \"registry/robustness/2026-10-30/robustness.json\"}",
+   "vintage": "2026-10-30",
+   "source": {
+    "path": "registry/dags/index.json",
+    "anchor": "published_results.B",
+    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
+   },
+   "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
+   "metadata": {
+    "design_id": "B",
+    "status": "estimated",
+    "result_is_card_level": false,
+    "n_specifications": 18,
+    "part": 9,
+    "n_parts": 9
    },
    "chars": 826,
-   "text_sha256": "c09ecc9eea529735ef5821bca8b88987d14be947f003e87940adb54a1bb97c0e"
+   "text_sha256": "c81d59f5e73507361d525672f75119cedd42afdf2e4ef872034a2b8c79315a6b"
   },
   {
    "chunk_id": "result:C",
@@ -12123,7 +12276,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.C",
-    "sha256": "d8f10b5ecc5cb6590adbcfbc73059176b13d5cc91020d326b0defa52ae36d7f3"
+    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
    },
    "citation": "Published result — Design C — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {
@@ -12146,7 +12299,7 @@
    "source": {
     "path": "registry/dags/index.json",
     "anchor": "published_results.C",
-    "sha256": "d8f10b5ecc5cb6590adbcfbc73059176b13d5cc91020d326b0defa52ae36d7f3"
+    "sha256": "7aabe2f3d3e8b36eeed385fc12b67eae0f531b732eb32c0101251d9bb2b18f5f"
    },
    "citation": "Published result — Design C — registry/dags/index.json (vintage 2026-10-30)",
    "metadata": {

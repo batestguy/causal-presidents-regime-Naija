@@ -18,7 +18,7 @@ authoritative-looking and wrong. Everything below is shaped by that.
 
 ## 1. What is in it
 
-**485 chunks from 53 attributed sources**, at vintage 2026-10-30 - the registry's vintage, not the build date,
+**492 chunks from 53 attributed sources**, at vintage 2026-10-30 - the registry's vintage, not the build date,
 so an answer that quotes a card is a statement about that data vintage whenever it is read.
 
 | Family | Chunks | Parent documents |
@@ -81,8 +81,8 @@ Design C's status, coverage, quality, the event study, the tables), 2 refusals t
 | Metric | Embeddings | BM25 baseline | Gate |
 |---|---|---|---|
 | recall@5 | **0.944** | 0.778 | ≥ 0.90 — **met** for embeddings, not for the baseline |
-| gold coverage@5 | 0.429 | 0.377 | - |
-| MRR | 0.718 | 0.644 | - |
+| gold coverage@5 | 0.424 | 0.372 | - |
+| MRR | 0.673 | 0.616 | - |
 | refusal-with-reason recall | **0.5** | 0.0 | 1.0 — **not met** |
 | out-of-scope refused | **0.25** | n/a | 1.0 — **not met** |
 | answerable kept (not refused) | 1.0 | n/a | 1.0 — met |
@@ -122,10 +122,10 @@ defines, judged by `gemini-3.5-flash-lite` at temperature 0:
 
 | Metric | Measured | What it means here |
 |---|---|---|
-| faithfulness | **1.000** | statements in an answer that its own cited contexts support |
-| answer relevancy | **0.821** | mean cosine between the question and three questions generated from the answer |
+| faithfulness | **0.952** | statements in an answer that its own cited contexts support |
+| answer relevancy | **0.810** | mean cosine between the question and three questions generated from the answer |
 | context precision | **0.989** | average precision over the cited chunks a judge calls useful for the reference answer |
-| context recall | **0.838** | reference-answer claims the cited contexts can support |
+| context recall | **0.848** | reference-answer claims the cited contexts can support |
 
 **This is not a `ragas` library run, and the artifact says so in its own fields.** The package is not
 installed in this repository or on this machine, and installing it would add a dependency tree to a project
@@ -137,15 +137,16 @@ RAGAS's per-item calls, because this key's free tier allows 20 requests per wind
 What the numbers say, read honestly:
 
 - **Faithfulness is high by construction, not by quality.** The answer is a selection of quoted corpus
-  paragraphs, so the check confirms the contract rather than judging retrieval. 1.000 here means "it quotes
+  paragraphs, so the check confirms the contract rather than judging retrieval. 0.952 here means "it quotes
   what it cites", nothing more — and earlier runs of the same measurement gave 0.956, 0.964 and 0.971, so even
   that is measured with a judge that varies.
-- **Context recall 0.838 is the number that matters.** About one reference claim in six is not supported by
-  the chunks the answer actually cited: in this run `q04_oil_to_states` scored **0.167**,
-  `q05_design_b_robust` **0.500**, `q08_observed_share` 0.600 and `q09_tenure_comparison` 0.750. The answer
-  quotes the right document but not always the paragraph that carries the reference's claim.
-- **The judge is noisy, and that is published too.** Eight runs of the same measurement gave faithfulness
-  0.956–1.000, answer relevancy 0.800–0.834, context precision 0.885–1.000 and context recall 0.792–0.863. A
+- **Context recall 0.848 is the number that matters.** About one reference claim in seven is not supported
+  by the chunks the answer actually cited: in this run `q04_oil_to_states` scored **0.000**,
+  `q05_design_b_robust` **0.667**, `q08_observed_share` 0.750 and `q09_tenure_comparison` 0.750. The answer
+  quotes the right document but not always the paragraph that carries the reference claim; `q05` is now the
+  harder question of the two, because Design B's answer must carry two outcome families rather than one.
+- **The judge is noisy, and that is published too.** Nine runs of the same measurement gave faithfulness
+  0.952–1.000, answer relevancy 0.800–0.834, context precision 0.885–1.000 and context recall 0.792–0.863. A
   lite judge at temperature 0 is not deterministic, and context precision scored every chunk useful in some
   runs and not in the others — a weak instrument, said so here rather than averaged into respectability. The
   artifact records the values of *its* run; `tests/verify_answer_quality.py` checks that every score
@@ -195,7 +196,7 @@ machine (no network service, no GPU):
 
 `sentence-transformers==5.1.2`, `torch==2.14.1+cpu`, `numpy 2.4.6`; the model is `multi-qa-MiniLM-L6-cos-v1`
 (384 dims, 512 tokens). The first `--embed` downloads ~90 MB into the Hugging Face cache; after that the run
-is ~20 seconds for 485 chunks.
+is ~20 seconds for 492 chunks.
 
 **Then rebuild whenever a source changes.** The corpus records the sha256 of all 51 sources and
 `tests/verify_rag.py` fails when one no longer matches, with the rebuild command in the message. That is the

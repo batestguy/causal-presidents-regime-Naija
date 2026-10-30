@@ -14,7 +14,7 @@ copied from named. This stage is the copying.
 
 ## 1. The problem this layer exists to solve
 
-The registry is 36 cards (12 outcomes × 3 identification designs). Stage 6 published 12 specifications, and
+The registry is 36 cards (12 outcomes × 3 identification designs). Stage 6 published 21 specifications (3 Design A outcomes and 18 Design B horizons across two outcome families), and
 they **do not line up with the cards** the way a reader would guess:
 
 | Design | Published | About what | Cards that can carry it |

@@ -2,11 +2,11 @@
  "schema_version": "0.1.0",
  "layer": "RAG evaluation set (retrieval-gated; generation metrics declared, not measured)",
  "vintage": "2026-10-30",
- "generated_at": "2026-10-30T13:08:57+00:00",
+ "generated_at": "2026-10-30T15:03:02+00:00",
  "generator": {
   "script": "scripts/build_rag_corpus.py",
   "spec": "analysis/specs/rag_eval.yml",
-  "git_sha": "ad720fc"
+  "git_sha": "7e630a0"
  },
  "corpus": "registry/rag/2026-10-30/corpus.json",
  "ragas": {
@@ -111,7 +111,10 @@
     "result:B#p3",
     "result:B#p4",
     "result:B#p5",
-    "result:B#p6"
+    "result:B#p6",
+    "result:B#p7",
+    "result:B#p8",
+    "result:B#p9"
    ],
    "must_contain": [
     "+0.5181",
@@ -136,17 +139,21 @@
     "result:B#p4",
     "result:B#p5",
     "result:B#p6",
+    "result:B#p7",
+    "result:B#p8",
+    "result:B#p9",
     "doc:robustness#s02",
     "doc:robustness#s02#p2",
     "doc:robustness#s02#p3",
     "doc:robustness#s02#p4",
-    "doc:robustness#s02#p5"
+    "doc:robustness#s02#p5",
+    "doc:robustness#s02#p6"
    ],
    "must_contain": [
-    "24 of 24"
+    "36 of 48"
    ],
    "refusal_must_cite": null,
-   "reference_answer": "Its sign did: 24 of 24 specifications are positive and all 24 intervals exclude zero. Its timing is weaker — the in-time placebo over 48 shifted alignments returns p = 0.0625, published as a bound rather than widened until it passed.",
+   "reference_answer": "Its fiscal family did: all 24 of its 24 specifications are positive and every interval excludes zero. Across both outcome families the grid is 36 of 48 positive — the price-level family is 12 positive and 12 negative with no interval excluding zero. Its timing is weaker — the in-time placebo over 48 shifted alignments returns p = 0.0625, published as a bound rather than widened until it passed.",
    "notes": null
   },
   {
@@ -168,6 +175,9 @@
     "doc:estimates#s02#p13",
     "doc:estimates#s02#p14",
     "doc:estimates#s02#p15",
+    "doc:estimates#s02#p16",
+    "doc:estimates#s02#p17",
+    "doc:estimates#s02#p18",
     "doc:estimates#s02#p2",
     "doc:estimates#s02#p3",
     "doc:estimates#s02#p4",
@@ -435,6 +445,9 @@
     "doc:estimates#s02#p13",
     "doc:estimates#s02#p14",
     "doc:estimates#s02#p15",
+    "doc:estimates#s02#p16",
+    "doc:estimates#s02#p17",
+    "doc:estimates#s02#p18",
     "doc:estimates#s02#p2",
     "doc:estimates#s02#p3",
     "doc:estimates#s02#p4",

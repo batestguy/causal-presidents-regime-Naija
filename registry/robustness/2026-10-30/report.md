@@ -1,29 +1,29 @@
 # Stage 7 — robustness and the multiverse, vintage 2026-10-30
 
-Generated 2026-10-30T12:22:21+0100 by `analysis/R/04_robustness.R` from `analysis/specs/robustness.yml`. Every specification and every count is recomputed independently by `tests/verify_stage7.py`.
+Generated 2026-10-30T15:42:29+0100 by `analysis/R/04_robustness.R` from `analysis/specs/robustness.yml`. Every specification and every count is recomputed independently by `tests/verify_stage7.py`.
 
 ## What this stage is for
 
-Stage 6 published two estimates. This stage asks whether they survive the choices that were not pinned down: 81 specifications for Design A and 24 for Design B, each declared in the spec before it was fitted, every one of them stored — including the ones that disagree. The count below is a count over a correlated grid, not a vote.
+Stage 6 published two estimates. This stage asks whether they survive the choices that were not pinned down: 81 specifications for Design A and 48 for Design B, each declared in the spec before it was fitted, every one of them stored — including the ones that disagree. The count below is a count over a correlated grid, not a vote.
 
 ## Support counts
 
 | Group | n | positive | positive, CI excludes 0 | negative | negative, CI excludes 0 |
 |---|---|---|---|---|---|
 | A — state dose-response | 81 | 60 | 32 | 21 | 0 |
-| B — national transmission | 24 | 24 | 24 | 0 | 0 |
-| overall | 105 | 84 | 56 | 21 | 0 |
+| B — national transmission | 48 | 36 | 24 | 12 | 0 |
+| overall | 129 | 96 | 56 | 33 | 0 |
 
 > The count is descriptive, not a vote. The specifications are deliberately correlated — the same 3,888 rows, the same outcome and overlapping windows — so a positive count is a statement about the grid, not that many independent pieces of evidence. It is published as a count, never as a share of evidence, and never as a probability that the sign is right. The tally itself is read from the fitted rows, never typed — the revision pass of 2026-10-30 moved it, and a literal here would have gone stale silently (C-82, C-83).
 
-> **The near-zero band.** 2 of the 105 specifications sit within ±0.02 of zero — 2 of Design A's and 0 of Design B's. Their sign is rounding, not direction, and it is not stable across a rebuild of the base: the counts above moved by one specification (44/37 to 45/36) between two bases for exactly that reason. They stay in the counts and are declared here, because removing them from `n` would hide the instability rather than name it.
+> **The near-zero band.** 24 of the 129 specifications sit within ±0.02 of zero — 2 of Design A's and 22 of Design B's. Their sign is rounding, not direction, and it is not stable across a rebuild of the base: the counts above moved by one specification (44/37 to 45/36) between two bases for exactly that reason. They stay in the counts and are declared here, because removing them from `n` would hide the instability rather than name it.
 
 Excluding the band, the counts are:
 
 | Group | positive outside the band | negative outside the band |
 |---|---|---|
 | A | 58 | 21 |
-| B | 24 | 0 |
+| B | 24 | 2 |
 
 ### Where the sign changes
 
@@ -47,19 +47,21 @@ Every axis level, with the count on each side of zero and the count opposite the
 | A | window | exclude_covid | 27 | 21 | 6 | 6 |
 | A | window | full | 27 | 21 | 6 | 6 |
 | A | window | post_2019 | 27 | 18 | 9 | 9 |
-| B | shock | d_log_oil_1m | 12 | 12 | 0 | 0 |
-| B | shock | d_log_oil_3m | 12 | 12 | 0 | 0 |
-| B | controls | month_of_year | 6 | 6 | 0 | 0 |
-| B | controls | month_of_year_plus_covid | 6 | 6 | 0 | 0 |
-| B | controls | month_of_year_plus_lagged_shock | 6 | 6 | 0 | 0 |
-| B | controls | none | 6 | 6 | 0 | 0 |
-| B | window | exclude_covid | 8 | 8 | 0 | 0 |
-| B | window | full | 8 | 8 | 0 | 0 |
-| B | window | post_2019 | 8 | 8 | 0 | 0 |
+| B | outcome | cpi | 24 | 12 | 12 | 12 |
+| B | outcome | faac | 24 | 24 | 0 | 0 |
+| B | shock | d_log_oil_1m | 24 | 18 | 6 | 6 |
+| B | shock | d_log_oil_3m | 24 | 18 | 6 | 6 |
+| B | controls | month_of_year | 12 | 8 | 4 | 4 |
+| B | controls | month_of_year_plus_covid | 12 | 8 | 4 | 4 |
+| B | controls | month_of_year_plus_lagged_shock | 12 | 9 | 3 | 3 |
+| B | controls | none | 12 | 11 | 1 | 1 |
+| B | window | exclude_covid | 16 | 9 | 7 | 7 |
+| B | window | full | 16 | 11 | 5 | 5 |
+| B | window | post_2019 | 16 | 16 | 0 | 0 |
 
 ## The pre-registered specifications
 
-Across the 24 Design B specifications the coefficient at h=2 runs from **0.3968** (`B|d_log_oil_1m|month_of_year_plus_lagged_shock|full`) to **2.3976** (`B|d_log_oil_3m|month_of_year_plus_lagged_shock|exclude_covid`). Holding the shock definition fixed, it spans 0.4073 across the control sets and windows; holding the covariate set fixed, it spans 0.7548 across the two shock definitions — a three-month average shock is a smoother regressor, so less of it is measurement noise and its coefficient is correspondingly larger. Every one of the 24 keeps the sign.
+Across the 48 Design B specifications the coefficient at h=2 runs from **0.3968** (`B|faac|d_log_oil_1m|month_of_year_plus_lagged_shock|full`) to **2.3976** (`B|faac|d_log_oil_3m|month_of_year_plus_lagged_shock|exclude_covid`). Holding the shock definition fixed, it spans 0.4073 across the control sets and windows; holding the covariate set fixed, it spans 0.7548 across the two shock definitions — a three-month average shock is a smoother regressor, so less of it is measurement noise and its coefficient is correspondingly larger. Every one of the 36 keeps the sign.
 
 | Design | Specification | Coefficient | SE | 95 % CI | n |
 |---|---|---|---|---|---|
@@ -86,7 +88,7 @@ Dropping the three oil-producing states named in the spec (Delta, Bayelsa, River
 
 The shock series shifted by each of 48 non-zero offsets (-24 to 24 months) and the preferred specification refitted at h=2: **p = 0.0625**. Placebo estimates average |0.1911| with a maximum of |0.6446|; the estimate is 0.5181.
 
-The *sign* of Design B is the same in all 24 grid specifications and all 24 of its intervals exclude zero, but the in-time placebo does **not** clear 0.05: 3 of 48 shifted alignments return an estimate at least as large as the true one (p = 0.0625). The sign is the robust claim here; the *timing* is the weaker one, and it is what the placebo tests.
+The *sign* of Design B disagrees with the preferred one in 12 of 48 grid specifications exclude zero, but the in-time placebo does **not** clear 0.05: 3 of 48 shifted alignments return an estimate at least as large as the true one (p = 0.0625). The sign is the robust claim here; the *timing* is the weaker one, and it is what the placebo tests.
 
 ### HAC bandwidth (Design B, intervals only)
 

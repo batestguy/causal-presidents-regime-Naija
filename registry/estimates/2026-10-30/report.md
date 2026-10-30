@@ -1,6 +1,6 @@
 # Stage 6 estimates — vintage 2026-10-30
 
-Generated 2026-10-30T12:17:48+0100 by `analysis/R/03_estimate.R` from `analysis/specs/estimation.yml`. Every number is recomputed independently by `tests/verify_stage6.py`.
+Generated 2026-10-30T15:28:15+0100 by `analysis/R/03_estimate.R` from `analysis/specs/estimation.yml`. Every number is recomputed independently by `tests/verify_stage6.py`.
 
 ## The answer this stage arrived at
 
@@ -12,7 +12,7 @@ stage answers two questions about it.
 | Design | Question | Verdict |
 |---|---|---|
 | A | Does a larger federal allocation reduce conflict fatalities in the state that receives it? | **estimated_not_identified** |
-| B | How much of a Brent shock reaches the states, and when? | **estimated** |
+| B | How much of a Brent shock reaches the states, and the price level? | **faac estimated · cpi estimated_null_at_the_declared_band** |
 | C | Did the tenures move an outcome, against a synthetic counterfactual? | **estimated_not_identified** |
 
 ## Design A — state dose-response
@@ -36,9 +36,9 @@ Sample: 3888 state-months, 36 states, 2016-12-01 → 2025-12-01. Estimator: PPML
 
 What this design actually uses: the dose's within-state, within-month variation. That variation is not spread across the federation — it is concentrated in the oil-producing states (residual sd 0.50 in Delta/Bayelsa/Rivers against 0.11 elsewhere), because what survives two-way fixed effects is mostly the 13 % derivation share moving with the oil price and with production volumes. A dose whose variation is a national oil shock interacted with a fixed state characteristic is not the randomised-looking exposure a dose-response design assumes, and the placebo says the same thing from the other side.
 
-## Design B — Brent crude to state allocations
+## Design B — Brent crude to the states and to prices
 
-Estimand: *The cumulative elasticity of the national monthly FAAC allocation to the 36 states with respect to a Brent crude shock: the proportional change in the allocation h months after a 1 % price move.*
+Estimand: *Two outcome families sharing one shock, one control set and one inference: (i) the **fiscal channel** — the cumulative elasticity of the national monthly FAAC allocation to the 36 states with respect to a Brent crude shock, i.e. the proportional change in the allocation h months after a 1 % price move; and (ii) the **price level** (C-85) — the cumulative log change in the NBS all-items CPI index h months after the same move, i.e. the inflation that passes through. They are not one estimand: one asks whether the money reaches the states, the other whether the shock reaches prices.*
 
 | Design | Specification | Coefficient | n | SE | 95% CI | p |
 |---|---|---|---|---|---|---|
@@ -51,14 +51,25 @@ Estimand: *The cumulative elasticity of the national monthly FAAC allocation to 
 | B | cumulative log change in national FAAC at h=6 | 0.2313 | 107 | 0.2183 | [-0.1966, 0.6592] | 0.2918 |
 | B | cumulative log change in national FAAC at h=9 | 0.3961 | 104 | 0.3019 | [-0.1957, 0.9878] | 0.1925 |
 | B | cumulative log change in national FAAC at h=12 | 0.3245 | 101 | 0.3188 | [-0.3003, 0.9493] | 0.3112 |
+| B | cumulative log change in the NBS CPI index at h=0 | 0.0043 | 309 | 0.0056 | [-0.0066, 0.0153] | 0.4394 |
+| B | cumulative log change in the NBS CPI index at h=1 | 0.0035 | 308 | 0.0102 | [-0.0164, 0.0235] | 0.7281 |
+| B | cumulative log change in the NBS CPI index at h=2 | -0.0021 | 307 | 0.0155 | [-0.0325, 0.0282] | 0.8921 |
+| B | cumulative log change in the NBS CPI index at h=3 | -0.0041 | 306 | 0.0183 | [-0.0400, 0.0318] | 0.8231 |
+| B | cumulative log change in the NBS CPI index at h=4 | -0.0020 | 305 | 0.0222 | [-0.0455, 0.0415] | 0.9276 |
+| B | cumulative log change in the NBS CPI index at h=5 | -0.0091 | 304 | 0.0266 | [-0.0613, 0.0431] | 0.7331 |
+| B | cumulative log change in the NBS CPI index at h=6 | -0.0080 | 303 | 0.0273 | [-0.0616, 0.0456] | 0.7707 |
+| B | cumulative log change in the NBS CPI index at h=9 | -0.0143 | 300 | 0.0275 | [-0.0681, 0.0396] | 0.6039 |
+| B | cumulative log change in the NBS CPI index at h=12 | -0.0016 | 297 | 0.0289 | [-0.0582, 0.0550] | 0.9563 |
 
-Peak response at h = 2 (declared band 2–4). Lead placebo at 6 months: +0.0953 (SE 0.1517).
+- **faac** — cumulative log change in national FAAC: peak response at h = 2 (declared band 2–4); lead placebo at 6 months +0.0953 (SE 0.1517); verdict **estimated**.
+- **cpi** — cumulative log change in the NBS CPI index: peak response at h = 0 (declared band 2–4); lead placebo at 6 months -0.0031 (SE 0.0075); verdict **estimated_null_at_the_declared_band**.
 
-A positive response at a lag of two to four months is what the disbursement calendar implies: the
-allocation published for a month is revenue accrued in an earlier one, so an immediate response would
-be the surprising result, not a lagged one. The confidence bounds are wide — this is 114 monthly
-observations of a series the naira's two devaluations also move, and the FX channel is annual grain
-(the monthly NGN/USD series has no keyless source: `docs/decisions.md` C-46).
+A positive response at a lag of two to four months is what the disbursement calendar implies for the
+fiscal family: the allocation published for a month is revenue accrued in an earlier one, so an
+immediate response would be the surprising result, not a lagged one. The price-level family shares
+the shock, the controls and the bandwidth — so its interval is comparable — but it is a different
+estimand with its own verdict, and Stage 5 measured it as usable only as short-run pass-through
+(no cointegration with Brent under the conservative rank rule: C-86).
 
 ## Design C — the synthetic control
 

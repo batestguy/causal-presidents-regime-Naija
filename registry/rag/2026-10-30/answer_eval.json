@@ -2,23 +2,23 @@
  "schema_version": 1,
  "layer": "Stage 9 — the answer layer: gate -> retrieve -> assemble -> R-04 post-check",
  "vintage": "2026-10-30",
- "generated_at": "2026-10-30T13:09:57+00:00",
+ "generated_at": "2026-10-30T15:04:00+00:00",
  "generator": {
   "script": "scripts/eval_answer.py",
   "spec": "analysis/specs/rag.yml#answer_contract",
   "gate_spec": "analysis/specs/intent_gate.yml",
-  "git_sha": "ad720fc66ee8c7fa202645ca1746dce0e3f13c21"
+  "git_sha": "7e630a0f9bcb56f274539a19d14ef1abd3eb361b"
  },
  "corpus": {
   "path": "registry/rag/2026-10-30/corpus.json",
-  "sha256": "158a77db9395402b164912dcdd5af71e419b5123fdbfc879e78455c3aa29d1a6",
-  "chunks": 485
+  "sha256": "49ffc59d11758a6f9131260fdd9458b6f83bc9fc37c207bbbe14e4877e7fe480",
+  "chunks": 492
  },
  "gate": {
   "path": "analysis/specs/intent_gate.yml",
   "sha256": "f89b39cc7e0476b436f6c1ffe3b01777c9114421125f213d449708922c95a3b3",
   "artifact": "registry/rag/2026-10-30/intent_eval.json",
-  "artifact_sha256": "eb1f30093738fdd64a56812da57991d1bba0aebf8e42fa1b2bc644d300182dfd"
+  "artifact_sha256": "17b94d6a69d3debefcfe6c3ce3eb8614c2d2892e4bccb31915ffdba6abd80fd3"
  },
  "contract": {
   "path": "analysis/specs/rag.yml#answer_contract",
@@ -67,15 +67,15 @@
    "answer_rate": 0.9375,
    "answered_with_all_parts": 15,
    "parts_present": {
-    "interval": 5,
+    "interval": 4,
     "reason_code": 1,
-    "identifying_assumption": 6,
-    "cannot_rule_out": 6,
+    "identifying_assumption": 5,
+    "cannot_rule_out": 5,
     "citation": 15
    },
    "shapes": {
-    "estimate": 5,
-    "fact": 9,
+    "estimate": 4,
+    "fact": 10,
     "no_estimate": 1
    },
    "refusals_with_citation": 0,
@@ -131,15 +131,15 @@
    "answer_rate": 0.947368,
    "answered_with_all_parts": 36,
    "parts_present": {
-    "interval": 10,
+    "interval": 9,
     "reason_code": 12,
-    "identifying_assumption": 22,
-    "cannot_rule_out": 22,
+    "identifying_assumption": 21,
+    "cannot_rule_out": 21,
     "citation": 36
    },
    "shapes": {
-    "estimate": 10,
-    "fact": 14,
+    "estimate": 9,
+    "fact": 15,
     "no_estimate": 12
    },
    "refusals_with_citation": 0,
@@ -466,19 +466,19 @@
    "rule_id": null,
    "route": null,
    "status": "answered",
-   "shape": "estimate",
+   "shape": "fact",
    "refusal_code": null,
    "check": {
-    "interval": true,
+    "citation": true,
+    "interval": false,
     "reason_code": false,
-    "identifying_assumption": true,
-    "cannot_rule_out": true,
-    "citation": true
+    "identifying_assumption": false,
+    "cannot_rule_out": false
    },
-   "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30); Card estimate — Headline inflation (y/y) under Design B — registry/dags/cpi_yoy__B.json (vintage 2026-10-30)",
+   "citation": "Published result — Design B — registry/dags/index.json (vintage 2026-10-30)",
    "chunks_used": [
     "result:B",
-    "estimate:cpi_yoy__B"
+    "result:B#p9"
    ],
    "needles": {
     "required": [
@@ -493,54 +493,29 @@
     "all_satisfied": true
    },
    "numbers_quoted": [
-    "+0.3245",
     "+0.5181",
-    "+0.9493",
-    "-0.3003",
-    "-01",
-    "-06",
-    "-44.0380",
+    "-10",
+    "-30",
     "0",
-    "0.3112",
+    "0.0625",
+    "0.19105683478",
+    "0.50621982607",
+    "0.51811762897",
+    "0.64457712741",
     "1",
     "1.96",
-    "101",
-    "12",
     "2",
-    "2014",
-    "2016",
-    "2017",
-    "2020",
-    "2023",
-    "2025",
-    "24",
-    "26",
-    "6",
-    "7",
-    "95"
+    "2026",
+    "48",
+    "6"
    ],
    "numbers_absent_from_citation": [],
    "plain_numbers_absent_from_citation": [],
-   "text": "**Question:** How much of a Brent crude oil shock reaches state governments, and after how long?\n\n**Estimate:** - cumulative log change in national FAAC at h=12: cumulative_pass_through_h12 = +0.3245, 95% interval [-0.3003, +0.9493], p = 0.3112, n = 101, 2017-01-01 to 2025-06-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=12). Formula: diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year. Covariance: Newey-West, 12 lags. The design's result measures: cumulative log change in national FAAC (the channel), national-month grain. Cards that carry no number because of this design-level result: 12. Stage 7 robustness for this design: 24 of 24 specifications positive, 0 negative, 24 with an interval above zero and 0 below it; 1 axis levels flip against the preferred specification. Oster delta on the preferred specification: -44.0380 (interpretable: false).\n\n**The check that decided it:** Published result for Design B — National VECM / ARDL time series. Brent crude to state allocations: how much of an oil shock reaches the states, and when? Estimator: local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=0. Estimand: long-run multiplier for the administration effect, oil-interacted. Status: estimated. Result is card-level: false. Verdict rule: `estimated` if the cumulative response is positive at the declared horizon band with a HAC t above 1.96 at some horizon in it, and the lead placebo at 6 months is smaller in magnitude. Reported with its confidence bounds either way; a null is a result. Failed checks: none. Headline: The largest response is +0.5181 (cumulative log change in national FAAC at h=2).\n\n**Identifying assumption:** Identifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\n**What it cannot rule out:** What this design cannot rule out:\n- FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\n**Citation:** Published result — Design B — registry/dags/index.json (vintage 2026-10-30); Card estimate — Headline inflation (y/y) under Design B — registry/dags/cpi_yoy__B.json (vintage 2026-10-30) — result:B",
+   "text": "**Question:** How much of a Brent crude oil shock reaches state governments, and after how long?\n\n**The record says:** Published result for Design B — National VECM / ARDL time series. Brent crude to the states and to the price level: how much of an oil shock passes through, and when? Estimator: local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=0. Estimand: long-run multiplier for the administration effect, oil-interacted. Status: estimated. Result is card-level: false. Verdict rule: Applied **per outcome family**, never pooled: `estimated` if the cumulative response is positive at the declared horizon band with a HAC t above 1.96 at some horizon in it, and the lead placebo at 6 months is smaller in magnitude. Reported with its confidence bounds either way; a null is a result. Failed checks: none. Headline: The largest response is +0.5181 (cumulative log change in national FAAC at h=2).\n\nthe observed controls move the estimate away from zero, so delta is negative and Oster's usual cutoff (delta >= 1) does not apply; beta* at delta = 1 is reported instead\nIn-time placebo: n_draws = 48, p_value = 0.0625, shifted_mean_abs = 0.19105683478, shifted_max_abs = 0.64457712741, observed_mean_abs = 0.50621982607, observed = 0.51811762897, note = The in-time placebo for this design: shift the shock series by every non-zero offset in the interval and refit the preferred specification. A real transmission channel should be largest at the true alignment. This is the check Stage 6 ran forward (a 6-month lead) made into a distribution.. Artifacts: {\"estimates\": \"registry/estimates/2026-10-30/estimates.json\", \"robustness\": \"registry/robustness/2026-10-30/robustness.json\"}\n\n**Citation:** Published result — Design B — registry/dags/index.json (vintage 2026-10-30) — result:B",
    "plain": {
-    "headline": "The published estimate is positive (12). The range the data cannot rule out runs from -0.3003 to +0.9493, and it includes zero, so this answer does not establish a direction.",
-    "reading": {
-     "coefficient": "12",
-     "interval_low": "-0.3003",
-     "interval_high": "+0.9493",
-     "includes_zero": true,
-     "direction": "positive",
-     "sentence": "The published estimate is positive (12). The range the data cannot rule out runs from -0.3003 to +0.9493, and it includes zero, so this answer does not establish a direction."
-    },
+    "headline": "Published result for Design B — National VECM / ARDL time series.",
+    "reading": null,
     "terms": [
-     {
-      "term": "95% interval",
-      "meaning": "The range of values the data cannot rule out. If the range runs from a negative number to a positive one, then an effect of zero is still inside it, and the data do not establish a direction."
-     },
-     {
-      "term": "identifying assumption",
-      "meaning": "The one condition that has to be true for the number to mean what it claims. If the condition fails, the number still exists — it just no longer measures the thing it is named after."
-     },
      {
       "term": "design",
       "meaning": "The identification strategy — the argument for why the comparison is informative. This project has a two-way fixed-effects panel (Design A), a panel with a shock interaction (Design B), and a synthetic control (Design C)."
@@ -556,13 +531,9 @@
      {
       "term": "robustness",
       "meaning": "Whether the finding survives reasonable changes: a different control set, a different sample, a different way of measuring the outcome. A finding that flips sign under those changes is reported as flipping, not dropped."
-     },
-     {
-      "term": "cannot rule out",
-      "meaning": "The list of alternative explanations the design cannot separate from the one it estimates. It is part of every answer because a number without its caveats is a claim the project has not earned."
      }
     ],
-    "text": "**Short answer:** The published estimate is positive (12). The range the data cannot rule out runs from -0.3003 to +0.9493, and it includes zero, so this answer does not establish a direction.\n\n**The number:** - cumulative log change in national FAAC at h=12: cumulative_pass_through_h12 = +0.3245, 95% interval [-0.3003, +0.9493], p = 0.3112, n = 101, 2017-01-01 to 2025-06-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=12).\n\n**What it assumes:** Identifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\n**What it cannot tell you:** - FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\n**Where this comes from:** Published result — Design B — registry/dags/index.json (vintage 2026-10-30); Card estimate — Headline inflation (y/y) under Design B — registry/dags/cpi_yoy__B.json (vintage 2026-10-30) — result:B\n\n**What the words mean:**\n\n- **95% interval** — The range of values the data cannot rule out. If the range runs from a negative number to a positive one, then an effect of zero is still inside it, and the data do not establish a direction.\n- **identifying assumption** — The one condition that has to be true for the number to mean what it claims. If the condition fails, the number still exists — it just no longer measures the thing it is named after.\n- **design** — The identification strategy — the argument for why the comparison is informative. This project has a two-way fixed-effects panel (Design A), a panel with a shock interaction (Design B), and a synthetic control (Design C).\n- **specification** — One exact combination of outcome, design and control set. The same question can have several specifications, and the robustness grid reports all of them rather than the one that looked best.\n- **estimator** — The method that turns the data into the coefficient — for example a fixed-effects regression. It is a procedure, not a finding.\n- **robustness** — Whether the finding survives reasonable changes: a different control set, a different sample, a different way of measuring the outcome. A finding that flips sign under those changes is reported as flipping, not dropped.\n- **cannot rule out** — The list of alternative explanations the design cannot separate from the one it estimates. It is part of every answer because a number without its caveats is a claim the project has not earned."
+    "text": "**Short answer:** Published result for Design B — National VECM / ARDL time series.\n\n**The record says:** Published result for Design B — National VECM / ARDL time series. Brent crude to the states and to the price level: how much of an oil shock passes through, and when? Estimator: local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=0. Estimand: long-run multiplier for the administration effect, oil-interacted. Status: estimated. Result is card-level: false. Verdict rule: Applied **per outcome family**, never pooled: `estimated` if the cumulative response is positive at the declared horizon band with a HAC t above 1.96 at some horizon in it, and the lead placebo at 6 months is smaller in magnitude. Reported with its confidence bounds either way; a null is a result. Failed checks: none. Headline: The largest response is +0.5181 (cumulative log change in national FAAC at h=2). the observed controls move the estimate away from zero, so delta is negative and Oster's usual cutoff (delta >= 1) does not apply; beta* at delta = 1 is reported instead In-time placebo: n_draws = 48, p_value = 0.0625, shifted_mean_abs = 0.19105683478, shifted_max_abs = 0.64457712741, observed_mean_abs = 0.50621982607, observed = 0.51811762897, note = The in-time placebo for this design: shift the shock series by every non-zero offset in the interval and refit the preferred specification. A real transmission channel should be largest at the true alignment. This is the check Stage 6 ran forward (a 6-month lead) made into a distribution.. Artifacts: {\"estimates\": \"registry/estimates/2026-10-30/estimates.json\", \"robustness\": \"registry/robustness/2026-10-30/robustness.json\"}\n\n**Where this comes from:** Published result — Design B — registry/dags/index.json (vintage 2026-10-30) — result:B\n\n**What the words mean:**\n\n- **design** — The identification strategy — the argument for why the comparison is informative. This project has a two-way fixed-effects panel (Design A), a panel with a shock interaction (Design B), and a synthetic control (Design C).\n- **specification** — One exact combination of outcome, design and control set. The same question can have several specifications, and the robustness grid reports all of them rather than the one that looked best.\n- **estimator** — The method that turns the data into the coefficient — for example a fixed-effects regression. It is a procedure, not a finding.\n- **robustness** — Whether the finding survives reasonable changes: a different control set, a different sample, a different way of measuring the outcome. A finding that flips sign under those changes is reported as flipping, not dropped."
    }
   },
   {
@@ -590,53 +561,59 @@
    ],
    "needles": {
     "required": [
-     "24 of 24"
+     "36 of 48"
     ],
     "satisfied": [
-     "24 of 24"
+     "36 of 48"
     ],
     "missing": [],
     "all_satisfied": true
    },
    "numbers_quoted": [
-    "+0.3245",
-    "+0.5181",
-    "+0.9493",
-    "-0.3003",
+    "+0.0550",
+    "-0.0016",
+    "-0.0582",
     "-01",
-    "-06",
+    "-02",
+    "-10",
+    "-30",
     "-44.0380",
     "0",
-    "0.3112",
+    "0.0625",
+    "0.19105683478",
+    "0.50621982607",
+    "0.51811762897",
+    "0.64457712741",
+    "0.9563",
     "1",
-    "1.96",
-    "101",
     "12",
-    "2",
+    "1999",
     "2014",
     "2016",
-    "2017",
     "2020",
     "2023",
-    "2025",
+    "2026",
     "24",
     "26",
+    "297",
+    "36",
+    "48",
     "6",
     "7",
     "95"
    ],
    "numbers_absent_from_citation": [],
    "plain_numbers_absent_from_citation": [],
-   "text": "**Question:** Did Design B's result survive the robustness grid?\n\n**Estimate:** - cumulative log change in national FAAC at h=12: cumulative_pass_through_h12 = +0.3245, 95% interval [-0.3003, +0.9493], p = 0.3112, n = 101, 2017-01-01 to 2025-06-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=12). Formula: diff(log(faac), lag = h, leading) ~ diff(log(oil)) + month_of_year. Covariance: Newey-West, 12 lags. The design's result measures: cumulative log change in national FAAC (the channel), national-month grain. Cards that carry no number because of this design-level result: 12. Stage 7 robustness for this design: 24 of 24 specifications positive, 0 negative, 24 with an interval above zero and 0 below it; 1 axis levels flip against the preferred specification. Oster delta on the preferred specification: -44.0380 (interpretable: false).\n\n**The check that decided it:** Published result for Design B — National VECM / ARDL time series. Brent crude to state allocations: how much of an oil shock reaches the states, and when? Estimator: local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=0. Estimand: long-run multiplier for the administration effect, oil-interacted. Status: estimated. Result is card-level: false. Verdict rule: `estimated` if the cumulative response is positive at the declared horizon band with a HAC t above 1.96 at some horizon in it, and the lead placebo at 6 months is smaller in magnitude. Reported with its confidence bounds either way; a null is a result. Failed checks: none. Headline: The largest response is +0.5181 (cumulative log change in national FAAC at h=2).\n\n**Identifying assumption:** Identifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\n**What it cannot rule out:** What this design cannot rule out:\n- FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\n**Citation:** Published result — Design B — registry/dags/index.json (vintage 2026-10-30); Card estimate — Headline inflation (y/y) under Design B — registry/dags/cpi_yoy__B.json (vintage 2026-10-30) — result:B",
+   "text": "**Question:** Did Design B's result survive the robustness grid?\n\n**Estimate:** - cumulative log change in the NBS CPI index at h=12: cumulative_pass_through_cpi_h12 = -0.0016, 95% interval [-0.0582, +0.0550], p = 0.9563, n = 297, 1999-02-01 to 2023-10-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=12). Formula: diff(log(gross_total_naira), lag = h, leading) ~ diff(log(oil)) + month_of_year. Covariance: Newey-West, 12 lags. The design's result measures: cumulative log change in national FAAC (the channel), national-month grain. Cards that carry no number because of this design-level result: 12. Stage 7 robustness for this design: 36 of 48 specifications positive, 12 negative, 24 with an interval above zero and 0 below it; 1 axis levels flip against the preferred specification. Oster delta on the preferred specification: -44.0380 (interpretable: false).\n\n**The check that decided it:** the observed controls move the estimate away from zero, so delta is negative and Oster's usual cutoff (delta >= 1) does not apply; beta* at delta = 1 is reported instead\nIn-time placebo: n_draws = 48, p_value = 0.0625, shifted_mean_abs = 0.19105683478, shifted_max_abs = 0.64457712741, observed_mean_abs = 0.50621982607, observed = 0.51811762897, note = The in-time placebo for this design: shift the shock series by every non-zero offset in the interval and refit the preferred specification. A real transmission channel should be largest at the true alignment. This is the check Stage 6 ran forward (a 6-month lead) made into a distribution.. Artifacts: {\"estimates\": \"registry/estimates/2026-10-30/estimates.json\", \"robustness\": \"registry/robustness/2026-10-30/robustness.json\"}\n\n**Identifying assumption:** Identifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\n**What it cannot rule out:** What this design cannot rule out:\n- FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\n**Citation:** Published result — Design B — registry/dags/index.json (vintage 2026-10-30); Card estimate — Headline inflation (y/y) under Design B — registry/dags/cpi_yoy__B.json (vintage 2026-10-30) — result:B",
    "plain": {
-    "headline": "The published estimate is positive (12). The range the data cannot rule out runs from -0.3003 to +0.9493, and it includes zero, so this answer does not establish a direction.",
+    "headline": "The published estimate is positive (12). The range the data cannot rule out runs from -0.0582 to +0.0550, and it includes zero, so this answer does not establish a direction.",
     "reading": {
      "coefficient": "12",
-     "interval_low": "-0.3003",
-     "interval_high": "+0.9493",
+     "interval_low": "-0.0582",
+     "interval_high": "+0.0550",
      "includes_zero": true,
      "direction": "positive",
-     "sentence": "The published estimate is positive (12). The range the data cannot rule out runs from -0.3003 to +0.9493, and it includes zero, so this answer does not establish a direction."
+     "sentence": "The published estimate is positive (12). The range the data cannot rule out runs from -0.0582 to +0.0550, and it includes zero, so this answer does not establish a direction."
     },
     "terms": [
      {
@@ -656,10 +633,6 @@
       "meaning": "One exact combination of outcome, design and control set. The same question can have several specifications, and the robustness grid reports all of them rather than the one that looked best."
      },
      {
-      "term": "estimator",
-      "meaning": "The method that turns the data into the coefficient — for example a fixed-effects regression. It is a procedure, not a finding."
-     },
-     {
       "term": "robustness",
       "meaning": "Whether the finding survives reasonable changes: a different control set, a different sample, a different way of measuring the outcome. A finding that flips sign under those changes is reported as flipping, not dropped."
      },
@@ -668,7 +641,7 @@
       "meaning": "The list of alternative explanations the design cannot separate from the one it estimates. It is part of every answer because a number without its caveats is a claim the project has not earned."
      }
     ],
-    "text": "**Short answer:** The published estimate is positive (12). The range the data cannot rule out runs from -0.3003 to +0.9493, and it includes zero, so this answer does not establish a direction.\n\n**The number:** - cumulative log change in national FAAC at h=12: cumulative_pass_through_h12 = +0.3245, 95% interval [-0.3003, +0.9493], p = 0.3112, n = 101, 2017-01-01 to 2025-06-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=12).\n\n**What it assumes:** Identifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\n**What it cannot tell you:** - FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\n**Where this comes from:** Published result — Design B — registry/dags/index.json (vintage 2026-10-30); Card estimate — Headline inflation (y/y) under Design B — registry/dags/cpi_yoy__B.json (vintage 2026-10-30) — result:B\n\n**What the words mean:**\n\n- **95% interval** — The range of values the data cannot rule out. If the range runs from a negative number to a positive one, then an effect of zero is still inside it, and the data do not establish a direction.\n- **identifying assumption** — The one condition that has to be true for the number to mean what it claims. If the condition fails, the number still exists — it just no longer measures the thing it is named after.\n- **design** — The identification strategy — the argument for why the comparison is informative. This project has a two-way fixed-effects panel (Design A), a panel with a shock interaction (Design B), and a synthetic control (Design C).\n- **specification** — One exact combination of outcome, design and control set. The same question can have several specifications, and the robustness grid reports all of them rather than the one that looked best.\n- **estimator** — The method that turns the data into the coefficient — for example a fixed-effects regression. It is a procedure, not a finding.\n- **robustness** — Whether the finding survives reasonable changes: a different control set, a different sample, a different way of measuring the outcome. A finding that flips sign under those changes is reported as flipping, not dropped.\n- **cannot rule out** — The list of alternative explanations the design cannot separate from the one it estimates. It is part of every answer because a number without its caveats is a claim the project has not earned."
+    "text": "**Short answer:** The published estimate is positive (12). The range the data cannot rule out runs from -0.0582 to +0.0550, and it includes zero, so this answer does not establish a direction.\n\n**The number:** - cumulative log change in the NBS CPI index at h=12: cumulative_pass_through_cpi_h12 = -0.0016, 95% interval [-0.0582, +0.0550], p = 0.9563, n = 297, 1999-02-01 to 2023-10-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=12).\n\n**What it assumes:** Identifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).\n\n**What it cannot tell you:** - FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a *direct* effect net of the fiscal and FX channel, not the total effect.\n- Only ~26 annual observations and five administrations — the interval is wide by construction.\n- Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.\n- Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove.\n\n**Where this comes from:** Published result — Design B — registry/dags/index.json (vintage 2026-10-30); Card estimate — Headline inflation (y/y) under Design B — registry/dags/cpi_yoy__B.json (vintage 2026-10-30) — result:B\n\n**What the words mean:**\n\n- **95% interval** — The range of values the data cannot rule out. If the range runs from a negative number to a positive one, then an effect of zero is still inside it, and the data do not establish a direction.\n- **identifying assumption** — The one condition that has to be true for the number to mean what it claims. If the condition fails, the number still exists — it just no longer measures the thing it is named after.\n- **design** — The identification strategy — the argument for why the comparison is informative. This project has a two-way fixed-effects panel (Design A), a panel with a shock interaction (Design B), and a synthetic control (Design C).\n- **specification** — One exact combination of outcome, design and control set. The same question can have several specifications, and the robustness grid reports all of them rather than the one that looked best.\n- **robustness** — Whether the finding survives reasonable changes: a different control set, a different sample, a different way of measuring the outcome. A finding that flips sign under those changes is reported as flipping, not dropped.\n- **cannot rule out** — The list of alternative explanations the design cannot separate from the one it estimates. It is part of every answer because a number without its caveats is a claim the project has not earned."
    }
   },
   {
