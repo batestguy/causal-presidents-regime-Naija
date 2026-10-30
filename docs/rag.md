@@ -122,10 +122,10 @@ defines, judged by `gemini-3.5-flash-lite` at temperature 0:
 
 | Metric | Measured | What it means here |
 |---|---|---|
-| faithfulness | **0.965** | statements in an answer that its own cited contexts support |
-| answer relevancy | **0.809** | mean cosine between the question and three questions generated from the answer |
-| context precision | **1.000** | average precision over the cited chunks a judge calls useful for the reference answer |
-| context recall | **0.820** | reference-answer claims the cited contexts can support |
+| faithfulness | **1.000** | statements in an answer that its own cited contexts support |
+| answer relevancy | **0.821** | mean cosine between the question and three questions generated from the answer |
+| context precision | **0.989** | average precision over the cited chunks a judge calls useful for the reference answer |
+| context recall | **0.838** | reference-answer claims the cited contexts can support |
 
 **This is not a `ragas` library run, and the artifact says so in its own fields.** The package is not
 installed in this repository or on this machine, and installing it would add a dependency tree to a project
@@ -137,15 +137,14 @@ RAGAS's per-item calls, because this key's free tier allows 20 requests per wind
 What the numbers say, read honestly:
 
 - **Faithfulness is high by construction, not by quality.** The answer is a selection of quoted corpus
-  paragraphs, so the check confirms the contract rather than judging retrieval. 0.965 here means "it quotes
+  paragraphs, so the check confirms the contract rather than judging retrieval. 1.000 here means "it quotes
   what it cites", nothing more — and earlier runs of the same measurement gave 0.956, 0.964 and 0.971, so even
   that is measured with a judge that varies.
-- **Context recall 0.820 is the number that matters.** About one reference claim in five is not supported by
-  the chunks the answer actually cited: in this run `q05_design_b_robust` scored **0.000** and
-  `q04_oil_to_states` **0.250**, where earlier runs scored 0.500 each. The answer quotes the right document
-  but not always the paragraph that carries the reference's claim, and on the 26.1 corpus it lost the
-  paragraph entirely for those two.
-- **The judge is noisy, and that is published too.** Seven runs of the same measurement gave faithfulness
+- **Context recall 0.838 is the number that matters.** About one reference claim in six is not supported by
+  the chunks the answer actually cited: in this run `q04_oil_to_states` scored **0.167**,
+  `q05_design_b_robust` **0.500**, `q08_observed_share` 0.600 and `q09_tenure_comparison` 0.750. The answer
+  quotes the right document but not always the paragraph that carries the reference's claim.
+- **The judge is noisy, and that is published too.** Eight runs of the same measurement gave faithfulness
   0.956–1.000, answer relevancy 0.800–0.834, context precision 0.885–1.000 and context recall 0.792–0.863. A
   lite judge at temperature 0 is not deterministic, and context precision scored every chunk useful in some
   runs and not in the others — a weak instrument, said so here rather than averaged into respectability. The

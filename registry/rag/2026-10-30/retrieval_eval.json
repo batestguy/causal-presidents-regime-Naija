@@ -2,21 +2,21 @@
  "schema_version": "0.1.0",
  "layer": "RAG retrieval evaluation (offline; generation metrics declared, not measured)",
  "vintage": "2026-10-30",
- "generated_at": "2026-10-30T11:38:57+00:00",
+ "generated_at": "2026-10-30T13:09:54+00:00",
  "generator": {
   "script": "scripts/eval_rag.py",
   "spec": "analysis/specs/rag.yml",
-  "git_sha": "51803ea"
+  "git_sha": "ad720fc"
  },
  "corpus": {
   "path": "corpus.json",
-  "sha256": "965391ade2ed0e39f4ef8bf2ccfdcf0225933811a83729ccb3a27303b2540dfb",
+  "sha256": "158a77db9395402b164912dcdd5af71e419b5123fdbfc879e78455c3aa29d1a6",
   "chunks": 485,
   "vintage": "2026-10-30"
  },
  "eval_set": {
   "path": "eval_set.json",
-  "sha256": "a5538307c6013590ad0c22de25d2feae397ff4426ef75729f759c5340ffa9552",
+  "sha256": "9c9dab9de26bd2645501b6edb556b61cfcc652ba1de26b0b270d016c99c9b7f1",
   "counts": {
    "questions": 22,
    "answerable": 16,
@@ -30,7 +30,7 @@
    "status": "measured",
    "model": "sentence-transformers/multi-qa-MiniLM-L6-cos-v1",
    "path": "embeddings.npz",
-   "sha256": "503d2b69514de075034d05199caade8322daff820be4fc96e6e570679ec792c0",
+   "sha256": "62c21b38f3602ea8d6cf3c8e95bfe87fa18de080216ed95f11bace58e99a469f",
    "n_chunk_vectors": 485,
    "dim": 384
   },

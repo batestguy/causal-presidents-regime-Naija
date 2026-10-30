@@ -2693,6 +2693,37 @@ it, and it was already stale before this pass. The `docs/limits`-style pages tha
 not touched. And the 23 verifier scripts are 23, not the 24 the plan's A6 names: the count in the plan
 included `scripts/validate_artifacts.py`, which is the 24th check and ran green (74 registry documents).
 
+**Then, same session — the documentation sweep, and a re-measurement it forced.** A grep for the numbers
+and archive labels the revision moved found three places that still described the *pre-adoption* state:
+
+- **`docs/design-memo.md` described the archive as "GED 25.1 … 385,918 events over 124 countries,
+  1989–2024"**, which is the donor-panel argument for a Design C on conflict outcomes. Measured on the
+  landed 26.1 zip: **417,968 events over 126 countries, 1989–2025** (`GEDEvent_v26_1.csv`). The argument
+  is unchanged — the path still needs parsing, not acquisition — but the counts are now the archive's.
+- **`docs/data-dictionary.md`'s `security_status` row still said `declared_gap` began "after 2024-12"**;
+  it begins after **2025-12**, and the row reads that way now.
+- **C-77's status said "VERIFIED"** while its consequence paragraph still claimed the adoption "has not
+  been taken". The status now reads **"VERIFIED — adopted 2026-10-30, see C-82"**, so a reader arriving at
+  the parked-release entry is pointed at the pass that resolved it rather than left with a stale present
+  tense.
+
+**Editing two of those forced the corpus to be rebuilt, which is the attribution record working.** The
+corpus fingerprints every narrative source's `sha256`, so `verify_rag` went red on `data-dictionary.md` and
+`design-memo.md` the moment they changed — exactly the defect it exists to catch ("a source that moves under
+an unchanged corpus"). Rebuilt with `--embed`: **485 chunks, unchanged counts by family**, and the retrieval
+numbers are identical (recall@5 0.944, gold coverage 0.429, MRR 0.718, BM25 0.778); the intent gate and the
+answer layer re-measured to their previous values (0.980/0.947/1.000/1.000 and 36 of 38, needles 22 of 25).
+
+**The answer-quality measurement was re-run, and the first attempt was rejected rather than kept.** The
+script skips questions already scored, so a naive re-run reused fifteen judgements made against the
+*pre-edit* corpus while rewriting `inputs` to the new corpus hash — a stale score wearing a fresh
+attribution. The artifact was deleted and re-judged from zero (30 calls): faithfulness **1.000**, answer
+relevancy **0.821**, context precision **0.989**, context recall **0.838**, with `q04_oil_to_states` at
+0.167 and `q05_design_b_robust` at 0.500. `docs/rag.md` carries those four values and the run count (eight),
+and — worth recording because it is what makes this loop finite — **`docs/rag.md` is deliberately not a
+corpus source** (`rag.yml` says so at the point where the narrative sources are listed), so the page that
+quotes the measurement does not re-fingerprint the corpus it describes.
+
 ## Next session starts here (written 2026-10-30, end of session)
 
 **Phase A is done and the gate accepts the move: `[x] Phase A`, `[~] Phase B`, `frontier: B`.** Everything

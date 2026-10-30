@@ -2,11 +2,11 @@
  "schema_version": "0.1.0",
  "layer": "retrieval corpus (one card per model card, plus the results, the tables and the narrative)",
  "vintage": "2026-10-30",
- "generated_at": "2026-10-30T11:37:30+00:00",
+ "generated_at": "2026-10-30T13:08:57+00:00",
  "generator": {
   "script": "scripts/build_rag_corpus.py",
   "spec": "analysis/specs/rag.yml",
-  "git_sha": "51803ea"
+  "git_sha": "ad720fc"
  },
  "registry": {
   "index": "registry/dags/index.json",
@@ -53,8 +53,8 @@
   "dim": 384,
   "normalised": true,
   "metric": "cosine",
-  "sha256": "503d2b69514de075034d05199caade8322daff820be4fc96e6e570679ec792c0",
-  "bytes": 725866,
+  "sha256": "62c21b38f3602ea8d6cf3c8e95bfe87fa18de080216ed95f11bace58e99a469f",
+  "bytes": 725881,
   "n_chunk_vectors": 485,
   "n_query_vectors": 22,
   "library": {
@@ -97,14 +97,14 @@
   {
    "path": "docs/data-dictionary.md",
    "role": "data_dictionary",
-   "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944",
+   "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915",
    "bytes": 26145,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
    "path": "docs/design-memo.md",
    "role": "methodology",
-   "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a",
+   "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a",
    "bytes": 23279,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
@@ -1711,7 +1711,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "declared-gaps-nothing-here-is-silently-missing",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — Declared gaps (nothing here is silently missing) — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -1732,7 +1732,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "declared-gaps-nothing-here-is-silently-missing",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — Declared gaps (nothing here is silently missing) — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -1753,7 +1753,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "declared-gaps-nothing-here-is-silently-missing",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — Declared gaps (nothing here is silently missing) — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -1774,7 +1774,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "dim-administration-and-dim-administration-term",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `dim_administration` and `dim_administration_term` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -1795,7 +1795,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "dim-administration-and-dim-administration-term",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `dim_administration` and `dim_administration_term` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -1816,7 +1816,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "dim-administration-and-dim-administration-term",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `dim_administration` and `dim_administration_term` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -1837,7 +1837,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "dim-metric",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `dim_metric` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -1858,7 +1858,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "dim-metric",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `dim_metric` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -1879,7 +1879,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "dim-metric",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `dim_metric` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -1900,7 +1900,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "dimension-tables",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — Dimension tables — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -1921,7 +1921,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "dimension-tables",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — Dimension tables — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -1942,7 +1942,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "faac-national-monthly",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `faac_national_monthly` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -1963,7 +1963,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "faac-national-monthly",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `faac_national_monthly` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -1984,7 +1984,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "faac-state-allocation-the-fiscal-dose",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `faac_state_allocation` — the fiscal dose — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2005,7 +2005,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "faac-state-allocation-the-fiscal-dose",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `faac_state_allocation` — the fiscal dose — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2026,7 +2026,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "faac-state-allocation-the-fiscal-dose",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `faac_state_allocation` — the fiscal dose — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2047,7 +2047,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "faac-state-allocation-the-fiscal-dose",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `faac_state_allocation` — the fiscal dose — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2068,7 +2068,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "faac-state-allocation-the-fiscal-dose",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `faac_state_allocation` — the fiscal dose — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2089,7 +2089,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "faac-state-allocation-the-fiscal-dose",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `faac_state_allocation` — the fiscal dose — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2110,7 +2110,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "fact-donor-panel-and-state-panel",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `fact_donor_panel` and `state_panel` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2131,7 +2131,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "fact-donor-panel-and-state-panel",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `fact_donor_panel` and `state_panel` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2152,7 +2152,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "fact-donor-panel-and-state-panel",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `fact_donor_panel` and `state_panel` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2173,7 +2173,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "fact-donor-panel-and-state-panel",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `fact_donor_panel` and `state_panel` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2194,7 +2194,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "fact-donor-panel-and-state-panel",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `fact_donor_panel` and `state_panel` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2210,12 +2210,12 @@
    "chunk_id": "doc:data-dictionary#fact-donor-panel-and-state-panel#p6",
    "doc_type": "data_dictionary",
    "title": "data-dictionary — `fact_donor_panel` and `state_panel`",
-   "text": "Data dictionary — the analytical base\n\n## `fact_donor_panel` and `state_panel`\n\n[data-dictionary — `fact_donor_panel` and `state_ — part 6 of 7]\n\n**0 is a recorded zero** (80 % of state-months); NULL with `security_status = 'not_covered'` is a month the archive does not cover at all |\n| `security_status` | `observed` (the archive covers the month and recorded this value, zero or not) · `not_covered` (inside the archive's span, but no Nigeria event anywhere that month — absence of records, not peace) · `declared_gap` (before 1990-09 or after 2024-12, where GED 25.1 ends) |\n| `security_gated`, `security_gate_status`, `security_gate_vintage` | The Stage 3 result for that state's `fatalities` series — `flagged` for all 37, because a monthly conflict count trips a relative spike rule as a matter of course (`analysis/specs/quality.yml` `document_sources.ucdp.spike_note`) |\n| `d1_faac_per_capita` | Empty: the numerator",
+   "text": "Data dictionary — the analytical base\n\n## `fact_donor_panel` and `state_panel`\n\n[data-dictionary — `fact_donor_panel` and `state_ — part 6 of 7]\n\n**0 is a recorded zero** (80 % of state-months); NULL with `security_status = 'not_covered'` is a month the archive does not cover at all |\n| `security_status` | `observed` (the archive covers the month and recorded this value, zero or not) · `not_covered` (inside the archive's span, but no Nigeria event anywhere that month — absence of records, not peace) · `declared_gap` (before 1990-09 or after 2025-12, where GED 26.1 ends) |\n| `security_gated`, `security_gate_status`, `security_gate_vintage` | The Stage 3 result for that state's `fatalities` series — `flagged` for all 37, because a monthly conflict count trips a relative spike rule as a matter of course (`analysis/specs/quality.yml` `document_sources.ucdp.spike_note`) |\n| `d1_faac_per_capita` | Empty: the numerator",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "fact-donor-panel-and-state-panel",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `fact_donor_panel` and `state_panel` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2225,7 +2225,7 @@
     "n_parts": 7
    },
    "chars": 925,
-   "text_sha256": "9ed11e6a361faf77068483e716540b97ffcc1d9cf4ed1cefd1b1941e55548c87"
+   "text_sha256": "11c8ed8554d49a3457245d23bab5f4a67ce954b415c083854ef49872a7e14760"
   },
   {
    "chunk_id": "doc:data-dictionary#fact-donor-panel-and-state-panel#p7",
@@ -2236,7 +2236,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "fact-donor-panel-and-state-panel",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `fact_donor_panel` and `state_panel` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2257,7 +2257,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "fact-metric-the-base-table",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `fact_metric` — the base table — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2278,7 +2278,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "fact-metric-the-base-table",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `fact_metric` — the base table — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2299,7 +2299,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "fact-metric-the-base-table",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `fact_metric` — the base table — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2320,7 +2320,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "fact-metric-the-base-table",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `fact_metric` — the base table — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2341,7 +2341,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "fact-metric-the-base-table",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `fact_metric` — the base table — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2362,7 +2362,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "fact-metric-the-base-table",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `fact_metric` — the base table — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2383,7 +2383,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "grains-at-a-glance",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — Grains at a glance — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2404,7 +2404,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "grains-at-a-glance",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — Grains at a glance — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2425,7 +2425,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "grains-at-a-glance",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — Grains at a glance — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2446,7 +2446,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "grains-at-a-glance",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — Grains at a glance — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2467,7 +2467,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "grains-at-a-glance",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — Grains at a glance — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2488,7 +2488,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "imputation-and-how-to-tell-it-apart-from-data",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — Imputation, and how to tell it apart from data — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2509,7 +2509,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "imputation-and-how-to-tell-it-apart-from-data",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — Imputation, and how to tell it apart from data — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2530,7 +2530,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "imputation-and-how-to-tell-it-apart-from-data",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — Imputation, and how to tell it apart from data — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2551,7 +2551,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "metric-anchor",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `metric_anchor` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2572,7 +2572,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "metric-anchor",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `metric_anchor` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2593,7 +2593,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "ucdp-national-monthly",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `ucdp_national_monthly` — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2614,7 +2614,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "ucdp-state-month-the-security-outcome",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `ucdp_state_month` — the security outcome — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2635,7 +2635,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "ucdp-state-month-the-security-outcome",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `ucdp_state_month` — the security outcome — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2656,7 +2656,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "ucdp-state-month-the-security-outcome",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — `ucdp_state_month` — the security outcome — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -2677,7 +2677,7 @@
    "source": {
     "path": "docs/data-dictionary.md",
     "anchor": "vintage-and-provenance-conventions",
-    "sha256": "728262d80154333cd5df1edb5eaba0228a69695a4730d1384f26c1bc03195944"
+    "sha256": "8e81f5acca4b1145f5509d7be348230b24c5accbc9bcc24d36ae03c2915e9915"
    },
    "citation": "data-dictionary — Vintage and provenance conventions — docs/data-dictionary.md (vintage 2026-10-30)",
    "metadata": {
@@ -3614,7 +3614,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s01",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 1. The grain the tests run on — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3635,7 +3635,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s01",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 1. The grain the tests run on — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3656,7 +3656,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s02",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 2. Family A — state dose-response DiD — **dropped** — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3677,7 +3677,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s02",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 2. Family A — state dose-response DiD — **dropped** — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3698,7 +3698,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s02",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 2. Family A — state dose-response DiD — **dropped** — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3719,7 +3719,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s02",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 2. Family A — state dose-response DiD — **dropped** — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3740,7 +3740,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3761,7 +3761,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3782,7 +3782,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3803,7 +3803,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3824,7 +3824,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3845,7 +3845,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3866,7 +3866,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3887,7 +3887,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3908,7 +3908,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3929,7 +3929,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3950,7 +3950,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s03",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 3. Family B — national VECM / ARDL — **degraded** — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3971,7 +3971,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -3992,7 +3992,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -4008,12 +4008,12 @@
    "chunk_id": "doc:design-memo#s04#p11",
    "doc_type": "methodology",
    "title": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect",
-   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect\n\n[design-memo — 4. Family C — synthetic control —  — part 11 of 12]\n\nThe landed UCDP payload is the *global*\nGED 25.1 archive (**385,918 events over 124 countries, 1989–2024**, member `GEDEvent_v25_1.csv`), not a\nNigeria extract: the country filter is applied at parse time (`ingestion/parsers/ucdp_events.py`,\n`country == COUNTRY`). So what is missing is a parsing and panel-wiring step over bytes already on disk,\nnot a download — corrected 2026-10-18 by counting the landed zip while answering a data-planning\nquestion.",
+   "text": "Design memo — what the data can support (Stage 5)\n\n## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect\n\n[design-memo — 4. Family C — synthetic control —  — part 11 of 12]\n\nThe landed UCDP payload is the *global*\nGED 26.1 archive (**417,968 events over 126 countries, 1989–2025**, member `GEDEvent_v26_1.csv`), not a\nNigeria extract: the country filter is applied at parse time (`ingestion/parsers/ucdp_events.py`,\n`country == COUNTRY`). So what is missing is a parsing and panel-wiring step over bytes already on disk,\nnot a download — corrected 2026-10-18 by counting the landed zip while answering a data-planning\nquestion.",
    "vintage": "2026-10-30",
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -4023,7 +4023,7 @@
     "n_parts": 12
    },
    "chars": 709,
-   "text_sha256": "564f27d578f60bc35a2eca693c767fe86b073d85d567426089313f171b6edd86"
+   "text_sha256": "743b7d59b3cf5ae6945dc3246b8aa7f0704c1220da282a34ae356d1edd6fb8e3"
   },
   {
    "chunk_id": "doc:design-memo#s04#p12",
@@ -4034,7 +4034,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -4055,7 +4055,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -4076,7 +4076,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -4097,7 +4097,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -4118,7 +4118,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -4139,7 +4139,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -4160,7 +4160,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -4181,7 +4181,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -4202,7 +4202,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s04",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -4223,7 +4223,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s05",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 5. Shock-window visibility — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -4244,7 +4244,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s05",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 5. Shock-window visibility — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -4265,7 +4265,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s06",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 6. What was dropped, on the record — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -4286,7 +4286,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s07",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 7. What this hands to Stage 6 — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -4307,7 +4307,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "s08",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — 8. How to reproduce — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -4328,7 +4328,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "the-verdict-in-one-screen",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — The verdict in one screen — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {
@@ -4349,7 +4349,7 @@
    "source": {
     "path": "docs/design-memo.md",
     "anchor": "the-verdict-in-one-screen",
-    "sha256": "fc61a64d368b67968ab35a4b9cf56b93c2e880a9cf48ef635f6380b82ff00f0a"
+    "sha256": "95a1efa01ff8449565753f9d5571765483fac6e0e8826a40f30a467ea866941a"
    },
    "citation": "design-memo — The verdict in one screen — docs/design-memo.md (vintage 2026-10-30)",
    "metadata": {

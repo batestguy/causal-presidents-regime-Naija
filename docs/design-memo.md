@@ -262,7 +262,7 @@ Outcomes not in the donor panel (`mmr`, `immun_penta3`, `skilled_birth`, `litera
 donor path exists to synthesise against. `fatalities` and `incidents` are in the UCDP *outcome* but not in
 the World Bank predictor set, so a Design C for the conflict outcomes needs a donor conflict path — and,
 unlike the other gaps here, **that path needs no acquisition**. The landed UCDP payload is the *global*
-GED 25.1 archive (**385,918 events over 124 countries, 1989–2024**, member `GEDEvent_v25_1.csv`), not a
+GED 26.1 archive (**417,968 events over 126 countries, 1989–2025**, member `GEDEvent_v26_1.csv`), not a
 Nigeria extract: the country filter is applied at parse time (`ingestion/parsers/ucdp_events.py`,
 `country == COUNTRY`). So what is missing is a parsing and panel-wiring step over bytes already on disk,
 not a download — corrected 2026-10-18 by counting the landed zip while answering a data-planning

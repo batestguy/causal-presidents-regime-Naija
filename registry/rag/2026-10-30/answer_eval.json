@@ -2,23 +2,23 @@
  "schema_version": 1,
  "layer": "Stage 9 — the answer layer: gate -> retrieve -> assemble -> R-04 post-check",
  "vintage": "2026-10-30",
- "generated_at": "2026-10-30T11:39:07+00:00",
+ "generated_at": "2026-10-30T13:09:57+00:00",
  "generator": {
   "script": "scripts/eval_answer.py",
   "spec": "analysis/specs/rag.yml#answer_contract",
   "gate_spec": "analysis/specs/intent_gate.yml",
-  "git_sha": "51803ea4270133f9e72e8f150833cd714e4e6b34"
+  "git_sha": "ad720fc66ee8c7fa202645ca1746dce0e3f13c21"
  },
  "corpus": {
   "path": "registry/rag/2026-10-30/corpus.json",
-  "sha256": "965391ade2ed0e39f4ef8bf2ccfdcf0225933811a83729ccb3a27303b2540dfb",
+  "sha256": "158a77db9395402b164912dcdd5af71e419b5123fdbfc879e78455c3aa29d1a6",
   "chunks": 485
  },
  "gate": {
   "path": "analysis/specs/intent_gate.yml",
   "sha256": "f89b39cc7e0476b436f6c1ffe3b01777c9114421125f213d449708922c95a3b3",
   "artifact": "registry/rag/2026-10-30/intent_eval.json",
-  "artifact_sha256": "7995b5e27fca4f73d270ee82ec1b4bc213e08f8e89d7c66b561b3c95574fb315"
+  "artifact_sha256": "eb1f30093738fdd64a56812da57991d1bba0aebf8e42fa1b2bc644d300182dfd"
  },
  "contract": {
   "path": "analysis/specs/rag.yml#answer_contract",
