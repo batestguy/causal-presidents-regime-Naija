@@ -1267,16 +1267,25 @@ for (o in outcomes) {
                     "X-09) while the nominal axis is present and Stage 3 gated: %s"),
               specified_axis, axis_summary)
     else "no dose series has landed; the state panel's dose columns are typed and empty")
+  # The card's **own** outcome, looked up in the panel's outcome columns. `any_state_outcome_present` is a
+  # design-level fact — "does the panel carry *any* state outcome" — and echoing it on every card made
+  # `cpi_yoy__A` say "22126 state outcome values present" when no state-level CPI exists anywhere in the
+  # base (C-90). A design-A card can only be a state x month regression, so the honest question is whether
+  # *this* outcome can be one; the design-level fact still decides `design_verdicts$A`.
+  o_state <- outcome_entries[[o$id]]
+  o_state_present <- !is.null(o_state) && identical(o_state$verdict, "present")
   a_outcome_check <- list(
     id = "state_outcome_attribution",
-    verdict = if (dose$any_state_outcome_present) "pass" else "fail",
-    detail = if (dose$any_state_outcome_present)
-      sprintf("%d state outcome values present",
-              sum(vapply(outcome_entries, function(d) d$n_non_null, numeric(1))))
-    else paste("no state-attributed outcome has landed — the landed health and education outcomes are",
-               "national, and the security series this would have come from are not on the panel"))
+    verdict = if (o_state_present) "pass" else "fail",
+    detail = if (o_state_present)
+      sprintf("%s is on the state panel: %d non-null state-months of %d",
+              o$id, o_state$n_non_null, panel_total)
+    else sprintf(paste("%s is not on the state panel, so a state x month regression has nothing to regress",
+                       "for this card (the declared state outcome columns are %s)"),
+                 o$id, paste(vapply(outcome_entries, function(d) d$column, character(1)), collapse = ", "))
+  )
   card_diagnostics[[sprintf("%s__A", o$id)]] <- list(
-    status = if (specified_present && dose$any_state_outcome_present) "pass" else "fail",
+    status = if (specified_present && o_state_present) "pass" else "fail",
     checks = list(
       a_dose_check,
       a_outcome_check,
@@ -1290,8 +1299,11 @@ for (o in outcomes) {
            else "needs the dose: with no exposure groups there is nothing to compare")
     ),
     blocker = design_verdicts$A$blocker,
-    note = if (specified_present && dose$any_state_outcome_present)
+    note = if (specified_present && o_state_present)
       "Passes its pre-check on the dose side; Stage 6 still owes the parallel-trends test."
+    else if (!o_state_present)
+      paste("Dropped at Stage 5 on the outcome side: this outcome has no state-level series, so there is",
+            "nothing for a state x month design to regress. A data finding, not a null result.")
     else "Dropped on the record at Stage 5. This is a data finding, not a null result."
   )
   # R lists are copy-on-modify, so the enriched copy has to be written back. Without this the A

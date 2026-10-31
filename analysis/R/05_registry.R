@@ -316,6 +316,31 @@ build_block <- function(card) {
     ))
   }
 
+  # C-90: a design-A pair that Stage 5 pre-checked and Stage 6 never fitted is not "open". The design's unit
+  # is a state-month, so the card's own measured check decides why: if this outcome has no state-level series,
+  # the pair is not estimable as specified, and the code says which absence it is — a series at the wrong
+  # grain, or no usable series at any grain (the outcome's own declared coverage). Reading the check rather
+  # than a hard-coded outcome list is what keeps this honest when a state series lands.
+  if (identical(design_id, "A")) {
+    attribution <- Filter(function(ch) identical(ch$id, "state_outcome_attribution"),
+                          card$diagnostics$checks)
+    has_state_series <- length(attribution) > 0 &&
+      identical(as.character(attribution[[1]]$verdict), "pass")
+    if (!has_state_series) {
+      declared_gap <- identical(as.character(card$diagnostics$coverage_status), "declared_gap")
+      code <- if (declared_gap) "outcome_series_absent" else "outcome_not_at_design_grain"
+      return(list(
+        status = "not_estimated", model_card_ref = NA,
+        the_number_is_for_this_card = FALSE,
+        not_estimated_reason = reason(code),
+        note = sprintf(paste0("No estimate for (%s, A). Stage 5 pre-checked this pair and the decisive ",
+                              "check failed on the outcome side: %s. Design A is a state-by-month design, ",
+                              "so this is a statement about the data that exists, not a question left open."),
+                       outcome_id, as.character(attribution[[1]]$detail))
+      ))
+    }
+  }
+
   list(
     status = "not_estimated", model_card_ref = NA,
     the_number_is_for_this_card = FALSE,

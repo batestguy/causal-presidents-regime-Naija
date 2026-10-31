@@ -2869,32 +2869,96 @@ guaranteed drift — the same defect as C-49 and C-83 in a new place.
 frontier C. The remaining phase-C work is unchanged: C1 (10 `no_specification_declared`), C2 (2
 `design_not_run`), C3 (12 `outcome_series_absent`), C5 exit.
 
+## Twenty-third session (2026-10-31) — Phase C1: the ten "open" cards were a check reading the wrong object
+
+**C1 looked like ten specification decisions. It was a defect.** All ten `no_specification_declared` cards were
+**Design A** pairs, and every one of them carried:
+
+```
+state_outcome_attribution   pass   22126 state outcome values present
+```
+
+including `cpi_yoy__A`, for which no state-level CPI exists anywhere in the base. The 22,126 is the *panel's*
+total (11,063 × 2), and the check was `dose$any_state_outcome_present` — a design-level fact echoed onto every
+card. So the cards' reason read "Stage 6 declared no specification for this pair: the stage fitted the outcomes
+its series could carry, and this was not one of them", which is the one answer the closed reason set exists to
+make impossible. Third instance of the same class this project keeps finding (C-49, C-83): **a check that passes
+on the wrong object**, this time on the outcome side rather than the vintage side.
+
+**Measured before deciding.** `state_panel` carries three outcome columns — `fatalities`, `incidents`,
+`fatalities_civilians`; `diagnostics.yml → outcome_columns` declares the first two; **none of the ten is in
+either list**. Seven have a usable *national* series (inflation monthly, GDP quarterly, MMR/U5MR/skilled
+birth/penta3 annual, unemployment quarterly). The three education outcomes are declared gaps — 8, 9 and 8
+observations, two of them ending in 2010.
+
+**So no specification was declared for any of the ten, and that is the finding.** Design A regresses a
+state-by-month outcome on that state's own allocation; there is nothing at that grain to regress, and a declared
+spec would be a number fitted on nothing. The refusal is now measured and specific:
+
+- **Seven** take a new code, **`outcome_not_at_design_grain`** — the series exists, but not at the design's unit.
+  `estimate.detail` says so in the outcome's own terms.
+- **Three** take the existing **`outcome_series_absent`**, matching their own B and C siblings, whose text was
+  made unit-neutral ("no usable series at this design's unit") because it used to say no pre-check *could* run,
+  which is false for these three.
+
+**Result: `no_specification_declared` now carries 0 cards.** It stays in the contract for a pair nobody reached,
+and none exists. The 34 reason-bearing cards are **15 `outcome_series_absent`, 7 `outcome_not_at_design_grain`,
+9 `design_result_is_channel_level`, 2 `design_not_run`, 1 `design_estimated_not_identified`** — and every one of
+them now names a fact about the data or the design, not a shrug.
+
+**The shape of the change.** `02_diagnostics.R` looks the card's outcome up in the panel's outcome columns and
+reports *that* (`fatalities is on the state panel: 11063 non-null state-months of 12358`); the design-level
+`any_state_outcome_present` still decides `design_verdicts$A`. The closed set goes 5 → 6 codes in
+`registry.yml` and the card schema, `05_registry.R` derives the code from the card's own check and the outcome's
+own `coverage_status`, and `verify_registry.py` re-derives the same rule so a card cannot claim "wrong grain"
+for an outcome that is on the panel. `docs/registry.md`, `docs/app.md`, `docs/limitations.md` and
+`analysis/specs/guide.yml` moved with the counts and the new plain-language sentence.
+
+**What would reopen a pair is a state-by-month series, and the acquisition was deliberately not attempted:**
+NDHS carries state-level MMR/U5MR/skilled-birth estimates, but at survey years (2003, 2008, 2013, 2018), so even
+landed they do not satisfy a monthly design. That is C3's question if it is asked at all, and the code text says
+what it would take.
+
+**One side finding, recorded and not fixed.** The panel carries three outcome columns while `diagnostics.yml`
+declares two, because `fatalities_civilians` is a Stage 6 robustness outcome and has no card of its own
+("A published without a card: fatalities_civilians"). Adding it would move the design-level count without
+changing any verdict, so it was left declared as it is; the card's detail therefore cites the *declared* set
+rather than claiming to be the panel's full column list.
+
+**Re-measured, and this time the noisy numbers were not copied.** The corpus was rebuilt after the
+artifacts and docs moved (495 chunks), and all four evals re-ran; their numbers live in
+`registry/rag/2026-10-30/` and `docs/rag.md`. C-90 says so explicitly instead of quoting them — the lesson of
+C-89, one unit later, applied on the first try.
+
+**C-90 records it.** All **23 verifiers PASS**, `validate_artifacts` PASS, phase gate `[~] C`, frontier C.
+What remains in Phase C is C2 (the 2 `design_not_run` Design C cards), C3 (the 12 → now 15
+`outcome_series_absent` cards, three of which are the education refusals) and C5's exit battery.
+
 ## Next session starts here (written 2026-10-30, end of session)
 
-**Phases A and B are closed and the gate accepts the move: `[x] A`, `[x] B`, `[~] C`, `frontier: C`.**
+**Phases A and B are closed, Phase C is two units from done: `[x] A`, `[x] B`, `[~] C`, `frontier: C`.**
 Everything above is committed and pushed; `data/pending/` is empty; every registry family's newest vintage is
 **2026-10-30** (the 2026-10-29 family is intact as the 25.1 record). The chain is green: **23/23 verifiers**,
-`validate_artifacts` (74 documents, the C-44 invariant), the phase gate, and CI + the Pages deploy on
-`cdc8bef`.
+`validate_artifacts` (74 documents, the C-44 invariant), the phase gate, and CI + the Pages deploy.
 
-**Phase C — "close or permanently record every not-estimated reason" — is 24 of the 36 cards.** The other 12
-are already final: 2 carry a number, 9 are `design_result_is_channel_level`, 1 is Design C's
-`design_estimated_not_identified`. The order below is cheapest-first, so the cheap closures land before the
-acquisition work can block them.
+**Phase C — "close or permanently record every not-estimated reason" — now covers 2 + 15 cards, not 24.** C4
+closed the gap list (C-89) and C1 closed the ten `no_specification_declared` cards (C-90), which turned out to
+be a Stage 5 check reading the wrong object. What is left is C2's two Design C refusals and C3's fifteen
+`outcome_series_absent` cards, three of which are the education refusals that C3(iii) closes permanently.
 
 1. **C4 — DONE (C-89, twenty-second session).** `dose` and `faac` were declared `gap` long after the fiscal
    series landed; the status was corrected at the declaration and the cards/index regenerated. The list is
    now **3, one root cause** — the three education outcomes, all of them outcomes, so no design has an
    unsourced exposure, confounder or mediator. (The plan's premise was half wrong: `primary_completion` is
    **not** landed — 8 of 66 anchors, 2000–2010 — so it stays a gap.)
-2. **C1 — the 10 `no_specification_declared` cards (next).** For each (outcome, design) pair: declare the
-   specification in the stage spec, or record the refusal with its reason. Nothing is left "open". The pairs
-   are on each card's `estimate.reason` and counted in `index.json → registry.card_estimate_counts`. Expect
-   one spec unit plus one chain run.
-3. **C2 — the 2 `design_not_run` cards (`cpi_yoy__C`, `gdp_growth__C`).** Design C is specified for `u5mr`
-   only. Extend `analysis/specs/design_c.yml`'s donor fields (World Bank country-year GDP is already
-   adopted) and re-run `11_design_c.R` + `verify_design_c.py`, or record the refusal. A spec change to C
-   re-runs the placebos: that is the exit, and it is the most compute-bound unit in the phase.
+2. **C1 — DONE (C-90, twenty-third session).** All ten were Design A pairs whose blocker was a Stage 5
+   check reporting a design-level fact; the check now reads the card's own outcome, and no specification was
+   declared because the outcomes have no state-level series. Seven are `outcome_not_at_design_grain`, three
+   are `outcome_series_absent`, and **`no_specification_declared` now carries 0 cards**.
+3. **C2 — the 2 `design_not_run` cards (`cpi_yoy__C`, `gdp_growth__C`) — this is the next move.** Design C
+   is specified for `u5mr` only. Extend `analysis/specs/design_c.yml`'s donor fields (World Bank country-year
+   GDP is already adopted) and re-run `11_design_c.R` + `verify_design_c.py`, or record the refusal. A spec
+   change to C re-runs the placebos: that is the exit, and it is the most compute-bound unit in the phase.
 4. **C3 — the 12 `outcome_series_absent` cards.** Three sub-tracks, cheapest first: (i) cross-country
    **security** outcomes for Design C are likely cheap — UCDP's bulk archive is keyless and a client of the
    `ucdp.py` family (a *donor* panel, not a new Nigeria series) would unlock the conflict outcomes for C;

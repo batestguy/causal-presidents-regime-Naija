@@ -2,12 +2,12 @@
  "schema_version": 2,
  "layer": "Stage 9 — the pre-retrieval intent gate",
  "vintage": "2026-10-30",
- "generated_at": "2026-10-30T22:46:27+00:00",
+ "generated_at": "2026-10-31T00:17:01+00:00",
  "generator": {
   "script": "scripts/eval_intent.py",
   "spec": "analysis/specs/intent_gate.yml",
   "eval_spec": "analysis/specs/intent_gate_eval_v4.yml",
-  "git_sha": "a7519eedeee87a8d5115ebcd74a03c661c8703a7"
+  "git_sha": "2610e44fede8c5c751a2b7db693b55744c9fb543"
  },
  "specs": {
   "gate": {
@@ -23,8 +23,8 @@
  },
  "corpus": {
   "path": "registry/rag/2026-10-30/corpus.json",
-  "sha256": "25210c1aa10b0606d4599d4ad4c11f5efe49c22fe86244dda7789d260d964751",
-  "chunks": 493,
+  "sha256": "24b517e51282d6b358c52ed57e5f91cc88950724d017ab483cfe01cbc614689d",
+  "chunks": 495,
   "vintage": "2026-10-30"
  },
  "rules": [
@@ -1211,7 +1211,7 @@
      },
      {
       "chunk_id": "card:fatalities__C#p7",
-      "score": 0.550519
+      "score": 0.533215
      },
      {
       "chunk_id": "estimate:fatalities__A",
@@ -1347,7 +1347,7 @@
      },
      {
       "chunk_id": "doc:limitations#s07#p3",
-      "score": 0.492291
+      "score": 0.49229
      },
      {
       "chunk_id": "doc:design-memo#s04#p6",
@@ -1393,8 +1393,8 @@
       "score": 0.502659
      },
      {
-      "chunk_id": "estimate:mmr__C",
-      "score": 0.498169
+      "chunk_id": "doc:limitations#s05",
+      "score": 0.496312
      }
     ]
    },
@@ -1428,8 +1428,8 @@
       "score": 0.427571
      },
      {
-      "chunk_id": "doc:data-dictionary#imputation-and-how-to-tell-it-apart-from-data#p3",
-      "score": 0.385218
+      "chunk_id": "card:cpi_yoy__A#p4",
+      "score": 0.419782
      }
     ]
    },
@@ -1518,7 +1518,7 @@
     "retrieved": [
      {
       "chunk_id": "coverage:registry",
-      "score": 0.607551
+      "score": 0.600467
      },
      {
       "chunk_id": "card:u5mr__B#p5",
@@ -1564,12 +1564,12 @@
       "score": 0.27871
      },
      {
-      "chunk_id": "card:immun_penta3__A#p4",
-      "score": 0.267001
+      "chunk_id": "doc:limitations#s02#p2",
+      "score": 0.250677
      },
      {
-      "chunk_id": "card:cpi_yoy__A#p4",
-      "score": 0.264768
+      "chunk_id": "event:jonathan_2010#p2",
+      "score": 0.245175
      }
     ]
    },
@@ -1604,7 +1604,7 @@
      },
      {
       "chunk_id": "doc:estimates#s01#p3",
-      "score": 0.436797
+      "score": 0.436796
      }
     ]
    },

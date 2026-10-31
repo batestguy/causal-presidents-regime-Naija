@@ -2,10 +2,10 @@
   "dag_id": "immun_penta3__B",
   "schema_version": "0.3.0",
   "vintage_date": "2026-10-30",
-  "generated_at": "2026-10-30T22:54:11+0100",
+  "generated_at": "2026-10-31T00:50:27+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "a7519ee"
+    "git_sha": "2610e44"
   },
   "outcome": {
     "id": "immun_penta3",

@@ -229,9 +229,9 @@ After all of the above, four things survive:
 1. **A fiscal transmission channel:** a 10 % Brent move reaches the states as roughly 5 % more money two
    to three months later (Design B, sign robust in all 24 fiscal specifications; the price-level family is a null at every horizon; timing p = 0.0625).
 2. **Two published cards** of 36 — the two Design A outcomes that have a card — each carrying its interval
-   and its `estimated_not_identified` verdict. **34 cards carry a reason, not a number** (12
-   `outcome_series_absent`, 10 `no_specification_declared`, 9 `design_result_is_channel_level`, 3
-   `design_not_run`).
+   and its `estimated_not_identified` verdict. **34 cards carry a reason, not a number** (15
+   `outcome_series_absent`, 7 `outcome_not_at_design_grain`, 9 `design_result_is_channel_level`, 2
+   `design_not_run`, 1 `design_estimated_not_identified`).
 3. **Two of eight event-outcome cells** show a shift that survives both the placebo and the pre-trend
    check; three fail the pre-trend, one shows no shift, and two cannot be checked at all.
 4. **A boundary:** every design that failed its pre-check is dropped on the record, with the diagnostic

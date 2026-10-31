@@ -269,7 +269,7 @@
           "properties": {
             "code": {
               "type": "string",
-              "enum": ["outcome_series_absent", "no_specification_declared", "design_result_is_channel_level", "design_not_run", "design_estimated_not_identified"]
+              "enum": ["outcome_series_absent", "no_specification_declared", "outcome_not_at_design_grain", "design_result_is_channel_level", "design_not_run", "design_estimated_not_identified"]
             },
             "detail": { "type": "string", "minLength": 20 }
           }

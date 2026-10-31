@@ -2,10 +2,10 @@
   "schema_version": "0.3.0",
   "layer": "causal DAGs + published results (the app's data contract)",
   "vintage_date": "2026-10-30",
-  "generated_at": "2026-10-30T22:54:11+0100",
+  "generated_at": "2026-10-31T00:50:27+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "a7519ee"
+    "git_sha": "2610e44"
   },
   "diagnostics": {
     "vintage": "2026-10-30",
@@ -779,7 +779,7 @@
     "Youth literacy (15-24) [NBS / UNESCO UIS]"
   ],
   "registry": {
-    "generated_at": "2026-10-30T22:55:33+0100",
+    "generated_at": "2026-10-31T00:51:12+0100",
     "generated_by": "analysis/R/05_registry.R",
     "spec": "analysis/specs/registry.yml",
     "rule": "A card with design `A` is `estimated` **iff** the estimates artifact publishes a Design A specification whose `outcome` is the card's outcome id. The number, interval and sample are copied from that specification, not from anywhere else.",
@@ -787,10 +787,10 @@
       "estimated": 2,
       "not_estimated": 34,
       "not_estimated_by_reason": {
-        "no_specification_declared": 10,
+        "outcome_not_at_design_grain": 7,
         "design_result_is_channel_level": 9,
         "design_not_run": 2,
-        "outcome_series_absent": 12,
+        "outcome_series_absent": 15,
         "design_estimated_not_identified": 1
       }
     },

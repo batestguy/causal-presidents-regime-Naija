@@ -48,8 +48,9 @@ A `not_estimated` card carries a reason from a **closed set**, so the absence of
 
 | Reason | Cards | What it means |
 |---|---|---|
-| `outcome_series_absent` | 12 | the outcome has no usable series, so no pre-check ran for this pair — a declared gap, not a null result |
-| `no_specification_declared` | 10 | Stage 5 ran a pre-check; Stage 6 declared no specification for this pair. Nothing about the estimate stage says this question was asked and answered |
+| `outcome_series_absent` | 15 | the outcome has no usable series at this design's unit, so no specification could be declared — a declared gap, not a null result |
+| `outcome_not_at_design_grain` | 7 | the outcome exists, but not at the grain this design needs. Design A regresses a state-by-month outcome on that state's own allocation; these are published only nationally, or only at survey/annual grain |
+| `no_specification_declared` | 0 | the code is still declared for the contract, but no card uses it: every pair Stage 5 pre-checked now says why it has no number (C-90) |
 | `design_result_is_channel_level` | 9 | Design B has a published result, and it is about the channel the design rests on, not about this card's outcome |
 | `design_not_run` | 2 | Design C was not run for this outcome — the gate refused it; the reason is on the index and in the estimates artifact |
 | `design_estimated_not_identified` | 1 | Design C was run for this outcome and no window survived its placebos; the gap and the placebos are in `registry/design_c/`, and no interval exists to put on a card |

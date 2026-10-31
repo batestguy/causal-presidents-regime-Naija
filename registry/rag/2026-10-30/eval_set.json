@@ -2,11 +2,11 @@
  "schema_version": "0.1.0",
  "layer": "RAG evaluation set (retrieval-gated; generation metrics declared, not measured)",
  "vintage": "2026-10-30",
- "generated_at": "2026-10-30T22:44:54+00:00",
+ "generated_at": "2026-10-31T00:15:44+00:00",
  "generator": {
   "script": "scripts/build_rag_corpus.py",
   "spec": "analysis/specs/rag_eval.yml",
-  "git_sha": "a7519ee"
+  "git_sha": "2610e44"
  },
  "corpus": "registry/rag/2026-10-30/corpus.json",
  "ragas": {
@@ -296,7 +296,9 @@
     "doc:registry#s02",
     "doc:registry#s02#p2",
     "doc:registry#s02#p3",
-    "doc:registry#s02#p4"
+    "doc:registry#s02#p4",
+    "doc:registry#s02#p5",
+    "doc:registry#s02#p6"
    ],
    "must_contain": [
     "2 cards carry a published estimate",

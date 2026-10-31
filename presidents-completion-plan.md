@@ -72,8 +72,16 @@ headline designs already say what they say. Each sub-track is a table walk, pair
 "no card's reason is a shrug": every no-number card names either a declared refusal (reason + why) or a
 planned specific fix.
 
-- [ ] **C1. `no_specification_declared` (10 cards).** For each (outcome, design) pair: declare the
-  specification in the relevant stage spec, or record the refusal with its reason. Nothing is "left open".
+- [x] **C1. `no_specification_declared` (10 cards) — DONE (C-90), and the code now carries zero cards.** All
+  ten were Design A pairs, and the reason they said "no specification declared" was a defect: Stage 5's
+  per-card `state_outcome_attribution` check was reporting a design-level fact (`any_state_outcome_present`,
+  "22126 state outcome values present") so `cpi_yoy__A` passed an outcome check for an outcome with no state
+  series at all. The check now reads the card's own outcome; **no specification was declared for any of the
+  ten**, because Design A needs a state × month outcome and none is at that grain — seven take the new
+  **`outcome_not_at_design_grain`** (series exist nationally or at survey grain), three education outcomes
+  take the existing **`outcome_series_absent`** (8/9/8 observations, matching their B and C cards). What
+  would reopen a pair is a state-by-month series; NDHS state estimates are survey-year, so buying them
+  would not close it.
 - [ ] **C2. `design_not_run` (2 cards: `cpi_yoy__C`, `gdp_growth__C`).** Design C is specified for `u5mr`
   only. Decide: extend Design C's spec to these outcomes (where a donor panel exists or is buyable: WB
   country-year GDP exists; the pool extension is declared in `design_c.yml`'s own donor fields) or record

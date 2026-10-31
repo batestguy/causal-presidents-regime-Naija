@@ -3,10 +3,10 @@
   "stage": 5,
   "layer": "pre-analysis diagnostics and design validation",
   "vintage": "2026-10-30",
-  "generated_at": "2026-10-30T15:04:55+0100",
+  "generated_at": "2026-10-31T00:47:15+0100",
   "generator": {
     "script": "analysis/R/02_diagnostics.R",
-    "git_sha": "0d431e9",
+    "git_sha": "2610e44",
     "r_version": "R version 4.5.2 (2025-10-31 ucrt)"
   },
   "spec": "analysis/specs/diagnostics.yml",
@@ -4114,8 +4114,8 @@
         },
         {
           "id": "state_outcome_attribution",
-          "verdict": "pass",
-          "detail": "22126 state outcome values present"
+          "verdict": "fail",
+          "detail": "u5mr is not on the state panel, so a state x month regression has nothing to regress for this card (the declared state outcome columns are fatalities, incidents)"
         },
         {
           "id": "parallel_trends_precheck",
@@ -4124,7 +4124,7 @@
         }
       ],
       "blocker": "specified_dose_axis_absent:D1",
-      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "note": "Dropped at Stage 5 on the outcome side: this outcome has no state-level series, so there is nothing for a state x month design to regress. A data finding, not a null result.",
       "coverage_status": "partial",
       "vintage": "2026-10-30",
       "source": "registry/diagnostics/2026-10-30/diagnostics.json"
@@ -4139,8 +4139,8 @@
         },
         {
           "id": "state_outcome_attribution",
-          "verdict": "pass",
-          "detail": "22126 state outcome values present"
+          "verdict": "fail",
+          "detail": "mmr is not on the state panel, so a state x month regression has nothing to regress for this card (the declared state outcome columns are fatalities, incidents)"
         },
         {
           "id": "parallel_trends_precheck",
@@ -4149,7 +4149,7 @@
         }
       ],
       "blocker": "specified_dose_axis_absent:D1",
-      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "note": "Dropped at Stage 5 on the outcome side: this outcome has no state-level series, so there is nothing for a state x month design to regress. A data finding, not a null result.",
       "coverage_status": "ok",
       "vintage": "2026-10-30",
       "source": "registry/diagnostics/2026-10-30/diagnostics.json"
@@ -4164,8 +4164,8 @@
         },
         {
           "id": "state_outcome_attribution",
-          "verdict": "pass",
-          "detail": "22126 state outcome values present"
+          "verdict": "fail",
+          "detail": "immun_penta3 is not on the state panel, so a state x month regression has nothing to regress for this card (the declared state outcome columns are fatalities, incidents)"
         },
         {
           "id": "parallel_trends_precheck",
@@ -4174,7 +4174,7 @@
         }
       ],
       "blocker": "specified_dose_axis_absent:D1",
-      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "note": "Dropped at Stage 5 on the outcome side: this outcome has no state-level series, so there is nothing for a state x month design to regress. A data finding, not a null result.",
       "coverage_status": "partial",
       "vintage": "2026-10-30",
       "source": "registry/diagnostics/2026-10-30/diagnostics.json"
@@ -4189,8 +4189,8 @@
         },
         {
           "id": "state_outcome_attribution",
-          "verdict": "pass",
-          "detail": "22126 state outcome values present"
+          "verdict": "fail",
+          "detail": "skilled_birth is not on the state panel, so a state x month regression has nothing to regress for this card (the declared state outcome columns are fatalities, incidents)"
         },
         {
           "id": "parallel_trends_precheck",
@@ -4199,7 +4199,7 @@
         }
       ],
       "blocker": "specified_dose_axis_absent:D1",
-      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "note": "Dropped at Stage 5 on the outcome side: this outcome has no state-level series, so there is nothing for a state x month design to regress. A data finding, not a null result.",
       "coverage_status": "partial",
       "vintage": "2026-10-30",
       "source": "registry/diagnostics/2026-10-30/diagnostics.json"
@@ -4214,8 +4214,8 @@
         },
         {
           "id": "state_outcome_attribution",
-          "verdict": "pass",
-          "detail": "22126 state outcome values present"
+          "verdict": "fail",
+          "detail": "literacy_youth is not on the state panel, so a state x month regression has nothing to regress for this card (the declared state outcome columns are fatalities, incidents)"
         },
         {
           "id": "parallel_trends_precheck",
@@ -4224,7 +4224,7 @@
         }
       ],
       "blocker": "specified_dose_axis_absent:D1",
-      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "note": "Dropped at Stage 5 on the outcome side: this outcome has no state-level series, so there is nothing for a state x month design to regress. A data finding, not a null result.",
       "coverage_status": "declared_gap",
       "vintage": "2026-10-30",
       "source": "registry/diagnostics/2026-10-30/diagnostics.json"
@@ -4239,8 +4239,8 @@
         },
         {
           "id": "state_outcome_attribution",
-          "verdict": "pass",
-          "detail": "22126 state outcome values present"
+          "verdict": "fail",
+          "detail": "primary_completion is not on the state panel, so a state x month regression has nothing to regress for this card (the declared state outcome columns are fatalities, incidents)"
         },
         {
           "id": "parallel_trends_precheck",
@@ -4249,7 +4249,7 @@
         }
       ],
       "blocker": "specified_dose_axis_absent:D1",
-      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "note": "Dropped at Stage 5 on the outcome side: this outcome has no state-level series, so there is nothing for a state x month design to regress. A data finding, not a null result.",
       "coverage_status": "declared_gap",
       "vintage": "2026-10-30",
       "source": "registry/diagnostics/2026-10-30/diagnostics.json"
@@ -4264,8 +4264,8 @@
         },
         {
           "id": "state_outcome_attribution",
-          "verdict": "pass",
-          "detail": "22126 state outcome values present"
+          "verdict": "fail",
+          "detail": "ner_primary is not on the state panel, so a state x month regression has nothing to regress for this card (the declared state outcome columns are fatalities, incidents)"
         },
         {
           "id": "parallel_trends_precheck",
@@ -4274,7 +4274,7 @@
         }
       ],
       "blocker": "specified_dose_axis_absent:D1",
-      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "note": "Dropped at Stage 5 on the outcome side: this outcome has no state-level series, so there is nothing for a state x month design to regress. A data finding, not a null result.",
       "coverage_status": "declared_gap",
       "vintage": "2026-10-30",
       "source": "registry/diagnostics/2026-10-30/diagnostics.json"
@@ -4290,7 +4290,7 @@
         {
           "id": "state_outcome_attribution",
           "verdict": "pass",
-          "detail": "22126 state outcome values present"
+          "detail": "fatalities is on the state panel: 11063 non-null state-months of 12358"
         },
         {
           "id": "parallel_trends_precheck",
@@ -4315,7 +4315,7 @@
         {
           "id": "state_outcome_attribution",
           "verdict": "pass",
-          "detail": "22126 state outcome values present"
+          "detail": "incidents is on the state panel: 11063 non-null state-months of 12358"
         },
         {
           "id": "parallel_trends_precheck",
@@ -4339,8 +4339,8 @@
         },
         {
           "id": "state_outcome_attribution",
-          "verdict": "pass",
-          "detail": "22126 state outcome values present"
+          "verdict": "fail",
+          "detail": "gdp_growth is not on the state panel, so a state x month regression has nothing to regress for this card (the declared state outcome columns are fatalities, incidents)"
         },
         {
           "id": "parallel_trends_precheck",
@@ -4349,7 +4349,7 @@
         }
       ],
       "blocker": "specified_dose_axis_absent:D1",
-      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "note": "Dropped at Stage 5 on the outcome side: this outcome has no state-level series, so there is nothing for a state x month design to regress. A data finding, not a null result.",
       "coverage_status": "ok",
       "vintage": "2026-10-30",
       "source": "registry/diagnostics/2026-10-30/diagnostics.json"
@@ -4364,8 +4364,8 @@
         },
         {
           "id": "state_outcome_attribution",
-          "verdict": "pass",
-          "detail": "22126 state outcome values present"
+          "verdict": "fail",
+          "detail": "cpi_yoy is not on the state panel, so a state x month regression has nothing to regress for this card (the declared state outcome columns are fatalities, incidents)"
         },
         {
           "id": "parallel_trends_precheck",
@@ -4374,7 +4374,7 @@
         }
       ],
       "blocker": "specified_dose_axis_absent:D1",
-      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "note": "Dropped at Stage 5 on the outcome side: this outcome has no state-level series, so there is nothing for a state x month design to regress. A data finding, not a null result.",
       "coverage_status": "ok",
       "vintage": "2026-10-30",
       "source": "registry/diagnostics/2026-10-30/diagnostics.json"
@@ -4389,8 +4389,8 @@
         },
         {
           "id": "state_outcome_attribution",
-          "verdict": "pass",
-          "detail": "22126 state outcome values present"
+          "verdict": "fail",
+          "detail": "unemp is not on the state panel, so a state x month regression has nothing to regress for this card (the declared state outcome columns are fatalities, incidents)"
         },
         {
           "id": "parallel_trends_precheck",
@@ -4399,7 +4399,7 @@
         }
       ],
       "blocker": "specified_dose_axis_absent:D1",
-      "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+      "note": "Dropped at Stage 5 on the outcome side: this outcome has no state-level series, so there is nothing for a state x month design to regress. A data finding, not a null result.",
       "coverage_status": "partial",
       "vintage": "2026-10-30",
       "source": "registry/diagnostics/2026-10-30/diagnostics.json"

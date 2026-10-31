@@ -2,10 +2,10 @@
   "dag_id": "mmr__A",
   "schema_version": "0.3.0",
   "vintage_date": "2026-10-30",
-  "generated_at": "2026-10-30T22:54:11+0100",
+  "generated_at": "2026-10-31T00:50:27+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "a7519ee"
+    "git_sha": "2610e44"
   },
   "outcome": {
     "id": "mmr",
@@ -201,8 +201,8 @@
       },
       {
         "id": "state_outcome_attribution",
-        "verdict": "pass",
-        "detail": "22126 state outcome values present"
+        "verdict": "fail",
+        "detail": "mmr is not on the state panel, so a state x month regression has nothing to regress for this card (the declared state outcome columns are fatalities, incidents)"
       },
       {
         "id": "parallel_trends_precheck",
@@ -211,7 +211,7 @@
       }
     ],
     "blocker": "specified_dose_axis_absent:D1",
-    "note": "Dropped on the record at Stage 5. This is a data finding, not a null result.",
+    "note": "Dropped at Stage 5 on the outcome side: this outcome has no state-level series, so there is nothing for a state x month design to regress. A data finding, not a null result.",
     "coverage_status": "ok",
     "vintage": "2026-10-30",
     "source": "registry/diagnostics/2026-10-30/diagnostics.json"
@@ -224,9 +224,9 @@
     "model_card_ref": null,
     "the_number_is_for_this_card": false,
     "not_estimated_reason": {
-      "code": "no_specification_declared",
-      "detail": "Stage 5 ran a pre-check for this pair, but Stage 6 declared no specification for it: the stage fitted the outcomes whose series it could carry, and this was not one of them. Nothing about the estimate stage says this question was asked and answered."
+      "code": "outcome_not_at_design_grain",
+      "detail": "The outcome exists, but not at the grain this design needs, so the pair is not estimable as specified. Design A regresses a state-by-month outcome on that state's own allocation; this outcome is published only nationally, or — where a state-level series exists in the sources — only at survey or annual grain. A state-by-month series would reopen the pair; a national one cannot."
     },
-    "note": "No estimate for (mmr, A). Stage 5 ran a pre-check for this pair (status fail), but Stage 6 declared no specification for it: the stage fitted the outcomes its series could carry, and this was not one of them. Nothing here says the question was asked and answered."
+    "note": "No estimate for (mmr, A). Stage 5 pre-checked this pair and the decisive check failed on the outcome side: mmr is not on the state panel, so a state x month regression has nothing to regress for this card (the declared state outcome columns are fatalities, incidents). Design A is a state-by-month design, so this is a statement about the data that exists, not a question left open."
   }
 }

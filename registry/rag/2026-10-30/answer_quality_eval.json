@@ -2,7 +2,7 @@
  "schema_version": 1,
  "layer": "answer quality — the four RAGAS metric definitions, implemented in this repository",
  "vintage": "2026-10-30",
- "generated_at": "2026-10-30T22:48:03+00:00",
+ "generated_at": "2026-10-31T00:18:49+00:00",
  "status": "measured",
  "metric_source": {
   "library": false,
@@ -25,13 +25,13 @@
   "embedding_dim": 768,
   "n_generated_questions": 3,
   "max_contexts": 4,
-  "calls": 30
+  "calls": 31
  },
  "inputs": {
   "corpus": "registry/rag/2026-10-30/corpus.json",
-  "corpus_content_sha256": "7e5ca371ee61427ab378c8ee0c090359dbbe4a6165ed95bb6f8c34cd98765c42",
+  "corpus_content_sha256": "3cbb000c3d92a13f482ba7b3fc43c97387958db8b505ba8a887da17376ab9e4a",
   "answer_eval": "registry/rag/2026-10-30/answer_eval.json",
-  "answer_eval_content_sha256": "b9ab2438093306eecb140d8c1f0bfc2c49b1c60bf38ce3ec7efaf930d2a65924",
+  "answer_eval_content_sha256": "9d5ad5f60af4986e0166e4c215caeb80512f10bc1a5eeb8b87ed66dc296cda7c",
   "eval_set": "registry/rag/2026-10-30/eval_set.json",
   "eval_set_content_sha256": "4525822cfca98053ef3c0c18dcc486ccf40a785f7ad4e7f721c86a3bccf6cda5"
  },
@@ -132,10 +132,10 @@
   }
  ],
  "metrics": {
-  "faithfulness": 0.950877,
-  "answer_relevancy": 0.824649,
+  "faithfulness": 0.955556,
+  "answer_relevancy": 0.827259,
   "context_precision": 0.988889,
-  "context_recall": 0.793333
+  "context_recall": 0.847778
  },
  "caveats": [
   "faithfulness is near 1.0 by construction when the answer is a selection of quoted corpus paragraphs — it measures the contract, not the retrieval's judgement",
@@ -152,7 +152,7 @@
    "answer_chars": 1386,
    "scores": {
     "faithfulness": 1.0,
-    "answer_relevancy": 0.757512,
+    "answer_relevancy": 0.905923,
     "context_precision": 1.0,
     "context_recall": 1.0
    },
@@ -164,17 +164,19 @@
      "The 95% interval is [-0.0833, +1.0189].",
      "The p-value is 0.0962.",
      "The sample size is 3,888 state-months over 36 states.",
-     "The time period is 2016-12-01 to 2025-12-01.",
+     "The coverage period is 2016-12-01 to 2025-12-01.",
      "The verdict is estimated_not_identified.",
      "The lead-shift p-value is 0.167.",
      "10 of 60 mis-timed doses return an estimate at least as large as the estimate itself.",
-     "The identifying assumption is Parallel trends.",
-     "Absent the policy shift, states with different exposure intensities would have followed parallel outcome paths.",
+     "The identifying assumption is parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths.",
      "Formally, no unmeasured state-by-time confounder affects both the dose and the outcome.",
-     "The design cannot rule out anticipation, SUTVA violations, compositional or definitional changes, and dose contamination.",
-     "The citation is Card estimate — Reported security fatalities under Design A — registry/dags/fatalities__A.json (vintage 2026-10-30) — estimate:fatalities__A."
+     "The design cannot rule out anticipation.",
+     "The design cannot rule out SUTVA violations through cross-state spillovers.",
+     "The design cannot rule out compositional or definitional change in state accounts over the window.",
+     "The design cannot rule out that the dose itself (D1, FAAC per capita) may be contaminated by the policy it measures."
     ],
     "statement_supported": [
+     true,
      true,
      true,
      true,
@@ -192,14 +194,14 @@
      true
     ],
     "generated_questions": [
-     "What was the published estimate for the effect of FAAC allocations on reported fatalities?",
-     "What is the verdict and lead-shift p-value for the Design A fatality estimate?",
-     "What identifying assumption and limitations apply to the Design A fatality estimate?"
+     "What was the published estimate for the effect of FAAC allocations on reported fatalities under Design A?",
+     "What statistical tests and limitations were associated with the published estimate of FAAC allocations on fatalities?",
+     "What identifying assumption and verdict were given for the effect of FAAC allocations on reported fatalities?"
     ],
     "similarities": [
-     0.987097,
-     0.64511,
-     0.640329
+     0.927391,
+     0.883478,
+     0.9069
     ],
     "context_usable": [
      true
@@ -209,7 +211,7 @@
      "The standard error is 0.2812.",
      "The 95% interval is [-0.0833, +1.0189].",
      "The p-value is 0.0962.",
-     "The analysis uses 3,888 state-months for 36 states from 2016-12 to 2025-12.",
+     "The analysis is based on 3,888 state-months for 36 states from 2016-12 to 2025-12.",
      "The interval crosses zero.",
      "The verdict is estimated_not_identified."
     ],
@@ -234,23 +236,22 @@
    "answer_chars": 1357,
    "scores": {
     "faithfulness": 1.0,
-    "answer_relevancy": 0.859744,
+    "answer_relevancy": 0.888899,
     "context_precision": 1.0,
     "context_recall": 0.8
    },
    "detail": {
     "statements": [
-     "The published specification is Design A on fatalities.",
-     "The elasticity of fatalities to allocation is +0.4678.",
-     "The standard error is 0.2812.",
+     "The published specification is Design A on fatalities: elasticity_of_fatalities_to_allocation = +0.4678.",
+     "The standard error of the estimate is 0.2812.",
      "The 95% interval is [-0.0833, +1.0189].",
      "The p-value is 0.0962.",
-     "The sample size is 3,888 state-months over 36 states.",
-     "The time period is 2016-12-01 to 2025-12-01.",
+     "The sample size is n = 3,888 state-months over 36 states, 2016-12-01 to 2025-12-01.",
      "The verdict is estimated_not_identified.",
      "The lead-shift p-value is 0.167.",
      "10 of 60 mis-timed doses return an estimate at least as large as the estimate itself.",
-     "The identifying assumption is parallel trends.",
+     "The identifying assumption is parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths.",
+     "Formally, no unmeasured state-by-time confounder affects both the dose and the outcome.",
      "The design cannot rule out anticipation, SUTVA violations, compositional or definitional changes, and dose contamination."
     ],
     "statement_supported": [
@@ -264,18 +265,17 @@
      true,
      true,
      true,
-     true,
      true
     ],
     "generated_questions": [
-     "Is the fatality estimate identified, and which check decided that?",
-     "What are the statistical details and verdict for the fatality estimate under Design A?",
-     "What limitations and identifying assumptions apply to the fatality estimate?"
+     "Is the fatality estimate identified?",
+     "Which check decided whether the fatality estimate is identified?",
+     "What are the statistical details and limitations of the fatality estimate?"
     ],
     "similarities": [
-     1.0,
-     0.765522,
-     0.813709
+     0.918137,
+     0.934963,
+     0.813596
     ],
     "context_usable": [
      true
@@ -306,7 +306,7 @@
    "answer_chars": 1383,
    "scores": {
     "faithfulness": 1.0,
-    "answer_relevancy": 0.797797,
+    "answer_relevancy": 0.783299,
     "context_precision": 1.0,
     "context_recall": 1.0
    },
@@ -317,17 +317,15 @@
      "The standard error is 0.1944.",
      "The 95% interval is [+0.1467, +0.9088].",
      "The p-value is 0.0066.",
-     "The sample size is n = 3,888 state-months over 36 states.",
-     "The time period is 2016-12-01 to 2025-12-01.",
+     "The sample size is n = 3,888 state-months over 36 states, 2016-12-01 to 2025-12-01.",
      "The verdict is estimated_not_identified.",
      "The lead-shift p-value is 0.167.",
      "10 of 60 mis-timed doses return an estimate at least as large as the estimate itself.",
-     "The identifying assumption is Parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths.",
+     "The identifying assumption is parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths.",
      "No unmeasured state-by-time confounder affects both the dose and the outcome.",
-     "The design cannot rule out anticipation, SUTVA violations, compositional or definitional changes, or dose contamination."
+     "The design cannot rule out anticipation, SUTVA violations through cross-state spillovers, compositional or definitional change in state accounts over the window, and contamination of the dose itself."
     ],
     "statement_supported": [
-     true,
      true,
      true,
      true,
@@ -343,13 +341,13 @@
     ],
     "generated_questions": [
      "What is the point estimate and 95% interval for the effect on reported incidents under Design A?",
-     "What are the statistical details and lead-shift p-value for the reported incidents estimate?",
-     "What identifying assumptions and limitations apply to the reported incidents estimate?"
+     "What identifying assumption is used for the Design A estimate on reported incidents?",
+     "What robustness checks or limitations apply to the Design A estimate on reported incidents?"
     ],
     "similarities": [
      0.92617,
-     0.764385,
-     0.702836
+     0.713223,
+     0.710504
     ],
     "context_usable": [
      true
@@ -358,7 +356,7 @@
      "The point estimate is +0.5278.",
      "The 95% interval is [+0.1467, +0.9088].",
      "The p-value is 0.0066.",
-     "The estimate is based on 3,888 state-months.",
+     "The sample size is 3,888 state-months.",
      "The interval excludes zero.",
      "The lead-shift check fails with p = 0.167.",
      "The card reads estimated_not_identified."
@@ -385,30 +383,34 @@
    "answer_chars": 1807,
    "scores": {
     "faithfulness": 1.0,
-    "answer_relevancy": 0.648815,
+    "answer_relevancy": 0.729148,
     "context_precision": 1.0,
     "context_recall": 0.0
    },
    "detail": {
     "statements": [
-     "Published result for Design B is a National VECM / ARDL time series regarding Brent crude to the states and to the price level.",
-     "The estimator used is local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=0.",
+     "Published result for Design B is a National VECM / ARDL time series.",
+     "Brent crude to the states and to the price level investigates how much of an oil shock passes through and when.",
+     "The estimator is local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=0.",
      "The estimand is the long-run multiplier for the administration effect, oil-interacted.",
      "The status is estimated.",
-     "The result is card-level: false.",
+     "Result is card-level: false.",
      "The verdict rule is applied per outcome family, never pooled.",
-     "The verdict is estimated if the cumulative response is positive at the declared horizon band with a HAC t above 1.96 at some horizon in it, and the lead placebo at 6 months is smaller in magnitude.",
+     "The verdict rule states it is estimated if the cumulative response is positive at the declared horizon band with a HAC t above 1.96 at some horizon in it, and the lead placebo at 6 months is smaller in magnitude.",
      "Results are reported with confidence bounds either way, and a null is a result.",
      "Failed checks: none.",
      "The headline is that the largest response is +0.5181 (cumulative log change in national FAAC at h=2).",
      "The observed controls move the estimate away from zero, so delta is negative and Oster's usual cutoff (delta >= 1) does not apply.",
      "Beta* at delta = 1 is reported instead.",
-     "In-time placebo parameters: n_draws = 48, p_value = 0.0625, shifted_mean_abs = 0.19105683478, shifted_max_abs = 0.64457712741, observed_mean_abs = 0.50621982607, observed = 0.51811762897.",
+     "In-time placebo parameters are n_draws = 48, p_value = 0.0625, shifted_mean_abs = 0.19105683478, shifted_max_abs = 0.64457712741, observed_mean_abs = 0.50621982607, observed = 0.51811762897.",
      "The note explains that the in-time placebo shifts the shock series by every non-zero offset in the interval and refits the preferred specification.",
-     "A real transmission channel should be largest at the true alignment, representing the Stage 6 forward check made into a distribution.",
-     "Artifacts are located at registry/estimates/2026-10-30/estimates.json and registry/robustness/2026-10-30/robustness.json."
+     "A real transmission channel should be largest at the true alignment.",
+     "This check is Stage 6 run forward (a 6-month lead) made into a distribution.",
+     "Artifacts include estimates at registry/estimates/2026-10-30/estimates.json and robustness at registry/robustness/2026-10-30/robustness.json."
     ],
     "statement_supported": [
+     true,
+     true,
      true,
      true,
      true,
@@ -427,14 +429,14 @@
      true
     ],
     "generated_questions": [
-     "What is the largest response of national FAAC to a Brent crude oil shock according to Design B?",
-     "What estimator and specification are used in Design B for the Brent crude oil transmission to state governments?",
-     "What are the in-time placebo statistics and artifacts associated with Design B?"
+     "How much of a Brent crude oil shock reaches state governments, and after how long?",
+     "What is the methodology and verdict rule used for Design B in evaluating the Brent crude oil shock transmission?",
+     "What are the specific in-time placebo and artifact details for the Design B estimation?"
     ],
     "similarities": [
-     0.714936,
-     0.744776,
-     0.486734
+     1.0,
+     0.682474,
+     0.504969
     ],
     "context_usable": [
      true,
@@ -443,7 +445,7 @@
     "reference_claims": [
      "Design B is a local projection of the cumulative log change in national FAAC on the Brent shock.",
      "The response is -0.1600 at h = 0.",
-     "The response is +0.5181 at h = 2 (interval [+0.1919, +0.8443]).",
+     "The response is +0.5181 at h = 2 with interval [+0.1919, +0.8443].",
      "The response is +0.4698 at h = 3.",
      "Roughly a 10 % Brent move reaches the states as about 5 % more money two to three months later.",
      "Only h = 2 and h = 3 exclude zero."
@@ -468,32 +470,31 @@
    ],
    "answer_chars": 2757,
    "scores": {
-    "faithfulness": 0.263158,
+    "faithfulness": 0.333333,
     "answer_relevancy": 0.885046,
     "context_precision": 1.0,
-    "context_recall": 0.0
+    "context_recall": 0.666667
    },
    "detail": {
     "statements": [
-     "Cumulative log change in the NBS CPI index at h=12 is -0.0016.",
-     "The 95% interval is [-0.0582, +0.0550].",
-     "p = 0.9563, n = 297, 1999-02-01 to 2023-10-01.",
-     "The estimator is local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=12.",
-     "The formula is diff(log(gross_total_naira), lag = h, leading) ~ diff(log(oil)) + month_of_year with Newey-West covariance, 12 lags.",
-     "The design's result measures cumulative log change in national FAAC (the channel) and national-month grain.",
+     "Estimate - cumulative log change in the NBS CPI index at h=12: cumulative_pass_through_cpi_h12 = -0.0016, 95% interval [-0.0582, +0.0550], p = 0.9563, n = 297, 1999-02-01 to 2023-10-01 (local projection (Jorda), OLS per horizon, statsmodels-equivalent HAC, h=12).",
+     "Formula: diff(log(gross_total_naira), lag = h, leading) ~ diff(log(oil)) + month_of_year.",
+     "Covariance: Newey-West, 12 lags.",
+     "The design's result measures: cumulative log change in national FAAC (the channel), national-month grain.",
      "Cards that carry no number because of this design-level result: 12.",
-     "Stage 7 robustness for this design: 36 of 48 specifications positive, 12 negative, 24 with an interval above zero and 0 below it.",
-     "1 axis levels flip against the preferred specification.",
+     "Stage 7 robustness for this design: 36 of 48 specifications positive, 12 negative, 24 with an interval above zero and 0 below it; 1 axis levels flip against the preferred specification.",
      "Oster delta on the preferred specification: -44.0380 (interpretable: false).",
-     "The check that decided it: the observed controls move the estimate away from zero, so delta is negative and Oster's usual cutoff does not apply; beta* at delta = 1 is reported instead.",
+     "The check that decided it: the observed controls move the estimate away from zero, so delta is negative and Oster's usual cutoff (delta >= 1) does not apply; beta* at delta = 1 is reported instead.",
      "In-time placebo: n_draws = 48, p_value = 0.0625, shifted_mean_abs = 0.19105683478, shifted_max_abs = 0.64457712741, observed_mean_abs = 0.50621982607, observed = 0.51811762897.",
-     "The in-time placebo shifts the shock series by every non-zero offset in the interval and refits the preferred specification.",
-     "Artifacts: estimates and robustness JSON paths are provided.",
-     "Identifying assumption: Conditional exogeneity holds given the oil price, lagged outcome, fiscal and FX controls and trend.",
-     "FAAC and the exchange rate are downstream of the administration.",
-     "Only ~26 annual observations and five administrations exist, making the interval wide by construction.",
-     "Structural breaks are not fully absorbed by trends.",
-     "Oil is treated as exogenous to Nigerian policy."
+     "Note = The in-time placebo for this design: shift the shock series by every non-zero offset in the interval and refit the preferred specification.",
+     "A real transmission channel should be largest at the true alignment.",
+     "This is the check Stage 6 ran forward (a 6-month lead) made into a distribution.",
+     "Artifacts: {\"estimates\": \"registry/estimates/2026-10-30/estimates.json\", \"robustness\": \"registry/robustness/2026-10-30/robustness.json\"}.",
+     "Identifying assumption: Conditional exogeneity: given the oil price, the lagged outcome, fiscal and FX controls and the trend, the administration dummy is unrelated to any remaining time-varying determinant of the outcome (the unobserved node is absent).",
+     "FAAC and the exchange rate are downstream of the administration, so conditioning on them identifies a direct effect net of the fiscal and FX channel, not the total effect.",
+     "Only ~26 annual observations and five administrations — the interval is wide by construction.",
+     "Structural breaks (2014 rebasing, 2016 and 2023 regime changes) are not fully absorbed by trends.",
+     "Oil is treated as exogenous to Nigerian policy, which the 2016 and 2020 episodes roughly support but do not prove."
     ],
     "statement_supported": [
      false,
@@ -501,8 +502,7 @@
      false,
      false,
      false,
-     false,
-     false,
+     true,
      false,
      false,
      false,
@@ -532,15 +532,13 @@
     ],
     "reference_claims": [
      "Its fiscal family did: all 24 of its 24 specifications are positive and every interval excludes zero.",
-     "Across both outcome families the grid is 36 of 48 positive.",
-     "The price-level family is 12 positive and 12 negative with no interval excluding zero.",
+     "Across both outcome families the grid is 36 of 48 positive — the price-level family is 12 positive and 12 negative with no interval excluding zero.",
      "Its timing is weaker — the in-time placebo over 48 shifted alignments returns p = 0.0625, published as a bound rather than widened until it passed."
     ],
     "claim_supported": [
      false,
-     false,
-     false,
-     false
+     true,
+     true
     ],
     "judge_replied": true
    }
@@ -555,22 +553,21 @@
    "answer_chars": 2123,
    "scores": {
     "faithfulness": 1.0,
-    "answer_relevancy": 0.753507,
+    "answer_relevancy": 0.896712,
     "context_precision": 1.0,
     "context_recall": 1.0
    },
    "detail": {
     "statements": [
-     "No estimate for this (outcome, design) pair exists under the synthetic-control design for under-5 mortality.",
+     "No estimate is available for the under-5 mortality and synthetic-control design pair.",
      "The reason code is design_estimated_not_identified.",
      "The design was run for this outcome in its own stage and is reported as estimated but not identified.",
      "A synthetic control has no sampling distribution, so there is no interval to put beside a point estimate.",
      "The design-level artifact carries the gap, its placebos, and the check that failed instead of a card number the honesty layer could not support.",
-     "The identifying assumption is that the synthetic control reproduces Nigeria's outcome path absent treatment.",
-     "Donor-weighted common factors stand in for Nigeria's counterfactual, and no Nigeria-specific shock coincides with the treatment.",
-     "The design cannot rule out idiosyncratic Nigeria-only shocks inside the treatment window.",
-     "Five treated tenures is a small treated set.",
-     "Sparse pre-treatment fit weakens the comparison.",
+     "The identifying assumption is that the synthetic control reproduces Nigeria's outcome path absent treatment, using donor-weighted common factors to stand in for Nigeria's counterfactual, with no Nigeria-specific shock coinciding with the treatment.",
+     "The design cannot rule out idiosyncratic Nigeria-only shocks inside the treatment window such as Niger Delta militancy and insurgency.",
+     "Five treated tenures is a small treated set, meaning the donor pool cannot always buy a credible counterfactual.",
+     "Sparse pre-treatment fit weakens the comparison, requiring the card to state this rather than shipping the gap.",
      "Contemporaneous global shocks affect donors differently than Nigeria even when the oil channel is shared."
     ],
     "statement_supported": [
@@ -583,22 +580,21 @@
      true,
      true,
      true,
-     true,
      true
     ],
     "generated_questions": [
-     "What is the estimate for under-5 mortality under the synthetic-control design?",
-     "What is the identifying assumption for the synthetic control design regarding Nigeria's outcome path?",
-     "What potential confounding factors or limitations cannot be ruled out by this design?"
+     "What is the under-5 mortality estimate under the synthetic-control design?",
+     "What identifying assumption is made by the synthetic-control design for under-5 mortality?",
+     "What limitations or factors cannot be ruled out by the synthetic-control design for under-5 mortality?"
     ],
     "similarities": [
-     0.97776,
-     0.722407,
-     0.560353
+     0.97134,
+     0.871319,
+     0.847478
     ],
     "context_usable": [
      true,
-     true
+     false
     ],
     "reference_claims": [
      "No number appears on the card.",
@@ -628,25 +624,25 @@
    "answer_chars": 1208,
    "scores": {
     "faithfulness": 1.0,
-    "answer_relevancy": 0.846244,
-    "context_precision": 1.0,
-    "context_recall": 0.6
+    "answer_relevancy": 0.751178,
+    "context_precision": 0.833333,
+    "context_recall": 0.75
    },
    "detail": {
     "statements": [
      "Every test runs on the native observation a source actually published, never on the monthly spine.",
-     "The spine used by the app is only 16.4% observed.",
-     "The spine consists of 1,373 of 8,350 rows observed.",
-     "There are 4,389 interpolated rows.",
-     "There are 2,588 empty rows.",
-     "Before the monthly Brent, FAAC and UCDP landings, it was 10.1% of 7,682.",
-     "A unit-root or cointegration test on interpolated rows reports the properties of the interpolator rather than the data.",
+     "The spine used by the app is only 16.4 % observed.",
+     "The spine has 1,373 of 8,350 rows observed.",
+     "The spine has 4,389 interpolated rows.",
+     "The spine has 2,588 empty rows.",
+     "Before the monthly Brent, FAAC and UCDP landings, it was 10.1 % of 7,682.",
+     "A unit-root or cointegration test on interpolated rows reports the properties of the interpolator, not of the data.",
      "Linear interpolation induces near-perfect serial correlation by construction.",
-     "ADF would fail to reject stationarity for a series that is strongly mean-reverting.",
+     "ADF would fail to reject stationarity for a series that is strongly mean-reverting due to linear interpolation.",
      "Johansen would find rank in a system of straight lines.",
      "Family B is evaluated at its annual cross-check (~26 observations).",
-     "Base spec §9 already assumes and its sample-size constraint already discloses the annual cross-check, not monthly.",
-     "This constraint was surfaced by Stage 4 as C-30 and is now a Stage 5 gate, not a note."
+     "Base spec §9 already assumes and its sample-size constraint already discloses the annual evaluation for Family B, not monthly.",
+     "This is the same constraint Stage 4 surfaced as C-30 and it is now a Stage 5 gate, not a note."
     ],
     "statement_supported": [
      true,
@@ -665,31 +661,29 @@
     ],
     "generated_questions": [
      "How much of the monthly data series is actually observed rather than interpolated?",
-     "What percentage and number of rows in the app's monthly spine are observed versus interpolated or empty?",
-     "Why are unit-root or cointegration tests on interpolated rows problematic?"
+     "Why can't unit-root or cointegration tests be run on interpolated rows?",
+     "At what frequency is Family B evaluated according to the design memo?"
     ],
     "similarities": [
      1.0,
-     0.8252,
-     0.713531
+     0.6946,
+     0.558935
     ],
     "context_usable": [
      true,
-     true,
+     false,
      true
     ],
     "reference_claims": [
-     "1,373 of 8,350 rows are observed (16.4 %).",
-     "4,389 rows are interpolated.",
-     "2,588 rows are unobserved.",
-     "The app draws interpolated months dashed.",
-     "Stage 7 excludes them on a robustness axis."
+     "1,373 of 8,350 rows are observed (16.4 %)",
+     "4,389 are interpolated",
+     "2,588 unobserved",
+     "The app draws interpolated months dashed and Stage 7 excludes them on a robustness axis."
     ],
     "claim_supported": [
      true,
      true,
      true,
-     false,
      false
     ],
     "judge_replied": true
@@ -705,7 +699,7 @@
    "answer_chars": 1080,
    "scores": {
     "faithfulness": 1.0,
-    "answer_relevancy": 0.809572,
+    "answer_relevancy": 0.709928,
     "context_precision": 1.0,
     "context_recall": 0.75
    },
@@ -713,17 +707,15 @@
     "statements": [
      "The brief asks whether PDP and APC tenures moved health, education, security or the economy.",
      "They did not answer that, and no estimator would have.",
-     "There are four to five administrations in the window.",
-     "There are 22–23 annual observations per national outcome.",
+     "There are four to five administrations in the window and 22–23 annual observations per national outcome.",
      "Stage 5 rebuilt the actual design matrix and computed the smallest effect each design could detect at 80 % power.",
      "The Tier-3 column is not a quirk of the estimator.",
      "It is the mandated oil × tenure interactions, which are collinear with the tenure dummies at R² 0.997–0.999.",
      "The only effects this design can see are ones as large as the series' own residual variation, which is not a hypothesis.",
      "This is a statement about arithmetic, not a null result.",
-     "\"we found no tenure effect\" would imply the design could have found one."
+     "The distinction matters: 'we found no tenure effect' would imply the design could have found one."
     ],
     "statement_supported": [
-     true,
      true,
      true,
      true,
@@ -736,22 +728,22 @@
     ],
     "generated_questions": [
      "Why can't you tell me whether PDP or APC tenures did better?",
-     "Why is it impossible for any estimator to determine if PDP or APC tenures moved health, education, security, or the economy?",
-     "Why is the inability of the design to see tenure effects described as a matter of arithmetic rather than a null result?"
+     "Why is the inability to detect tenure effects a statement of arithmetic rather than a null result?",
+     "What makes the tenure dummies collinear with the mandated interactions?"
     ],
     "similarities": [
      1.0,
-     0.849018,
-     0.579699
+     0.593538,
+     0.536246
     ],
     "context_usable": [
      true,
      true
     ],
     "reference_claims": [
-     "There are four to five administrations against 22–23 annual observations per outcome",
-     "the mandated oil x tenure interactions are collinear with the tenure dummies at R² 0.997–0.999",
-     "the smallest detectable effect is 35–99 residual standard deviations",
+     "There are four to five administrations against 22–23 annual observations per outcome.",
+     "The mandated oil x tenure interactions are collinear with the tenure dummies at R² 0.997–0.999.",
+     "The smallest detectable effect is 35–99 residual standard deviations.",
      "It is a statement about arithmetic, not a null result."
     ],
     "claim_supported": [
@@ -774,17 +766,17 @@
    "answer_chars": 810,
    "scores": {
     "faithfulness": 1.0,
-    "answer_relevancy": 0.808663,
-    "context_precision": 0.833333,
+    "answer_relevancy": 0.785948,
+    "context_precision": 1.0,
     "context_recall": 1.0
    },
    "detail": {
     "statements": [
      "The quality gates flagged almost half the landed series.",
      "674 series are gated.",
-     "There are 359 ok series.",
-     "There are 313 flagged series.",
-     "There are 2 empty series.",
+     "359 series are ok.",
+     "313 series are flagged.",
+     "2 series are empty.",
      "Flagged does not mean unusable.",
      "Flagged means a rule fired and the reason travels with the series into the base and the registry.",
      "The two empty series are Eritrea's and Somalia's CPI in the donor panel, which the source has no data for.",
@@ -803,26 +795,30 @@
     ],
     "generated_questions": [
      "How many of the landed series did the quality gates flag?",
-     "What do the ok, flagged, and empty counts add up to for the gated series?",
-     "What does a 'flagged' status mean for a series?"
+     "What is the breakdown of the 674 gated series?",
+     "What does it mean when a series is marked as flagged?"
     ],
     "similarities": [
      1.0,
-     0.743089,
-     0.682899
+     0.670654,
+     0.687191
     ],
     "context_usable": [
      true,
-     false,
+     true,
      true
     ],
     "reference_claims": [
      "674 series are gated.",
-     "There are 359 ok series, 313 flagged series, and 2 empty series.",
+     "359 series are ok.",
+     "313 series are flagged.",
+     "2 series are empty.",
      "A flag means a rule fired and the reason travels with the series.",
      "A flag does not mean the series was removed."
     ],
     "claim_supported": [
+     true,
+     true,
      true,
      true,
      true,
@@ -837,10 +833,10 @@
    "contexts": [
     "coverage:registry"
    ],
-   "answer_chars": 874,
+   "answer_chars": 875,
    "scores": {
     "faithfulness": 1.0,
-    "answer_relevancy": 0.805835,
+    "answer_relevancy": 0.800525,
     "context_precision": 1.0,
     "context_recall": 0.75
    },
@@ -849,8 +845,8 @@
      "The registry holds 36 model cards.",
      "There are 12 outcomes across 3 identification designs.",
      "2 cards carry a published estimate.",
-     "34 cards carry a reason instead from a closed set.",
-     "The reasons include design_estimated_not_identified 1, design_not_run 2, design_result_is_channel_level 9, no_specification_declared 10, and outcome_series_absent 12.",
+     "34 cards carry a reason instead, from a closed set.",
+     "The reasons include design_estimated_not_identified 1, design_not_run 2, design_result_is_channel_level 9, outcome_not_at_design_grain 7, and outcome_series_absent 15.",
      "A card with no number is not a null result.",
      "A card with no number names why no specification was published for that (outcome, design) pair.",
      "The design-level results sit on the index, once, because they are statements about the channel a design rests on rather than about any single card's outcome."
@@ -866,14 +862,14 @@
      true
     ],
     "generated_questions": [
-     "How many model cards does the registry hold?",
-     "How many model cards carry a published estimate?",
-     "What do cards without a published number represent?"
+     "How many of the 36 model cards carry a published number?",
+     "What do the model cards that do not carry a number show instead?",
+     "Where do the design-level results sit?"
     ],
     "similarities": [
-     0.786075,
-     0.846695,
-     0.784734
+     1.0,
+     0.830516,
+     0.57106
     ],
     "context_usable": [
      true
@@ -904,7 +900,7 @@
    "answer_chars": 1364,
    "scores": {
     "faithfulness": 1.0,
-    "answer_relevancy": 0.896152,
+    "answer_relevancy": 0.838665,
     "context_precision": 1.0,
     "context_recall": 1.0
    },
@@ -912,24 +908,22 @@
     "statements": [
      "The app draws interpolated values dashed.",
      "Stage 7 excludes interpolated values on a robustness axis.",
-     "observation_type makes this usable downstream.",
-     "A dbt test fails if any interpolated month sits more than twelve months from a real observation."
+     "observation_type is what makes this usable downstream."
     ],
     "statement_supported": [
-     true,
      true,
      true,
      true
     ],
     "generated_questions": [
-     "How can I tell an interpolated value from an observed one in the app?",
-     "How are interpolated values displayed in the app?",
-     "What downstream effect does observation_type have on interpolated values?"
+     "How does the app display interpolated values compared to observed ones?",
+     "What field in the data makes it possible to distinguish interpolated values from observed ones downstream?",
+     "How are interpolated values handled in Stage 7?"
     ],
     "similarities": [
-     1.0,
-     0.898279,
-     0.790176
+     0.928113,
+     0.85613,
+     0.731753
     ],
     "context_usable": [
      true,
@@ -939,12 +933,10 @@
     "reference_claims": [
      "Every row carries observation_type.",
      "The app draws interpolated segments dashed.",
-     "Stage 7 excludes interpolated segments on a robustness axis.",
-     "Interpolation is linear and only between two observations exactly twelve months apart.",
-     "Interpolation is never for a count."
+     "Stage 7 excludes them on a robustness axis.",
+     "Interpolation is linear and only between two observations exactly twelve months apart, and never for a count."
     ],
     "claim_supported": [
-     true,
      true,
      true,
      true,
@@ -964,7 +956,7 @@
    "answer_chars": 1409,
    "scores": {
     "faithfulness": 1.0,
-    "answer_relevancy": 0.956029,
+    "answer_relevancy": 0.908901,
     "context_precision": 1.0,
     "context_recall": 1.0
    },
@@ -973,18 +965,10 @@
      "For Buhari 2015, the fatalities shift was −67.5 %.",
      "For Buhari 2015, the placebo p-value for fatalities was 0.017.",
      "For Buhari 2015, the pre-trend shift for fatalities was 83.8 %.",
-     "For Buhari 2015, the fatalities verdict was `not_interpretable_pre_trend`.",
-     "For Buhari 2015, the incidents shift was −48.0 %.",
-     "For Buhari 2015, the placebo p-value for incidents was 0.085.",
-     "For Buhari 2015, the pre-trend shift for incidents was 40.4 %.",
-     "For Buhari 2015, the incidents verdict was `no_shift_detected`.",
-     "Buhari 2015 is the largest fall in fatalities (−67.5 %, p = 0.017) against the same 58-month distribution."
+     "For Buhari 2015, the verdict for fatalities was `not_interpretable_pre_trend`.",
+     "Buhari 2015 represents the largest fall in fatalities (−67.5 %, p = 0.017) family-wise among the four."
     ],
     "statement_supported": [
-     true,
-     true,
-     true,
-     true,
      true,
      true,
      true,
@@ -992,19 +976,19 @@
      true
     ],
     "generated_questions": [
-     "How did fatalities change after Buhari was sworn in in 2015?",
-     "What was the verdict for fatalities after Buhari took office in 2015?",
-     "Is the shift in fatalities after Buhari's 2015 inauguration interpretable?"
+     "Did fatalities change after Buhari was sworn in in 2015?",
+     "What was the placebo p-value and verdict for fatalities after Buhari took office in 2015?",
+     "How does the shift in fatalities after Buhari's 2015 inauguration rank family-wise?"
     ],
     "similarities": [
-     0.974457,
-     0.941165,
-     0.952465
+     0.979187,
+     0.854278,
+     0.893239
     ],
     "context_usable": [
      true,
-     false,
-     false
+     true,
+     true
     ],
     "reference_claims": [
      "Fatalities fell 67.5 % over the 12 months after the transition (placebo p = 0.017).",
@@ -1028,7 +1012,7 @@
    "answer_chars": 439,
    "scores": {
     "faithfulness": 1.0,
-    "answer_relevancy": 0.818371,
+    "answer_relevancy": 0.791984,
     "context_precision": 1.0,
     "context_recall": 1.0
    },
@@ -1037,7 +1021,7 @@
      "Annotated shock band 2 is COVID-19.",
      "The COVID-19 shock band covers the period from 2020-03-01 to 2020-12-01.",
      "The base spec is §8 shock band.",
-     "There was a pandemic demand collapse.",
+     "The pandemic caused a demand collapse.",
      "Brent averaged $18.38 in April 2020.",
      "The band is a declared annotation on the charts and in the analysis, not a break detected by a test."
     ],
@@ -1051,13 +1035,13 @@
     ],
     "generated_questions": [
      "Which period does the COVID-19 shock band cover?",
-     "What was the average price of Brent in April 2020 during the COVID-19 shock band?",
-     "Is the COVID-19 shock band a declared annotation or a break detected by a test?"
+     "What was the average price of Brent in April 2020 during the COVID-19 shock?",
+     "Is the COVID-19 shock band a break detected by a test or a declared annotation?"
     ],
     "similarities": [
      1.0,
-     0.674663,
-     0.78045
+     0.614416,
+     0.761535
     ],
     "context_usable": [
      true
@@ -1084,19 +1068,21 @@
    "answer_chars": 599,
    "scores": {
     "faithfulness": 1.0,
-    "answer_relevancy": 0.869929,
+    "answer_relevancy": 0.869541,
     "context_precision": 1.0,
     "context_recall": 1.0
    },
    "detail": {
     "statements": [
      "Goodluck Jonathan was president in administration 3.",
-     "His party was PDP.",
-     "His term was from 2010-05-06 to 2015-05-29.",
-     "He served 1 term.",
-     "He was acting from 2010-02-09 and sworn in on 2010-05-06."
+     "Goodluck Jonathan's party was PDP.",
+     "Goodluck Jonathan's administration was from 2010-05-06 to 2015-05-29.",
+     "Goodluck Jonathan served 1 term.",
+     "Goodluck Jonathan was acting from 2010-02-09.",
+     "Goodluck Jonathan was sworn in on 2010-05-06, which is the single decided boundary."
     ],
     "statement_supported": [
+     true,
      true,
      true,
      true,
@@ -1104,22 +1090,22 @@
      true
     ],
     "generated_questions": [
-     "Who was president in 2012?",
-     "Which political party did the president in 2012 belong to?",
+     "Who was the president in 2012?",
+     "Which party did the president in 2012 belong to?",
      "What were the dates of the administration in 2012?"
     ],
     "similarities": [
-     0.95759,
-     0.955216,
+     0.958392,
+     0.95325,
      0.696981
     ],
     "context_usable": [
      true
     ],
     "reference_claims": [
-     "Goodluck Jonathan was in office from 2010-05-06 to 2015-05-29.",
-     "He was affiliated with the PDP party.",
-     "He was acting from 2010-02-09.",
+     "Goodluck Jonathan served from 2010-05-06 to 2015-05-29.",
+     "Goodluck Jonathan belonged to the PDP party.",
+     "Goodluck Jonathan was acting from 2010-02-09.",
      "The sworn-in date is the single decided boundary of the administration spine."
     ],
     "claim_supported": [
@@ -1142,34 +1128,30 @@
    "answer_chars": 1273,
    "scores": {
     "faithfulness": 1.0,
-    "answer_relevancy": 0.856521,
+    "answer_relevancy": 0.863185,
     "context_precision": 1.0,
     "context_recall": 1.0
    },
    "detail": {
     "statements": [
      "The outcome is Under-5 mortality rate (u5mr).",
-     "The unit of measurement is per 1,000 live births.",
-     "The better direction is down (lower is better).",
+     "The unit is per 1,000 live births.",
+     "The direction is down (lower is better).",
      "The frequency is annual.",
      "The source is NDHS / UN IGME.",
      "The coverage is partial.",
      "World Bank u5mr has 61 observations to 2024 with no gaps.",
-     "The annual series is largely interpolation across a 5-yearly NDHS cycle.",
-     "The annual series renders as a flagged segment.",
+     "The annual series is largely interpolation across a 5-yearly NDHS cycle, rendering as a flagged segment.",
      "Model card u5mr__A covers the Under-5 mortality rate under Design A (DiD).",
-     "Design A is a State dose-response DiD.",
-     "The unit for Design A is state-month (36 states + FCT).",
+     "Design A uses state-month unit covering 36 states + FCT.",
      "The estimand is ATT of a federal policy shift, with state exposure intensity as the dose.",
      "The estimator is Callaway & Sant'Anna group-time ATT (did); fixest TWFE cross-check.",
-     "The identifying assumption is Parallel trends: absent the policy shift, states with different exposure intensities would have followed parallel outcome paths.",
-     "Formally, no unmeasured state-by-time confounder affects both the dose and the outcome (the unobserved node is absent).",
-     "The adjustment set (backdoor criterion) includes donor, inherit, oil, statefe, timefe.",
+     "The identifying assumption is parallel trends.",
+     "No unmeasured state-by-time confounder affects both the dose and the outcome.",
+     "The adjustment set includes donor, inherit, oil, statefe, and timefe.",
      "The node assumed absent is u_st."
     ],
     "statement_supported": [
-     true,
-     true,
      true,
      true,
      true,
@@ -1190,12 +1172,12 @@
     "generated_questions": [
      "What unit is under-5 mortality measured in?",
      "Which direction is better for under-5 mortality?",
-     "What is the frequency and coverage of the under-5 mortality rate data?"
+     "What is the source and frequency of the under-5 mortality rate data?"
     ],
     "similarities": [
      0.940449,
      0.850806,
-     0.778307
+     0.798299
     ],
     "context_usable": [
      true,
@@ -1203,7 +1185,7 @@
      true
     ],
     "reference_claims": [
-     "Under-5 mortality is measured per 1,000 live births.",
+     "The unit is per 1,000 live births.",
      "The frequency is annual.",
      "Lower is better.",
      "The card's coverage status is partial.",

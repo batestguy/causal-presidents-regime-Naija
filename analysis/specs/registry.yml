@@ -95,12 +95,17 @@ mapping:
 # ---------------------------------------------------------------------------------------------
 not_estimated_reasons:
   outcome_series_absent: >-
-    The outcome has no usable series, so no Stage 5 pre-check could run for this (outcome, design) pair.
-    The card is a declared gap, not a null result.
+    The outcome has no usable series at this design's unit, so no specification could be declared for this
+    (outcome, design) pair. The card is a declared gap, not a null result.
   no_specification_declared: >-
     Stage 5 ran a pre-check for this pair, but Stage 6 declared no specification for it: the stage fitted
     the outcomes whose series it could carry, and this was not one of them. Nothing about the estimate
     stage says this question was asked and answered.
+  outcome_not_at_design_grain: >-
+    The outcome exists, but not at the grain this design needs, so the pair is not estimable as specified.
+    Design A regresses a state-by-month outcome on that state's own allocation; this outcome is published
+    only nationally, or — where a state-level series exists in the sources — only at survey or annual
+    grain. A state-by-month series would reopen the pair; a national one cannot.
   design_result_is_channel_level: >-
     The design has a published result, but it is a statement about the channel the design rests on (the
     national FAAC series) rather than about this card's outcome. The number is on the index, once, where
@@ -113,8 +118,10 @@ not_estimated_reasons:
     and the design-level artifact carries the gap, its placebos and the check that failed instead of a card
     number the honesty layer could not support.
 
-# Precedence: an outcome with no series (`outcome_series_absent`) outranks the design-level reasons,
-# because it is a statement about this card's data rather than about the design.
+# Precedence: a statement about this card's own data (`outcome_series_absent`,
+# `outcome_not_at_design_grain`) outranks the design-level reasons, because it is a fact about the outcome
+# rather than about what the design managed to publish. An outcome that exists but at the wrong grain is
+# `outcome_not_at_design_grain`; one with no usable series at any grain is `outcome_series_absent`.
 
 # ---------------------------------------------------------------------------------------------
 # The block written onto each card

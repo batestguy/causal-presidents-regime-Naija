@@ -65,8 +65,8 @@ checks that no B card ever displays B's coefficient.
 
 | Reason | Cards |
 |---|---|
-| `outcome_series_absent` | 12 |
-| `no_specification_declared` | 10 |
+| `outcome_series_absent` | 15 |
+| `outcome_not_at_design_grain` | 7 |
 | `design_result_is_channel_level` | 9 |
 | `design_not_run` | 2 |
 | `design_estimated_not_identified` | 1 |

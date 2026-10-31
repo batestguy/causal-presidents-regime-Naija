@@ -40,6 +40,7 @@ TOL = 1e-9
 REASONS = {
     "outcome_series_absent",
     "no_specification_declared",
+    "outcome_not_at_design_grain",
     "design_result_is_channel_level",
     "design_not_run",
     "design_estimated_not_identified",
@@ -218,7 +219,15 @@ def main() -> int:
                     w["status"] != "refused" for w in cdoc.get("windows", []))
                 expect = "design_estimated_not_identified" if estimated else "design_not_run"
             else:
-                expect = "no_specification_declared"
+                # Design A is a state-by-month design, so the reason turns on the card's own measured
+                # outcome check (C-90), not on a list of outcomes: wrong grain, or no series at all.
+                checks = {c["id"]: c for c in (card["diagnostics"].get("checks") or [])}
+                attribution = checks.get("state_outcome_attribution") or {}
+                if attribution.get("verdict") != "pass":
+                    declared_gap = card["diagnostics"].get("coverage_status") == "declared_gap"
+                    expect = "outcome_series_absent" if declared_gap else "outcome_not_at_design_grain"
+                else:
+                    expect = "no_specification_declared"
             if reason["code"] != expect:
                 fail(failures, f"{dag_id}: reason {reason['code']!r}, recomputed {expect!r}")
             if len(reason.get("detail", "")) < 20:

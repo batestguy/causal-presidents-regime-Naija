@@ -105,6 +105,8 @@ reasons:
     sentence: "There is no usable series to estimate on."
   no_specification_declared:
     sentence: "No specification was declared for this pair, so nothing was estimated."
+  outcome_not_at_design_grain:
+    sentence: "The outcome exists, but not at the grain this design needs — for example only nationally, when the design compares states."
   design_result_is_channel_level:
     sentence: "This design was run, but its result is about the money channel rather than about this outcome."
   design_not_run:
