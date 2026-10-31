@@ -86,7 +86,8 @@ planned specific fix.
   only. Decide: extend Design C's spec to these outcomes (where a donor panel exists or is buyable: WB
   country-year GDP exists; the pool extension is declared in `design_c.yml`'s own donor fields) or record
   the refusal. A spec change to C re-runs `11_design_c.R` and `verify_design_c.py` — that is the exit.
-- [ ] **C3. `outcome_series_absent` (12 cards).** Audit award series against sources, cheapest first:
+- [ ] **C3. `outcome_series_absent` (15 cards — 12 as originally counted, plus the 3 education refusals
+  C-90 moved here).** Audit the series against their sources, cheapest first:
   (i) cross-country *security* outcomes for Design C are likely cheap — UCDP's bulk archive is keyless and
   country-level pages exist (a client of the `ucdp.py` family); (ii) the World Bank outcomes for missing
   B/C donor panels come from an already-adopted source (a second WDI dataset id + parser wiring);

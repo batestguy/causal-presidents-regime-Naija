@@ -2934,9 +2934,10 @@ C-89, one unit later, applied on the first try.
 What remains in Phase C is C2 (the 2 `design_not_run` Design C cards), C3 (the 12 → now 15
 `outcome_series_absent` cards, three of which are the education refusals) and C5's exit battery.
 
-## Next session starts here (written 2026-10-30, end of session)
+## Next session starts here (written 2026-10-30; updated 2026-10-31 after C4 and C1)
 
-**Phases A and B are closed, Phase C is two units from done: `[x] A`, `[x] B`, `[~] C`, `frontier: C`.**
+**Phases A and B are closed; Phase C has two sub-tracks and the exit battery left: `[x] A`, `[x] B`,
+`[~] C`, `frontier: C`.**
 Everything above is committed and pushed; `data/pending/` is empty; every registry family's newest vintage is
 **2026-10-30** (the 2026-10-29 family is intact as the 25.1 record). The chain is green: **23/23 verifiers**,
 `validate_artifacts` (74 documents, the C-44 invariant), the phase gate, and CI + the Pages deploy.
@@ -2959,7 +2960,8 @@ be a Stage 5 check reading the wrong object. What is left is C2's two Design C r
    is specified for `u5mr` only. Extend `analysis/specs/design_c.yml`'s donor fields (World Bank country-year
    GDP is already adopted) and re-run `11_design_c.R` + `verify_design_c.py`, or record the refusal. A spec
    change to C re-runs the placebos: that is the exit, and it is the most compute-bound unit in the phase.
-4. **C3 — the 12 `outcome_series_absent` cards.** Three sub-tracks, cheapest first: (i) cross-country
+4. **C3 — the 15 `outcome_series_absent` cards** (12 as the plan counted them, plus the three education
+   refusals C-90 moved here). Three sub-tracks, cheapest first: (i) cross-country
    **security** outcomes for Design C are likely cheap — UCDP's bulk archive is keyless and a client of the
    `ucdp.py` family (a *donor* panel, not a new Nigeria series) would unlock the conflict outcomes for C;
    (ii) the World Bank outcomes for missing B/C donor panels are a second WDI dataset id plus parser wiring
