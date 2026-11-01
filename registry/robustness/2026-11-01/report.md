@@ -1,6 +1,6 @@
 # Stage 7 — robustness and the multiverse, vintage 2026-11-01
 
-Generated 2026-11-01T11:30:44+0100 by `analysis/R/04_robustness.R` from `analysis/specs/robustness.yml`. Every specification and every count is recomputed independently by `tests/verify_stage7.py`.
+Generated 2026-11-01T12:54:06+0100 by `analysis/R/04_robustness.R` from `analysis/specs/robustness.yml`. Every specification and every count is recomputed independently by `tests/verify_stage7.py`.
 
 ## What this stage is for
 

@@ -11,7 +11,7 @@
     "worldbank_donor_outcomes": "2026-11-01",
     "worldbank_donors": "2026-10-18"
   },
-  "generated_at": "2026-11-01T10:22:44+00:00",
+  "generated_at": "2026-11-01T11:50:55+00:00",
   "generator": "ingestion/flows/check_quality.py",
   "spec": "analysis/specs/quality.yml",
   "document_sources": [

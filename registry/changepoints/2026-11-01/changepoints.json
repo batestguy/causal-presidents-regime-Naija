@@ -3,10 +3,10 @@
   "stage": "9-prep",
   "layer": "declared breaks in each outcome series — description, never attribution",
   "vintage": "2026-11-01",
-  "generated_at": "2026-11-01T11:31:18+0100",
+  "generated_at": "2026-11-01T12:54:21+0100",
   "generator": {
     "script": "analysis/R/09_changepoints.R",
-    "git_sha": "63f3f0f"
+    "git_sha": "e22debd"
   },
   "spec": {
     "path": "analysis/specs/changepoints.yml",

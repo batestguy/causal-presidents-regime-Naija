@@ -1,6 +1,6 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-11-01 (twenty-fifth session) — this session's record is the last section of this file · **Stage:** 9, and the **completion plan's Phases A, B, C, D and E are closed**: GED 26.1 adopted, Design B's monthly-CPI outcome fitted, **Design C extended to every outcome the donor panel carries** (9 outcomes, 45 windows, none identified), the optional RAGAS library run **deferred on a measured budget** (D-01), and delivery polish done with two real defects fixed by the clean-clone proof · **verified at vintage 2026-11-01**: `dbt build` (179/179), every R stage, the corpus, all four evals and every verifier, plus `validate_artifacts` and the phase gate · **frontier: F, the freeze**
+**Last updated:** 2026-11-01 (twenty-fifth session) — this session's record is the last section of this file · **Stage:** 9 · **The project is frozen at vintage 2026-11-01**: every phase of `presidents-completion-plan.md` is closed with its exit criteria measured green, and the section below states what the frozen system claims, refuses and leaves open
 
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
@@ -2609,36 +2609,44 @@ returns the **2026-11-01** vintage; `/designs/` shows *9 outcomes, 31 windows es
 methodology page shows *969 of 2,959* placebo fits. CI's `static` job is green on both commits, and the Pages
 deploy follows it.
 
-## Next session starts here (written 2026-11-01, at the close of Phase E)
+## The frozen state (2026-11-01)
 
-**Phases A, B, C, D and E are closed; the frontier is F: `[x] A`, `[x] B`, `[x] C`, `[x] D`, `[x] E`,
-`frontier: F`.**
-Every registry family's newest vintage is **2026-11-01**; the chain prints `all checks passed`, every verifier
-exits 0, `validate_artifacts` and the phase gate pass, and the live Pages site serves this registry.
+**The project is complete, and this is the last section of the log.** Every phase of
+`presidents-completion-plan.md` is closed with its exit criteria measured green; `presidents-completion-state.yml`
+carries the evidence, phase by phase; and there is no next session queued.
 
-**What Phase F ("completion freeze") is, and the only open items:**
+**What the frozen system is.** Seven sources acquired and provenance-verified (World Bank national, the donor
+panel, its four outcome paths, FRED Brent, 174 FAAC documents, the UCDP GED archive, the NBS monthly CPI), a
+quality report that gates **1,070 series**, a 37-unit state panel and a national monthly spine built by dbt under
+declared rules, six stages of diagnostics and estimation above them, and **36 model cards whose every number or
+reason is a field of a committed artifact**. Two cards carry a published number; the other 34 name a reason from
+a closed set, and the two codes that used to absorb uncertainty — `design_not_run` and
+`no_specification_declared` — now carry none. Design A is estimated and not identified; Design B's fiscal family
+is estimated with a timing caveat; Design C is fitted for every outcome the donor panel carries and identifies
+nothing; the tenure contrasts are descriptive and say so. The app, the site and the answer layer read the
+registry and compute nothing at render time.
 
-1. **A final prose pass.** `PROGRESS.md`, `PHASES.md` and `docs/decisions.md` end in their final state — the
-   dated session logs stay as they are (they record what was true when written), but the *status* lines at the
-   top of `PHASES.md`, the plan's checkboxes and the state file must agree with the artifacts one last time.
-2. **The two published failures stay published.** The embedding retrieval gates (refusal 0.5, out-of-scope
-   0.25) and the answer-quality judge's noise range are not widened to look green; `limitations.md` §11's
-   re-acquisition limit (the NBS elibrary index returns 500) is the newest one and it stays written down.
-3. **`git log` clean, one final commit.** No uncommitted verifier state, no `.probe/` artefacts tracked, no
-   `data/` in git.
-4. **The project is done when the checkout is the deliverable:** a reader with their own `.env` runs
-   `scripts/verify.sh` and watches it pass against the landed raw layer. A *fresh* clone cannot be green
-   today, for a reason that is external and published — the NBS index — and Phase F must not pretend
-   otherwise.
+**What it refuses to claim.** No ranking of presidents, no scorecard, no pooled tenure effect, no party
+comparison, and no causal verb without a named design. Two embedding retrieval gates **fail and are published**
+(0.5 and 0.25), the answer-quality judge is noisy and its range is published rather than averaged, and the
+`ragas` library run is deferred on a measured call budget rather than pretended. A synthetic control has no
+sampling distribution, so none of its gaps is a card number.
 
-**Standing reminders for the freeze session:** the ds-general interpreter for Python, R 4.5.2 for the stages,
-the drlca-rag env only for the corpus rebuild (`HF_HUB_OFFLINE=1`); editing any corpus source
-(`docs/*.md` except `rag.md`, and the registry artifacts) requires the rebuild and the four evals; `data/raw/`
-is never edited and superseded vintages are kept; `verify.sh` must be run from Git Bash on this machine (the
-WSL bash cannot pass Windows paths to the Windows interpreters).
+**How a reader checks it.** With the landed raw layer, one command reproduces every number, verdict and refusal:
 
-**And the mechanical rules this project earned, for whoever reads this next:** a check that passes on the
-wrong object is worse than a failing one (C-49, C-83, C-90); a verifier must certify a degenerate optimum
-rather than expect a second solver to reproduce it (C-92); a new source lands as its own vintage and a fresh
-acquisition is not a reproduction (C-93, E-01); a number that can be undefined publishes `null`, not `"NA"`;
-and prose that quotes a count must be re-derived from the artifact, because the count will move.
+```bash
+PYTHON=/c/Users/TOSHIBA/ds-general/python.exe \
+RAG_PYTHON=/c/conda-envs/drlca-rag/python.exe \
+HF_HUB_OFFLINE=1 bash scripts/verify.sh
+```
+
+It ends in `all checks passed`. **A fresh clone is the one thing it cannot do**, and that is external: the NBS
+elibrary index returns 500, so the FAAC panel and the NBS CPI workbook cannot be re-acquired whole
+(`limitations.md` §11). The raw layer is the record; a fresh acquisition is a new vintage to adopt, not a
+reproduction. Every number quoted in the docs is re-derived by a verifier from the artifact that carries it.
+
+**What remains open, and it is limitation rather than work.** The per-capita dose axis waits on a population
+denominator decision (X-09); D2 waits on NBS state IGR; monthly security after 2024-12 waits on a source that
+does not exist yet; monthly sub-national health waits on DHIS2 credentials; the RAGAS library run waits on a
+judge budget (D-01); and a re-acquisition waits on the NBS index (E-01). Each is named where it is measured, in
+`docs/limitations.md` §13, `robustness.json → unbuilt_axes` or the artifact that owns it.

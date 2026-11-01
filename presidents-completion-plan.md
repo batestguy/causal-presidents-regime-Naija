@@ -150,9 +150,7 @@ planned specific fix.
 
 ## Phase F — completion freeze
 
-- [ ] **F1.** `PROGRESS.md`, `PHASES.md`, `docs/decisions.md` final-state edit; every card reason final;
-  `git log` clean (no uncommitted verifier state). Final commit. The project is done when **the checkout
-  itself is the deliverable**: any reader runs `verify.sh` and watches it pass.
+- [x] **F1. — DONE (2026-11-01): the project is frozen.** `PROGRESS.md`, `PHASES.md` and `docs/decisions.md` end in their final state; every card's reason is final (2 of 36 carry a number, 34 name a reason, and the two codes that used to carry blanks now carry none); `git log` is clean with no `data/`, `.probe/` or `.env` tracked; the final `scripts/verify.sh` printed `all checks passed` at the frozen commit. **The checkout is the deliverable** — with the landed raw layer, one command reproduces every number, every verdict and every refusal. A *fresh* clone is the one thing it cannot do, and that limit is external (the NBS elibrary index returns 500) and published in `limitations.md` §11 rather than hidden.
 
 ---
 

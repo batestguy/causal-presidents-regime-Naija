@@ -1,6 +1,6 @@
 # Stage 8h - Design C, synthetic control - vintage 2026-11-01
 
-Generated 2026-11-01T11:28:18+0100 by `analysis/R/11_design_c.R`. Spec `analysis/specs/design_c.yml` (md5 63f22a5639d74fda0f64ec5ccce19a5c), declared 2026-10-28 for u5mr, before any weight was fitted; extended to the panel's outcomes 2026-11-01, before any of them was fitted.
+Generated 2026-11-01T12:53:09+0100 by `analysis/R/11_design_c.R`. Spec `analysis/specs/design_c.yml` (md5 63f22a5639d74fda0f64ec5ccce19a5c), declared 2026-10-28 for u5mr, before any weight was fitted; extended to the panel's outcomes 2026-11-01, before any of them was fitted.
 
 **This is not the effect of a president.** It is the gap between Nigeria's path and a simplex-weighted
 combination of other countries' paths after a transition, published with the placebos that decide whether

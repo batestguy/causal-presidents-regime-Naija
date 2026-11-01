@@ -1,6 +1,6 @@
 # Stage 6 estimates — vintage 2026-11-01
 
-Generated 2026-11-01T11:30:09+0100 by `analysis/R/03_estimate.R` from `analysis/specs/estimation.yml`. Every number is recomputed independently by `tests/verify_stage6.py`.
+Generated 2026-11-01T12:53:54+0100 by `analysis/R/03_estimate.R` from `analysis/specs/estimation.yml`. Every number is recomputed independently by `tests/verify_stage6.py`.
 
 ## The answer this stage arrived at
 

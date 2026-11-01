@@ -3,10 +3,10 @@
   "stage": "8h",
   "layer": "Design C: a synthetic control per donor-panel outcome, with in-space and in-time placebos - an effect estimate only where its placebos support one",
   "vintage": "2026-11-01",
-  "generated_at": "2026-11-01T11:28:18+0100",
+  "generated_at": "2026-11-01T12:53:09+0100",
   "generator": {
     "script": "analysis/R/11_design_c.R",
-    "git_sha": "63f3f0f"
+    "git_sha": "e22debd"
   },
   "spec": {
     "path": "analysis/specs/design_c.yml",

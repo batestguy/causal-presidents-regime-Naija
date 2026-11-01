@@ -12,7 +12,7 @@ coefficient tables, intervals, diagnostics and sensitivity bounds.
 
 ---
 
-## Status: Stages 0–9 complete and the chain verified end to end — the registry carries two numbers and a reason for every other card
+## Status: frozen at vintage 2026-11-01 — Stages 0–9 complete, the chain verified end to end, and the registry carries two numbers with a reason for every other card
 
 > **The headline finding (2026-10-18): an oil-price shock reaches Nigeria's states, federal money does not
 > visibly buy peace, and the tenure question has one answerable half.** A 10 % rise in Brent reaches state allocations as roughly **5 % more money, two

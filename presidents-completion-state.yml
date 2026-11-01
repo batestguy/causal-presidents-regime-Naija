@@ -83,5 +83,15 @@ phases:
         date: "2026-11-01"
   - id: F
     title: completion freeze
-    status: not_started
-    evidence: []
+    status: done
+    evidence:
+      - check: "final scripts/verify.sh from the frozen commit printed 'all checks passed' (every R stage, dbt 179/179, corpus, four evals, every verifier)"
+        date: "2026-11-01"
+      - check: "scripts/validate_artifacts.py PASS and scripts/check_phase_gate.py reports 6 phases, 0 violations, every phase done"
+        date: "2026-11-01"
+      - check: "every card reason final: verify_registry re-derives all 34 reasons and the index counts; 2 of 36 cards carry a number, design_not_run and no_specification_declared carry none"
+        date: "2026-11-01"
+      - check: "git log clean (no uncommitted verifier state, no data/ or .probe/ tracked, no .env); 558 tracked files; every registry family at vintage 2026-11-01"
+        date: "2026-11-01"
+      - check: "the published failures stay published: two embedding retrieval gates (0.5 and 0.25), the answer-quality judge range, and the NBS elibrary re-acquisition limit in limitations.md 11"
+        date: "2026-11-01"

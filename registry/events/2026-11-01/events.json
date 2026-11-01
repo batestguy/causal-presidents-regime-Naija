@@ -2,7 +2,7 @@
   "stage": "8b",
   "layer": "events (within-tenure timing)",
   "vintage": "2026-11-01",
-  "generated_at": "2026-11-01T11:30:53+0100",
+  "generated_at": "2026-11-01T12:54:11+0100",
   "generator": "analysis/R/06_events.R",
   "spec": "analysis/specs/events.yml",
   "verifier": "tests/verify_events.py",
