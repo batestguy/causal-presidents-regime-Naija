@@ -1,11 +1,11 @@
 {
   "dag_id": "literacy_youth__B",
   "schema_version": "0.3.0",
-  "vintage_date": "2026-10-30",
-  "generated_at": "2026-10-31T00:50:27+0100",
+  "vintage_date": "2026-11-01",
+  "generated_at": "2026-11-01T10:10:55+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "2610e44"
+    "git_sha": "63f3f0f"
   },
   "outcome": {
     "id": "literacy_youth",
@@ -257,8 +257,8 @@
     "blocker": "no usable series for this outcome (declared_gap)",
     "note": "No pre-check could run: this outcome has no series over the window.",
     "coverage_status": "declared_gap",
-    "vintage": "2026-10-30",
-    "source": "registry/diagnostics/2026-10-30/diagnostics.json"
+    "vintage": "2026-11-01",
+    "source": "registry/diagnostics/2026-11-01/diagnostics.json"
   },
   "assets": {
     "svg": "registry/dags/literacy_youth__B.svg"

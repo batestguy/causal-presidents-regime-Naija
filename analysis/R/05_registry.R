@@ -216,7 +216,7 @@ build_block <- function(card) {
   design_id <- as.character(card$design$id)
   diag_status <- as.character(card$diagnostics$status)
 
-  if (identical(diag_status, "not_attempted")) {
+  if (identical(diag_status, "not_attempted") && !identical(design_id, "C")) {
     return(list(
       status = "not_estimated", model_card_ref = NA,
       the_number_is_for_this_card = FALSE,
@@ -277,15 +277,21 @@ build_block <- function(card) {
   }
 
   if (identical(design_id, "C")) {
-    # The synthetic control was fitted for one outcome, in its own stage. A card carries either the fact that
-    # the design was run for this outcome and is not identified, or the reason it was not run — never a gap
-    # dressed up as a coefficient. A synthetic control has no sampling distribution, so the honesty layer's
+    # The synthetic control is fitted in its own stage for every outcome the donor panel carries (C-91). A
+    # card carries either the fact that the design was run for this outcome and is not identified, the fact
+    # that it was run and every window was refused, or the reason it was never reached — never a gap dressed
+    # up as a coefficient. A synthetic control has no sampling distribution, so the honesty layer's
     # "no point estimate without an interval" rule keeps the number off the card and on the design artifact.
-    if (!is.null(design_c) && identical(outcome_id, as.character(design_c$input$outcome))) {
-      est <- Filter(function(w) !identical(w$status, "refused"), design_c$windows)
+    co <- if (is.null(design_c)) list() else Filter(
+      function(o) identical(as.character(o$outcome), outcome_id), design_c$outcomes)
+    if (length(co)) {
+      this_outcome <- co[[1]]
+      est <- Filter(function(w) !identical(w$status, "refused"), this_outcome$windows)
       if (length(est)) {
         gaps <- vapply(est, function(w) as.numeric(w$mean_gap), numeric(1))
         ps <- vapply(est, function(w) as.numeric(w$in_space$p_value), numeric(1))
+        placebos <- vapply(est, function(w) as.integer(w$in_space$n_placebos), integer(1))
+        unit <- as.character(this_outcome$unit)
         return(list(
           status = "not_estimated", model_card_ref = NA,
           the_number_is_for_this_card = FALSE,
@@ -293,17 +299,48 @@ build_block <- function(card) {
           published_result = sprintf("registry/design_c/%s/design_c.json", vintage),
           note = sprintf(paste0("No estimate on this card for (%s, C). The synthetic control was fitted for ",
                                 "this outcome in stage 8h: %d of %d windows estimated, none identified. The ",
-                                "mean gap runs from %+.2f to %+.2f deaths per 1,000 live births against the ",
-                                "synthetic counterfactual, and the in-space placebo rank from p = %.2f to ",
-                                "%.2f over %d placebos. A synthetic control has no sampling distribution, so ",
-                                "there is no interval to publish and the honesty layer keeps a number without ",
-                                "one off the card. The artifact carries every gap path, the placebos and the ",
-                                "check that failed."),
-                         outcome_id, length(est), length(design_c$windows),
-                         min(gaps), max(gaps), min(ps), max(ps),
-                         as.integer(est[[1]]$in_space$n_placebos))
-        ))
+                                "mean gap runs from %+.2f to %+.2f %s against the synthetic counterfactual, ",
+                                "and the in-space placebo rank from p = %.2f to %.2f over %d to %d placebos. ",
+                                "A synthetic control has no sampling distribution, so there is no interval ",
+                                "to publish and the honesty layer keeps a number without one off the card. ",
+                                "The artifact carries every gap path, the placebos and the check that ",
+                                "failed."),
+                         outcome_id, length(est), length(this_outcome$windows),
+                         min(gaps), max(gaps), unit, min(ps), max(ps), min(placebos), max(placebos))))
       }
+      # Run, and every window refused. The refusals are the reason, and they are specific: a series too
+      # sparse to fill a window is an absent series at this design's unit, which is the closed set's own
+      # sentence rather than a shrug.
+      reasons <- unique(vapply(this_outcome$windows, function(w)
+        as.character(w$refused$reason), character(1)))
+      detail <- paste(vapply(this_outcome$windows, function(w)
+        sprintf("%s: %s", w$id, as.character(w$refused$detail)), character(1)), collapse = "; ")
+      return(list(
+        status = "not_estimated", model_card_ref = NA,
+        the_number_is_for_this_card = FALSE,
+        not_estimated_reason = reason("outcome_series_absent"),
+        published_result = sprintf("registry/design_c/%s/design_c.json", vintage),
+        note = sprintf(paste0("No estimate for (%s, C). The synthetic control was run for this outcome and ",
+                              "every declared window was refused (%s): %s. The series exists, but it cannot ",
+                              "fill a window of this design's declared length, so this is a statement about ",
+                              "the data that exists rather than a question left open."),
+                       outcome_id, paste(reasons, collapse = ", "), detail)))
+    }
+    # A C outcome with no block at all: the donor panel does not carry it, so the design never ran. Stage 5
+    # records exactly that as `not_attempted` with the donor panel's metric list, and the card carries it.
+    if (identical(diag_status, "not_attempted")) {
+      blocker <- Filter(function(ch) identical(ch$id, "pretreatment_fit"), card$diagnostics$checks)
+      return(list(
+        status = "not_estimated", model_card_ref = NA,
+        the_number_is_for_this_card = FALSE,
+        not_estimated_reason = reason("outcome_series_absent"),
+        published_result = "index.json#published_results.design.C",
+        note = sprintf(paste0("No estimate for (%s, C). Stage 5 pre-checked this pair and the design's own ",
+                              "donor panel carries no path for this outcome, so no synthetic control can be ",
+                              "fitted: %s. That is a statement about the data that exists, not a question ",
+                              "left open."),
+                       outcome_id,
+                       if (length(blocker)) as.character(blocker[[1]]$detail) else "see the diagnostics")))
     }
     return(list(
       status = "not_estimated", model_card_ref = NA,
@@ -315,7 +352,6 @@ build_block <- function(card) {
                      if (is.null(designs[["C"]][["why"]])) "see the index." else as.character(designs[["C"]][["why"]]))
     ))
   }
-
   # C-90: a design-A pair that Stage 5 pre-checked and Stage 6 never fitted is not "open". The design's unit
   # is a state-month, so the card's own measured check decides why: if this outcome has no state-level series,
   # the pair is not estimable as specified, and the code says which absence it is — a series at the wrong
@@ -412,6 +448,7 @@ res <- list(
     next_step = as.character(designs[["C"]][["next_step"]] %||% NA),
     artifact = as.character(designs[["C"]][["artifact"]] %||% NA),
     counts = if (is.null(designs[["C"]][["counts"]])) NULL else designs[["C"]][["counts"]],
+    outcomes = if (is.null(designs[["C"]][["outcomes"]])) list() else designs[["C"]][["outcomes"]],
     windows = if (is.null(designs[["C"]][["windows"]])) list() else designs[["C"]][["windows"]],
     specifications = list(),
     artifacts = list(estimates = estimates_artifact_ref, robustness = NA)

@@ -55,6 +55,10 @@ if [ -z "$(ls -A data/raw/worldbank 2>/dev/null || true)" ]; then
   $PYTHON ingestion/flows/pull_worldbank.py
   step "acquire: worldbank donors"
   $PYTHON ingestion/flows/pull_worldbank_donors.py
+  # The outcome-path half of the same pool (C-91): a separate source, so the predictor panel whose
+  # membership the intent gate reads is never re-landed to add a series.
+  step "acquire: worldbank donor outcome paths"
+  $PYTHON ingestion/flows/pull_worldbank_donors.py --profile outcomes
   step "acquire: fred"
   $PYTHON ingestion/flows/pull_fred.py
   step "acquire: faac documents"

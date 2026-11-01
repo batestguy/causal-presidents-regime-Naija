@@ -47,8 +47,20 @@ phases:
         date: "2026-10-30"
   - id: C
     title: close or permanently record every not-estimated reason
-    status: in_progress
-    evidence: []
+    status: done
+    evidence:
+      - check: "scripts/validate_artifacts.py PASS (79 registry documents, every stage describing the 2026-11-01 gate report, the C-44 invariant included)"
+        date: "2026-11-01"
+      - check: "every tests/verify_*.py PASS, including verify_design_c (9 outcomes, 31 windows refitted) and verify_registry (34 reasons re-derived, design_not_run at 0)"
+        date: "2026-11-01"
+      - check: "dbt build 179/179 PASS on the 2026-11-01 base (the country-year conflict panel added as a derived staging model)"
+        date: "2026-11-01"
+      - check: "R chain re-run in declared order 02 -> 01 -> 11 -> 03 -> 04 -> 05 -> 06..10, every stage green, every artifact at vintage 2026-11-01"
+        date: "2026-11-01"
+      - check: "RAG corpus rebuilt with --embed and eval_rag / eval_intent / eval_answer / eval_answer_quality re-measured on the new artifacts"
+        date: "2026-11-01"
+      - check: "every card's reason re-published: 10 outcome_series_absent, 8 design_estimated_not_identified, 9 design_result_is_channel_level, 7 outcome_not_at_design_grain, 0 design_not_run, 0 no_specification_declared (C-90, C-91, C-93)"
+        date: "2026-11-01"
   - id: D
     title: optional RAGAS library run on Colab
     status: not_started

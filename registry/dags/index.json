@@ -1,15 +1,15 @@
 {
   "schema_version": "0.3.0",
   "layer": "causal DAGs + published results (the app's data contract)",
-  "vintage_date": "2026-10-30",
-  "generated_at": "2026-10-31T00:50:27+0100",
+  "vintage_date": "2026-11-01",
+  "generated_at": "2026-11-01T10:10:55+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "2610e44"
+    "git_sha": "63f3f0f"
   },
   "diagnostics": {
-    "vintage": "2026-10-30",
-    "source": "registry/diagnostics/2026-10-30/diagnostics.json",
+    "vintage": "2026-11-01",
+    "source": "registry/diagnostics/2026-11-01/diagnostics.json",
     "spec": "analysis/specs/diagnostics.yml",
     "design_verdicts": {
       "A": {
@@ -83,31 +83,31 @@
         "gates": {
           "pretreatment_fit": {
             "passed": null,
-            "detail": "1 outcomes pass the pre-fit threshold of 0.10 x pre-period SD"
+            "detail": "3 outcomes pass the pre-fit threshold of 0.10 x pre-period SD"
           },
           "donor_pool_coverage": {
             "passed": true,
-            "detail": "99 donor countries x 5 predictors"
+            "detail": "99 donor countries x 11 predictors"
           }
         },
         "blocker": null,
         "diagnostics_that_decide": "pretreatment_fit",
         "next_step": "Stage 6 fits the synthetic control where pre-fit passes",
         "card_status_counts": {
-          "fail": 2,
-          "not_attempted": 9,
-          "pass": 1
+          "fail": 3,
+          "not_attempted": 6,
+          "pass": 3
         },
-        "n_outcomes_pass": 1,
-        "n_outcomes_attempted": 3,
-        "status_basis": "computed from the 12 cards: fail=2, not_attempted=9, pass=1"
+        "n_outcomes_pass": 3,
+        "n_outcomes_attempted": 6,
+        "status_basis": "computed from the 12 cards: fail=3, not_attempted=6, pass=3"
       }
     },
     "status_counts": {
       "degraded": 9,
-      "fail": 14,
-      "not_attempted": 12,
-      "pass": 1
+      "fail": 15,
+      "not_attempted": 9,
+      "pass": 3
     }
   },
   "counts": {
@@ -314,8 +314,8 @@
       "assumption_required": [
         "u_ng"
       ],
-      "diagnostics_status": "not_attempted",
-      "diagnostics_blocker": "outcome mmr is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+      "diagnostics_status": "pass",
+      "diagnostics_blocker": null
     },
     {
       "dag_id": "immun_penta3__A",
@@ -360,8 +360,8 @@
       "assumption_required": [
         "u_ng"
       ],
-      "diagnostics_status": "not_attempted",
-      "diagnostics_blocker": "outcome immun_penta3 is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+      "diagnostics_status": "fail",
+      "diagnostics_blocker": "no candidate treated window lets any convex combination of the donors track Nigeria's pre-treatment path: best pre-RMSPE exceeds 0.10 x the pre-period outcome SD"
     },
     {
       "dag_id": "skilled_birth__A",
@@ -407,7 +407,7 @@
         "u_ng"
       ],
       "diagnostics_status": "not_attempted",
-      "diagnostics_blocker": "outcome skilled_birth is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+      "diagnostics_blocker": "no declared window has the required 8 pre and 2 post years of this outcome's native annual path (8 observations over 1999-2022)"
     },
     {
       "dag_id": "literacy_youth__A",
@@ -453,7 +453,7 @@
         "u_ng"
       ],
       "diagnostics_status": "not_attempted",
-      "diagnostics_blocker": "outcome literacy_youth is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+      "diagnostics_blocker": "outcome literacy_youth is not in the donor panel (predictors: cpi_yoy, fatalities, gdp_growth, immun_penta3, incidents, mmr, oil_rents, population, skilled_birth, u5mr, unemp)"
     },
     {
       "dag_id": "primary_completion__A",
@@ -499,7 +499,7 @@
         "u_ng"
       ],
       "diagnostics_status": "not_attempted",
-      "diagnostics_blocker": "outcome primary_completion is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+      "diagnostics_blocker": "outcome primary_completion is not in the donor panel (predictors: cpi_yoy, fatalities, gdp_growth, immun_penta3, incidents, mmr, oil_rents, population, skilled_birth, u5mr, unemp)"
     },
     {
       "dag_id": "ner_primary__A",
@@ -545,7 +545,7 @@
         "u_ng"
       ],
       "diagnostics_status": "not_attempted",
-      "diagnostics_blocker": "outcome ner_primary is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+      "diagnostics_blocker": "outcome ner_primary is not in the donor panel (predictors: cpi_yoy, fatalities, gdp_growth, immun_penta3, incidents, mmr, oil_rents, population, skilled_birth, u5mr, unemp)"
     },
     {
       "dag_id": "fatalities__A",
@@ -590,7 +590,7 @@
         "u_ng"
       ],
       "diagnostics_status": "not_attempted",
-      "diagnostics_blocker": "outcome fatalities is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+      "diagnostics_blocker": "no annual native observations: this outcome is monthly (343 native observations), and the gate's pre-fit reads native annual series only. Stage 8h sums it to the calendar year under its declared grain rule and screens on its own pre-fit."
     },
     {
       "dag_id": "incidents__A",
@@ -635,7 +635,7 @@
         "u_ng"
       ],
       "diagnostics_status": "not_attempted",
-      "diagnostics_blocker": "outcome incidents is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+      "diagnostics_blocker": "no annual native observations: this outcome is monthly (343 native observations), and the gate's pre-fit reads native annual series only. Stage 8h sums it to the calendar year under its declared grain rule and screens on its own pre-fit."
     },
     {
       "dag_id": "gdp_growth__A",
@@ -769,8 +769,8 @@
       "assumption_required": [
         "u_ng"
       ],
-      "diagnostics_status": "not_attempted",
-      "diagnostics_blocker": "outcome unemp is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+      "diagnostics_status": "pass",
+      "diagnostics_blocker": null
     }
   ],
   "variables_still_missing": [
@@ -779,7 +779,7 @@
     "Youth literacy (15-24) [NBS / UNESCO UIS]"
   ],
   "registry": {
-    "generated_at": "2026-10-31T00:51:12+0100",
+    "generated_at": "2026-11-01T11:30:47+0100",
     "generated_by": "analysis/R/05_registry.R",
     "spec": "analysis/specs/registry.yml",
     "rule": "A card with design `A` is `estimated` **iff** the estimates artifact publishes a Design A specification whose `outcome` is the card's outcome id. The number, interval and sample are copied from that specification, not from anywhere else.",
@@ -789,16 +789,15 @@
       "not_estimated_by_reason": {
         "outcome_not_at_design_grain": 7,
         "design_result_is_channel_level": 9,
-        "design_not_run": 2,
-        "outcome_series_absent": 15,
-        "design_estimated_not_identified": 1
+        "design_estimated_not_identified": 8,
+        "outcome_series_absent": 10
       }
     },
     "card_wins": "The card wins over prose (PHASES.md Stage 8). Every number here is copied from the artifact it names."
   },
   "estimates": {
-    "artifact": "registry/estimates/2026-10-30/estimates.json",
-    "vintage": "2026-10-30",
+    "artifact": "registry/estimates/2026-11-01/estimates.json",
+    "vintage": "2026-11-01",
     "design_status": {
       "A": "estimated_not_identified",
       "B": "estimated",
@@ -817,7 +816,7 @@
       "result_is_card_level": true,
       "specifications": [
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 1,
           "design": "A",
           "outcome": "fatalities",
@@ -836,7 +835,7 @@
           "covariance": "cluster by state (36 clusters)"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 2,
           "design": "A",
           "outcome": "incidents",
@@ -855,7 +854,7 @@
           "covariance": "cluster by state (36 clusters)"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 3,
           "design": "A",
           "outcome": "fatalities_civilians",
@@ -875,15 +874,15 @@
         }
       ],
       "artifacts": {
-        "estimates": "registry/estimates/2026-10-30/estimates.json",
-        "robustness": "registry/robustness/2026-10-30/robustness.json"
+        "estimates": "registry/estimates/2026-11-01/estimates.json",
+        "robustness": "registry/robustness/2026-11-01/robustness.json"
       },
       "specifications_without_a_card": [
         {
           "outcome": "fatalities_civilians",
           "why": "Stage 6 published a specification on civilian fatalities, which is a UCDP item carried inside the `fatalities` outcome rather than one of the 12 catalogue outcomes the registry holds cards for, so no card can carry it. It is published on the index and named here rather than dropped: a published specification no card carries is the registry's version of a declared gap.",
           "specification": {
-            "artifact": "registry/estimates/2026-10-30/estimates.json",
+            "artifact": "registry/estimates/2026-11-01/estimates.json",
             "spec_index": 3,
             "design": "A",
             "outcome": "fatalities_civilians",
@@ -904,7 +903,7 @@
         }
       ],
       "robustness": {
-        "artifact": "registry/robustness/2026-10-30/robustness.json",
+        "artifact": "registry/robustness/2026-11-01/robustness.json",
         "support": {
           "n": 81,
           "n_positive": 60,
@@ -1123,7 +1122,7 @@
       "result_is_card_level": false,
       "specifications": [
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 4,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=0",
@@ -1142,7 +1141,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 5,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=1",
@@ -1161,7 +1160,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 6,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=2",
@@ -1180,7 +1179,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 7,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=3",
@@ -1199,7 +1198,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 8,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=4",
@@ -1218,7 +1217,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 9,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=5",
@@ -1237,7 +1236,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 10,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=6",
@@ -1256,7 +1255,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 11,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=9",
@@ -1275,7 +1274,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 12,
           "design": "B",
           "outcome": "cumulative log change in national FAAC at h=12",
@@ -1294,7 +1293,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 13,
           "design": "B",
           "outcome": "cumulative log change in the NBS CPI index at h=0",
@@ -1313,7 +1312,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 14,
           "design": "B",
           "outcome": "cumulative log change in the NBS CPI index at h=1",
@@ -1332,7 +1331,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 15,
           "design": "B",
           "outcome": "cumulative log change in the NBS CPI index at h=2",
@@ -1351,7 +1350,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 16,
           "design": "B",
           "outcome": "cumulative log change in the NBS CPI index at h=3",
@@ -1370,7 +1369,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 17,
           "design": "B",
           "outcome": "cumulative log change in the NBS CPI index at h=4",
@@ -1389,7 +1388,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 18,
           "design": "B",
           "outcome": "cumulative log change in the NBS CPI index at h=5",
@@ -1408,7 +1407,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 19,
           "design": "B",
           "outcome": "cumulative log change in the NBS CPI index at h=6",
@@ -1427,7 +1426,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 20,
           "design": "B",
           "outcome": "cumulative log change in the NBS CPI index at h=9",
@@ -1446,7 +1445,7 @@
           "covariance": "Newey-West, 12 lags"
         },
         {
-          "artifact": "registry/estimates/2026-10-30/estimates.json",
+          "artifact": "registry/estimates/2026-11-01/estimates.json",
           "spec_index": 21,
           "design": "B",
           "outcome": "cumulative log change in the NBS CPI index at h=12",
@@ -1466,13 +1465,13 @@
         }
       ],
       "artifacts": {
-        "estimates": "registry/estimates/2026-10-30/estimates.json",
-        "robustness": "registry/robustness/2026-10-30/robustness.json"
+        "estimates": "registry/estimates/2026-11-01/estimates.json",
+        "robustness": "registry/robustness/2026-11-01/robustness.json"
       },
       "result_outcome": "cumulative log change in national FAAC (the channel), national-month grain",
       "cards_that_carry_no_number": 12,
       "robustness": {
-        "artifact": "registry/robustness/2026-10-30/robustness.json",
+        "artifact": "registry/robustness/2026-11-01/robustness.json",
         "support": {
           "n": 48,
           "n_positive": 36,
@@ -1881,26 +1880,201 @@
       "verdict": {
         "rule": "A window is `identified` only if **all three** hold: (1) its pre-fit ratio is at or below 0.10, the gate's own threshold, carried rather than re-decided; (2) the in-space rank p is at or below 0.05, i.e. the treated unit's post/pre RMSPE ratio is the largest among itself and the placebos; and (3) every in-time placebo that could be run returns a mean gap smaller in absolute value than **half** the estimated gap. Otherwise the window is `estimated_not_identified` and each failed check is named. A window the gate refused is `refused` with the gate's reason and no number. Report the gap and its placebos either way. Declared 2026-10-28, before any weight was fitted.",
         "status": "estimated_not_identified",
-        "failed_checks": ["the in-space rank p is 0.5000: 49 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the in-space rank p is 0.3200: 31 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the in-space rank p is 0.1700: 16 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "an in-time placebo returns a gap at least half the size of the estimated gap", "the pre-fit ratio is 0.1984 against the declared 0.10 threshold", "the in-space rank p is 0.3300: 32 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio"]
+        "failed_checks": ["the in-space rank p is 0.5000: 49 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the in-space rank p is 0.3200: 31 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the in-space rank p is 0.1700: 16 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "an in-time placebo returns a gap at least half the size of the estimated gap", "the pre-fit ratio is 0.1984 against the declared 0.10 threshold", "the in-space rank p is 0.3300: 32 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the in-space rank p is 0.6200: 61 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the in-space rank p is 0.1400: 13 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.7877 against the declared 0.10 threshold", "the in-space rank p is 0.5400: 53 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.7074 against the declared 0.10 threshold", "the in-space rank p is 0.6531: 63 of 97 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.4613 against the declared 0.10 threshold", "the in-space rank p is 0.5918: 57 of 97 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.7026 against the declared 0.10 threshold", "the in-space rank p is 0.9796: 95 of 97 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.5458 against the declared 0.10 threshold", "the in-space rank p is 0.9588: 92 of 96 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.2047 against the declared 0.10 threshold", "the in-space rank p is 0.9500: 94 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.1936 against the declared 0.10 threshold", "the in-space rank p is 0.5700: 56 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.3491 against the declared 0.10 threshold", "the in-space rank p is 0.4600: 45 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.4798 against the declared 0.10 threshold", "the in-space rank p is 0.8300: 82 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.1089 against the declared 0.10 threshold", "the in-space rank p is 0.7200: 71 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.1099 against the declared 0.10 threshold", "the in-space rank p is 0.4800: 47 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.1065 against the declared 0.10 threshold", "the in-space rank p is 0.4100: 40 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.2481 against the declared 0.10 threshold", "the in-space rank p is 0.4300: 42 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the in-space rank p is 0.4490: 43 of 97 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.2859 against the declared 0.10 threshold", "the in-space rank p is 0.4845: 46 of 96 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.5079 against the declared 0.10 threshold", "the in-space rank p is 0.5938: 56 of 95 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.3827 against the declared 0.10 threshold", "the in-space rank p is 0.2526: 23 of 94 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.5554 against the declared 0.10 threshold", "the in-space rank p is 0.7683: 62 of 81 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.5962 against the declared 0.10 threshold", "the pre-fit ratio is 0.7480 against the declared 0.10 threshold", "the in-space rank p is 0.6753: 51 of 76 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.8016 against the declared 0.10 threshold", "the in-space rank p is 0.2105: 15 of 75 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the in-space rank p is 0.3100: 30 of 99 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the in-space rank p is 0.1616: 15 of 98 placebos match or exceed the treated unit's post/pre RMSPE ratio", "the pre-fit ratio is 0.1605 against the declared 0.10 threshold", "the in-space rank p is 0.0825: 7 of 96 placebos match or exceed the treated unit's post/pre RMSPE ratio"]
       },
       "result_is_card_level": false,
       "why": null,
       "next_step": null,
-      "artifact": "registry/design_c/2026-10-30/design_c.json",
+      "artifact": "registry/design_c/2026-11-01/design_c.json",
       "counts": {
-        "windows": 5,
-        "estimated": 4,
-        "refused": 1,
+        "outcomes": 9,
+        "windows": 45,
+        "estimated": 31,
+        "refused": 14,
         "identified": 0,
-        "not_identified": 4,
+        "not_identified": 31,
         "donors": 99,
-        "placebos_in_space": 396,
-        "placebos_in_time": 7,
-        "placebos_passing_pre_fit": 304,
-        "loo_fits": 396
+        "placebos_in_space": 2959,
+        "placebos_in_time": 53,
+        "placebos_passing_pre_fit": 969,
+        "loo_fits": 2959
       },
+      "outcomes": [
+        {
+          "outcome": "u5mr",
+          "label": "Under-5 mortality rate",
+          "unit": "per 1,000 live births",
+          "status": "estimated_not_identified",
+          "gate_basis": "stage5_prefit",
+          "counts": {
+            "windows": 5,
+            "estimated": 4,
+            "refused": 1,
+            "identified": 0,
+            "not_identified": 4,
+            "donors": 99,
+            "placebos_in_space": 396,
+            "placebos_in_time": 7,
+            "placebos_passing_pre_fit": 304,
+            "loo_fits": 396
+          }
+        },
+        {
+          "outcome": "mmr",
+          "label": "Maternal mortality ratio",
+          "unit": "per 100,000 births",
+          "status": "estimated_not_identified",
+          "gate_basis": "stage5_prefit",
+          "counts": {
+            "windows": 5,
+            "estimated": 3,
+            "refused": 2,
+            "identified": 0,
+            "not_identified": 3,
+            "donors": 99,
+            "placebos_in_space": 297,
+            "placebos_in_time": 4,
+            "placebos_passing_pre_fit": 187,
+            "loo_fits": 297
+          }
+        },
+        {
+          "outcome": "immun_penta3",
+          "label": "Penta3 immunisation coverage",
+          "unit": "% surviving infants",
+          "status": "estimated_not_identified",
+          "gate_basis": "stage5_prefit",
+          "counts": {
+            "windows": 5,
+            "estimated": 4,
+            "refused": 1,
+            "identified": 0,
+            "not_identified": 4,
+            "donors": 99,
+            "placebos_in_space": 387,
+            "placebos_in_time": 7,
+            "placebos_passing_pre_fit": 68,
+            "loo_fits": 387
+          }
+        },
+        {
+          "outcome": "skilled_birth",
+          "label": "Skilled birth attendance",
+          "unit": "% of births",
+          "status": "not_run",
+          "gate_basis": "stage5_prefit",
+          "counts": {
+            "windows": 5,
+            "estimated": 0,
+            "refused": 5,
+            "identified": 0,
+            "not_identified": 0,
+            "donors": 99,
+            "placebos_in_space": 0,
+            "placebos_in_time": 0,
+            "placebos_passing_pre_fit": 0,
+            "loo_fits": 0
+          }
+        },
+        {
+          "outcome": "fatalities",
+          "label": "Reported security fatalities",
+          "unit": "count",
+          "status": "estimated_not_identified",
+          "gate_basis": "stage8h_annual_aggregation",
+          "counts": {
+            "windows": 5,
+            "estimated": 4,
+            "refused": 1,
+            "identified": 0,
+            "not_identified": 4,
+            "donors": 99,
+            "placebos_in_space": 396,
+            "placebos_in_time": 7,
+            "placebos_passing_pre_fit": 81,
+            "loo_fits": 396
+          }
+        },
+        {
+          "outcome": "incidents",
+          "label": "Reported security incidents",
+          "unit": "count",
+          "status": "estimated_not_identified",
+          "gate_basis": "stage8h_annual_aggregation",
+          "counts": {
+            "windows": 5,
+            "estimated": 4,
+            "refused": 1,
+            "identified": 0,
+            "not_identified": 4,
+            "donors": 99,
+            "placebos_in_space": 396,
+            "placebos_in_time": 7,
+            "placebos_passing_pre_fit": 53,
+            "loo_fits": 396
+          }
+        },
+        {
+          "outcome": "gdp_growth",
+          "label": "Real GDP growth (y/y)",
+          "unit": "%",
+          "status": "estimated_not_identified",
+          "gate_basis": "stage5_prefit",
+          "counts": {
+            "windows": 5,
+            "estimated": 4,
+            "refused": 1,
+            "identified": 0,
+            "not_identified": 4,
+            "donors": 99,
+            "placebos_in_space": 382,
+            "placebos_in_time": 7,
+            "placebos_passing_pre_fit": 96,
+            "loo_fits": 382
+          }
+        },
+        {
+          "outcome": "cpi_yoy",
+          "label": "Headline inflation (y/y)",
+          "unit": "%",
+          "status": "estimated_not_identified",
+          "gate_basis": "stage5_prefit",
+          "counts": {
+            "windows": 5,
+            "estimated": 4,
+            "refused": 1,
+            "identified": 0,
+            "not_identified": 4,
+            "donors": 97,
+            "placebos_in_space": 313,
+            "placebos_in_time": 7,
+            "placebos_passing_pre_fit": 64,
+            "loo_fits": 313
+          }
+        },
+        {
+          "outcome": "unemp",
+          "label": "Unemployment rate",
+          "unit": "%",
+          "status": "estimated_not_identified",
+          "gate_basis": "stage5_prefit",
+          "counts": {
+            "windows": 5,
+            "estimated": 4,
+            "refused": 1,
+            "identified": 0,
+            "not_identified": 4,
+            "donors": 99,
+            "placebos_in_space": 392,
+            "placebos_in_time": 7,
+            "placebos_passing_pre_fit": 116,
+            "loo_fits": 392
+          }
+        }
+      ],
       "windows": [
         {
+          "outcome": "u5mr",
           "id": "obasanjo",
           "status": "refused",
           "first_year": null,
@@ -1910,6 +2084,7 @@
           "ridge_gap": null
         },
         {
+          "outcome": "u5mr",
           "id": "yaradua",
           "status": "estimated_not_identified",
           "first_year": 2007,
@@ -1919,6 +2094,7 @@
           "ridge_gap": -2.595613202
         },
         {
+          "outcome": "u5mr",
           "id": "jonathan",
           "status": "estimated_not_identified",
           "first_year": 2010,
@@ -1928,6 +2104,7 @@
           "ridge_gap": -0.370934959
         },
         {
+          "outcome": "u5mr",
           "id": "buhari",
           "status": "estimated_not_identified",
           "first_year": 2015,
@@ -1937,6 +2114,7 @@
           "ridge_gap": 9.375701467
         },
         {
+          "outcome": "u5mr",
           "id": "tinubu",
           "status": "estimated_not_identified",
           "first_year": 2023,
@@ -1944,11 +2122,411 @@
           "mean_gap": 18.53395444,
           "p_value": 0.33,
           "ridge_gap": 18.50234273
+        },
+        {
+          "outcome": "mmr",
+          "id": "obasanjo",
+          "status": "refused",
+          "first_year": null,
+          "last_year": null,
+          "mean_gap": null,
+          "p_value": null,
+          "ridge_gap": null
+        },
+        {
+          "outcome": "mmr",
+          "id": "yaradua",
+          "status": "estimated_not_identified",
+          "first_year": 2007,
+          "last_year": 2009,
+          "mean_gap": 4.282069189,
+          "p_value": 0.62,
+          "ridge_gap": -21.61010465
+        },
+        {
+          "outcome": "mmr",
+          "id": "jonathan",
+          "status": "estimated_not_identified",
+          "first_year": 2010,
+          "last_year": 2014,
+          "mean_gap": 135.8224538,
+          "p_value": 0.14,
+          "ridge_gap": 140.6885077
+        },
+        {
+          "outcome": "mmr",
+          "id": "buhari",
+          "status": "estimated_not_identified",
+          "first_year": 2015,
+          "last_year": 2022,
+          "mean_gap": 171.5283288,
+          "p_value": 0.54,
+          "ridge_gap": 171.5282991
+        },
+        {
+          "outcome": "mmr",
+          "id": "tinubu",
+          "status": "refused",
+          "first_year": null,
+          "last_year": null,
+          "mean_gap": null,
+          "p_value": null,
+          "ridge_gap": null
+        },
+        {
+          "outcome": "immun_penta3",
+          "id": "obasanjo",
+          "status": "refused",
+          "first_year": null,
+          "last_year": null,
+          "mean_gap": null,
+          "p_value": null,
+          "ridge_gap": null
+        },
+        {
+          "outcome": "immun_penta3",
+          "id": "yaradua",
+          "status": "estimated_not_identified",
+          "first_year": 2007,
+          "last_year": 2009,
+          "mean_gap": 10.87370895,
+          "p_value": 0.6530612245,
+          "ridge_gap": 10.9032187
+        },
+        {
+          "outcome": "immun_penta3",
+          "id": "jonathan",
+          "status": "estimated_not_identified",
+          "first_year": 2010,
+          "last_year": 2014,
+          "mean_gap": -12.56781908,
+          "p_value": 0.5918367347,
+          "ridge_gap": -12.95072583
+        },
+        {
+          "outcome": "immun_penta3",
+          "id": "buhari",
+          "status": "estimated_not_identified",
+          "first_year": 2015,
+          "last_year": 2022,
+          "mean_gap": 0.685495869,
+          "p_value": 0.9795918367,
+          "ridge_gap": 0.7196209589
+        },
+        {
+          "outcome": "immun_penta3",
+          "id": "tinubu",
+          "status": "estimated_not_identified",
+          "first_year": 2023,
+          "last_year": 2024,
+          "mean_gap": -2.113448156,
+          "p_value": 0.9587628866,
+          "ridge_gap": -2.08793849
+        },
+        {
+          "outcome": "skilled_birth",
+          "id": "obasanjo",
+          "status": "refused",
+          "first_year": null,
+          "last_year": null,
+          "mean_gap": null,
+          "p_value": null,
+          "ridge_gap": null
+        },
+        {
+          "outcome": "skilled_birth",
+          "id": "yaradua",
+          "status": "refused",
+          "first_year": null,
+          "last_year": null,
+          "mean_gap": null,
+          "p_value": null,
+          "ridge_gap": null
+        },
+        {
+          "outcome": "skilled_birth",
+          "id": "jonathan",
+          "status": "refused",
+          "first_year": null,
+          "last_year": null,
+          "mean_gap": null,
+          "p_value": null,
+          "ridge_gap": null
+        },
+        {
+          "outcome": "skilled_birth",
+          "id": "buhari",
+          "status": "refused",
+          "first_year": null,
+          "last_year": null,
+          "mean_gap": null,
+          "p_value": null,
+          "ridge_gap": null
+        },
+        {
+          "outcome": "skilled_birth",
+          "id": "tinubu",
+          "status": "refused",
+          "first_year": null,
+          "last_year": null,
+          "mean_gap": null,
+          "p_value": null,
+          "ridge_gap": null
+        },
+        {
+          "outcome": "fatalities",
+          "id": "obasanjo",
+          "status": "refused",
+          "first_year": null,
+          "last_year": null,
+          "mean_gap": null,
+          "p_value": null,
+          "ridge_gap": null
+        },
+        {
+          "outcome": "fatalities",
+          "id": "yaradua",
+          "status": "estimated_not_identified",
+          "first_year": 2007,
+          "last_year": 2009,
+          "mean_gap": 44.83342607,
+          "p_value": 0.95,
+          "ridge_gap": 44.70213297
+        },
+        {
+          "outcome": "fatalities",
+          "id": "jonathan",
+          "status": "estimated_not_identified",
+          "first_year": 2010,
+          "last_year": 2014,
+          "mean_gap": 3349.086127,
+          "p_value": 0.57,
+          "ridge_gap": 3349.570415
+        },
+        {
+          "outcome": "fatalities",
+          "id": "buhari",
+          "status": "estimated_not_identified",
+          "first_year": 2015,
+          "last_year": 2022,
+          "mean_gap": -6728.370647,
+          "p_value": 0.46,
+          "ridge_gap": -6631.79591
+        },
+        {
+          "outcome": "fatalities",
+          "id": "tinubu",
+          "status": "estimated_not_identified",
+          "first_year": 2023,
+          "last_year": 2024,
+          "mean_gap": 370.1873062,
+          "p_value": 0.83,
+          "ridge_gap": 428.5653285
+        },
+        {
+          "outcome": "incidents",
+          "id": "obasanjo",
+          "status": "refused",
+          "first_year": null,
+          "last_year": null,
+          "mean_gap": null,
+          "p_value": null,
+          "ridge_gap": null
+        },
+        {
+          "outcome": "incidents",
+          "id": "yaradua",
+          "status": "estimated_not_identified",
+          "first_year": 2007,
+          "last_year": 2009,
+          "mean_gap": 8.398541592,
+          "p_value": 0.72,
+          "ridge_gap": 6.900901023
+        },
+        {
+          "outcome": "incidents",
+          "id": "jonathan",
+          "status": "estimated_not_identified",
+          "first_year": 2010,
+          "last_year": 2014,
+          "mean_gap": 287.6503078,
+          "p_value": 0.48,
+          "ridge_gap": 117.826282
+        },
+        {
+          "outcome": "incidents",
+          "id": "buhari",
+          "status": "estimated_not_identified",
+          "first_year": 2015,
+          "last_year": 2022,
+          "mean_gap": -18.54042014,
+          "p_value": 0.41,
+          "ridge_gap": 96.23817184
+        },
+        {
+          "outcome": "incidents",
+          "id": "tinubu",
+          "status": "estimated_not_identified",
+          "first_year": 2023,
+          "last_year": 2024,
+          "mean_gap": 100.9129757,
+          "p_value": 0.43,
+          "ridge_gap": 72.76832498
+        },
+        {
+          "outcome": "gdp_growth",
+          "id": "obasanjo",
+          "status": "refused",
+          "first_year": null,
+          "last_year": null,
+          "mean_gap": null,
+          "p_value": null,
+          "ridge_gap": null
+        },
+        {
+          "outcome": "gdp_growth",
+          "id": "yaradua",
+          "status": "estimated_not_identified",
+          "first_year": 2007,
+          "last_year": 2009,
+          "mean_gap": 2.420929174,
+          "p_value": 0.4489795918,
+          "ridge_gap": 2.621750705
+        },
+        {
+          "outcome": "gdp_growth",
+          "id": "jonathan",
+          "status": "estimated_not_identified",
+          "first_year": 2010,
+          "last_year": 2014,
+          "mean_gap": 5.352257831,
+          "p_value": 0.4845360825,
+          "ridge_gap": 5.254101851
+        },
+        {
+          "outcome": "gdp_growth",
+          "id": "buhari",
+          "status": "estimated_not_identified",
+          "first_year": 2015,
+          "last_year": 2022,
+          "mean_gap": -3.141612021,
+          "p_value": 0.59375,
+          "ridge_gap": -3.151228086
+        },
+        {
+          "outcome": "gdp_growth",
+          "id": "tinubu",
+          "status": "estimated_not_identified",
+          "first_year": 2023,
+          "last_year": 2024,
+          "mean_gap": 3.105804611,
+          "p_value": 0.2526315789,
+          "ridge_gap": 3.104130654
+        },
+        {
+          "outcome": "cpi_yoy",
+          "id": "obasanjo",
+          "status": "refused",
+          "first_year": null,
+          "last_year": null,
+          "mean_gap": null,
+          "p_value": null,
+          "ridge_gap": null
+        },
+        {
+          "outcome": "cpi_yoy",
+          "id": "yaradua",
+          "status": "estimated_not_identified",
+          "first_year": 2007,
+          "last_year": 2009,
+          "mean_gap": -2.367522495,
+          "p_value": 0.7682926829,
+          "ridge_gap": -1.779882819
+        },
+        {
+          "outcome": "cpi_yoy",
+          "id": "jonathan",
+          "status": "estimated_not_identified",
+          "first_year": 2010,
+          "last_year": 2014,
+          "mean_gap": 2.951815075,
+          "p_value": 0.7682926829,
+          "ridge_gap": 3.654257763
+        },
+        {
+          "outcome": "cpi_yoy",
+          "id": "buhari",
+          "status": "estimated_not_identified",
+          "first_year": 2015,
+          "last_year": 2022,
+          "mean_gap": 0.3990895989,
+          "p_value": 0.6753246753,
+          "ridge_gap": 0.5897196243
+        },
+        {
+          "outcome": "cpi_yoy",
+          "id": "tinubu",
+          "status": "estimated_not_identified",
+          "first_year": 2023,
+          "last_year": 2024,
+          "mean_gap": 5.305857614,
+          "p_value": 0.2105263158,
+          "ridge_gap": 5.61588238
+        },
+        {
+          "outcome": "unemp",
+          "id": "obasanjo",
+          "status": "refused",
+          "first_year": null,
+          "last_year": null,
+          "mean_gap": null,
+          "p_value": null,
+          "ridge_gap": null
+        },
+        {
+          "outcome": "unemp",
+          "id": "yaradua",
+          "status": "estimated_not_identified",
+          "first_year": 2007,
+          "last_year": 2009,
+          "mean_gap": 0.127661675,
+          "p_value": 0.31,
+          "ridge_gap": 0.149850654
+        },
+        {
+          "outcome": "unemp",
+          "id": "jonathan",
+          "status": "estimated_not_identified",
+          "first_year": 2010,
+          "last_year": 2014,
+          "mean_gap": 0.07747031037,
+          "p_value": 0.32,
+          "ridge_gap": 0.01804920039
+        },
+        {
+          "outcome": "unemp",
+          "id": "buhari",
+          "status": "estimated_not_identified",
+          "first_year": 2015,
+          "last_year": 2022,
+          "mean_gap": 1.368335806,
+          "p_value": 0.1616161616,
+          "ridge_gap": 0.729799797
+        },
+        {
+          "outcome": "unemp",
+          "id": "tinubu",
+          "status": "estimated_not_identified",
+          "first_year": 2023,
+          "last_year": 2024,
+          "mean_gap": -1.048017405,
+          "p_value": 0.0824742268,
+          "ridge_gap": -0.7310918148
         }
       ],
       "specifications": [],
       "artifacts": {
-        "estimates": "registry/estimates/2026-10-30/estimates.json",
+        "estimates": "registry/estimates/2026-11-01/estimates.json",
         "robustness": null
       }
     }

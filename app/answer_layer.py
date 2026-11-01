@@ -275,7 +275,10 @@ class AnswerLayer:
                 # split family put the number in one part and the assumption in another, and an
                 # answer assembled from a single part was missing half of what the contract requires.
                 if chunk.get("doc_type") == "card_estimate" or key not in self.cards:
-                    self.cards[key] = chunk["chunk_id"]
+                    # The parent id, never a part: a long card is split into `#p2`, `#p3`, and the
+                    # assumption, the caveats and the reason can land in different parts. Citing the
+                    # parent is what lets the answer's chunks_used resolve to the whole card (C-91).
+                    self.cards[key] = chunk["chunk_id"].split("#p", 1)[0]
         # A term that is rare in the corpus is stronger evidence than one every chunk uses. The
         # weight is the retrieval scorer's own idf, so the layer and the retrieval measurement
         # agree on what makes a term distinctive.
@@ -474,9 +477,15 @@ class AnswerLayer:
         }
 
     def _design_donor(self, design_id: str) -> str | None:
-        """One card of a design, to carry the design's assumption and caveats."""
+        """One card of a design, to carry the design's assumption and caveats.
+
+        The parent id is returned, never a part: the assumption lives in a card's first part and the
+        caveats in its second, so a part id would borrow half a card (found with the three-part Design C
+        cards, C-91).
+        """
         candidates = sorted(
-            chunk_id for (outcome_id, card_design), chunk_id in self.cards.items()
+            chunk_id.split("#p", 1)[0]
+            for (outcome_id, card_design), chunk_id in self.cards.items()
             if card_design == design_id
         )
         return candidates[0] if candidates else None
@@ -719,9 +728,16 @@ class AnswerLayer:
 
     # -- assembly -------------------------------------------------------------------------------
     def _blocks(self, source: str) -> list[str]:
-        """The paragraphs of a chunk, with the part markers taken out."""
+        """The paragraphs of a chunk, with the part markers taken out.
+
+        The parent is used, not the paragraph: a card estimate is written in parts (assumption, caveats,
+        the reason and the check), and a source that is one part carries only that part. Reading the
+        parent's parts is what lets a card answer carry its assumption and its caveats together — the
+        failure this fixes was found when the Design C notes grew long enough to split every C card three
+        ways, and the number path then had a reason block with no assumption to pair it with.
+        """
         blocks: list[str] = []
-        for chunk_id in self.gate.parts_of(source):
+        for chunk_id in self.gate.parts_of(source.split("#p", 1)[0]):
             blocks.extend(self._paragraphs(chunk_id))
         return blocks
 
@@ -749,7 +765,8 @@ class AnswerLayer:
         which card it is, and the interval is what the card says — and a design-level result keeps
         its number in a part.
         """
-        return any(INTERVAL.search(self._body(part)) for part in self.gate.parts_of(chunk_id))
+        return any(INTERVAL.search(self._body(part))
+                   for part in self.gate.parts_of(chunk_id.split("#p", 1)[0]))
 
     def _parents_in_order(self, retrieved: list[tuple[str, float]]) -> list[tuple[str, list[str]]]:
         seen: list[str] = []

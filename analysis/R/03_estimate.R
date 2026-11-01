@@ -480,7 +480,15 @@ cat(sprintf("figure: %s (%d canonical bytes)\n", basename(fig_path), canonical_b
 design_c_path <- file.path(REPO_ROOT, "registry", "design_c", vintage, "design_c.json")
 if (file.exists(design_c_path)) {
   cdoc <- jsonlite::fromJSON(design_c_path, simplifyVector = FALSE)
-  c_estimated <- Filter(function(x) !identical(x$status, "refused"), cdoc$windows)
+  # The artifact carries one block per outcome (C-91). This stage flattens it for the design-level verdict and
+  # keeps the per-outcome block beside it, so a card can be told about *its own* outcome's windows rather than
+  # about whichever outcome the artifact happened to carry first.
+  c_flat <- unlist(lapply(cdoc$outcomes, function(o) lapply(o$windows, function(x) {
+    x$outcome <- o$outcome
+    x$outcome_unit <- o$unit
+    x
+  })), recursive = FALSE)
+  c_estimated <- Filter(function(x) !identical(x$status, "refused"), c_flat)
   c_status <- if (any(vapply(c_estimated, function(x) identical(x$status, "identified"), logical(1)))) {
     "identified"
   } else if (length(c_estimated)) "estimated_not_identified" else "not_run"
@@ -492,8 +500,11 @@ if (file.exists(design_c_path)) {
       failed_checks = as.list(unique(unlist(lapply(c_estimated, function(x) x$verdict$failed_checks))))),
     artifact = file.path("registry", "design_c", vintage, "design_c.json"),
     counts = cdoc$counts,
-    windows = lapply(cdoc$windows, function(x) list(
-      id = x$id, status = x$status,
+    outcomes = lapply(cdoc$outcomes, function(o) list(
+      outcome = o$outcome, label = o$label, unit = o$unit, status = o$status,
+      gate_basis = o$gate_basis, counts = o$counts)),
+    windows = lapply(c_flat, function(x) list(
+      outcome = x$outcome, id = x$id, status = x$status,
       first_year = if (is.null(x$first_year)) NA else x$first_year,
       last_year = if (is.null(x$last_year)) NA else x$last_year,
       mean_gap = if (is.null(x$mean_gap)) NA else x$mean_gap,

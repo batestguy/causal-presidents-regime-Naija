@@ -35,7 +35,7 @@ Vintages `2026-10-11` (`worldbank`, `worldbank_donors`, `fred`), `2026-10-16-cor
 | `dim_definition_break` | metric × break date | 8 | Stage 3 report, definition-drift gate (national series only) |
 | `fact_observation_native` | metric × native period | 2,588 | Audit trail: 2,002 valued observations plus their empty periods |
 | `int_metric_monthly` | metric × month | 8,350 | The spine before the index is attached |
-| `fact_donor_panel` | country × metric × year | 27,352 | Design C donor pool, 99 candidate countries (widened 2026-10-18) |
+| `fact_donor_panel` | country × metric × year | 40,060 | Design C donor pool, 99 candidate countries (widened 2026-10-18) × 9 series (5 predictors + 4 outcome paths, 2026-11-01) |
 | `state_panel` | state × month | 12,358 | 37 × 334, FAAC nominal dose populated, the rest empty by declaration |
 | `faac_state_allocation` | state × month | 4,104 | The FAAC dose: 114 months × 36 states, one publisher chosen per row |
 | `faac_national_monthly` | month | 114 | The same dose aggregated to the fiscal transfer channel as a national series |
@@ -174,8 +174,8 @@ all four strata. Term boundaries are four years from a 29 May inauguration.
 
 ## `fact_donor_panel` and `state_panel`
 
-`fact_donor_panel` — country × metric × year for Design C: 99 candidate countries × 5 screening
-predictors over 1960–2025 = 27,352 country-metric-years, all valued. The panel is not a rectangle and
+`fact_donor_panel` — country × metric × year for Design C: 99 candidate countries × 9 country-year
+series (5 screening predictors plus 4 outcome paths) over 1960–2025 = 40,060 country-metric-years, all valued. The panel is not a rectangle and
 is not meant to be one: a country-metric-year the source does not publish is absent rather than null, so
 97 of the 99 countries carry all five predictors somewhere in the span and 62 carry all five across
 1990–2015, which is the coverage screen the pool was chosen on. Kept off the national spine

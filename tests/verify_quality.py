@@ -43,7 +43,7 @@ VERDICTS = {
     "explained_by_definition_break",
     "probable_data_error",
 }
-MULTI_COUNTRY_SOURCES = {"worldbank_donors"}
+MULTI_COUNTRY_SOURCES = {"worldbank_donors", "worldbank_donor_outcomes"}
 
 
 # ------------------------------------------------------------------------------------------

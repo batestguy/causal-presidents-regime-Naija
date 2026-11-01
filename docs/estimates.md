@@ -162,31 +162,37 @@ keyless source (C-46). The confidence bounds are also wide, and 114 months is no
 price-level family, the series ends in 2024-10, so nothing after it is claimed, and a null at monthly
 frequency with 310 observations is not the same as a null on annual data.
 
-### Design C — synthetic control: estimated, and not identified
+### Design C — synthetic control: estimated for seven outcomes, and not identified for any
 
 The design moved twice. Stage 5 first recorded `infeasible`: the pre-treatment fit failed on every outcome and
 every window against a 13-country pool, with the best single donor beating the fitted simplex. The pool was
 then widened to **99 candidates** screened on oil dependence, region/income band and coverage, and the gate
 re-run passed **`u5mr` on 3 of its 4 runnable windows** (ratios 0.0014–0.0042 against the declared 0.10
-threshold). That pass was permission to build the design, not evidence that its fit was real — and the
-warning was earned.
+threshold), **`mmr` on 2 of 3** and **`unemp` on 3 of 4**. That pass was permission to build the design, not
+evidence that its fit was real — and the warning was earned.
 
 The estimator and its placebos now exist (`analysis/specs/design_c.yml`, `analysis/R/11_design_c.R`,
-`registry/design_c/2026-10-18/`). **Four windows were estimated and none is identified.** The in-space rank p
-runs from 0.17 to 0.50, the in-time placebo fails in the one window long enough to run it, and the declared
-pre-fit gate turns out not to discriminate at all: **304 of the 396 placebo fits also clear the same 0.10
-threshold.** A 99-donor simplex can interpolate any 8-to-24-year pre-period, so the gate's pass says almost
-nothing about whether the fit is a counterfactual.
+`registry/design_c/2026-11-01/`) and run for **every outcome the donor panel carries** (C-91): **9 outcomes,
+45 windows, 31 estimated and 14 refused by the declared rule, none identified.** The in-space rank p runs from
+0.08 to 0.98, and the declared pre-fit gate turns out not to discriminate at all: **969 of the 2,959 placebo
+fits also clear the same 0.10 threshold.** A 99-donor simplex can interpolate any 8-to-24-year pre-period, so
+the gate's pass says almost nothing about whether the fit is a counterfactual. The mean gaps run from
+**−11.56 to +18.53** deaths per 1,000 for `u5mr`, **+4.28 to +171.53** per 100,000 births for `mmr`,
+**−12.57 to +10.87** points for `immun_penta3`, **−3.14 to +5.35** for `gdp_growth`, **−2.37 to +5.31** for
+`cpi_yoy`, **−1.05 to +1.37** for `unemp`, and **−6,728 to +3,349** reported fatalities and **−19 to
++288** reported incidents for the two conflict outcomes aggregated from the landed UCDP archive.
 
 Two numbers travel with the gaps because the declared problem is underdetermined. With 99 donors and 8 to 24
 pre-years, a face of weight vectors fits the pre-period equally well and they disagree about the post-period;
-the artifact publishes the vertex the declared solver returns **and** a unique ridge refit beside it. For the
-first window the two disagree in sign (+2.1 against −2.6 deaths per 1,000), which is the clearest statement
-the design can make about itself: that estimate belongs to the solver, not to the data.
+the artifact publishes the vertex the declared solver returns, a ridge refit **with its weights**, and the
+leave-one-donor-out range. For `u5mr` and `mmr` on the first window the vertex and the ridge refit disagree in
+sign, which is the clearest statement the design can make about itself: those estimates belong to the solver,
+not to the data.
 
 No gap is on a card, because a synthetic control has no sampling distribution and the honesty layer publishes
-no point estimate without an interval. The `u5mr` card carries `design_estimated_not_identified` and points at
-the artifact.
+no point estimate without an interval. The eight fitted C cards carry `design_estimated_not_identified` and point
+at their own block of the artifact; `skilled_birth`'s card carries `outcome_series_absent`, with the nine
+observations that cannot fill a declared window.
 
 ## 3. The answer, in one paragraph
 
@@ -194,9 +200,9 @@ the artifact.
 effects on national annual outcomes), one is now estimable but not identified (does federal money reduce
 local violence), and one is answerable and answered (an oil-price shock reaches Nigeria's states with an
 elasticity of roughly 0.5 at a two-to-three-month lag).** The fourth — synthetic control against a donor
-pool — cleared its pre-fit gate on one outcome once the pool was widened (2026-10-18) and has now been
-fitted: four windows, no identified effect, and a placebo distribution that says the gate's pass was
-interpolation (`registry/design_c/2026-10-18/`). **A fifth question turned out to be answerable and is
+pool — cleared its pre-fit gate on three outcomes once the pool was widened (2026-10-18) and has now been
+fitted for every outcome the panel carries: 45 windows, 31 estimated, none identified, and a placebo
+distribution that says the gate's pass was interpolation (`registry/design_c/2026-11-01/`). **A fifth question turned out to be answerable and is
 answered: did conflict move inside each tenure?** (`docs/events.md`: two of eight event-outcome cells survive
 both the placebo and the pre-trend check.)
 

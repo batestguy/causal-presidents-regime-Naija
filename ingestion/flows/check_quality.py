@@ -48,7 +48,7 @@ SPEC_PATH = REPO_ROOT / "analysis" / "specs" / "quality.yml"
 OUT_ROOT = REPO_ROOT / "registry" / "quality"
 
 # Sources whose payload carries several countries, keyed by source name.
-MULTI_COUNTRY_SOURCES = {"worldbank_donors"}
+MULTI_COUNTRY_SOURCES = {"worldbank_donors", "worldbank_donor_outcomes"}
 
 
 def load_spec() -> dict:

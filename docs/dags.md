@@ -13,10 +13,10 @@ not chosen by hand — it is computed from the graph.
 **Status:** DAG layer built and verified (2026-10-11); every card carries its **Stage 5 pre-check**
 (`diagnostics`), re-run at vintage **2026-10-18** after the fiscal dose, the security outcome and the
 widened donor pool landed. Cards do not carry estimates as a layer — that is Stage 8's job — and
-**1 of 36 cards passes its pre-check**: `u5mr` under Design C. The rest are **14 fail, 9 degraded,
-12 not attempted**; see `docs/design-memo.md`. The totals moved on the last two re-runs (2026-10-16 was
-15 fail / 7 degraded / 14 not attempted; 2026-10-17 was 15 / 9 / 12), while the reasons moved on all of
-them.
+**3 of 36 cards pass their pre-check**: `u5mr`, `mmr` and `unemp`, all under Design C. The rest are
+**15 fail, 9 degraded, 9 not attempted**; see `docs/design-memo.md`. The totals moved on the last two
+re-runs (2026-10-16 was 15 fail / 7 degraded / 14 not attempted; 2026-10-17 was 15 / 9 / 12; 2026-11-01 is
+15 / 9 / 9, because four outcomes now have a donor path and one of them cannot fill a window).
 Family A's cards now say the dose is absent on the per-capita axis the estimand is written on (the
 nominal dose is landed and gated) and that **the state-attributed outcome has arrived** — so the family is
 estimable on the nominal axis, which Stage 6 ran: `estimated_not_identified`, with the failing check named
@@ -130,7 +130,7 @@ machine-checkable rather than asserted. The generator refuses to emit a card wit
 | `admin`, `treat` | Administration spine (base spec §7) | acquired |
 | `donor` | World Bank `DT.ODA.ALLD.CD` (net ODA) | acquired — **contaminated, see below** |
 | `fx` | World Bank `PA.NUS.FCRF` (annual); CBN for monthly | acquired |
-| `donors` (pool) | Donor panel: 99 candidate countries × 5 predictors (widened 2026-10-18) | acquired — 27,352 country-metric-years, 1960–2025; 62 countries carry all five across 1990–2015 |
+| `donors` (pool) | Donor panel: 99 candidate countries × 9 country-year series (5 screening predictors, widened 2026-10-18, plus 4 outcome paths landed 2026-11-01) | acquired — 40,060 country-metric-years, 1960–2025; 62 countries carry all five predictors across 1990–2015 |
 | `Y` | the outcome's own source, from `outcomes.yml` | per outcome |
 | `inherit`, `lagY`, `oilxadmin` | derived from other nodes | derived |
 | `statefe`, `timefe`, `trend`, `countryfe` | design artefacts, not data | construct |

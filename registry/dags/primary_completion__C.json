@@ -1,11 +1,11 @@
 {
   "dag_id": "primary_completion__C",
   "schema_version": "0.3.0",
-  "vintage_date": "2026-10-30",
-  "generated_at": "2026-10-31T00:50:27+0100",
+  "vintage_date": "2026-11-01",
+  "generated_at": "2026-11-01T10:10:55+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "2610e44"
+    "git_sha": "63f3f0f"
   },
   "outcome": {
     "id": "primary_completion",
@@ -155,19 +155,19 @@
       {
         "id": "pretreatment_fit",
         "verdict": "not_run",
-        "detail": "outcome primary_completion is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+        "detail": "outcome primary_completion is not in the donor panel (predictors: cpi_yoy, fatalities, gdp_growth, immun_penta3, incidents, mmr, oil_rents, population, skilled_birth, u5mr, unemp)"
       },
       {
         "id": "donor_pool_coverage",
         "verdict": "computed",
-        "detail": "99 donors x 5 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
+        "detail": "99 donors x 11 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
       }
     ],
-    "blocker": "outcome primary_completion is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)",
+    "blocker": "outcome primary_completion is not in the donor panel (predictors: cpi_yoy, fatalities, gdp_growth, immun_penta3, incidents, mmr, oil_rents, population, skilled_birth, u5mr, unemp)",
     "note": "No candidate window is testable for this outcome",
     "coverage_status": "declared_gap",
-    "vintage": "2026-10-30",
-    "source": "registry/diagnostics/2026-10-30/diagnostics.json"
+    "vintage": "2026-11-01",
+    "source": "registry/diagnostics/2026-11-01/diagnostics.json"
   },
   "assets": {
     "svg": "registry/dags/primary_completion__C.svg"
@@ -181,6 +181,6 @@
       "detail": "The outcome has no usable series at this design's unit, so no specification could be declared for this (outcome, design) pair. The card is a declared gap, not a null result."
     },
     "published_result": "index.json#published_results.design.C",
-    "note": "No estimate for (primary_completion, C). The outcome series is absent, so no pre-check ran for this pair (Stage 5 status not_attempted). This is a declared gap, not a null result."
+    "note": "No estimate for (primary_completion, C). Stage 5 pre-checked this pair and the design's own donor panel carries no path for this outcome, so no synthetic control can be fitted: outcome primary_completion is not in the donor panel (predictors: cpi_yoy, fatalities, gdp_growth, immun_penta3, incidents, mmr, oil_rents, population, skilled_birth, u5mr, unemp). That is a statement about the data that exists, not a question left open."
   }
 }

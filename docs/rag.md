@@ -18,17 +18,17 @@ authoritative-looking and wrong. Everything below is shaped by that.
 
 ## 1. What is in it
 
-**495 chunks from 53 attributed sources**, at vintage 2026-10-30 - the registry's vintage, not the build date,
+**524 chunks from 53 attributed sources**, at vintage 2026-11-01 - the registry's vintage, not the build date,
 so an answer that quotes a card is a statement about that data vintage whenever it is read.
 
 | Family | Chunks | Parent documents |
 |---|---|---|
-| `model_card` | 179 | 36 — one per card, split into parts when the card exceeds the budget |
-| `methodology` | 183 | 9 documents: design memo (34), estimates (23), robustness (19), events (22), registry (14), limitations (37), DAGs (29), glossary (3), licence register (2) |
+| `model_card` | 181 | 36 — one per card, split into parts when the card exceeds the budget |
+| `methodology` | 201 | 9 documents: design memo, estimates, robustness, events, registry, limitations, DAGs, glossary, licence register |
 | `data_dictionary` | 47 | 1 |
-| `card_estimate` | 36 | 36 — one per card, the card's fields in one piece |
-| `event_study` | 13 | 4 transitions + the artifact's `not_claimed` list |
-| `published_result` | 12 | 3 — Designs A, B and C |
+| `card_estimate` | 52 | 36 — one per card, in one piece until a card's note grows past the budget, then split into parts |
+| `event_study` | 12 | 4 transitions + the artifact's `not_claimed` list |
+| `published_result` | 19 | 3 — Designs A, B and C (C carries one block per outcome since C-91) |
 | `administration` | 5 | 5 seed rows |
 | `shock` | 3 | 3 annotated bands |
 | `coverage` | 2 | the quality gate counts and the registry's card counts |
@@ -47,15 +47,17 @@ parts, each opening with `[title — part k of n]` and carrying the card's id in
 cannot-rule-out list. The estimate paragraph and its verdict sit in adjacent paragraphs and normally land in
 the same part; when they do not, the retriever returns both.
 
-**The `card_estimate` family is the same card in one piece**, because an answer has to quote the reason
-beside the assumption it qualifies. A question about one of the 34 cards that carries a reason needs the
-reason, the assumption and the caveat from a single passage; assembled from the split `model_card` parts it
-lacked half of what the contract requires, and the answer layer declined. The family is therefore allowed a
-declared **1,700-character** budget (`chunking.max_chars_by_family`) rather than the 950 every other family
-takes. The number is the tokenizer's, not a preference: the longest card is 1,598 characters and 379 tokens
-of the 512-token window, measured with the declared model's own tokenizer. `tests/verify_rag.py` reads the
-per-family budget from the spec — before it did, it applied 950 to this family and reported 36 false
-failures, which is how a verifier stops being read.
+**The `card_estimate` family was the same card in one piece**, because an answer has to quote the reason
+beside the assumption it qualifies. The family is allowed a declared **1,700-character** budget
+(`chunking.max_chars_by_family`) rather than the 950 every other family takes; the number is the tokenizer's,
+not a preference. **Since C-91 the eight Design C cards carry a longer note** — the gap range, the placebo
+rank and the per-outcome wording — and sixteen card-estimate chunks are now parts rather than whole cards.
+The answer layer therefore reads a card's **parts together** when it assembles: `chunks_used` names the
+parent, and the assumption, the caveats and the reason are all available to the contract even when they sit
+in different parts. That defect was found here, by the answer rate falling from 0.947 to 0.842 and returning
+to 0.947 when the layer was fixed — not by reading the code. `tests/verify_rag.py` reads the per-family
+budget from the spec — before it did, it applied 950 to this family and reported 36 false failures, which is
+how a verifier stops being read.
 
 ## 2. The budget is set by the model, and it caught two mistakes
 
@@ -81,8 +83,8 @@ Design C's status, coverage, quality, the event study, the tables), 2 refusals t
 | Metric | Embeddings | BM25 baseline | Gate |
 |---|---|---|---|
 | recall@5 | **0.944** | 0.778 | ≥ 0.90 — **met** for embeddings, not for the baseline |
-| gold coverage@5 | 0.421 | 0.369 | - |
-| MRR | 0.673 | 0.616 | - |
+| gold coverage@5 | 0.403 | 0.353 | - |
+| MRR | 0.631 | 0.569 | - |
 | refusal-with-reason recall | **0.5** | 0.0 | 1.0 — **not met** |
 | out-of-scope refused | **0.25** | n/a | 1.0 — **not met** |
 | answerable kept (not refused) | 1.0 | n/a | 1.0 — met |
@@ -112,20 +114,20 @@ held-out set the rules never saw (v3), it refuses **0.947** of out-of-scope ques
 through its capital city, is published rather than tuned away (`docs/intent.md`). On this eval set, out-of-scope refusal goes
 **0.25 → 1.000** and reason-citation **0.5 → 1.000**, with answerable recall unchanged.
 
-The refusal threshold is `0.300234`, derived as 0.5 × the median answerable top-1 similarity (0.6005). It is
+The refusal threshold is `0.302598`, derived as 0.5 × the median answerable top-1 similarity (0.6052). It is
 calibrated on the eval set, so the refusal number is optimistic; that caveat travels in the artifact.
 
 ### The answer-quality measurement — the definitions, not the library
 
-`registry/rag/2026-10-30/answer_quality_eval.json` scores the 15 answered questions on the four metrics RAGAS
+`registry/rag/2026-11-01/answer_quality_eval.json` scores the 15 answered questions on the four metrics RAGAS
 defines, judged by `gemini-3.5-flash-lite` at temperature 0:
 
 | Metric | Measured | What it means here |
 |---|---|---|
-| faithfulness | **0.956** | statements in an answer that its own cited contexts support |
-| answer relevancy | **0.827** | mean cosine between the question and three questions generated from the answer |
-| context precision | **0.989** | average precision over the cited chunks a judge calls useful for the reference answer |
-| context recall | **0.848** | reference-answer claims the cited contexts can support |
+| faithfulness | **0.920** | statements in an answer that its own cited contexts support |
+| answer relevancy | **0.816** | mean cosine between the question and three questions generated from the answer |
+| context precision | **0.956** | average precision over the cited chunks a judge calls useful for the reference answer |
+| context recall | **0.787** | reference-answer claims the cited contexts can support |
 
 **This is not a `ragas` library run, and the artifact says so in its own fields.** The package is not
 installed in this repository or on this machine, and installing it would add a dependency tree to a project
@@ -137,14 +139,13 @@ RAGAS's per-item calls, because this key's free tier allows 20 requests per wind
 What the numbers say, read honestly:
 
 - **Faithfulness is high by construction, not by quality.** The answer is a selection of quoted corpus
-  paragraphs, so the check confirms the contract rather than judging retrieval. 0.956 here means "it quotes
+  paragraphs, so the check confirms the contract rather than judging retrieval. 0.920 here means "it quotes
   what it cites", nothing more — and earlier runs of the same measurement gave 0.952, 0.956, 0.964 and 0.971.
-  This run's floor is `q05_design_b_robust` at **0.333**, the question whose answer must carry two outcome
-  families: the design-level result block and its two families do not fit cleanly into the quoted passages.
-- **Context recall 0.848 is the number that matters.** About one reference claim in seven is not supported
-  by the chunks the answer actually cited: in this run `q04_oil_to_states` scored **0.000**,
-  `q05_design_b_robust` 0.667, and `q08_observed_share`, `q09_tenure_comparison` and
-  `q11_cards_with_numbers` 0.750 each.
+  This run's floor is `q07_u5mr_synthetic_control` at **0.083**, the Design C question: the answer is a reason
+  and a set of caveats rather than a number, so most of its statements are not claims a context can support.
+- **Context recall 0.787 is the number that matters.** About one reference claim in five is not supported
+  by the chunks the answer actually cited: in this run `q07_u5mr_synthetic_control` scored **0.000** and
+  several others sit between 0.5 and 0.75.
   The answer quotes the right document but not always the paragraph that carries the reference claim —
   and both zeros are questions whose reference answer spans two design-level artefacts rather than one.
 - **The judge is noisy, and that is published too.** Fourteen runs of the same measurement gave faithfulness
@@ -198,7 +199,7 @@ machine (no network service, no GPU):
 
 `sentence-transformers==5.1.2`, `torch==2.14.1+cpu`, `numpy 2.4.6`; the model is `multi-qa-MiniLM-L6-cos-v1`
 (384 dims, 512 tokens). The first `--embed` downloads ~90 MB into the Hugging Face cache; after that the run
-is ~20 seconds for 495 chunks.
+is ~20 seconds for 524 chunks.
 
 **Then rebuild whenever a source changes.** The corpus records the sha256 of all 51 sources and
 `tests/verify_rag.py` fails when one no longer matches, with the rebuild command in the message. That is the

@@ -1,10 +1,17 @@
 -- Country-year observations for the Design C donor pool, typed, at the native grain.
 --
--- The donor panel is a separate source (`worldbank_donors`) holding the same five screening predictors
--- for each of 99 candidate comparison countries (widened from 13 on 2026-10-18). It is kept apart from
--- the national series on purpose: these rows are not outcomes of the thing being estimated, they are
--- the donor pool's pre-treatment paths, and mixing them into the national spine would put 99
--- countries' outcomes on Nigeria's chart.
+-- The donor panel is landed as **two sources**, and both are read here:
+--
+--   * `worldbank_donors` — the five screening predictors the pre-fit gate fits on. Its membership is the
+--     committed donor-panel artifact Stage 5 and the intent gate read, so it is never re-landed to add a
+--     series: a second vintage of it would move the pool under a frozen gate.
+--   * `worldbank_donor_outcomes` — additional outcome paths for the same pool (C-91), landed as its own
+--     source so the predictor panel stays put. Its donor list is copied from the predictor manifest by the
+--     flow, so the two sources cannot disagree about who is in the pool.
+--
+-- Both are kept apart from the national series on purpose: these rows are not outcomes of the thing being
+-- estimated, they are the donor pool's pre-treatment paths, and mixing them into the national spine would
+-- put 99 countries' outcomes on Nigeria's chart.
 --
 -- Country-level rows are keyed by ISO3 plus the country name the source returned, because the synthetic
 -- control stage has to state which countries entered the pool and a bare code is not auditable at a glance.
@@ -16,11 +23,12 @@ with payloads as (
         dataset_id,
         content
     from {{ ref('stg_raw_payload') }}
-    where source = 'worldbank_donors'
+    where source in ('worldbank_donors', 'worldbank_donor_outcomes')
 ),
 
 observations as (
     select
+        source,
         metric_id,
         vintage,
         dataset_id,
@@ -35,7 +43,7 @@ select
     metric_id,
     vintage,
     dataset_id,
-    'worldbank_donors' as source,
+    source,
     upper(country_iso3) as country_iso3,
     country_name,
     try_cast(period_label as integer) as period_year,

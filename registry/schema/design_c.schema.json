@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://causal-presidents.local/schema/design_c.schema.json",
   "title": "Stage 8h - Design C synthetic control",
-  "description": "A synthetic counterfactual for Nigeria on u5mr, one window per transition, with in-space, in-time and leave-one-donor-out placebos. A window is `identified` only where its own placebos support it.",
+  "description": "One synthetic counterfactual per outcome the donor panel carries, one window per transition, with in-space, in-time and leave-one-donor-out placebos. A window is `identified` only where its own placebos support it. Version 0.2.0 carries an `outcomes` array rather than a single outcome (C-91).",
   "type": "object",
-  "required": ["schema_version", "stage", "layer", "vintage", "generated_at", "generator", "spec", "input", "counts", "windows"],
+  "required": ["schema_version", "stage", "layer", "vintage", "generated_at", "generator", "spec", "input", "counts", "outcomes"],
   "properties": {
     "schema_version": { "type": "string" },
     "stage": { "const": "8h" },
@@ -34,12 +34,14 @@
     },
     "input": {
       "type": "object",
-      "required": ["database", "donor_table", "native_table", "outcome", "treated_iso3", "donor_pool", "treated_series", "window_years", "pre_fit_threshold"],
+      "required": ["database", "donor_table", "native_table", "outcomes", "outcomes_rule", "annual_sum_metrics", "treated_iso3", "donor_pool", "treated_series", "window_years", "pre_fit_threshold"],
       "properties": {
         "database": { "type": "string" },
         "donor_table": { "const": "main_analytics.fact_donor_panel" },
         "native_table": { "const": "main_analytics.fact_observation_native" },
-        "outcome": { "const": "u5mr" },
+        "outcomes": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "outcomes_rule": { "type": "string" },
+        "annual_sum_metrics": { "type": "array", "items": { "type": "string" } },
         "treated_iso3": { "const": "NGA" },
         "donor_pool": {
           "type": "object",
@@ -53,8 +55,9 @@
     },
     "counts": {
       "type": "object",
-      "required": ["windows", "estimated", "refused", "identified", "not_identified", "donors", "placebos_in_space", "placebos_in_time", "placebos_passing_pre_fit", "loo_fits"],
+      "required": ["outcomes", "windows", "estimated", "refused", "identified", "not_identified", "donors", "placebos_in_space", "placebos_in_time", "placebos_passing_pre_fit", "loo_fits"],
       "properties": {
+        "outcomes": { "type": "integer", "minimum": 1 },
         "windows": { "type": "integer", "minimum": 0 },
         "estimated": { "type": "integer", "minimum": 0 },
         "refused": { "type": "integer", "minimum": 0 },
@@ -67,144 +70,205 @@
         "loo_fits": { "type": "integer", "minimum": 0 }
       }
     },
-    "windows": {
+    "outcomes": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["id", "status", "pre_years", "post_years"],
+        "required": ["outcome", "label", "unit", "native_frequency", "treated_rule", "annual_sum", "gate_basis", "status", "counts", "windows"],
         "properties": {
-          "id": { "type": "string" },
-          "status": { "enum": ["refused", "identified", "estimated_not_identified"] },
-          "pre_years": { "type": "integer", "minimum": 0 },
-          "post_years": { "type": "integer", "minimum": 0 },
-          "refused": {
+          "outcome": { "type": "string" },
+          "label": { "type": "string" },
+          "unit": { "type": ["string", "null"] },
+          "native_frequency": { "type": "string" },
+          "treated_rule": { "type": "string" },
+          "annual_sum": { "type": "boolean" },
+          "gate_basis": { "enum": ["stage5_prefit", "stage8h_annual_aggregation"] },
+          "status": { "enum": ["identified", "estimated_not_identified", "not_run"] },
+          "counts": {
             "type": "object",
-            "required": ["reason", "detail"],
-            "properties": { "reason": { "type": "string" }, "detail": { "type": "string" } }
-          },
-          "first_year": { "type": "integer" },
-          "last_year": { "type": "integer" },
-          "n_donors_used": { "type": "integer", "minimum": 1 },
-          "n_donors_with_weight": { "type": "integer", "minimum": 1 },
-          "path": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-              "type": "object",
-              "required": ["year", "treated", "synthetic", "gap"],
-              "properties": {
-                "year": { "type": "integer" },
-                "treated": { "type": "number" },
-                "synthetic": { "type": "number" },
-                "gap": { "type": "number" }
-              }
-            }
-          },
-          "pre_rmse": { "type": "number", "minimum": 0 },
-          "pre_sd": { "type": "number", "minimum": 0 },
-          "pre_ratio": { "type": "number", "minimum": 0 },
-          "post_rmse": { "type": "number", "minimum": 0 },
-          "post_pre_ratio": { "type": "number", "minimum": 0 },
-          "mean_gap": { "type": "number" },
-          "weights": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": ["donor", "weight"],
-              "properties": {
-                "donor": { "type": "string", "pattern": "^[A-Z]{3}$" },
-                "weight": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }
-              }
-            }
-          },
-          "n_weights_published": { "type": "integer", "minimum": 1 },
-          "in_space": {
-            "type": "object",
-            "required": ["n_placebos", "p_value", "n_at_least_as_extreme", "n_placebos_passing_pre_fit", "distribution"],
+            "required": ["windows", "estimated", "refused", "identified", "not_identified", "donors", "placebos_in_space", "placebos_in_time", "placebos_passing_pre_fit", "loo_fits"],
             "properties": {
-              "n_placebos": { "type": "integer", "minimum": 1 },
-              "p_value": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
-              "n_at_least_as_extreme": { "type": "integer", "minimum": 0 },
-              "n_placebos_passing_pre_fit": { "type": "integer", "minimum": 0 },
-              "distribution": {
-                "type": "array",
-                "minItems": 1,
-                "items": {
-                  "type": "object",
-                  "required": ["donor", "pre_ratio", "post_pre_ratio", "mean_gap"],
-                  "properties": {
-                    "donor": { "type": "string", "pattern": "^[A-Z]{3}$" },
-                    "pre_ratio": { "type": "number", "minimum": 0 },
-                    "post_pre_ratio": { "type": "number", "minimum": 0 },
-                    "mean_gap": { "type": "number" }
-                  }
-                }
-              }
+              "windows": { "type": "integer", "minimum": 0 },
+              "estimated": { "type": "integer", "minimum": 0 },
+              "refused": { "type": "integer", "minimum": 0 },
+              "identified": { "type": "integer", "minimum": 0 },
+              "not_identified": { "type": "integer", "minimum": 0 },
+              "donors": { "type": "integer", "minimum": 0 },
+              "placebos_in_space": { "type": "integer", "minimum": 0 },
+              "placebos_in_time": { "type": "integer", "minimum": 0 },
+              "placebos_passing_pre_fit": { "type": "integer", "minimum": 0 },
+              "loo_fits": { "type": "integer", "minimum": 0 }
             }
           },
-          "in_time": {
+          "windows": {
             "type": "array",
             "minItems": 1,
             "items": {
               "type": "object",
-              "required": ["backdated_years", "status"],
+              "required": ["id", "status", "pre_years", "post_years", "gate"],
               "properties": {
-                "backdated_years": { "type": "integer", "minimum": 1 },
-                "status": { "enum": ["estimated", "not_run"] },
-                "detail": { "type": "string" },
+                "id": { "type": "string" },
+                "status": { "enum": ["refused", "identified", "estimated_not_identified"] },
                 "pre_years": { "type": "integer", "minimum": 0 },
                 "post_years": { "type": "integer", "minimum": 0 },
+                "gate": {
+                  "type": "object",
+                  "required": ["basis", "verdict"],
+                  "properties": {
+                    "basis": { "enum": ["stage5_prefit", "stage8h_annual_aggregation"] },
+                    "verdict": { "type": ["string", "null"] },
+                    "ratio": { "type": ["number", "null"] },
+                    "note": { "type": ["string", "null"] }
+                  }
+                },
+                "refused": {
+                  "type": "object",
+                  "required": ["reason", "detail"],
+                  "properties": {
+                    "reason": { "enum": ["gate_window_not_runnable", "treated_series_incomplete"] },
+                    "detail": { "type": "string" }
+                  }
+                },
+                "first_year": { "type": "integer" },
+                "last_year": { "type": "integer" },
+                "n_donors_used": { "type": "integer", "minimum": 1 },
+                "n_donors_with_weight": { "type": "integer", "minimum": 1 },
+                "n_donors_in_gate": { "type": "integer", "minimum": 1 },
+                "donors_dropped_for_post_gap": { "type": "array", "items": { "type": "string", "pattern": "^[A-Z]{3}$" } },
+                "path": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "required": ["year", "treated", "synthetic", "gap"],
+                    "properties": {
+                      "year": { "type": "integer" },
+                      "treated": { "type": "number" },
+                      "synthetic": { "type": "number" },
+                      "gap": { "type": "number" }
+                    }
+                  }
+                },
+                "pre_rmse": { "type": "number", "minimum": 0 },
+                "pre_sd": { "type": "number", "minimum": 0 },
+                "pre_ratio": { "type": ["number", "null"], "minimum": 0 },
+                "post_rmse": { "type": "number", "minimum": 0 },
+                "post_pre_ratio": { "type": ["number", "null"], "minimum": 0 },
                 "mean_gap": { "type": "number" },
-                "ratio_to_estimated": { "type": "number", "minimum": 0 }
-              }
-            }
-          },
-          "leave_one_out": {
-            "type": "object",
-            "required": ["n_fits", "min", "max", "n_sign_flips"],
-            "properties": {
-              "n_fits": { "type": "integer", "minimum": 1 },
-              "min": { "type": "number" },
-              "max": { "type": "number" },
-              "n_sign_flips": { "type": "integer", "minimum": 0 }
-            }
-          },
-          "solver_sensitivity": {
-            "type": "object",
-            "required": ["ridge_relative", "mean_gap", "pre_ratio", "p_value", "gap_shift", "n_weights_with_ridge"],
-            "properties": {
-              "ridge_relative": { "type": "number", "exclusiveMinimum": 0 },
-              "mean_gap": { "type": "number" },
-              "pre_ratio": { "type": "number", "minimum": 0 },
-              "p_value": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
-              "gap_shift": { "type": "number" },
-              "n_weights_with_ridge": { "type": "integer", "minimum": 1 }
-            }
-          },
-          "verdict": {
-            "type": "object",
-            "required": ["status", "rule", "failed_checks"],
-            "properties": {
-              "status": { "enum": ["identified", "estimated_not_identified"] },
-              "rule": { "type": "string" },
-              "failed_checks": { "type": "array", "items": { "type": "string" } }
-            }
-          },
-          "balance": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": ["metric", "status"],
-              "properties": {
-                "metric": { "type": "string" },
-                "status": { "enum": ["balanced", "not_balanced"] },
-                "detail": { "type": "string" },
-                "n_years": { "type": "integer", "minimum": 0 },
-                "treated": { "type": "number" },
-                "synthetic": { "type": "number" },
-                "donor_min": { "type": "number" },
-                "donor_max": { "type": "number" }
+                "weights": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["donor", "weight"],
+                    "properties": {
+                      "donor": { "type": "string", "pattern": "^[A-Z]{3}$" },
+                      "weight": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }
+                    }
+                  }
+                },
+                "n_weights_published": { "type": "integer", "minimum": 1 },
+                "in_space": {
+                  "type": "object",
+                  "required": ["n_placebos", "p_value", "n_at_least_as_extreme", "n_placebos_passing_pre_fit", "distribution"],
+                  "properties": {
+                    "n_placebos": { "type": "integer", "minimum": 1 },
+                    "p_value": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+                    "n_at_least_as_extreme": { "type": "integer", "minimum": 0 },
+                    "n_placebos_passing_pre_fit": { "type": "integer", "minimum": 0 },
+                    "distribution": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "object",
+                        "required": ["donor", "pre_ratio", "post_pre_ratio", "mean_gap"],
+                        "properties": {
+                          "donor": { "type": "string", "pattern": "^[A-Z]{3}$" },
+                          "pre_ratio": { "type": ["number", "null"], "minimum": 0 },
+                          "post_pre_ratio": { "type": ["number", "null"], "minimum": 0 },
+                          "mean_gap": { "type": "number" }
+                        }
+                      }
+                    }
+                  }
+                },
+                "in_time": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "required": ["backdated_years", "status"],
+                    "properties": {
+                      "backdated_years": { "type": "integer", "minimum": 1 },
+                      "status": { "enum": ["estimated", "not_run"] },
+                      "detail": { "type": "string" },
+                      "pre_years": { "type": "integer", "minimum": 0 },
+                      "post_years": { "type": "integer", "minimum": 0 },
+                      "mean_gap": { "type": "number" },
+                      "ratio_to_estimated": { "type": ["number", "null"], "minimum": 0 }
+                    }
+                  }
+                },
+                "leave_one_out": {
+                  "type": "object",
+                  "required": ["n_fits", "min", "max", "n_sign_flips"],
+                  "properties": {
+                    "n_fits": { "type": "integer", "minimum": 1 },
+                    "min": { "type": "number" },
+                    "max": { "type": "number" },
+                    "n_sign_flips": { "type": "integer", "minimum": 0 }
+                  }
+                },
+                "solver_sensitivity": {
+                  "type": "object",
+                  "required": ["ridge_relative", "mean_gap", "pre_ratio", "p_value", "gap_shift", "n_weights_with_ridge", "weights"],
+                  "properties": {
+                    "ridge_relative": { "type": "number", "exclusiveMinimum": 0 },
+                    "mean_gap": { "type": "number" },
+                    "pre_ratio": { "type": "number", "minimum": 0 },
+                    "p_value": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+                    "gap_shift": { "type": "number" },
+                    "n_weights_with_ridge": { "type": "integer", "minimum": 1 },
+                    "weights": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": ["donor", "weight"],
+                        "properties": {
+                          "donor": { "type": "string", "pattern": "^[A-Z]{3}$" },
+                          "weight": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }
+                        }
+                      }
+                    }
+                  }
+                },
+                "verdict": {
+                  "type": "object",
+                  "required": ["status", "rule", "failed_checks"],
+                  "properties": {
+                    "status": { "enum": ["identified", "estimated_not_identified"] },
+                    "rule": { "type": "string" },
+                    "failed_checks": { "type": "array", "items": { "type": "string" } }
+                  }
+                },
+                "solver_scaled": { "type": "boolean" },
+                "balance": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["metric", "status"],
+                    "properties": {
+                      "metric": { "type": "string" },
+                      "status": { "enum": ["balanced", "not_balanced"] },
+                      "detail": { "type": "string" },
+                      "n_years": { "type": "integer", "minimum": 0 },
+                      "treated": { "type": "number" },
+                      "synthetic": { "type": "number" },
+                      "donor_min": { "type": "number" },
+                      "donor_max": { "type": "number" }
+                    }
+                  }
+                }
               }
             }
           }

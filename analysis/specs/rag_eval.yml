@@ -20,7 +20,7 @@
 # `reference_answer` is not used by the offline harness (there is no generation step yet, and no LLM key).
 # It is carried so the RAGAS half can be wired the day a key exists: question, contexts, answer, ground_truth.
 version: 1
-labelled: "2026-10-30"
+labelled: "2026-11-01"
 spec_path: "analysis/specs/rag_eval.yml"
 corpus_spec: "analysis/specs/rag.yml"
 
@@ -132,9 +132,9 @@ questions:
     type: answerable
     question: "How many of the landed series did the quality gates flag?"
     gold: ["doc:limitations#s04"]
-    must_contain: ["313"]
+    must_contain: ["491"]
     reference_answer: >-
-      674 series are gated: 359 ok, 313 flagged and 2 empty. A flag means a rule fired and the reason
+      1,070 series are gated: 577 ok, 491 flagged and 2 empty. A flag means a rule fired and the reason
       travels with the series; it does not mean the series was removed.
 
   - id: q11_cards_with_numbers

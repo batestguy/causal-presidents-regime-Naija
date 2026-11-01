@@ -206,18 +206,26 @@ def main() -> int:
                 fail(failures, f"{dag_id}: reason code {reason['code']!r} is not in the declared set")
             recomputed_reasons[reason["code"]] = recomputed_reasons.get(reason["code"], 0) + 1
 
-            if card["diagnostics"]["status"] == "not_attempted":
+            if design == "C":
+                # Design C runs for every outcome the donor panel carries (C-91, C-93). A C card carries the
+                # design-level reason when the artifact estimated a window for this outcome; the outcome's
+                # own absence when it ran and every window was refused, or when the panel carries no path
+                # for it; and `design_not_run` only when neither is true (no such card exists today).
+                design_c_path = REPO_ROOT / "registry" / "design_c" / est_vintage / "design_c.json"
+                cdoc = json.loads(design_c_path.read_text(encoding="utf-8")) if design_c_path.exists() else {}
+                block = next((o for o in cdoc.get("outcomes", []) if o.get("outcome") == outcome), None)
+                estimated = block is not None and any(w["status"] != "refused" for w in block["windows"])
+                ran_all_refused = block is not None and not estimated
+                if estimated:
+                    expect = "design_estimated_not_identified"
+                elif ran_all_refused or card["diagnostics"]["status"] == "not_attempted":
+                    expect = "outcome_series_absent"
+                else:
+                    expect = "design_not_run"
+            elif card["diagnostics"]["status"] == "not_attempted":
                 expect = "outcome_series_absent"
             elif design == "B":
                 expect = "design_result_is_channel_level"
-            elif design == "C":
-                # Design C is run for one outcome in its own stage; a C card carries the new reason only when
-                # that artifact actually estimated a window for this outcome.
-                design_c_path = REPO_ROOT / "registry" / "design_c" / est_vintage / "design_c.json"
-                cdoc = json.loads(design_c_path.read_text(encoding="utf-8")) if design_c_path.exists() else {}
-                estimated = cdoc.get("input", {}).get("outcome") == outcome and any(
-                    w["status"] != "refused" for w in cdoc.get("windows", []))
-                expect = "design_estimated_not_identified" if estimated else "design_not_run"
             else:
                 # Design A is a state-by-month design, so the reason turns on the card's own measured
                 # outcome check (C-90), not on a list of outcomes: wrong grain, or no series at all.

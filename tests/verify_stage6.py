@@ -331,7 +331,8 @@ def main() -> int:
     design_c_path = REPO_ROOT / "registry" / "design_c" / report["vintage"] / "design_c.json"
     if design_c_path.exists():
         cdoc = json.loads(design_c_path.read_text(encoding="utf-8"))
-        estimated = [w for w in cdoc["windows"] if w["status"] != "refused"]
+        flat = [w for block in cdoc["outcomes"] for w in block["windows"]]
+        estimated = [w for w in flat if w["status"] != "refused"]
         expected_c = ("identified" if any(w["status"] == "identified" for w in estimated)
                       else "estimated_not_identified" if estimated else "not_run")
         if c["status"] != expected_c:
@@ -341,6 +342,12 @@ def main() -> int:
             fail(failures, "design C: the estimate block does not point at its own artifact")
         if (c.get("counts") or {}).get("estimated") != len(estimated):
             fail(failures, "design C: the counts block does not match the artifact's estimated windows")
+        if (c.get("counts") or {}).get("outcomes") != len(cdoc["outcomes"]):
+            fail(failures, "design C: the counts block does not carry the artifact's outcome count")
+        if len(c.get("outcomes") or []) != len(cdoc["outcomes"]):
+            fail(failures, "design C: the estimate block does not carry one entry per artifact outcome")
+        if len(c.get("windows") or []) != len(flat):
+            fail(failures, "design C: the estimate block does not carry every artifact window")
     elif c["status"] != "not_run" or not c.get("why"):
         fail(failures, "design C: reported as estimated with no artifact, or as not_run without a reason")
 

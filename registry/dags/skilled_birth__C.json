@@ -1,11 +1,11 @@
 {
   "dag_id": "skilled_birth__C",
   "schema_version": "0.3.0",
-  "vintage_date": "2026-10-30",
-  "generated_at": "2026-10-31T00:50:27+0100",
+  "vintage_date": "2026-11-01",
+  "generated_at": "2026-11-01T10:10:55+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "2610e44"
+    "git_sha": "63f3f0f"
   },
   "outcome": {
     "id": "skilled_birth",
@@ -153,21 +153,41 @@
     "status": "not_attempted",
     "checks": [
       {
-        "id": "pretreatment_fit",
+        "id": "pretreatment_fit:obasanjo",
         "verdict": "not_run",
-        "detail": "outcome skilled_birth is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)"
+        "detail": "needs >= 8 pre and >= 2 post years"
+      },
+      {
+        "id": "pretreatment_fit:yaradua",
+        "verdict": "not_run",
+        "detail": "needs >= 8 pre and >= 2 post years"
+      },
+      {
+        "id": "pretreatment_fit:jonathan",
+        "verdict": "not_run",
+        "detail": "needs >= 8 pre and >= 2 post years"
+      },
+      {
+        "id": "pretreatment_fit:buhari",
+        "verdict": "not_run",
+        "detail": "needs >= 8 pre and >= 2 post years"
+      },
+      {
+        "id": "pretreatment_fit:tinubu",
+        "verdict": "not_run",
+        "detail": "needs >= 8 pre and >= 2 post years"
       },
       {
         "id": "donor_pool_coverage",
         "verdict": "computed",
-        "detail": "99 donors x 5 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
+        "detail": "99 donors x 11 predictors; Venezuela's oil-rents series ends 2014 (C-19)"
       }
     ],
-    "blocker": "outcome skilled_birth is not in the donor panel (predictors: cpi_yoy, gdp_growth, oil_rents, population, u5mr)",
+    "blocker": "no declared window has the required 8 pre and 2 post years of this outcome's native annual path (8 observations over 1999-2022)",
     "note": "No candidate window is testable for this outcome",
     "coverage_status": "partial",
-    "vintage": "2026-10-30",
-    "source": "registry/diagnostics/2026-10-30/diagnostics.json"
+    "vintage": "2026-11-01",
+    "source": "registry/diagnostics/2026-11-01/diagnostics.json"
   },
   "assets": {
     "svg": "registry/dags/skilled_birth__C.svg"
@@ -180,7 +200,7 @@
       "code": "outcome_series_absent",
       "detail": "The outcome has no usable series at this design's unit, so no specification could be declared for this (outcome, design) pair. The card is a declared gap, not a null result."
     },
-    "published_result": "index.json#published_results.design.C",
-    "note": "No estimate for (skilled_birth, C). The outcome series is absent, so no pre-check ran for this pair (Stage 5 status not_attempted). This is a declared gap, not a null result."
+    "published_result": "registry/design_c/2026-11-01/design_c.json",
+    "note": "No estimate for (skilled_birth, C). The synthetic control was run for this outcome and every declared window was refused (gate_window_not_runnable, treated_series_incomplete): obasanjo: 0 pre and 8 post years against the declared minima of 8 and 2 (the year belongs to the administration in office on 1 July); yaradua: Nigeria has no native observation in at least one year of the window (fact_observation_native at its native grain; monthly counts summed to the calendar year); jonathan: Nigeria has no native observation in at least one year of the window (fact_observation_native at its native grain; monthly counts summed to the calendar year); buhari: Nigeria has no native observation in at least one year of the window (fact_observation_native at its native grain; monthly counts summed to the calendar year); tinubu: Nigeria has no native observation in at least one year of the window (fact_observation_native at its native grain; monthly counts summed to the calendar year). The series exists, but it cannot fill a window of this design's declared length, so this is a statement about the data that exists rather than a question left open."
   }
 }

@@ -33,7 +33,7 @@
 #     size as the estimate itself. The design is therefore reported as *estimated, not identified* —
 #     a measured verdict rather than a caveat, and the reason both designs are run together.
 version: 1
-labelled: "2026-10-30"
+labelled: "2026-11-01"
 spec_path: "analysis/specs/estimation.yml"
 engine: "analysis/R/03_estimate.R"
 verifier: "tests/verify_stage6.py"
@@ -221,18 +221,19 @@ design_c:
   # Run 2026-10-28 in its own stage (8h) with its own spec, placebos and verifier. This block is kept here
   # because Stage 6's report renders it, and it now carries a status rather than a reason for absence.
   status: estimated_not_identified
-  artifact: "registry/design_c/2026-10-30/design_c.json"
+  artifact: "registry/design_c/2026-11-01/design_c.json"
   spec: "analysis/specs/design_c.yml"
   why: >-
     The design was authorized by the 2026-10-18 gate (u5mr passes 3 of its 4 runnable windows against a
-    99-candidate pool) and has since been fitted: four windows estimated, one refused by the declared
-    minimum, none identified. The gate's pass was permission, not evidence, and the placebos say why —
-    304 of 396 placebo fits also clear the same 0.10 pre-fit threshold, and the treated unit's post/pre
-    RMSPE ratio is unremarkable among them (p = 0.17 to 0.50). The detail is in the stage 8h artifact; no
-    number is repeated here, and none is on a card, because a synthetic control has no sampling
-    distribution to publish an interval from.
+    99-candidate pool; mmr and unemp pass too) and has since been fitted for every outcome the donor panel
+    carries (C-91, C-93): nine outcomes, 45 windows, 31 estimated and 14 refused by the declared rule, none
+    identified. The gate's pass was permission, not evidence, and the placebos say why — 969 of 2,959
+    placebo fits also clear the same 0.10 pre-fit threshold, and the treated unit's post/pre RMSPE ratio is
+    unremarkable among them (p = 0.08 to 0.98). The detail is in the stage 8h artifact; no number is
+    repeated here, and none is on a card, because a synthetic control has no sampling distribution to
+    publish an interval from.
   next_step: null
-  gate_artifact: "registry/diagnostics/2026-10-30/diagnostics.json"
+  gate_artifact: "registry/diagnostics/2026-11-01/diagnostics.json"
 
 # ---------------------------------------------------------------------------------------------
 # Figure — the CI forest plot

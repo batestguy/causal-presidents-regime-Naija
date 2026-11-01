@@ -31,7 +31,8 @@ recomputed independently by `tests/verify_stage5.py`. The current artifact is
 >   aggregation and an outcome decision for a series that begins 2016-12.
 >
 > The verdict totals have since moved, and the movement is the point: **2026-10-16 was 15 fail / 7 degraded /
-> 14 not attempted / 0 pass; 2026-10-17 was 15 / 9 / 12 / 0; 2026-10-18 is 14 / 9 / 12 / **1 pass**.** The
+> 14 not attempted / 0 pass; 2026-10-17 was 15 / 9 / 12 / 0; 2026-10-18 was 14 / 9 / 12 / **1 pass**;
+> 2026-11-01 is 15 / 9 / 9 / **3 pass**.** The
 > sections below are dated where their reasons changed. Everything else — the grain, the cointegration
 > ranks, the detectable-effect sizes — was measured against the base and is unaffected.
 Machine-readable companion: `registry/diagnostics/2026-10-18/diagnostics.json` (current); the human page is
@@ -52,11 +53,11 @@ a result. It is the boundary inside which results will be obtained at Stage 6.
 |---|---|---|---|
 | **A** — state dose-response DiD | **dropped** | dose validation: **0 of 12,358** values on the specified axis (`D1`, per capita) across 37 states — the nominal axis is present and gated | the state-population denominator decision (X-09), **and** a state-attributed outcome (the security series are the route and are credential-blocked) |
 | **B** — national VECM / ARDL | **degraded** | cointegration rank, DoF, collinearity; the base-spec Tier-3 system has no FAAC — the series exists and is gated, but has **no catalogue entry** | a metric-catalogue entry for the FAAC panel, and a decision on whether an annual-grain estimate is worth publishing |
-| **C** — synthetic control | **fitted, not identified** (2026-10-28) | pre-treatment fit over a **99-country** pool: `u5mr` passes **3 of its 4** windows; `gdp_growth` 1 of 4 and `cpi_yoy` 0 of 4 do not pass the declared strict-majority rollup. The fitted design then fails its placebos: rank p 0.17–0.50, and 304 of 396 placebos clear the same 0.10 gate | a donor pool that cannot interpolate an 8-to-24-year pre-period — the gate, not the estimator, is the binding constraint |
+| **C** — synthetic control | **fitted, not identified for any outcome** (2026-11-01) | pre-treatment fit over a **99-country** pool: `u5mr` passes **3 of its 4** windows, `mmr` 2 of 3 and `unemp` 3 of 4; `immun_penta3`, `gdp_growth` and `cpi_yoy` fail the declared strict-majority rollup, and `skilled_birth` has no runnable window. The design is then fitted for all nine outcomes the panel carries (45 windows, 31 estimated) and no window survives its placebos: rank p 0.08–0.98, and 969 of 2,959 placebos clear the same 0.10 gate |
 
-All **36** (outcome × design) cards carry their own pre-check verdict: **14 fail, 9 degraded,
-12 not attempted, 1 pass.** The pass is `u5mr` under Design C, and it is permission to build that design
-rather than evidence its fit is real. No other card clears its gate. That is the finding.
+All **36** (outcome × design) cards carry their own pre-check verdict: **15 fail, 9 degraded,
+9 not attempted, 3 pass.** The passes are `u5mr`, `mmr` and `unemp` under Design C, and each is permission
+to build that design rather than evidence its fit is real. No other card clears its gate. That is the finding.
 
 ---
 
@@ -201,7 +202,7 @@ gate, but it belongs in the memo because it bounds what a Design B health estima
 
 ---
 
-## 4. Family C — synthetic control — **feasible on one outcome**, after the pool was widened — and fitted without identifying an effect
+## 4. Family C — synthetic control — **feasible on three outcomes**, after the pool was widened — and fitted for every outcome the panel carries without identifying an effect
 
 **Re-run 2026-10-18** against a **99-country** candidate pool screened on oil dependence, region/income
 band and coverage (`ingestion/flows/pull_worldbank_donors.py`, S5-11), where the first run had 13 chosen
@@ -240,38 +241,36 @@ sharp change, and it carries its own warning:
   than the best single donor (`u5mr`/yaradua: 85.22 vs 3.87). Its default V search failed on this pool too.
   Recorded as a finding for Stage 6, not relied upon: the gate rests on the QP, which is a global optimum.
 
-**Built 2026-10-28, and it did not identify an effect.** The estimator and placebos now exist
-(`analysis/specs/design_c.yml`, `analysis/R/11_design_c.R`, `registry/design_c/2026-10-18/`): the gate's own
-simplex fit, in-space placebos over all 99 donors, in-time placebos backdated 3, 5 and 7 years, and a
-leave-one-donor-out sweep. Four windows were estimated and none survived the declared rule; the in-space rank
-p runs from 0.17 to 0.50, and **304 of 396 placebo fits clear the same 0.10 pre-fit threshold**, which is the
-measured version of the warning above: on this pool the gate does not discriminate.
+**Built 2026-10-28, extended 2026-11-01, and it identifies no effect on any outcome.** The estimator and
+placebos now exist (`analysis/specs/design_c.yml`, `analysis/R/11_design_c.R`,
+`registry/design_c/2026-11-01/`) and run for **every outcome the donor panel carries**: nine outcomes, forty-five
+windows, thirty-one estimated and fourteen refused by the declared rule, none identified. The gate's own simplex
+fit, in-space placebos over all 99 donors, in-time placebos backdated 3, 5 and 7 years, and a
+leave-one-donor-out sweep are all re-run per outcome; the in-space rank p runs from 0.08 to 0.98, and **969 of
+2,959 placebo fits clear the same 0.10 pre-fit threshold**, which is the measured version of the warning above:
+on this pool the gate does not discriminate.
 
 The declared problem is also underdetermined — 99 donors against 8 to 24 pre-years leaves a face of equally
-good fits — so the artifact publishes the solver's vertex *and* a unique ridge refit. For the first window they
-disagree in sign (+2.1 against −2.6 deaths per 1,000), which is the artifact saying that this particular gap
-belongs to the solver rather than to Nigeria. The fitted gap is therefore not a card number: a synthetic
-control has no sampling distribution, and the honesty layer publishes no point estimate without an interval.
+good fits — so the artifact publishes the solver's vertex, the ridge refit with its weights, and the
+leave-one-donor-out range. For `u5mr`, `mmr` and `incidents` on their first window the two disagree in sign,
+which is the artifact saying that this particular gap belongs to the solver rather than to Nigeria. The fitted
+gap is therefore not a card number: a synthetic control has no sampling distribution, and the honesty layer
+publishes no point estimate without an interval.
 - **The API blocked part of the pool and the block is recorded.** A content-based WAF rejects some country
   combinations (`LK;LR` → 200, `LK;LR;LS` → 403 every time); the flow splits and retries, and the manifest
   carries the split depth per request (C-60). Libya, Lesotho and Sri Lanka therefore land through narrower
   requests rather than being dropped silently.
 
-Outcomes not in the donor panel (`mmr`, `immun_penta3`, `skilled_birth`, `literacy_youth`,
-`primary_completion`, `ner_primary`, `fatalities`, `incidents`, `unemp`) are `not_attempted`: no
-donor path exists to synthesise against. `fatalities` and `incidents` are in the UCDP *outcome* but not in
-the World Bank predictor set, so a Design C for the conflict outcomes needs a donor conflict path — and,
-unlike the other gaps here, **that path needs no acquisition**. The landed UCDP payload is the *global*
-GED 26.1 archive (**417,968 events over 126 countries, 1989–2025**, member `GEDEvent_v26_1.csv`), not a
-Nigeria extract: the country filter is applied at parse time (`ingestion/parsers/ucdp_events.py`,
-`country == COUNTRY`). So what is missing is a parsing and panel-wiring step over bytes already on disk,
-not a download — corrected 2026-10-18 by counting the landed zip while answering a data-planning
-question. Two facts a build has to handle, both measured from those bytes: the archive carries
-`country_id` (the Gleditsch–Ward code), not ISO3, so joining it to the 99-country donor panel needs a
-crosswalk — matching on names alone reaches only **70 of 99**, and the residual is naming rather than
-absence (`Congo, Dem. Rep.` is `DR Congo (Zaire)`, `Cote d'Ivoire` is `Ivory Coast`, `Gambia, The` is
-`Gambia`) except for a handful of states with genuinely no recorded events (Cabo Verde, Brunei, Gabon),
-which the existing parser already treats as recorded zeros rather than gaps.
+**The conflict outcomes are in the panel now, derived from bytes already on disk.** The landed UCDP payload is
+the *global* GED 26.1 archive (417,968 events over 126 countries, 1989–2025), not a Nigeria extract, so the
+donor path for `fatalities` and `incidents` is a second aggregation in
+`ingestion/parsers/ucdp_events.py` — no download (C-93). Three facts a build has to handle, all measured from
+those bytes: the archive carries `country_id`, not ISO3, so the crosswalk is a declared alias map over the
+committed country vocabulary (eleven GED labels need it, `DR Congo (Zaire)` and `Myanmar (Burma)` among them);
+a country with no recorded event has zero **reported** fatalities rather than a missing series, which is the
+same recorded-zero rule as the state-month artifact one grain up; and Nigeria's conflict outcomes are monthly,
+so the stage sums them to the calendar year under a declared rule rather than Stage 5's annual gate reading
+them. All three are declared in the parser's docstring and recorded in the parse report.
 
 ---
 
@@ -297,9 +296,10 @@ is why the 2023 window is not monthly-visible on the landed CPI.
 
 - **Family A** — dropped. PHASES.md Stage 5 dose validation: a dose with near-zero cross-state
   variance cannot support a dose-response design, and no estimator fixes that. (0 of 12,358 values.)
-- **Family C** — feasible on `u5mr` only (re-run 2026-10-18 over a 99-country pool): 3 of its 4 windows
-  pass the pre-fit gate, `gdp_growth` passes 1 of 4 and `cpi_yoy` none. No candidate treated window lets any convex combination of the donors
-  track Nigeria's pre-treatment path. Reported infeasible rather than estimated, per the Stage 6 gate.
+- **Family C** — feasible on `u5mr`, `mmr` and `unemp` (re-run 2026-10-18 over a 99-country pool; extended
+  2026-11-01): 3 of `u5mr`'s 4 windows pass the pre-fit gate, 2 of 3 for `mmr`, 3 of 4 for `unemp`, while
+  `immun_penta3`, `gdp_growth` and `cpi_yoy` fail the strict-majority rollup and `skilled_birth` has no
+  runnable window. The design is fitted for all nine outcomes and identifies none.
 - **Family B** — degraded, not dropped. It can be estimated, but at annual grain and without FAAC, and
   with a ~38–99 SD detectable effect on the Tier-3 design. The deviations are named on every card.
 

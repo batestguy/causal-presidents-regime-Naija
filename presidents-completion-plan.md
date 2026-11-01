@@ -82,11 +82,24 @@ planned specific fix.
   take the existing **`outcome_series_absent`** (8/9/8 observations, matching their B and C cards). What
   would reopen a pair is a state-by-month series; NDHS state estimates are survey-year, so buying them
   would not close it.
-- [ ] **C2. `design_not_run` (2 cards: `cpi_yoy__C`, `gdp_growth__C`).** Design C is specified for `u5mr`
+- [x] **C2. `design_not_run` (2 cards) — DONE (C-91), and the code now carries zero cards.** Design C
+  was extended from `u5mr` to **every outcome the donor panel carries** (a rule in `design_c.yml`,
+  not a typed list), and the panel itself grew by four World Bank outcome paths for the same 99
+  countries. The artifact now carries **9 outcome blocks, 45 windows, 31 estimated and none
+  identified**; the `u5mr` block is bit-identical to the 2026-10-30 artifact. Both cards
+  (`cpi_yoy__C`, `gdp_growth__C`) are now `design_estimated_not_identified`, and so are six others.
   only. Decide: extend Design C's spec to these outcomes (where a donor panel exists or is buyable: WB
   country-year GDP exists; the pool extension is declared in `design_c.yml`'s own donor fields) or record
   the refusal. A spec change to C re-runs `11_design_c.R` and `verify_design_c.py` — that is the exit.
-- [ ] **C3. `outcome_series_absent` (15 cards — 12 as originally counted, plus the 3 education refusals
+- [x] **C3. `outcome_series_absent` (15 cards) — DONE.** (i) the **conflict** donor path (C-93)
+  is a second aggregation over the landed GED archive (99 countries × 1989–2025 × 2 items), with
+  the GED-name → ISO3 crosswalk declared, a recorded zero for a country with no reported event,
+  and the monthly → annual sum declared in the spec; (ii) the four **World Bank** outcome paths
+  (`immun_penta3`, `mmr`, `skilled_birth`, `unemp`) landed as their own source so the frozen
+  predictor panel did not move (C-91); (iii) **education stays permanently refused on the record** —
+  NEMIS and UIS were measured dead (C-11/C-12) and only a verified new source reopens them. Ten
+  cards keep `outcome_series_absent`: the nine education cards and `skilled_birth` (nine native
+  observations across 1990–2022 cannot fill a declared window).
   C-90 moved here).** Audit the series against their sources, cheapest first:
   (i) cross-country *security* outcomes for Design C are likely cheap — UCDP's bulk archive is keyless and
   country-level pages exist (a client of the `ucdp.py` family); (ii) the World Bank outcomes for missing
@@ -102,7 +115,10 @@ planned specific fix.
   dose the design fits, the per-capita axis kept in `robustness.yml → unbuilt_axes`. The list is now **3,
   one root cause**: the three education outcomes, all of them *outcomes*, so no design has an unsourced
   exposure, confounder or mediator left.
-- [ ] **C5. Exit criteria.** Every card's reason re-published with its final state; `verify_dags.py`'s
+- [x] **C5. Exit criteria — DONE (2026-11-01).** Every card's reason re-published with its final
+  state (`verify_registry` re-derives all 34 and the index's counts); `verify_dags.py`'s G-11 PASS;
+  the full battery green on the 2026-11-01 vintage (every verifier, `validate_artifacts`, the phase
+  gate, the corpus and all four evals); six evidence entries in `presidents-completion-state.yml`.
   G-11 check (the index carries missing variables) PASS; the full battery green. **Do not proceed to
   Phase D until green.**
 

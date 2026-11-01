@@ -1,10 +1,16 @@
-# Stage 8h — Design C: synthetic control on under-5 mortality
+# Stage 8h — Design C: synthetic control, one run per outcome the donor panel can carry
 #
-# This spec was written **before any weight was fitted** (2026-10-28). It exists because Stage 5 moved
-# Design C from `infeasible` to `candidate` and handed Stage 6 an instruction rather than an estimate:
-# `estimation.yml → design_c.next_step` reads "build the Design C estimator and its placebos on the `u5mr`
-# windows the gate now passes". That is what this stage does, and the rule that turns the placebos into a
-# verdict is fixed here rather than after the numbers are known.
+# This spec was written **before any weight was fitted** (2026-10-28), for `u5mr` alone. It was extended
+# on 2026-11-01 (C-91) to every outcome the donor panel carries, **before any new outcome was fitted**:
+# the estimator, the windows, the placebos and the verdict rule are unchanged, and the extension is the
+# outcome list plus one declared grain rule for monthly counts. The `u5mr` numbers must be bit-identical
+# after the refactor, and they are: the fit for each outcome is the same computation on the same tables.
+#
+# Why the design is no longer one outcome: Phase C's exit is "no card's reason is a shrug". The old
+# artifact fitted `u5mr` and every other C card said `design_not_run`, which was true but unhelpful —
+# the panel now carries the outcome paths, and a design that can be fitted for six outcomes is not
+# described by an artifact that fits one. An outcome the panel carries but no declared window can be run
+# for is still published, with its refusal: the absence is measured rather than omitted.
 #
 # What the gate measured, and what it did not
 # ---------------------------------------------------------------------------------------------
@@ -30,9 +36,9 @@
 # Because the pre-fit cannot discriminate, the verdict rests on the **placebos**: every donor treated in turn
 # (in space) and the treatment date moved back (in time). A design that only publishes a gap and a pre-fit
 # ratio would publish the one number this data cannot support.
-version: 1
-labelled: "2026-10-30"          # the data vintage, not the day the spec was written
-stamp: "declared 2026-10-28, before any weight was fitted"
+version: 2
+labelled: "2026-11-01"          # the data vintage, not the day the spec was written
+stamp: "declared 2026-10-28 for u5mr, before any weight was fitted; extended to the panel's outcomes 2026-11-01, before any of them was fitted"
 stage: "8h"
 engine: "analysis/R/11_design_c.R"
 verifier: "tests/verify_design_c.py"
@@ -45,13 +51,28 @@ input:
   donor_table: "main_analytics.fact_donor_panel"
   native_table: "main_analytics.fact_observation_native"
   admin_table: "main_analytics.dim_administration"
-  outcome: "u5mr"
+  metric_table: "main_analytics.dim_metric"
+  # The outcome list is a **rule**, not a hand-written list, so an outcome that lands in the donor panel
+  # cannot be silently left out of the artifact (and one that is dropped from it cannot be silently kept).
+  outcomes:
+    source: "analysis/specs/outcomes.yml"
+    rule: >-
+      every outcome in the registry that the donor panel carries. Each outcome's annual path is its native
+      annual observations; a monthly **count** declared in `annual_sum_metrics` is summed to the calendar
+      year, because a count's annual total is the sum of its months and no rate is being invented. Any
+      other monthly outcome is refused rather than averaged, so the grain rule cannot be applied where it
+      would mean something else.
+    not_run_policy: >-
+      an outcome the panel carries but no declared window can be run for (too few pre or post years) is
+      published with every window refused and the reason, never dropped from the artifact.
+  annual_sum_metrics: [fatalities, incidents]
   treated_iso3: "NGA"
   donor_panel_artifact: "registry/donors/2026-10-18/panel.json"
-  # Nigeria's own annual path comes from the native observations, never from the interpolated monthly
-  # spine: the spine is 16.2 % observed (Stage 4), and a synthetic control fitted to interpolated months
-  # would be fitted to the interpolation rule as much as to the country.
-  treated_series: "fact_observation_native, native_frequency = 'annual'"
+  # Nigeria's own path comes from the native observations, never from the interpolated monthly spine: the
+  # spine is 16.2 % observed (Stage 4), and a synthetic control fitted to interpolated months would be
+  # fitted to the interpolation rule as much as to the country.
+  treated_series: "fact_observation_native at its native grain; monthly counts summed to the calendar year"
+
 
 # ---------------------------------------------------------------------------------------------
 # Windows
@@ -70,7 +91,10 @@ windows:
   ids: [obasanjo, yaradua, jonathan, buhari, tinubu]
   year_rule: "the year belongs to the administration in office on 1 July"
   first_year: 1999            # the spine's first year, and the gate's own start
-  last_year: 2024             # the last native u5mr observation (World Bank WDI, vintage 2026-10-18)
+  last_year: 2024             # the design's window end, **common to every outcome**, so a window compares
+                              # the same calendar years across outcomes; an outcome whose series ends
+                              # earlier refuses the windows it cannot cover (mmr ends 2023, so its tinubu
+                              # window is refused rather than fitted on one post year)
   require_pre_years: 8        # Stage 5's declared minimum, carried not re-decided
   require_post_years: 2
   pre_rule: >-
@@ -93,6 +117,13 @@ estimator:
     `Synth`'s V search is not used. On this pool it returned a fit worse than the best single donor on every
     window (diagnostics 2026-10-18), so it cannot be the estimator and a second fit whose weights disagreed
     with the gate would be a second design wearing the same name.
+  # The one grain rule, declared before the extension was fitted: a monthly **count** is summed to the
+  # calendar year (declared per metric in `input.annual_sum_metrics`); a native annual outcome is used as
+  # published; anything else is refused. Averaging a count would produce a per-month mean labelled as a
+  # year, and averaging a monthly rate would be a second decision with no declared basis.
+  annual_aggregation: >-
+    sum the monthly native observations of a count over the calendar year (fatalities, incidents); use a
+    native annual outcome as published; refuse any other monthly outcome rather than aggregate it
   # Added 2026-10-28 after the independent verifier found that different solvers return different optimal
   # weights: with 99 donors and 8-24 pre-years the QP is underdetermined, so `solve.QP` returns one vertex of a
   # face of equally good fits. The ridge refit is a *diagnostic* that shows whether the gap and the rank p are a
@@ -118,7 +149,10 @@ placebos:
       p = #{placebos with ratio >= the treated unit's ratio, counting the treated unit itself} /
       (1 + n_placebos). One-sided, and it is a rank, not a sampling distribution: with 100 units the
       smallest attainable p is 0.01, which is stated on the artifact rather than left to be inferred.
-    reported: "the full distribution, so a reader can see where the treated ratio sits rather than trust a p"
+    reported: >-
+      the full distribution, so a reader can see where the treated ratio sits rather than trust a p. A
+      placebo whose own pre-path has no variance has an undefined pre-fit ratio and publishes `null` there;
+      an undefined ratio cannot clear the pre-fit gate, so it is not counted in the saturation figure.
   in_time:
     backdate_years: [3, 5, 7]
     rule: >-
@@ -157,4 +191,5 @@ not_claimed:
   - "The counterfactual is not observed. A low pre-fit ratio shows the donors can reproduce the pre-period, not that they would have reproduced the post-period without the transition."
   - "The donor pool is countries, not Nigerian states: it cannot hold constant anything Nigeria-specific — the oil cycle, the naira, the security environment."
   - "The windows overlap in their pre-periods and are not additive: a later window's counterfactual already contains the earlier tenures."
-  - "The pre-fit gate does not discriminate on this pool: 99 donors and 8 to 16 pre-years make the fit underdetermined, so the placebos carry the verdict."
+  - "The pre-fit gate does not discriminate on this pool: 99 donors and 8 to 24 pre-years make the fit underdetermined, so the placebos carry the verdict."
+  - "The outcomes are not comparable to one another. Each is its own fit against its own donor paths, in its own unit; a gap of 2 in one outcome is not twice a gap of 1 in another."

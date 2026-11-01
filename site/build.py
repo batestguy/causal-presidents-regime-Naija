@@ -476,6 +476,23 @@ def build_context(root: Path) -> dict:
             "why": by_design["C"].get("why"),
             "next_step": by_design["C"].get("next_step"),
             "counts": by_design["C"].get("counts") or {},
+            # One group per outcome (C-91): the artifact fits each outcome separately, and a flat list of 35
+            # windows would let a reader compare two gaps without seeing that they are in different units.
+            "groups": [{
+                "outcome": block["outcome"],
+                "label": block.get("label") or block["outcome"],
+                "unit": block.get("unit") or "",
+                "status": block["status"],
+                "counts": block.get("counts") or {},
+                "rows": [{
+                    "years": f"{w['first_year']}–{w['last_year']}",
+                    "gap": signed(w["mean_gap"]),
+                    "ridge": signed(w["ridge_gap"]),
+                    "p": f"{w['p_value']:.2f}",
+                    "status": str(w["status"]).replace("_", " "),
+                } for w in (by_design["C"].get("windows") or [])
+                    if w.get("outcome") == block["outcome"] and w["status"] != "refused"],
+            } for block in (by_design["C"].get("outcomes") or [])],
             "rows": [{
                 "years": f"{w['first_year']}–{w['last_year']}",
                 "gap": signed(w["mean_gap"]),
@@ -1173,17 +1190,27 @@ def render_designs(ctx: dict) -> str:
                      f"<p><span class=\"tech\">{html.escape(copy['next_step'])}</span> "
                      f"{md(d['c']['next_step'] or '')}</p>")
     else:
-        c_rows = "".join(
-            f"<li>{html.escape(fill_text(copy['c_row'], row))}</li>" for row in d["c"]["rows"])
         counts = d["c"]["counts"]
+        groups_html = []
+        for group in d["c"].get("groups") or []:
+            head = f"<h4>{html.escape(group['label'])}"
+            if group.get("unit"):
+                head += f" <span class=\"tech\">({html.escape(group['unit'])})</span>"
+            head += "</h4>"
+            if group["rows"]:
+                body = "<ul class=\"tight\">" + "".join(
+                    f"<li>{html.escape(fill_text(copy['c_row'], row))}</li>" for row in group["rows"]) + "</ul>"
+            else:
+                body = f"<p class=\"blocker\">{html.escape(copy['c_refused_outcome'])}</p>"
+            groups_html.append(head + body)
         c_section = (
             f"<h2>{html.escape(copy['c_heading'])}</h2>"
             f"<h3>{html.escape(names['C'])}</h3>"
             f"<p class=\"status-line\"><span class=\"tech\">{html.escape(copy['verdict_label'])}</span> "
             f"<strong>{html.escape(d['c']['status'])}</strong></p>"
             f"<p>{html.escape(fill_text(copy['c_intro'], counts))}</p>"
-            f"<ul class=\"tight\">{c_rows}</ul>"
-            f"<p class=\"note\">{html.escape(copy['c_note'])}</p>")
+            + "".join(groups_html)
+            + f"<p class=\"note\">{html.escape(copy['c_note'])}</p>")
 
     body = f"""<main class="flow designs">
   <header class="flow-head">

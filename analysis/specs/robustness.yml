@@ -40,7 +40,7 @@
 # the curve cannot tell a reader whether the per-capita estimand behaves the same way. That is recorded
 # in `unbuilt_axes` and repeated in the report, not left to be inferred from a missing level.
 version: 1
-labelled: "2026-10-30"
+labelled: "2026-11-01"
 spec_path: "analysis/specs/robustness.yml"
 engine: "analysis/R/04_robustness.R"
 verifier: "tests/verify_stage7.py"
@@ -52,7 +52,7 @@ upstream:
   # green through two re-fits because the numbers happened not to move; the 26.1 revision moved them and
   # the check fired (C-83). The engine and `tests/verify_stage7.py` now both refuse a declared vintage
   # that is not `labelled`.
-  estimates: "registry/estimates/2026-10-30/estimates.json"
+  estimates: "registry/estimates/2026-11-01/estimates.json"
 
 # ---------------------------------------------------------------------------------------------
 # Inputs — the same base the estimates read, never a staging CSV

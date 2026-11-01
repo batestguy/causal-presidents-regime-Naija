@@ -1,20 +1,28 @@
-"""Stage 2 ingestion flow: the synthetic-control donor panel (Design C).
+"""Stage 2 ingestion flow: the synthetic-control donor panels (Design C).
 
 Design C needs a counterfactual for Nigeria, built from a donor pool that is *screened on fit*
-rather than fixed (design spec section 5.3). That screening needs each candidate donor's
-predictor set, which nothing was fetching — the DAG's ``donors`` and ``common`` nodes had no data
-behind them.
+rather than fixed (design spec section 5.3). Two kinds of country-year series are needed, and they are
+landed as **two sources** on purpose:
 
-``probe_missing_variables.py`` verified that all 13 candidates carry all 5 predictors keylessly
-(Venezuela is partial: its oil-rents series does not reach 2015). This flow lands them.
+  * ``worldbank_donors`` — the five **screening predictors** the gate fits on (``gdp_growth``,
+    ``cpi_yoy``, ``oil_rents``, ``population``, ``u5mr``). This is the source whose membership is the
+    committed donor-panel artifact Stage 5 and the intent gate read; it must not move under a frozen
+    gate, so it is never re-landed to add a series.
+  * ``worldbank_donor_outcomes`` — additional **outcome paths** for the same 99 pool members, so a
+    synthetic control can be fitted for outcomes the predictor panel does not carry (C-91). The donor
+    *list* is read from the predictor source's landed manifest rather than declared again: a second
+    copy of the pool is a second answer to "who is in the pool", and the two would drift.
+
+``probe_missing_variables.py`` verified that all 13 original candidates carry all 5 predictors
+keylessly (Venezuela is partial: its oil-rents series does not reach 2015). This flow lands them.
 
 Writes, per vintage:
 
-    data/raw/worldbank_donors/<vintage>/<indicator_id>/page-0001.json
-    data/raw/worldbank_donors/<vintage>/manifest.json
-    data/raw/worldbank_donors/<vintage>/coverage.json
+    data/raw/<source>/<vintage>/<indicator_id>/page-0001.json
+    data/raw/<source>/<vintage>/manifest.json
+    data/raw/<source>/<vintage>/coverage.json
 
-One multi-country request per predictor **per chunk of the pool**, so a donor cannot be silently
+One multi-country request per indicator **per chunk of the pool**, so a donor cannot be silently
 half-landed: the row-count assertion in the client fires if pagination truncates, and the chunk's own
 country list is checked back against the codes the request asked for. The chunking is not a preference:
 a 99-country request returns an unparseable body (the API's limit is between 30 and 50 codes — measured,
@@ -22,10 +30,13 @@ not assumed), so the pool is landed in batches of ``CHUNK_SIZE`` and each batch 
 
 Run:
     conda run -p "C:/Users/TOSHIBA/ds-general" python ingestion/flows/pull_worldbank_donors.py
+    conda run -p "C:/Users/TOSHIBA/ds-general" python ingestion/flows/pull_worldbank_donors.py --profile outcomes
 """
 
 from __future__ import annotations
 
+import argparse
+import hashlib
 import json
 import sys
 from datetime import datetime, timezone
@@ -34,10 +45,10 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT))
 
-from ingestion.clients.provenance import write_manifest, write_pages  # noqa: E402
+from ingestion.clients.provenance import prepare_vintage, write_manifest, write_pages  # noqa: E402
 from ingestion.clients.worldbank import WorldBankError, fetch_indicator  # noqa: E402
 
-RAW_ROOT = REPO_ROOT / "data" / "raw" / "worldbank_donors"
+RAW_ROOT = REPO_ROOT / "data" / "raw"
 APC_FLOOR = 2015
 STUDY_FLOOR = 1999
 # The API's multi-country limit is between 30 and 50 codes (a 50-code request returns a body that is not
@@ -70,8 +81,8 @@ DONOR_GROUPS = {
                      "AZ", "IQ", "SA", "AE", "KW", "OM", "QA", "IR", "LY", "BN", "MY", "PE", "MX",
                      "BR", "BD", "MN"],
     "africa_comparator": ["KE", "TZ", "ZA", "ET", "UG", "ZM", "ZW", "MZ", "MW", "CD", "RW", "SD",
-                           "SS", "SO", "NA", "BW", "MG", "EG", "MA", "TN", "DJ", "ER", "LS", "SZ",
-                           "BI", "CF", "TD", "MR"],
+                          "SS", "SO", "NA", "BW", "MG", "EG", "MA", "TN", "DJ", "ER", "LS", "SZ",
+                          "BI", "CF", "TD", "MR"],
     "lower_middle_income_large": ["PK", "VN", "PH", "TH", "IN", "LK", "ID", "EG", "MA", "BO", "HN",
                                   "GT", "NI", "SV", "PY", "DO", "JM", "TR", "RO", "UA", "UZ", "KG",
                                   "TJ", "MN", "PG", "TL", "NP", "KH", "LA", "MM", "BD", "YE", "JO",
@@ -81,11 +92,6 @@ DONOR_GROUPS = {
 # rather than an omission a reader has to notice.
 TREATED_UNIT = "NG"
 
-# The pool actually requested: the union of the groups, minus the treated unit. The groups overlap on
-# purpose (South Africa is both an African comparator and a large lower-middle-income country), so the union
-# is deduplicated here and the group tags stay as the declared *reason* a country is a candidate.
-DONORS = {code: code for code in sorted({code for group in DONOR_GROUPS.values() for code in group})
-          if code != TREATED_UNIT}
 DONOR_NAMES = {
     "GH": "Ghana", "SN": "Senegal", "CI": "Cote d'Ivoire", "KE": "Kenya", "TZ": "Tanzania",
     "ZA": "South Africa", "AO": "Angola", "DZ": "Algeria", "GA": "Gabon", "EC": "Ecuador",
@@ -109,9 +115,16 @@ DONOR_NAMES = {
     "TL": "Timor-Leste", "NP": "Nepal", "KH": "Cambodia", "LA": "Lao PDR", "MM": "Myanmar",
     "YE": "Yemen, Rep.", "JO": "Jordan", "SY": "Syrian Arab Republic",
 }
-# Every requested code must have a declared name, or a reader of the coverage report meets a bare ISO code —
-# the same auditability rule the donor panel's country-name column carries in the base.
-MISSING_NAMES = sorted(set(DONORS) - set(DONOR_NAMES))
+
+# The outcome paths the C-3 audit found one WDI dataset id away from a Design C run (C-91). Each id is the
+# same indicator the national outcome's `outcomes.yml` entry names, so the donor path and the treated path
+# are the same quantity rather than two indicators with similar labels.
+OUTCOME_INDICATORS = [
+    ("immun_penta3", "SH.IMM.IDPT", "Immunisation, DPT (% of children ages 12-23 months)"),
+    ("mmr", "SH.STA.MMRT", "Maternal mortality ratio (modeled estimate, per 100,000 live births)"),
+    ("skilled_birth", "SH.STA.BRTC.ZS", "Births attended by skilled health staff (% of total)"),
+    ("unemp", "SL.UEM.TOTL.ZS", "Unemployment, total (% of total labor force) (modeled ILO estimate)"),
+]
 
 # The predictor set the pool is screened on.
 PREDICTORS = [
@@ -122,13 +135,66 @@ PREDICTORS = [
     ("u5mr", "SH.DYN.MORT", "Under-5 mortality rate (per 1,000 live births)"),
 ]
 
+PROFILES = {
+    "predictors": {
+        "source": "worldbank_donors",
+        "root": RAW_ROOT / "worldbank_donors",
+        "indicators": PREDICTORS,
+        "purpose": "synthetic-control donor screening (Design C): the predictors the pre-fit gate fits on",
+        "donor_source": None,
+    },
+    "outcomes": {
+        "source": "worldbank_donor_outcomes",
+        "root": RAW_ROOT / "worldbank_donor_outcomes",
+        "indicators": OUTCOME_INDICATORS,
+        "purpose": ("synthetic-control donor outcome paths (Design C): additional country-year series for "
+                    "the same pool, so a control can be fitted for outcomes the predictor panel does not carry"),
+        "donor_source": RAW_ROOT / "worldbank_donors",
+    },
+}
 
-def _per_country(rows: list[dict]) -> dict[str, dict]:
+
+def declared_pool() -> tuple[dict[str, str], dict[str, str], dict[str, list[str]], None]:
+    """The predictor profile's candidate pool: the declared groups, minus the treated unit."""
+    donors = {code: code for code in sorted({code for group in DONOR_GROUPS.values() for code in group})
+              if code != TREATED_UNIT}
+    missing = sorted(set(donors) - set(DONOR_NAMES))
+    if missing:
+        raise SystemExit(f"FAIL: {len(missing)} requested code(s) have no declared name: {missing}")
+    return donors, dict(DONOR_NAMES), {g: list(c) for g, c in DONOR_GROUPS.items()}, None
+
+
+def landed_pool(source_root: Path) -> tuple[dict[str, str], dict[str, str], dict[str, list[str]], dict]:
+    """The pool as the predictor source already landed it, so the outcome panel cannot re-declare it."""
+    manifests = sorted(source_root.glob("*/manifest.json"))
+    if not manifests:
+        raise SystemExit(
+            f"FAIL: no landed predictor manifest under {source_root.relative_to(REPO_ROOT)}; land the "
+            "predictors profile first — the outcome panel borrows the pool rather than declaring it again"
+        )
+    manifest_path = manifests[-1]
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    donors = manifest.get("donors") or {}
+    names = manifest.get("donor_names") or {}
+    if not donors or not names:
+        raise SystemExit(f"FAIL: {manifest_path} names no donor pool")
+    if TREATED_UNIT in donors:
+        raise SystemExit(f"FAIL: {manifest_path} carries the treated unit in its pool")
+    provenance = {
+        "manifest": manifest_path.relative_to(REPO_ROOT).as_posix(),
+        "manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
+        "vintage": manifest_path.parent.name,
+    }
+    return dict(donors), dict(names), manifest.get("donor_groups") or {}, provenance
+
+
+def _per_country(rows: list[dict], donors: dict[str, str], names: dict[str, str],
+                 groups: dict[str, list[str]]) -> dict[str, dict]:
     """Per-donor coverage: observations, span, and whether the series reaches the screen floors."""
     out: dict[str, dict] = {}
     for row in rows:
         country = (((row.get("country") or {}).get("id")) or row.get("countryiso3code") or "").upper()
-        if country not in DONORS or row.get("value") is None:
+        if country not in donors or row.get("value") is None:
             continue
         bucket = out.setdefault(country, {"n": 0, "years": []})
         bucket["n"] += 1
@@ -139,8 +205,8 @@ def _per_country(rows: list[dict]) -> dict[str, dict]:
         bucket["last_year"] = years[-1]
         bucket["reaches_1999"] = years[0] <= STUDY_FLOOR
         bucket["reaches_2015"] = years[-1] >= APC_FLOOR
-        bucket["name"] = DONOR_NAMES[country]
-        bucket["groups"] = sorted(g for g, codes in DONOR_GROUPS.items() if country in codes
+        bucket["name"] = names[country]
+        bucket["groups"] = sorted(g for g, codes in groups.items() if country in codes
                                   and country != TREATED_UNIT)
     return out
 
@@ -171,31 +237,49 @@ def fetch_codes(indicator_id: str, name: str, codes: list[str], depth: int = 0) 
         return pieces
 
 
-def main() -> int:
-    vintage = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    vintage_dir = RAW_ROOT / vintage
-    vintage_dir.mkdir(parents=True, exist_ok=True)
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Land a Design C donor panel (predictors or outcome paths).")
+    parser.add_argument("--profile", choices=sorted(PROFILES), default="predictors",
+                        help="which donor panel to land (default: the screening predictors)")
+    parser.add_argument("--vintage", default=None,
+                        help="vintage label (default: today's UTC date); a re-run must use a new label (X-07)")
+    args = parser.parse_args(argv if argv is not None else sys.argv[1:])
+
+    profile = PROFILES[args.profile]
+    vintage = args.vintage or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    vintage_dir = profile["root"] / vintage
+    try:
+        prepare_vintage(vintage_dir, profile["source"])
+    except Exception as error:  # VintageExists carries the X-07 sentence
+        print(f"FAIL: {error}")
+        return 1
+
+    if args.profile == "predictors":
+        donors, names, groups, donor_source = declared_pool()
+    else:
+        donors, names, groups, donor_source = landed_pool(profile["donor_source"])
+
     entries = []
     coverage: dict[str, dict] = {}
     failures = []
 
-    if MISSING_NAMES:
-        print(f"FAIL: {len(MISSING_NAMES)} requested code(s) have no declared name: {MISSING_NAMES}")
-        return 1
-
+    print(f"profile: {args.profile}   source: {profile['source']}")
     print(f"vintage: {vintage}")
     print(f"landing: {vintage_dir.relative_to(REPO_ROOT)}")
-    print(f"donors:  {len(DONORS)}  predictors: {len(PREDICTORS)}  chunk size: {CHUNK_SIZE}")
-    for group, codes in DONOR_GROUPS.items():
+    print(f"donors:  {len(donors)}  indicators: {len(profile['indicators'])}  chunk size: {CHUNK_SIZE}")
+    if donor_source is not None:
+        print(f"pool borrowed from {donor_source['manifest']} (vintage {donor_source['vintage']})")
+    for group, codes in groups.items():
         print(f"  group {group:<26} {len([c for c in codes if c != TREATED_UNIT]):>3} candidate(s)")
     print(f"  treated unit {TREATED_UNIT} excluded from the pool")
     print()
 
-    for label, indicator_id, name in PREDICTORS:
+    for label, indicator_id, name in profile["indicators"]:
         per_country: dict[str, dict] = {}
         rows_seen = 0
-        chunks = [codes for codes in (list(DONORS)[i:i + CHUNK_SIZE]
-                                      for i in range(0, len(DONORS), CHUNK_SIZE)) if codes]
+        chunks = [codes for codes in (list(donors)[i:i + CHUNK_SIZE]
+                                      for i in range(0, len(donors), CHUNK_SIZE)) if codes]
         for index, codes in enumerate(chunks, start=1):
             try:
                 pieces = fetch_codes(indicator_id, name, codes)
@@ -212,7 +296,7 @@ def main() -> int:
                     f"{indicator_id}-p{index:02d}s{sub:02d}"
                 # A donor cannot be silently half-landed: the request named these codes, so the payload has
                 # to name them back (a country whose series is entirely empty would otherwise vanish).
-                returned = set(_per_country(rows))
+                returned = set(_per_country(rows, donors, names, groups))
                 absent = sorted(set(part) - returned)
                 page_files = write_pages(vintage_dir / dataset_id, retrieval.payloads, REPO_ROOT)
                 # `dataset_id` must be passed explicitly: the client derives its own from the indicator id,
@@ -225,9 +309,9 @@ def main() -> int:
                     metric_id=label,
                     dataset_id=dataset_id,
                     dataset_name=f"{name} — donor pool chunk {index}/{len(chunks)} ({len(part)} countries)",
-                    note=(f"donor-panel predictor for synthetic-control screening, pool chunk "
-                          f"{index}/{len(chunks)} ({len(part)} of {len(codes)} countries in this request; "
-                          f"split depth {piece['split_depth']})"),
+                    note=(f"donor-panel {'outcome path' if args.profile == 'outcomes' else 'predictor'} "
+                          f"for synthetic-control screening, pool chunk {index}/{len(chunks)} ({len(part)} "
+                          f"of {len(codes)} countries in this request; split depth {piece['split_depth']})"),
                     page_files=page_files,
                     n_countries=len(part),
                 )
@@ -240,7 +324,7 @@ def main() -> int:
                     continue
                 entries.append(entry)
                 rows_seen += len(rows)
-                for code, bucket in _per_country(rows).items():
+                for code, bucket in _per_country(rows, donors, names, groups).items():
                     merged = per_country.setdefault(code, {"n": 0, "years": [], "name": bucket["name"],
                                                            "groups": bucket["groups"]})
                     merged["n"] += bucket["n"]
@@ -267,33 +351,41 @@ def main() -> int:
             "countries": per_country,
         }
         print(f"  ok   {label:<14} {indicator_id:<18} chunks={len(chunks)} rows={rows_seen} "
-              f"donors={len(per_country)}/{len(DONORS)} "
-              f"reaching_2015={coverage[label]['n_donors_reaching_2015']}/{len(DONORS)}")
+              f"donors={len(per_country)}/{len(donors)} "
+              f"reaching_2015={coverage[label]['n_donors_reaching_2015']}/{len(donors)}")
 
+    extra = {
+        "n_indicators_requested": len(profile["indicators"]),
+        "donors": donors,
+        "donor_names": {code: names[code] for code in donors},
+        "donor_groups": groups,
+        "treated_unit": TREATED_UNIT,
+        "n_donors": len(donors),
+        "profile": args.profile,
+        "purpose": profile["purpose"],
+    }
+    if donor_source is not None:
+        extra["donor_source"] = donor_source
+        extra["n_indicators_landed"] = len(coverage)
     write_manifest(
         vintage_dir=vintage_dir,
         vintage_date=vintage,
-        source="worldbank_donors",
+        source=profile["source"],
         entries=entries,
         failures=failures,
-        extra={
-            "n_indicators_requested": len(PREDICTORS),
-            "donors": DONORS,
-            "donor_names": {code: DONOR_NAMES[code] for code in DONORS},
-            "donor_groups": DONOR_GROUPS,
-            "treated_unit": TREATED_UNIT,
-            "n_donors": len(DONORS),
-        },
+        extra=extra,
     )
     (vintage_dir / "coverage.json").write_text(
         json.dumps(
             {
                 "vintage_date": vintage,
-                "purpose": "synthetic-control donor screening (Design C)",
-                "donors": DONORS,
-                "donor_names": {code: DONOR_NAMES[code] for code in DONORS},
-                "donor_groups": DONOR_GROUPS,
+                "profile": args.profile,
+                "purpose": profile["purpose"],
+                "donors": donors,
+                "donor_names": {code: names[code] for code in donors},
+                "donor_groups": groups,
                 "treated_unit": TREATED_UNIT,
+                "donor_source": donor_source,
                 "screen_axes": ["oil dependence (oil rents, % of GDP)",
                                 "region and income band (Sub-Saharan / lower-middle-income)",
                                 "coverage of the 1999 pre-period floor and the last treated window"],
@@ -306,7 +398,7 @@ def main() -> int:
 
     landed = sorted({entry["metric_id"] for entry in entries})
     print()
-    print(f"succeeded: {len(landed)}/{len(PREDICTORS)} predictor(s) in {len(entries)} request(s)"
+    print(f"succeeded: {len(landed)}/{len(profile['indicators'])} indicator(s) in {len(entries)} request(s)"
           f"   failures: {len(failures)}")
     if failures:
         print("counts as an incomplete vintage — see manifest.failures")

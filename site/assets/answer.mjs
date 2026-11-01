@@ -318,7 +318,11 @@ export class AnswerLayer {
         if (metadata.design_name && !this.designs.has(String(designId))) {
           this.designs.set(String(designId), String(metadata.design_name));
         }
-        if (chunk.doc_type === "card_estimate" || !this.cards.has(key)) this.cards.set(key, chunk.chunk_id);
+        // The parent id, never a part: a long card is split into `#p2`, `#p3`, and the assumption,
+        // the caveats and the reason can land in different parts. Citing the parent is what lets the
+        // answer's chunks_used resolve to the whole card, as in the Python layer (C-91).
+        if (chunk.doc_type === "card_estimate" || !this.cards.has(key))
+          this.cards.set(key, chunk.chunk_id.split("#p")[0]);
       }
     }
     this.defaultIdf = Math.log(1 + (this.bm25.ids.length + 0.5) / 0.5);
@@ -467,9 +471,11 @@ export class AnswerLayer {
   }
 
   designDonor(designId) {
+    // The parent id, never a part: the assumption lives in a card's first part and the caveats in
+    // its second, so a part id would borrow half a card (C-91).
     const candidates = [...this.cards.entries()]
       .filter(([key]) => key.split("::")[1] === designId)
-      .map(([, chunkId]) => chunkId)
+      .map(([, chunkId]) => String(chunkId).split("#p")[0])
       .sort();
     return candidates.length ? candidates[0] : null;
   }
@@ -615,8 +621,11 @@ export class AnswerLayer {
   }
 
   blocks(source) {
+    // The parent's parts, not one part: a card answer carries its assumption, its caveats and its
+    // reason together even when the corpus split them across parts (C-91).
     const out = [];
-    for (const chunkId of this.gate.partsOf(source)) out.push(...this.paragraphs(chunkId));
+    for (const chunkId of this.gate.partsOf(String(source).split("#p")[0]))
+      out.push(...this.paragraphs(chunkId));
     return out;
   }
 
@@ -645,7 +654,9 @@ export class AnswerLayer {
   }
 
   carriesInterval(chunkId) {
-    return this.gate.partsOf(chunkId).some((part) => INTERVAL.test(this.body(part)));
+    return this.gate
+      .partsOf(String(chunkId).split("#p")[0])
+      .some((part) => INTERVAL.test(this.body(part)));
   }
 
   parentsInOrder(retrieved) {

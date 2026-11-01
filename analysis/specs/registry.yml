@@ -28,7 +28,7 @@
 #
 # ---------------------------------------------------------------------------------------------
 version: 1
-labelled: "2026-10-30"
+labelled: "2026-11-01"
 spec_path: "analysis/specs/registry.yml"
 engine: "analysis/R/05_registry.R"
 verifier: "tests/verify_registry.py"
@@ -86,8 +86,10 @@ mapping:
     result_outcome: "cumulative log change in national FAAC (the channel), national-month grain"
   design_c:
     rule: >-
-      No card with design `C` is `estimated`: the design was not run, and the reason is carried from the
-      estimates artifact's own Design C block rather than restated here.
+      No card with design `C` is `estimated`: a synthetic control has no sampling distribution, so there is no
+      interval to publish beside a gap. The design is run for every outcome the donor panel carries (C-91,
+      C-93), and each card carries either the fact that it was fitted and no window was identified, or the
+      outcome's own measured absence — never a gap dressed up as a coefficient.
     result_is_design_level: true
 
 # ---------------------------------------------------------------------------------------------
@@ -152,10 +154,10 @@ published_results:
   carry: [status, verdict_rule, failed_checks, specifications, sensitivity, artifacts]
   rule: >-
     One entry per design that reached a verdict: A (`estimated_not_identified`, 3 specifications),
-    B (`estimated`, 9 specifications on the channel), C (`not_run`, with its reason). Every number is
-    copied from `registry/estimates/<vintage>/estimates.json`; the sensitivity blocks come from
-    `registry/robustness/<vintage>/robustness.json`. The index carries `vintage_date` so a stale answer
-    cannot outlive the model it quotes.
+    B (`estimated`, 9 specifications on the channel), C (one block per outcome, 31 windows estimated and
+    none identified). Every number is copied from `registry/estimates/<vintage>/estimates.json`; the
+    sensitivity blocks come from `registry/robustness/<vintage>/robustness.json`. The index carries
+    `vintage_date` so a stale answer cannot outlive the model it quotes.
 
 # ---------------------------------------------------------------------------------------------
 # What the layer must never do

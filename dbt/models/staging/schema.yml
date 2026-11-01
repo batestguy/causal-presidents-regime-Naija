@@ -11,7 +11,7 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values: ["worldbank", "worldbank_donors", "fred", "faac", "ucdp", "nbs_cpi"]
+                values: ["worldbank", "worldbank_donors", "worldbank_donor_outcomes", "fred", "faac", "ucdp", "nbs_cpi"]
       - name: metric_id
         tests:
           - not_null

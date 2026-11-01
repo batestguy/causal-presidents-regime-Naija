@@ -647,22 +647,64 @@ def check_prefit(con, diag, failures):
                     use = True
             if not use:
                 continue
-            wts = simplex_qp(z1, Z0)
-            rmse = float(np.sqrt(np.mean((z1 - Z0 @ wts) ** 2)))
-            sd_pre = float(np.std(z1, ddof=1))
-            ratio = rmse / sd_pre
-            verdict = "pass" if ratio <= pre_frac else "weak_fit"
             if rec_w is None or rec_w.get("pre_rmse") is None:
                 failures.append(f"prefit {oid}/{w['id']}: engine did not compute a fit but data allow one")
                 continue
-            if not close(rmse, rec_w["pre_rmse"]):
-                failures.append(f"prefit {oid}/{w['id']}: pre-rmse {rec_w['pre_rmse']} != {rmse:.6g}")
-            if not close(ratio, rec_w["ratio"]):
+
+            # The estimator is a simplex-constrained QP with a small numerical ridge, and its published
+            # weights are the evidence. With 97-99 donors and 8-24 pre-years the problem is degenerate:
+            # a second *solver* can stop at a different point and report a much worse fit (SLSQP does,
+            # on the added outcomes — 43.5 against 5.4 on immun_penta3/jonathan), which says something
+            # about SLSQP, not about the artifact. So the verifier certifies optimality instead of
+            # re-solving: reconstruct the weights, reproduce the pre-fit, and check the KKT conditions
+            # for the declared QP (C-92).
+            raw_weights = rec_w.get("weights") or []
+            if isinstance(raw_weights, dict):
+                published = np.array([float(raw_weights.get(cc, 0.0)) for cc in donors_used], dtype=float)
+            else:
+                published = np.array([float(x) for x in raw_weights], dtype=float)
+                if len(published) != len(donors_used):
+                    failures.append(f"prefit {oid}/{w['id']}: the published weight vector has "
+                                    f"{len(published)} entries for {len(donors_used)} donors")
+                    continue
+            if abs(published.sum() - 1.0) > 1e-5:
+                failures.append(f"prefit {oid}/{w['id']}: the published weights sum to {published.sum():.6g}")
+                continue
+            rmse = float(np.sqrt(np.mean((z1 - Z0 @ published) ** 2)))
+            sd_pre = float(np.std(z1, ddof=1))
+            ratio = rmse / sd_pre
+            verdict = "pass" if ratio <= pre_frac else "weak_fit"
+            if not close(rmse, rec_w["pre_rmse"], 1e-5):
+                failures.append(f"prefit {oid}/{w['id']}: the published weights give pre-rmse "
+                                f"{rmse:.6g}, the artifact recorded {rec_w['pre_rmse']:.6g}")
+            if not close(ratio, rec_w["ratio"], 1e-5):
                 failures.append(f"prefit {oid}/{w['id']}: ratio {rec_w['ratio']} != {ratio:.6g}")
             if verdict != rec_w["verdict"]:
                 failures.append(f"prefit {oid}/{w['id']}: verdict {rec_w['verdict']} != {verdict}")
+
+            D = Z0.T @ Z0
+            ridge = max(np.diag(D)) * 1e-8
+            d = Z0.T @ z1
+            grad = (D + ridge * np.eye(len(donors_used))) @ published - d
+            active = published > 1e-9
+            mu = -float(np.mean(grad[active])) if active.any() else 0.0
+            scale = max(1.0, float(np.abs(d).max()))
+            if active.any() and np.abs(grad[active] + mu).max() > 1e-4 * scale:
+                failures.append(f"prefit {oid}/{w['id']}: the published weights are not stationary")
+            if (~active).any() and (grad[~active] + mu).min() < -1e-4 * scale:
+                failures.append(f"prefit {oid}/{w['id']}: a zero weight could be increased and improve the fit")
+
+            # And the certificate is not vacuous: a solver must not improve on the published point beyond the
+            # noise of publishing weights rounded to six decimals (which shifts the objective by ~1e-6 of
+            # its own scale — the comparison is relative for that reason, not absolute).
+            alt = simplex_qp(z1, Z0)
+            objective = lambda v: 0.5 * v @ (D + ridge * np.eye(len(donors_used))) @ v - d @ v  # noqa: E731
+            tolerance = 1e-6 * max(1.0, abs(objective(published)))
+            if objective(alt) < objective(published) - tolerance:
+                failures.append(f"prefit {oid}/{w['id']}: an independent solver improves on the published weights")
             checked += 1
-    print(f"  pre-treatment fit: {checked} outcome-window QPs re-solved and matched")
+    print(f"  pre-treatment fit: {checked} outcome-window fits certified from their own published weights "
+          f"(KKT, and no solver improves on them)")
 
 
 def check_mde(con, diag, failures):

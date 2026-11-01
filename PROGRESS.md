@@ -1,6 +1,6 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-10-30 (twenty-first session) — this session's record is the last section of this file · **Stage:** 9, and the **completion plan's Phases A and B are closed**: GED 26.1 adopted in its own accountable pass (every Design A number moved, **no verdict moved**), and Design B's monthly-CPI outcome fitted (**a null at every horizon**), with the grid at 129 specifications · **verified at vintage 2026-10-30**: `dbt build` (178/178), every R stage, the corpus, all four evals and **all twenty-three** verifiers, plus `validate_artifacts` and the phase gate; `all checks passed` equivalent, one step at a time with `HF_HUB_OFFLINE=1` and the RAG interpreter
+**Last updated:** 2026-11-01 (twenty-fourth session) — this session's record is the last section of this file · **Stage:** 9, and the **completion plan's Phases A, B and C are closed**: GED 26.1 adopted, Design B's monthly-CPI outcome fitted, and **Design C extended to every outcome the donor panel carries** (9 outcomes, 45 windows, none identified) so that **no card's reason is a shrug** · **verified at vintage 2026-11-01**: `dbt build` (179/179), every R stage, the corpus, all four evals and every verifier, plus `validate_artifacts` and the phase gate
 
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
@@ -2934,61 +2934,104 @@ C-89, one unit later, applied on the first try.
 What remains in Phase C is C2 (the 2 `design_not_run` Design C cards), C3 (the 12 → now 15
 `outcome_series_absent` cards, three of which are the education refusals) and C5's exit battery.
 
-## Next session starts here (written 2026-10-30; updated 2026-10-31 after C4 and C1)
+## Twenty-fourth session (2026-11-01) — Phase C closed: Design C runs for every outcome the panel can carry, and the panel grew to meet it
 
-**Phases A and B are closed; Phase C has two sub-tracks and the exit battery left: `[x] A`, `[x] B`,
-`[~] C`, `frontier: C`.**
-Everything above is committed and pushed; `data/pending/` is empty; every registry family's newest vintage is
-**2026-10-30** (the 2026-10-29 family is intact as the 25.1 record). The chain is green: **23/23 verifiers**,
-`validate_artifacts` (74 documents, the C-44 invariant), the phase gate, and CI + the Pages deploy.
+**The unit was "all of C", and the first thing it did was take a data decision.** C2 asked whether Design C
+should be extended to the two `design_not_run` cards or refused; C3 asked whether the fifteen
+`outcome_series_absent` cards were closable. Both answers turned out to depend on two acquisitions that the
+plan had already scoped as cheap, and both are now landed: the **four health/economy outcome paths** for the
+same 99-country pool (`worldbank_donor_outcomes`, a separate source so the frozen predictor panel does not
+move) and the **country-year conflict path** derived from the UCDP archive that was already on disk. The data
+vintage therefore moves to **2026-11-01** and every registry family regenerates at it; the 2026-10-30 family
+is intact as the previous record.
 
-**Phase C — "close or permanently record every not-estimated reason" — now covers 2 + 15 cards, not 24.** C4
-closed the gap list (C-89) and C1 closed the ten `no_specification_declared` cards (C-90), which turned out to
-be a Stage 5 check reading the wrong object. What is left is C2's two Design C refusals and C3's fifteen
-`outcome_series_absent` cards, three of which are the education refusals that C3(iii) closes permanently.
+**Design C is now one artifact with one block per outcome (C-91).** `design_c.yml` declares an outcome *rule*
+— every registry outcome the donor panel carries — rather than a typed list, so an outcome that lands cannot
+be silently left out. The result is **9 outcomes, 45 windows, 31 estimated and 14 refused by the declared
+rule, none identified**. The gate passes `u5mr` (3 of 4), `mmr` (2 of 3) and `unemp` (3 of 4); `immun_penta3`,
+`gdp_growth` and `cpi_yoy` are infeasible on pre-fit; `skilled_birth` has **no runnable window** because its
+nine native observations across 1990–2022 cannot fill a window that needs 8 pre and 2 post years. The
+`u5mr` block is **bit-identical** to the 2026-10-30 artifact — every pre-fit, path, gap, ratio, placebo p and
+ridge gap — which is the regression proof that the refactor changed the scope and not the estimator.
 
-1. **C4 — DONE (C-89, twenty-second session).** `dose` and `faac` were declared `gap` long after the fiscal
-   series landed; the status was corrected at the declaration and the cards/index regenerated. The list is
-   now **3, one root cause** — the three education outcomes, all of them outcomes, so no design has an
-   unsourced exposure, confounder or mediator. (The plan's premise was half wrong: `primary_completion` is
-   **not** landed — 8 of 66 anchors, 2000–2010 — so it stays a gap.)
-2. **C1 — DONE (C-90, twenty-third session).** All ten were Design A pairs whose blocker was a Stage 5
-   check reporting a design-level fact; the check now reads the card's own outcome, and no specification was
-   declared because the outcomes have no state-level series. Seven are `outcome_not_at_design_grain`, three
-   are `outcome_series_absent`, and **`no_specification_declared` now carries 0 cards**.
-3. **C2 — the 2 `design_not_run` cards (`cpi_yoy__C`, `gdp_growth__C`) — this is the next move.** Design C
-   is specified for `u5mr` only. Extend `analysis/specs/design_c.yml`'s donor fields (World Bank country-year
-   GDP is already adopted) and re-run `11_design_c.R` + `verify_design_c.py`, or record the refusal. A spec
-   change to C re-runs the placebos: that is the exit, and it is the most compute-bound unit in the phase.
-4. **C3 — the 15 `outcome_series_absent` cards** (12 as the plan counted them, plus the three education
-   refusals C-90 moved here). Three sub-tracks, cheapest first: (i) cross-country
-   **security** outcomes for Design C are likely cheap — UCDP's bulk archive is keyless and a client of the
-   `ucdp.py` family (a *donor* panel, not a new Nigeria series) would unlock the conflict outcomes for C;
-   (ii) the World Bank outcomes for missing B/C donor panels are a second WDI dataset id plus parser wiring
-   on an already-adopted source; (iii) education (NEMIS/UIS) stays **permanently refused on the record** —
-   C-11/C-12 measured both dead, and only a verified new source reopens it. Acquisitions follow the standing
-   pattern: land → parse → verify → declare in the gate → adopt in one accountable pass (C-79/C-81/C-84),
-   never silently.
-5. **C5 — exit.** Every card's reason re-published with its final state; `verify_dags.py`'s G-11 PASS; the
-   same battery as A6/B4. Then six evidence entries in `presidents-completion-state.yml` and `D
-   in_progress`.
+**The security path needed no download, and the blocker was the grain (C-93).** The landed UCDP payload is the
+global GED 26.1 archive: 417,968 events over 126 countries, 1989–2025. The parser now writes a second artifact
+from the same read — **99 pool countries × 1989–2025 × 2 items = 7,326 rows** — and the Nigeria state-month
+CSV is **byte-identical** before and after. Three decisions are declared in the parser: the GED label → ISO3
+crosswalk is an explicit alias map over the committed vocabulary (eleven labels need it, and an unmapped
+label fails the parse rather than dropping a country); a pool country with no recorded event has **zero
+reported fatalities**, because the outcome is *reported* security fatalities; and because Nigeria's conflict
+outcomes are monthly, `design_c.yml` declares `annual_sum_metrics: [fatalities, incidents]` and the stage sums
+them to the calendar year. Stage 5's pre-fit cannot read a monthly outcome at annual grain, so those windows
+publish `gate_basis: stage8h_annual_aggregation` rather than implying a gate pass.
 
-**Two decisions cost or save a day, and both should be taken before the work rather than after:** do C3(i)
-and C3(ii) run as acquisitions, or are they recorded as planned fixes with their source named? And does C2
-extend Design C or record a refusal? The plan allows either — a recorded refusal is a legitimate exit as long
-as it names the source and what would reopen it.
+**Three defects surfaced the moment the design had more than one outcome (C-92), and all three were in the
+checks, not the numbers.** (1) Stage 5 mapped a `not_run` pre-fit onto `not_attempted` **with no blocker**,
+and the engine — correctly — refuses a non-pass status with no blocker; `skilled_birth` stopped the stage, and
+the rollup now records the observation count and the sentence. (2) The ridge refit's gap and pre-fit were
+published **without its weights**, so no reader could recompute them and an independent solver landed
+elsewhere (`immun_penta3/jonathan`: 43.5 against 5.4 pre-RMSE). The weights are now published, the verifier
+recomputes from them, and the optimality claim is "no solver improves on the published point"; the same
+defect in `verify_stage5` became a **KKT certificate** over the gate's own published weights. (3) The stage's
+donor pool requires a complete post-period path while the gate's requires only the pre-period, so `cpi_yoy`
+drops 22 of 99 donors and its pre-fit legitimately differs from the gate's; the artifact now publishes
+`n_donors_in_gate` and the dropped donors, and the gate's ratio is demanded only where the pools coincide.
+
+**Every card's reason is now a fact about the data or the design.** `design_not_run` carries **zero cards**;
+the 34 reason-bearing cards are **10 `outcome_series_absent`** (the nine education cards, permanently refused
+because C-11/C-12 measured NEMIS and UIS dead, plus `skilled_birth`'s nine observations), **8
+`design_estimated_not_identified`**, **9 `design_result_is_channel_level`** and **7
+`outcome_not_at_design_grain`**. Two cards still carry a number, and the three cards that pass a pre-check
+(`u5mr`, `mmr`, `unemp` under C) are not either of them.
+
+**Re-measured, and the noisy ones not copied.** The quality report gates **1,070 series (577 ok, 491 flagged,
+2 empty)**; the donor panel is **47,386 rows, 99 countries, 11 country-year series**; the corpus and all four
+evals were re-run against the new artifacts. This session's evidence is recorded in `decisions.md` as
+**C-91, C-92 and C-93**, and every count above is quoted from the artifact that carries it rather than from
+this page.
+
+## Next session starts here (written 2026-11-01, at the close of Phase C)
+
+**Phases A, B and C are closed; the frontier is D: `[x] A`, `[x] B`, `[x] C`, `frontier: D`.**
+Everything above is committed; every registry family's newest vintage is **2026-11-01** (the 2026-10-30
+family is intact as the previous record). The chain is green: every verifier, `validate_artifacts` (the C-44
+invariant included), the phase gate, the corpus and all four evals.
+
+**Phase C — "close or permanently record every not-estimated reason" — is done, and no card's reason is a
+shrug.** `design_not_run` and `no_specification_declared` both carry **zero cards**; the 34 reason-bearing
+cards are 10 `outcome_series_absent` (nine education — permanently refused on the C-11/C-12 measurement — and
+`skilled_birth`'s nine observations), 8 `design_estimated_not_identified`, 9
+`design_result_is_channel_level` and 7 `outcome_not_at_design_grain`. Two cards carry a number.
+
+1. **C2 — DONE (C-91).** Design C runs for every outcome the donor panel carries, not `u5mr` alone: 9
+   outcomes, 45 windows, 31 estimated, none identified. The `u5mr` block is bit-identical to 2026-10-30.
+2. **C3(i) — DONE (C-93).** The conflict donor path is a second aggregation over the landed GED archive
+   (99 countries × 1989–2025 × 2 items), with the monthly → annual sum declared and the gate basis published.
+3. **C3(ii) — DONE (C-91).** Four World Bank outcome paths (`immun_penta3`, `mmr`, `skilled_birth`, `unemp`)
+   landed for the same 99-country pool as their own source, so the frozen predictor panel did not move.
+4. **C3(iii) — DONE, as a permanent refusal on the record.** The nine education cards stay
+   `outcome_series_absent`: NEMIS timed out and UIS returned 404 on every path (C-11/C-12). What would reopen
+   them is a verified new source, not a re-run.
+5. **C4 — DONE (C-89).** The gap list is 3, one root cause (the three education outcomes).
+6. **C1 — DONE (C-90).** `no_specification_declared` carries zero cards.
+7. **C5 — DONE.** Every card's reason re-published; `verify_dags.py`'s G-11 PASS; the same battery as A6/B4;
+   six evidence entries in `presidents-completion-state.yml`.
+
+**What is next is Phase D, and it is optional by design:** the RAGAS library run on Colab, only if the judge
+API budget is approved. If it is not, record the skip as a decision and go to Phase E (delivery polish: README
+quickstart, blog/video decision, one-command proof, live URL check). Phase F is the freeze.
 
 **Standing reminders for any session:** the ds-general interpreter for Python, R 4.5.2 for the stages, the
 drlca-rag env only for the corpus rebuild (`HF_HUB_OFFLINE=1`); `GOOGLE_API_KEY` is in the **environment**,
 not `.env`, and the answer-quality measurement needs it; every spec's `upstream:` path must name its own
-`labelled` vintage (C-83); measure in a served browser before writing CSS (file:// is blocked); commit +
-push after each unit; `data/raw/` is never edited, superseded vintages are kept.
+`labelled` vintage (C-83); measure in a served browser before writing CSS (file:// is blocked); commit after
+each unit; `data/raw/` is never edited, superseded vintages are kept.
 
-**And four mechanical rules this session earned:** the outcome map for a design lives **once**, in
-`estimation.yml`, and `robustness.yml` reads it through `upstream.estimation_spec` (C-87); an `upstream:`
-path must name its own `labelled` vintage or the check answers a question about an older artifact (C-83);
-editing any **corpus source** (`docs/*.md` except `rag.md`, and the registry artifacts) requires
-`scripts/build_rag_corpus.py --embed` and the four evals, and the answer-quality script **caches per
-question** — delete its artifact before re-judging after a corpus change, or it will re-attribute stale
-scores to a new corpus hash (found the hard way); and a declaration-only pass regenerates the family of the
-data vintage it describes **in place** (C-88), which is only honest when the diff is proven additive.
+**And the mechanical rules this session added to the earlier four:** a new raw source dated later than the
+data layer **moves the quality report's vintage and therefore the whole registry** — that is the correct
+behaviour, not an accident, and it is why every `labelled:` field and every hard-coded vintage path has to
+move with it; a donor panel that must not move under a frozen gate lands as its **own source**, never as a
+re-landing of the one whose membership is committed; a verifier must **certify** a degenerate QP (KKT plus
+"no solver improves") rather than expect a second solver to reproduce it; and a numeric field that can be
+undefined (a placebo whose pre-path has no variance) must publish `null`, not the string `"NA"`, and the
+schema must accept it.

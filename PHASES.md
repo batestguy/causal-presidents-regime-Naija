@@ -8,6 +8,7 @@ never touches R, a database or a model.
 > exit-gated plan for finishing the project: Phase A GED 26.1 adoption → Phase B the monthly-CPI Design B
 > decision → Phase C close-or-record every card reason → Phase D optional RAGAS library run → Phase E
 > delivery polish → Phase F freeze. Phases do not begin until the previous one's named checks are green.
+> **A, B and C are closed (2026-11-01); the frontier is D, which is optional by design.**
 Companions: `nigeria-causal-inference-spec.md` (design decisions), `#CausalPresidents.txt` (base spec),
 `knowledge.md` (environment).
 

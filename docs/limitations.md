@@ -75,11 +75,11 @@ CBN by hand.
 
 ## 4. The quality gates flagged almost half the landed series
 
-**674 series** are gated: **359 `ok`, 313 `flagged`, 2 `empty`**. `flagged` does not mean unusable — it
+**1070 series** are gated: **577 `ok`, 491 `flagged`, 2 `empty`**. `flagged` does not mean unusable — it
 means a rule fired and the reason travels with the series into the base and the registry. The two empty
-series are Eritrea's and Somalia's CPI in the donor panel, which the source has no data for. (The two
-series added on 2026-10-29 are the NBS monthly CPI's index and year-on-year change, both `ok`:
-`registry/quality/2026-10-29/`.)
+series are Eritrea's and Somalia's CPI in the donor panel, which the source has no data for. (The four
+outcome paths added on 2026-11-01 — penta3, MMR, skilled birth attendance and unemployment for the same 99
+donors — are gated alongside the predictor panel: `registry/quality/2026-11-01/`.)
 
 - **8 definition breaks** are annotated rather than removed: GDP rebasing (2014), the unemployment
   methodology change, the January-2025 CPI rebasing (C-27), and the FX regime breaks among them.
@@ -141,25 +141,38 @@ bound is published rather than widened until it passed (S7-04).
   carries a number.
 - **114 months is not many**, and two devaluations sit inside them.
 
-## 7. Design C was built, and it did not identify an effect
+## 7. Design C was built for every outcome the panel can carry, and it identified none
 
 Stage 5's earlier `infeasible` verdict was a statement about the **donor pool**. Widened from 13 to **99
-countries**, the pre-fit gate passes `u5mr` on **3 of its 4** runnable windows, `gdp_growth` on 1 of 4 and
-`cpi_yoy` on **0 of 4**, under a strict-majority rollup that is declared rather than inferred (S5-12). The pass
-carried its own warning: **a 99-donor simplex can fit almost any pre-period**, and in the 13-donor run a single
-donor beat the fitted simplex (C-59).
+countries**, the pre-fit gate now passes **`u5mr` on 3 of its 4** runnable windows, **`mmr` on 2 of 3** and
+**`unemp` on 3 of 4**, is infeasible for `immun_penta3` (0 of 4), `gdp_growth` (1 of 4) and `cpi_yoy`
+(0 of 4), and cannot run for `skilled_birth` at all — 9 native observations across 1990–2022 cannot fill a
+window that needs 8 pre and 2 post years. The rollup is a strict majority, declared rather than inferred
+(S5-12). Every pass carries its own warning: **a 99-donor simplex can fit almost any pre-period**, and in the
+13-donor run a single donor beat the fitted simplex (C-59).
 
-The estimator and its in-space, in-time and leave-one-donor-out placebos now exist
-(`registry/design_c/2026-10-18/`). **Four windows were estimated and none is identified.** The in-space rank p
-runs from 0.17 to 0.50; the in-time placebo fails where it can be run; and **304 of 396 placebo fits also clear
-the gate's own 0.10 threshold**, so the pre-fit gate does not discriminate on this pool. Two further limits:
+The estimator and its in-space, in-time and leave-one-donor-out placebos now run for **every outcome the
+donor panel carries** (C-91): **9 outcomes, 45 windows, 31 estimated and 14 refused by the declared rule,
+none identified** (`registry/design_c/2026-11-01/`). The mean gaps run from **−11.56 to +18.53** deaths per
+1,000 for `u5mr`, **+4.28 to +171.53** per 100,000 births for `mmr`, **−12.57 to +10.87** percentage points
+for `immun_penta3`, **−3.14 to +5.35** points for `gdp_growth`, **−2.37 to +5.31** points for `cpi_yoy` and
+**−1.05 to +1.37** points for `unemp`, and **−6,728 to +3,349** reported fatalities and **−19 to +288**
+reported incidents for the two conflict outcomes aggregated from the landed UCDP archive. The in-space rank p
+runs from 0.08 to 0.98 across the estimated windows, and **969 of 2,959 placebo fits also clear the gate's own 0.10 threshold**, so the pre-fit gate does
+not discriminate on this pool. Two further limits:
 
 - **The declared problem is underdetermined.** With 99 donors and 8 to 24 pre-years, a face of weights fits the
-  pre-period equally well. The artifact publishes the solver's vertex and a unique ridge refit; for one window
-  they disagree in sign, which means that gap is a property of the solver, not of Nigeria.
+  pre-period equally well. The artifact publishes the solver's vertex, the unique ridge refit **with its
+  weights**, and the leave-one-donor-out range; for `u5mr` and `mmr` on the first window the vertex and the
+  ridge refit disagree in sign, which means those gaps are a property of the solver, not of Nigeria.
 - **There is no interval.** A synthetic control's inference is a rank among placebos. The honesty layer publishes
-  no point estimate without an interval, so no gap reaches a card; the `u5mr` card names the reason and points
-  at the artifact.
+  no point estimate without an interval, so no gap reaches a card: the eight fitted C cards carry
+  `design_estimated_not_identified` and point at the artifact, and `skilled_birth`'s card carries
+  `outcome_series_absent` with the observation count that refuses it.
+- **The pools are not the same size for every outcome.** A donor enters only with a complete pre- and
+  post-period path, and `cpi_yoy`'s post-period gaps drop 22 of 99 donors on the latest window. Where the
+  stage's pool is smaller than the gate's, its pre-fit ratio is its own number rather than the gate's, and the
+  artifact names the donors it dropped.
 
 ## 8. Inference floors that no interval can hide
 
@@ -229,9 +242,10 @@ After all of the above, four things survive:
 1. **A fiscal transmission channel:** a 10 % Brent move reaches the states as roughly 5 % more money two
    to three months later (Design B, sign robust in all 24 fiscal specifications; the price-level family is a null at every horizon; timing p = 0.0625).
 2. **Two published cards** of 36 — the two Design A outcomes that have a card — each carrying its interval
-   and its `estimated_not_identified` verdict. **34 cards carry a reason, not a number** (15
-   `outcome_series_absent`, 7 `outcome_not_at_design_grain`, 9 `design_result_is_channel_level`, 2
-   `design_not_run`, 1 `design_estimated_not_identified`).
+   and its `estimated_not_identified` verdict. **34 cards carry a reason, not a number** (10
+   `outcome_series_absent`, 7 `outcome_not_at_design_grain`, 9 `design_result_is_channel_level`, 8
+   `design_estimated_not_identified`, and none `design_not_run` — every design has now been run for every
+   outcome it can carry).
 3. **Two of eight event-outcome cells** show a shift that survives both the placebo and the pre-trend
    check; three fail the pre-trend, one shows no shift, and two cannot be checked at all.
 4. **A boundary:** every design that failed its pre-check is dropped on the record, with the diagnostic
@@ -250,7 +264,7 @@ series.
 | The per-capita axis | A state population denominator decision (X-09) | An unmade decision, not an unavailable source |
 | D2 — FAAC share of state revenue | NBS state IGR parsed | Acquisition, same parser family as FAAC |
 | The 2023 window monthly | Monthly NBS CPI | Annual CPI landed; the monthly series is a parser |
-| An identified synthetic counterfactual | A donor pool that is not rich enough to interpolate the pre-period, or a shorter fit window | Built and measured: no window survives its placebos, and 304 of 396 placebos clear the same pre-fit gate |
+| An identified synthetic counterfactual | A donor pool that is not rich enough to interpolate the pre-period, or a shorter fit window | Built for all seven outcomes the donor panel carries and measured: no window survives its placebos, and 969 of 2,959 placebos clear the same pre-fit gate |
 | The security record after 2025-12 | The next GED release | Publication cycle — the adopted archive (26.1) is complete to 2025-12 |
 | Tenure effects on health and education | Sub-national monthly outcomes | DHIS2 credentials; NEMIS/NEDI and UNESCO unreachable |
 | The naira channel separated | Monthly NGN/USD | No keyless publisher; CBN by hand |
@@ -261,13 +275,13 @@ The claims that can be recomputed are registered as claims, not trusted as prose
 
 | Claim | Artifact | Check |
 |---|---|---|
-| Observed share 1,373 / 8,350 (16.4 %) | `registry/diagnostics/2026-10-30/diagnostics.json → grain_decision` | `tests/verify_stage5.py`, and the memo's number is checked against it |
+| Observed share 1,373 / 8,350 (16.4 %) | `registry/diagnostics/2026-11-01/diagnostics.json → grain_decision` | `tests/verify_stage5.py`, and the memo's number is checked against it |
 | 2 of 36 cards carry a number; 34 by reason | `registry/dags/index.json → registry.card_estimate_counts` | `tests/verify_registry.py` |
-| Design A coefficient, interval, placebo, lead-shift p | `registry/estimates/2026-10-30/estimates.json` | `tests/verify_stage6.py`; doc claims in `tests/verify_registry.py` |
+| Design A coefficient, interval, placebo, lead-shift p | `registry/estimates/2026-11-01/estimates.json` | `tests/verify_stage6.py`; doc claims in `tests/verify_registry.py` |
 | Design B peak and its interval | same | `tests/verify_stage6.py`, `tests/verify_stage7.py` |
-| 60 positive / 21 negative; 36 of 48 | `registry/robustness/2026-10-30/robustness.json` | `scripts/validate_artifacts.py` recomputes the counts from the rows |
-| 2 / 3 / 2 / 1 event cells | `registry/events/2026-10-30/events.json` | `tests/verify_events.py` re-fits and re-derives every verdict |
-| 674 gated series, 359 / 313 / 2 | `registry/quality/2026-10-30/report.json` | `tests/verify_quality.py` |
+| 60 positive / 21 negative; 36 of 48 | `registry/robustness/2026-11-01/robustness.json` | `scripts/validate_artifacts.py` recomputes the counts from the rows |
+| 2 / 3 / 2 / 1 event cells | `registry/events/2026-11-01/events.json` | `tests/verify_events.py` re-fits and re-derives every verdict |
+| 1,070 gated series, 577 / 491 / 2 | `registry/quality/2026-11-01/report.json` | `tests/verify_quality.py` |
 
 Two stale prose facts were found while writing this page and are corrected with it: **`docs/events.md`
 said four cells fail the pre-trend** when the artifact has three failing and two that cannot be checked

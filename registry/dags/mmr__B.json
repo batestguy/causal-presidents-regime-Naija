@@ -1,11 +1,11 @@
 {
   "dag_id": "mmr__B",
   "schema_version": "0.3.0",
-  "vintage_date": "2026-10-30",
-  "generated_at": "2026-10-31T00:50:27+0100",
+  "vintage_date": "2026-11-01",
+  "generated_at": "2026-11-01T10:10:55+0100",
   "generator": {
     "script": "analysis/R/01_build_dags.R",
-    "git_sha": "2610e44"
+    "git_sha": "63f3f0f"
   },
   "outcome": {
     "id": "mmr",
@@ -257,8 +257,8 @@
     "blocker": "FAAC is absent from the metric catalogue, so the Tier-3 system runs without its fiscal variable; and the grain is annual, not monthly",
     "note": "Runs, but not as base spec section 9 specifies; the deviations are listed above.",
     "coverage_status": "ok",
-    "vintage": "2026-10-30",
-    "source": "registry/diagnostics/2026-10-30/diagnostics.json"
+    "vintage": "2026-11-01",
+    "source": "registry/diagnostics/2026-11-01/diagnostics.json"
   },
   "assets": {
     "svg": "registry/dags/mmr__B.svg"

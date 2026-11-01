@@ -74,6 +74,9 @@ imputation: []
 grains:
   worldbank: { period: annual, label: year }
   worldbank_donors: { period: annual, label: year }
+  # The outcome-path half of the Design C donor panel (C-91), landed as its own source so the frozen
+  # predictor panel and the intent gate's membership artifact do not move under a new acquisition.
+  worldbank_donor_outcomes: { period: annual, label: year }
   fred: { period: daily, label: day }
   faac: { period: monthly, label: month }
   ucdp: { period: monthly, label: month }

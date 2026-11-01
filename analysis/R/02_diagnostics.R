@@ -845,6 +845,10 @@ nga_annual <- q("select metric_id, year(anchor_month) as yr, value
                  from main_analytics.fact_observation_native
                  where native_frequency = 'annual' and value is not null
                    and anchor_month >= date '1999-01-01' order by 1, 2")
+nga_monthly <- q("select metric_id, count(*) as n
+                  from main_analytics.fact_observation_native
+                  where native_frequency = 'monthly' and value is not null
+                  group by 1")
 donor_countries <- sort(unique(donor_panel$country_iso3))
 cand_windows <- spec_get(c("windows", "candidate_treated_windows"), list())
 
@@ -864,6 +868,11 @@ for (o in outcomes) {
     start_year <- as.integer(substr(w$from, 1, 4))
     wkey <- w$id
     y_nga <- nga_annual[nga_annual$metric_id == o$id, ]
+    # Recorded so the rollup can say *why* an outcome had no runnable window. A sparse native path
+    # (survey-year series used as an annual one) is the case that has no window but is still covered by
+    # the donor panel, and without this count the only honest note would have been NA — which the card
+    # builder rejects, correctly (C-92).
+    entry$n_native_observations <- nrow(y_nga)
     yrs <- y_nga$yr
     pre_years <- yrs[yrs < start_year]
     post_years <- yrs[yrs >= start_year]
@@ -995,6 +1004,25 @@ for (o in outcomes) {
     entry$verdict <- "infeasible_weak_pre_fit"
   } else {
     entry$verdict <- "not_run"
+    # A covered outcome can still have no runnable window, for two different reasons, and the note has to
+    # say which: a sparse annual series (skilled_birth has 9 points across 33 years) cannot fill a window,
+    # and a monthly outcome (the UCDP counts) has no annual native path at all — Stage 8h sums it to the
+    # calendar year under its own declared rule, which the gate cannot do because the gate reads annual
+    # observations only (C-92, C-93).
+    monthly_obs <- nga_monthly$n[nga_monthly$metric_id == o$id]
+    entry$note <- if (entry$n_native_observations == 0 && length(monthly_obs) && monthly_obs > 0) {
+      sprintf(paste0("no annual native observations: this outcome is monthly (%d native observations), and ",
+                     "the gate's pre-fit reads native annual series only. Stage 8h sums it to the calendar ",
+                     "year under its declared grain rule and screens on its own pre-fit."),
+              as.integer(monthly_obs))
+    } else {
+      sprintf(
+        "no declared window has the required %d pre and %d post years of this outcome's native annual path (%d observation%s over %s-%s)",
+        min_pre, min_post, entry$n_native_observations,
+        if (identical(entry$n_native_observations, 1L)) "" else "s",
+        if (entry$n_native_observations > 0) min(nga_annual$yr[nga_annual$metric_id == o$id]) else "no year",
+        if (entry$n_native_observations > 0) max(nga_annual$yr[nga_annual$metric_id == o$id]) else "no year")
+    }
   }
   prefit[[o$id]] <- entry
 }
@@ -1433,6 +1461,7 @@ for (o in outcomes) {
                        "no candidate treated window lets any convex combination of the donors track",
                        "Nigeria's pre-treatment path: best pre-RMSPE exceeds 0.10 x the pre-period",
                        "outcome SD"),
+                     not_run = pf$note,
                      if (identical(pf$verdict, "not_attempted")) pf$note else NA_character_),
     note = switch(pf$verdict,
                   pass = sprintf("Pre-treatment fit passes at window(s): %s", paste(best, collapse = ", ")),

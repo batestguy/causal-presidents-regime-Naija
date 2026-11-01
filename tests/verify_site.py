@@ -153,7 +153,7 @@ def main() -> int:
         (f"{models} models are compared", "the model count"),
         (f"{specs} fitted specifications", "the specification count"),
         (span.replace('–', ' to '), "the time span"),
-        (f"{dc_doc['counts']['placebos_passing_pre_fit']} of {dc_doc['counts']['placebos_in_space']} "
+        (f"{dc_doc['counts']['placebos_passing_pre_fit']:,} of {dc_doc['counts']['placebos_in_space']:,} "
          f"placebo fits", "the placebo saturation"),
         (f"{dc_doc['counts']['donors']} donors", "the donor count"),
         (f"{series_doc['counts']['spine_rows']['observed']:,} are observations", "the observed share"),

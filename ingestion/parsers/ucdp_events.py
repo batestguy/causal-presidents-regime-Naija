@@ -2,8 +2,9 @@
 
 Writes:
 
-    data/staging/ucdp_state_month.csv     state × month × item, the table Stage 3 gates and Stage 4 reads
-    data/staging/ucdp_parse_report.json   what the parse assumed, excluded and could not attribute
+    data/staging/ucdp_state_month.csv       state × month × item, the table Stage 3 gates and Stage 4 reads
+    data/staging/ucdp_country_year.csv      country × year × item, the Design C donor path (C-93)
+    data/staging/ucdp_parse_report.json     what the parse assumed, excluded and could not attribute
 
 Why this is the artifact Stage 5 said was missing: Family A is a state-level design whose outcome has
 to be attributed to a state and a month. The World Bank security series are national and annual
@@ -11,7 +12,12 @@ to be attributed to a state and a month. The World Bank security series are nati
 a token (C-14) but its bulk archive does not. GED carries `adm_1` — the state — and a start date, so
 the outcome can be built at exactly the grain the design needs.
 
-Four decisions, each stated because the alternative is defensible:
+The same landed archive also carries every other country's events, so the **Design C donor path** is a
+second aggregate over bytes already on disk rather than an acquisition. It is written as its own
+artifact and kept apart from the national spine, because a donor's conflict history is not an outcome of
+the thing being estimated.
+
+Five decisions, each stated because the alternative is defensible:
 
 1. **The month is `date_start`'s month.** GED gives a start and an end date, and an event can span a
    month boundary. Attributing it to the month it began is the convention that matches how the data
@@ -37,6 +43,14 @@ Four decisions, each stated because the alternative is defensible:
    records, and it stays a gap so the Stage 3 gap gate can see it. Six such months fall inside the
    1999-2009 window (`1999-08`, `1999-12`, `2000-04`, `2008-10`, `2009-08`, `2009-09`); none after 2009.
 
+5. **The donor path's zero is a measurement of *reported* fatalities.** The country-year artifact covers
+   every member of the committed donor pool, not only the countries GED happens to mention. A country
+   with no GED event has a reported-fatality path of zeros from the archive's first year, because the
+   outcome is "reported security fatalities" and the archive records nothing for it. This is the same
+   rule as (4) one grain up, and it is what lets a synthetic control treat a peaceful comparator as a
+   comparator rather than as a missing series. The mapping from GED's country names to ISO3 is declared
+   below rather than guessed; an unmapped name fails the parse instead of silently dropping a country.
+
 Run::
 
     conda run -p "C:/Users/TOSHIBA/ds-general" python ingestion/parsers/ucdp_events.py
@@ -57,8 +71,10 @@ import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 RAW_ROOT = REPO_ROOT / "data" / "raw" / "ucdp"
+DONOR_MANIFESTS = REPO_ROOT / "data" / "raw" / "worldbank_donors"
 STATE_SEED = REPO_ROOT / "dbt" / "seeds" / "raw_state.csv"
 OUT_CSV = REPO_ROOT / "data" / "staging" / "ucdp_state_month.csv"
+OUT_COUNTRY_CSV = REPO_ROOT / "data" / "staging" / "ucdp_country_year.csv"
 OUT_REPORT = REPO_ROOT / "data" / "staging" / "ucdp_parse_report.json"
 
 COUNTRY = "Nigeria"
@@ -72,15 +88,144 @@ ITEMS = {
     "incidents": "count",
     "fatalities_civilians": "count",
 }
+DONOR_ITEMS = {"fatalities": "count", "incidents": "count"}
 
 # GED labels the states as "<Name> state" and the capital as "Federal Capital territory". Declared
 # rather than derived, so a change in the publisher's labelling fails the parse instead of silently
 # dropping a state.
 LABEL_EXCEPTIONS = {"FCT": "Federal Capital territory"}
 
+# GED's country labels that the ISO 3166-1 vocabulary does not match by name. Each is the publisher's own
+# historical label for a state the donor pool carries, declared here so the crosswalk is reviewable. The
+# parser fails on any other unmapped label rather than dropping the country (C-93).
+GED_COUNTRY_ALIASES = {
+    "Bosnia-Herzegovina": "BIH",
+    "Cambodia (Kampuchea)": "KHM",
+    "DR Congo (Zaire)": "COD",
+    "Kingdom of eSwatini (Swaziland)": "SWZ",
+    "Madagascar (Malagasy)": "MDG",
+    "Myanmar (Burma)": "MMR",
+    "Russia (Soviet Union)": "RUS",
+    "Serbia (Yugoslavia)": "SRB",
+    "United States of America": "USA",
+    "Yemen (North Yemen)": "YEM",
+    "Zimbabwe (Rhodesia)": "ZWE",
+}
+
 
 def ged_label(state_name: str) -> str:
     return LABEL_EXCEPTIONS.get(state_name, f"{state_name} state")
+
+
+def donor_pool() -> dict[str, str]:
+    """ISO2 -> ISO3 for the committed donor pool, read from the landed predictor payloads.
+
+    The pool is declared once, by the flow that landed it; the country-year artifact borrows it rather
+    than declaring a second list that could disagree (the same rule the outcome-path flow follows). The
+    ISO3 codes come from the payload rows themselves, so no second table has to be kept in step.
+    """
+    manifests = sorted(DONOR_MANIFESTS.glob("*/manifest.json"))
+    if not manifests:
+        raise SystemExit(f"no landed donor manifest under {DONOR_MANIFESTS.relative_to(REPO_ROOT)}")
+    vintage_dir = manifests[-1].parent
+    manifest = json.loads(manifests[-1].read_text(encoding="utf-8"))
+    codes = set(manifest.get("donors") or {})
+    if not codes:
+        raise SystemExit(f"{manifests[-1]}: the manifest names no donor pool")
+    found: dict[str, str] = {}
+    for payload in sorted(vintage_dir.glob("*/*.json")):
+        blob = json.loads(payload.read_text(encoding="utf-8"))
+        if not isinstance(blob, list) or len(blob) < 2:
+            continue
+        for row in blob[1]:
+            code = str((row.get("country") or {}).get("id") or "")
+            iso3 = row.get("countryiso3code")
+            if code in codes and iso3:
+                found[code] = str(iso3).upper()
+    missing = sorted(codes - set(found))
+    if missing:
+        raise SystemExit(f"the landed payloads name no ISO3 for donor(s) {missing}")
+    return found
+
+
+def _norm(text: str) -> str:
+    lowered = text.lower()
+    for char in ",.()-":
+        lowered = lowered.replace(char, " ")
+    return " ".join(lowered.split())
+
+
+def name_to_iso3() -> dict[str, str]:
+    """GED's country label -> ISO3, from the committed vocabulary plus the declared aliases."""
+    vocabulary = json.loads(
+        (REPO_ROOT / "registry" / "reference" / "countries.json").read_text(encoding="utf-8"))
+    out = {_norm(row["name"]): row["iso3"] for row in vocabulary["countries"]}
+    for row in vocabulary["countries"]:
+        for alias in row.get("aliases") or []:
+            out.setdefault(_norm(alias), row["iso3"])
+    out.update({_norm(label): iso for label, iso in GED_COUNTRY_ALIASES.items()})
+    return out
+
+
+def write_country_year(frame: pd.DataFrame, vintage: str, member: str, sha256: str,
+                       archive_path: Path, pool: dict[str, str]) -> dict:
+    """Aggregate every country's events to a country-year donor path, zero-filled inside GED's coverage.
+
+    The outcome is *reported* fatalities: a pool country the archive records nothing for has zero
+    reported fatalities in that year, not a missing value. Only pool members are written — the donor
+    panel is a design object, not a world dataset — and an unmapped GED country label fails the parse.
+    """
+    lookup = name_to_iso3()
+    labels = sorted(str(label) for label in frame["country"].dropna().unique())
+    unmapped = [label for label in labels if _norm(label) not in lookup]
+    if unmapped:
+        raise SystemExit(f"GED country label(s) with no ISO3 mapping: {unmapped} — declare them in "
+                         f"GED_COUNTRY_ALIASES rather than dropping the countries")
+    iso_by_label = {label: lookup[_norm(label)] for label in labels}
+
+    frame = frame.copy()
+    frame["country_iso3"] = frame["country"].map(iso_by_label)
+    frame["period_year"] = frame["year"].astype(int)
+    by_country_year = frame.groupby(["country_iso3", "period_year"], sort=True).agg(
+        fatalities=("best", "sum"), incidents=("best", "size")).reset_index()
+
+    pool_iso3 = sorted(set(pool.values()))
+    first_year = int(frame["period_year"].min())
+    last_year = int(frame["period_year"].max())
+    grid = pd.MultiIndex.from_product([pool_iso3, range(first_year, last_year + 1)],
+                                      names=["country_iso3", "period_year"]).to_frame(index=False)
+    out = grid.merge(by_country_year, on=["country_iso3", "period_year"], how="left")
+    out[list(DONOR_ITEMS)] = out[list(DONOR_ITEMS)].fillna(0)
+    long = out.melt(id_vars=["country_iso3", "period_year"], value_vars=list(DONOR_ITEMS),
+                    var_name="item", value_name="value")
+    label_by_iso = {iso: label for label, iso in iso_by_label.items()}
+    long["country_name"] = long["country_iso3"].map(label_by_iso)
+    long["unit"] = long["item"].map(DONOR_ITEMS)
+    long["source_dataset_id"] = archive_path.parent.name
+    long["source_file"] = archive_path.relative_to(REPO_ROOT).as_posix()
+    long["source_sha256"] = sha256
+    long["source_location"] = f"{member}#all-countries"
+    long["vintage"] = vintage
+    long = long.sort_values(["item", "country_iso3", "period_year"])
+    long["value"] = long["value"].astype("int64")
+    long[["country_iso3", "country_name", "period_year", "item", "value", "unit",
+          "source_dataset_id", "source_file", "source_sha256", "source_location", "vintage"]] \
+        .to_csv(OUT_COUNTRY_CSV, index=False, quoting=csv.QUOTE_MINIMAL)
+
+    in_pool = by_country_year[by_country_year["country_iso3"].isin(pool_iso3)]
+    return {
+        "rows": int(len(long)),
+        "countries": len(pool_iso3),
+        "years": f"{first_year}-{last_year}",
+        "items": list(DONOR_ITEMS),
+        "pool_countries_with_at_least_one_event": int(in_pool["country_iso3"].nunique()),
+        "observed_country_years": int(len(in_pool)),
+        "zero_filled_country_years": int(len(long) / len(DONOR_ITEMS)) - int(len(in_pool)),
+        "totals": {item: int(long.loc[long["item"] == item, "value"].sum()) for item in DONOR_ITEMS},
+        "assumption": (
+            "a pool country the archive records no event for has zero *reported* fatalities in that year: "
+            "the outcome is reported security fatalities, and GED is a global archive from its first year"),
+    }
 
 
 def latest_archive() -> tuple[Path, str, Path]:
@@ -99,7 +244,7 @@ def latest_archive() -> tuple[Path, str, Path]:
 
 
 def read_events(archive_path: Path) -> tuple[pd.DataFrame, str, str]:
-    """Read the Nigeria slice from the archive without extracting it to disk."""
+    """Read the archive without extracting it to disk. The returned frame is **all countries**."""
     payload = archive_path.read_bytes()
     with zipfile.ZipFile(io.BytesIO(payload)) as archive:
         members = [n for n in archive.namelist() if n.lower().endswith(".csv")]
@@ -110,13 +255,13 @@ def read_events(archive_path: Path) -> tuple[pd.DataFrame, str, str]:
                 handle,
                 low_memory=False,
                 usecols=[
-                    "id", "date_start", "date_end", "country", "adm_1", "adm_2",
+                    "id", "date_start", "date_end", "country", "year", "adm_1", "adm_2",
                     "best", "deaths_civilians", "type_of_violence", "where_prec",
                     "latitude", "longitude",
                 ],
             )
     sha256 = hashlib.sha256(payload).hexdigest()
-    return frame[frame["country"] == COUNTRY].copy(), members[0], sha256
+    return frame, members[0], sha256
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -132,9 +277,13 @@ def main(argv: list[str] | None = None) -> int:
         vintage_dir, vintage, archive_path = latest_archive()
 
     states = pd.read_csv(STATE_SEED)
-    events, member, sha256 = read_events(archive_path)
+    all_events, member, sha256 = read_events(archive_path)
+    if all_events.empty:
+        raise SystemExit("the archive carries no events")
+    events = all_events[all_events["country"] == COUNTRY].copy()
     if events.empty:
         raise SystemExit("the archive carries no Nigeria events")
+    country_year = write_country_year(all_events, vintage, member, sha256, archive_path, donor_pool())
 
     label_to_state = {ged_label(row.state_name): row.state_name for row in states.itertuples()}
     state_id_of = dict(zip(states["state_name"], states["state_id"]))
@@ -242,6 +391,7 @@ def main(argv: list[str] | None = None) -> int:
         "n_scopes": len(scopes),
         "n_rows": int(len(long)),
         "totals": totals,
+        "country_year_donor_panel": country_year,
         "state_label_mapping": {k: v for k, v in sorted(label_to_state.items())},
         "assumptions": {
             "month_assignment": "date_start's month; multi-month events are counted in the month they began",
@@ -267,6 +417,8 @@ def main(argv: list[str] | None = None) -> int:
     print(f"scopes:  {len(scopes)} (37 units + unattributed)   items: {', '.join(ITEMS)}")
     print(f"totals:  " + ", ".join(f"{k}={v:,}" for k, v in totals.items()))
     print(f"staging: {OUT_CSV.relative_to(REPO_ROOT)}  ({len(long):,} rows)")
+    print(f"donors : {OUT_COUNTRY_CSV.relative_to(REPO_ROOT)}  ({country_year['rows']:,} rows, "
+          f"{country_year['countries']} countries, {country_year['years']})")
     print(f"report:  {OUT_REPORT.relative_to(REPO_ROOT)}")
     return 0
 
