@@ -1,6 +1,6 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-11-01 (twenty-fifth session) — this session's record is the last section of this file · **Stage:** 9 · **The project is frozen at vintage 2026-11-01**: every phase of `presidents-completion-plan.md` is closed with its exit criteria measured green, and the section below states what the frozen system claims, refuses and leaves open
+**Last updated:** 2026-11-01 (twenty-fifth session) — this session's record is the last section of this file · **Stage:** 9 · **The project is frozen at vintage 2026-11-01**: every phase of `presidents-completion-plan.md` is closed with its exit criteria measured green, and the **final** section states what the frozen system claims, refuses and leaves open
 
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict

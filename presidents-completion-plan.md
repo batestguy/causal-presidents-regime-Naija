@@ -9,6 +9,9 @@ criteria are *measured green* — a named check run to completion and passing, n
 time that discipline was skipped in this project, a verifier found a defect nobody could have found by
 reading (C-42, C-44, C-49, C-52).
 
+**Status: all six phases are closed (2026-11-01) and the project is frozen at vintage 2026-11-01.** The
+record is `presidents-completion-state.yml`; `PROGRESS.md`'s final section is the completion statement.
+
 **Status markers:** `[ ]` not started · `[~]` in progress · `[x]` done, with the evidence noted.
 
 > **This plan is enforced, not just stated.** The checkboxes below are prose; the *record* is

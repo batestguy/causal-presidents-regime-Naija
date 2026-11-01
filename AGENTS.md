@@ -2,6 +2,11 @@
 
 Freebuff context for this repo: what runs, where things live, and the rules a change must not break.
 
+**Status: frozen at vintage 2026-11-01.** Every phase of `presidents-completion-plan.md` is closed
+with its exit criteria measured green (`presidents-completion-state.yml` carries the evidence), and
+the final section of `PROGRESS.md` is the completion statement: what the system claims, what it
+refuses to claim, and the limitations it leaves open. Nothing is queued behind the freeze.
+
 ## Quickstart
 
 The verified interpreter on this machine is the `ds-general` conda env (3.12); the default `python` on PATH
@@ -27,6 +32,19 @@ Rscript analysis/R/05_registry.R        # Stage 8 registry — must run after 01
 
 `scripts/verify.sh` skips acquisition when `data/raw/` is landed (the raw layer is immutable), and skips the
 R stages when `Rscript` is absent — it says so in the log rather than passing quietly.
+
+**Run it with Git Bash, not the WSL `bash`.** On this machine plain `bash` resolves to WSL, which
+cannot pass `/mnt/d/...` paths to the Windows Python and R interpreters; the script fails at the first
+globbed `py_compile`. From PowerShell:
+
+```powershell
+& "C:\Program Files\Git\bin\bash.exe" -c "PYTHON=/c/Users/TOSHIBA/ds-general/python.exe `
+RAG_PYTHON=/c/conda-envs/drlca-rag/python.exe HF_HUB_OFFLINE=1 bash scripts/verify.sh"
+```
+
+It ends in `all checks passed`. A *fresh* clone is the one thing it cannot do: the NBS elibrary index
+returns 500, so the FAAC panel and the NBS CPI workbook cannot be re-acquired whole — `docs/limitations.md`
+§11, and the raw layer is the record.
 
 ## Architecture
 
