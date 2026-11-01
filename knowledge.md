@@ -16,15 +16,15 @@ economic metrics. Visitors ask causal questions of a model and inspect the fitte
 behind the answers. (Base spec title: "Nigeria Presidential Performance Dashboard" — the
 word *performance* is retired from all user-facing naming; see the title note above.)
 
-**Status: Stage 8 of 8 begun (2026-10-18) — the registry the app reads exists.** Ingestion
+**Status: the analytical work is complete at vintage 2026-11-01 — the registry the app reads exists, and Phases A–C of the completion plan are closed.** Ingestion
 works end to end on **five** sources and is provenance-verified — including 174 FAAC disbursement
 documents, which are the state fiscal dose, and the UCDP GED security events, which are the
 state-attributed outcome (keyless: its bulk archive needs no token, C-45) — 36 causal graphs are generated
-and verified, 672 series are quality-gated, `dbt/` builds the analytical base the models and the app read,
-and Stage 5 has attached a **pre-check verdict to every card — 1 of 36 passes** (14 fail, 9 degraded, 12 not
-attempted; `docs/design-memo.md`; re-run at vintage 2026-10-18 over the widened donor pool). The one pass is
-`u5mr` under Design C. The verdicts have been re-run three times, once per data delivery (the artifact on
-disk is `registry/diagnostics/2026-10-18/`), and the totals **did** move while the reasons moved too:
+and verified, **1,070 series are quality-gated** (577 ok, 491 flagged, 2 empty), `dbt/` builds the analytical base the models and the app read,
+and Stage 5 has attached a **pre-check verdict to every card — 3 of 36 pass** (15 fail, 9 degraded, 9 not
+attempted; `docs/design-memo.md`; re-run at vintage 2026-11-01). The passes are `u5mr`, `mmr` and
+`unemp` under Design C. The verdicts have been re-run at every data delivery (the artifact on
+disk is `registry/diagnostics/2026-11-01/`), and the totals **did** move while the reasons moved too:
 Family A is dropped because the dose's per-capita axis waits on the population denominator (X-09), not for
 want of a dose or an outcome.
 
@@ -45,23 +45,23 @@ two true statements.
 
 **Stage 8 has since assembled the registry the app reads** (`docs/registry.md`, `analysis/specs/registry.yml`,
 `analysis/R/05_registry.R`): **2 of the 36 cards carry a published number, 34 carry a reason**, because
-Stage 6's twelve specifications do not line up with 36 cards — three Design A specifications are about
+Stage 6's specifications do not line up with 36 cards — three Design A specifications are about
 catalogue outcomes (two of which have cards), nine Design B specifications are about the **national FAAC
-channel**, which is a *mediator* node on every B card, and Design C was not run. The two B/C results sit on
-`registry/dags/index.json → published_results` with `result_is_card_level: false` where the app can show them
-once instead of implying them nine times, every `not_estimated` card names a reason from a closed set, and
-`tests/verify_registry.py` re-derives the mapping and checks each number against the artifact it names. Read
-`PROGRESS.md` for what is verified and what is blocked.
-
+channel**, which is a *mediator* node on every B card, and Design C's synthetic control has no interval to
+publish. The two design-level results sit on `registry/dags/index.json → published_results` with
+`result_is_card_level: false` where the app can show them once instead of implying them nine times, every
+`not_estimated` card names a reason from a closed set, and `tests/verify_registry.py` re-derives the
+mapping and checks each number against the artifact it names. Read `PROGRESS.md` for what is verified and
+what is blocked.
 **Stage 5 has since been re-run against a widened Design C donor pool (vintage 2026-10-18).** The candidate
 set went from 13 GDP-selected countries to **99 candidates screened on oil dependence, region/income band
 and coverage**, and the pre-fit gate moved from `infeasible` on everything to **`pass` on `u5mr` (3 of its
 4 runnable windows)** with `gdp_growth` (1 of 4) and `cpi_yoy` (0 of 4) still failing — under a rollup rule
 that is now **declared** (strict majority of runnable windows). Two cautions travel with it and are on the
 artifact: a 99-donor simplex can fit almost any pre-period, so the gate is weaker evidence than it was at
-13 donors; and Design C is still **not estimated** — the estimator and its placebos are the next build. The
-quality gate now covers **672 series** (was 242) and the donor panel is 27,352 rows.
-
+13 donors; and Design C is now **fitted for all nine outcomes the panel carries** — 45 windows, 31 estimated,
+none identified (C-91, C-93). The quality gate covers **1,070 series** and the donor panel is 47,386 rows
+over 11 country-year series.
 **Stage 8b has since answered the one tenure-shaped question the data can carry** (`docs/events.md`,
 `registry/events/2026-10-17/`): monthly conflict around the four in-window transitions, 32 specifications,
 inference by exhaustive placebo assignment over 58 eligible months. **2 of 8 event-outcome cells survive both
@@ -172,11 +172,11 @@ scripts/verify.sh                                # all of the above, one exit st
 ## Conventions & gotchas
 
 - **Stage 5 runs every test on the native observation, never the monthly spine** (`analysis/specs/diagnostics.yml`,
-  `analysis/R/02_diagnostics.R`). Testing interpolated rows tests the interpolator. **1 of 36 cards passes
-  its pre-check at vintage 2026-10-18** (`u5mr` under Design C; 14 fail, 9 degraded, 12 not attempted) —
-  the dose's specified axis is empty (the nominal one is landed and gated), the VECM family is
-  annual-grain and has no catalogue entry for FAAC, and the synthetic control is a `candidate` rather
-  than infeasible. `docs/design-memo.md` is the source of truth for
+  `analysis/R/02_diagnostics.R`). Testing interpolated rows tests the interpolator. **3 of 36 cards pass
+  their pre-check at vintage 2026-11-01** (`u5mr`, `mmr` and `unemp` under Design C; 15 fail, 9 degraded, 9 not
+  attempted) — the dose's specified axis is empty (the nominal one is landed and gated), the VECM family is
+  annual-grain and has no catalogue entry for FAAC, and the synthetic control is fitted and identifies nothing.
+  `docs/design-memo.md` is the source of truth for
   which design is credible per outcome; the summary is computed from the cards, never asserted.
 - **The `mmr` Johansen rank is marginal** (the deciding statistic sits ~9% over its critical value) and
   an independent implementation reaches a different rank under a different deterministic-term convention.

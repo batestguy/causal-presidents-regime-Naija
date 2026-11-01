@@ -83,8 +83,8 @@ Design C's status, coverage, quality, the event study, the tables), 2 refusals t
 | Metric | Embeddings | BM25 baseline | Gate |
 |---|---|---|---|
 | recall@5 | **0.944** | 0.778 | ≥ 0.90 — **met** for embeddings, not for the baseline |
-| gold coverage@5 | 0.403 | 0.353 | - |
-| MRR | 0.631 | 0.569 | - |
+| gold coverage@5 | 0.407 | 0.353 | - |
+| MRR | 0.634 | 0.569 | - |
 | refusal-with-reason recall | **0.5** | 0.0 | 1.0 — **not met** |
 | out-of-scope refused | **0.25** | n/a | 1.0 — **not met** |
 | answerable kept (not refused) | 1.0 | n/a | 1.0 — met |
@@ -114,7 +114,7 @@ held-out set the rules never saw (v3), it refuses **0.947** of out-of-scope ques
 through its capital city, is published rather than tuned away (`docs/intent.md`). On this eval set, out-of-scope refusal goes
 **0.25 → 1.000** and reason-citation **0.5 → 1.000**, with answerable recall unchanged.
 
-The refusal threshold is `0.302598`, derived as 0.5 × the median answerable top-1 similarity (0.6052). It is
+The refusal threshold is `0.297595`, derived as 0.5 × the median answerable top-1 similarity (0.5952). It is
 calibrated on the eval set, so the refusal number is optimistic; that caveat travels in the artifact.
 
 ### The answer-quality measurement — the definitions, not the library
@@ -124,10 +124,10 @@ defines, judged by `gemini-3.5-flash-lite` at temperature 0:
 
 | Metric | Measured | What it means here |
 |---|---|---|
-| faithfulness | **0.920** | statements in an answer that its own cited contexts support |
-| answer relevancy | **0.816** | mean cosine between the question and three questions generated from the answer |
-| context precision | **0.956** | average precision over the cited chunks a judge calls useful for the reference answer |
-| context recall | **0.787** | reference-answer claims the cited contexts can support |
+| faithfulness | **0.936** | statements in an answer that its own cited contexts support |
+| answer relevancy | **0.806** | mean cosine between the question and three questions generated from the answer |
+| context precision | **0.989** | average precision over the cited chunks a judge calls useful for the reference answer |
+| context recall | **0.864** | reference-answer claims the cited contexts can support |
 
 **This is not a `ragas` library run, and the artifact says so in its own fields.** The package is not
 installed in this repository or on this machine, and installing it would add a dependency tree to a project
@@ -139,11 +139,11 @@ RAGAS's per-item calls, because this key's free tier allows 20 requests per wind
 What the numbers say, read honestly:
 
 - **Faithfulness is high by construction, not by quality.** The answer is a selection of quoted corpus
-  paragraphs, so the check confirms the contract rather than judging retrieval. 0.920 here means "it quotes
+  paragraphs, so the check confirms the contract rather than judging retrieval. 0.936 here means "it quotes
   what it cites", nothing more — and earlier runs of the same measurement gave 0.952, 0.956, 0.964 and 0.971.
   This run's floor is `q07_u5mr_synthetic_control` at **0.083**, the Design C question: the answer is a reason
   and a set of caveats rather than a number, so most of its statements are not claims a context can support.
-- **Context recall 0.787 is the number that matters.** About one reference claim in five is not supported
+- **Context recall 0.864 is the number that matters.** About one reference claim in seven is not supported
   by the chunks the answer actually cited: in this run `q07_u5mr_synthetic_control` scored **0.000** and
   several others sit between 0.5 and 0.75.
   The answer quotes the right document but not always the paragraph that carries the reference claim —

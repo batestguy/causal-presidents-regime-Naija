@@ -2,21 +2,21 @@
  "schema_version": "0.1.0",
  "layer": "RAG retrieval evaluation (offline; generation metrics declared, not measured)",
  "vintage": "2026-11-01",
- "generated_at": "2026-11-01T10:32:59+00:00",
+ "generated_at": "2026-11-01T11:04:49+00:00",
  "generator": {
   "script": "scripts/eval_rag.py",
   "spec": "analysis/specs/rag.yml",
-  "git_sha": "63f3f0f"
+  "git_sha": "965ffab"
  },
  "corpus": {
   "path": "corpus.json",
-  "sha256": "d9db0e228b34f3273289476f342161e8ca4561d45e3343358cb5cc63fed61edd",
+  "sha256": "58c374661b5ae01c33706c03a515061ac8d19d41d67213aa70074d6bd1c1ec46",
   "chunks": 524,
   "vintage": "2026-11-01"
  },
  "eval_set": {
   "path": "eval_set.json",
-  "sha256": "839c639a2c46d361293dc96bdabbaf8bd73e1319eb276f8ed66b778abf59c690",
+  "sha256": "06306d04e93b05226d2a0905c12d763fd620830f734053ae32042eed5f4f279b",
   "counts": {
    "questions": 22,
    "answerable": 16,
@@ -30,7 +30,7 @@
    "status": "measured",
    "model": "sentence-transformers/multi-qa-MiniLM-L6-cos-v1",
    "path": "embeddings.npz",
-   "sha256": "e3b1792e65a3413710874821acfd923186b858b659166bfc89464a222d7efb8b",
+   "sha256": "410e02d3bfbaca92e9ef994c3c00f51f010805e17d9c4b7a6a584b9db00a4033",
    "n_chunk_vectors": 524,
    "dim": 384
   },
@@ -47,16 +47,16 @@
    "refusal_with_reason": "**Not a score decision at all.** A question the data cannot answer should retrieve the passage that says why with *high* similarity — that is the point of putting the limitations page in the corpus. So this type is measured by whether the reason chunk is in the top 5, and the answer is required to cite it; using \"low similarity\" as the test here would score a well-argued refusal as a failure.",
    "measured": "The first build made exactly that mistake: one score threshold was applied to both kinds of refusal and reported 0 of 2 reason-bearing questions as \"refused\" while the reason chunk was ranked first. The two rules are separate because the two questions are different questions."
   },
-  "threshold": 0.302598,
-  "median_answerable_top1": 0.605197,
+  "threshold": 0.297595,
+  "median_answerable_top1": 0.59519,
   "applies_to": "embedding retriever only — BM25 scores are unbounded and not comparable to cosine",
   "caveat": "the threshold is calibrated on the answerable eval questions, so refusal recall is optimistic; it is a declared rule with a published number, not a guarantee"
  },
  "metrics": {
   "embedding": {
    "recall_at_k": 0.944444,
-   "gold_coverage_at_k": 0.403365,
-   "mrr_at_10": 0.631481,
+   "gold_coverage_at_k": 0.407068,
+   "mrr_at_10": 0.634259,
    "n_scored": 18,
    "n_refusal_questions": 2,
    "out_of_scope_refusal": 0.25,
@@ -177,26 +177,26 @@
     "retrieved": [
      {
       "chunk_id": "estimate:fatalities__B",
-      "score": 11.75162
+      "score": 11.753017
      },
      {
       "chunk_id": "card:fatalities__B#p5",
-      "score": 11.206622
+      "score": 11.207444
      },
      {
       "chunk_id": "card:fatalities__A#p6",
-      "score": 10.39207
+      "score": 10.39304
      },
      {
       "chunk_id": "doc:registry#s02#p3",
-      "score": 9.887769
+      "score": 9.88874
      },
      {
       "chunk_id": "estimate:fatalities__A",
-      "score": 9.282891
+      "score": 9.283904
      }
     ],
-    "top1_score": 11.75162,
+    "top1_score": 11.753017,
     "first_gold_rank": 3
    }
   },
@@ -234,26 +234,26 @@
     "retrieved": [
      {
       "chunk_id": "estimate:cpi_yoy__C#p3",
-      "score": 9.772111
+      "score": 9.772933
      },
      {
       "chunk_id": "estimate:mmr__C#p3",
-      "score": 9.725278
+      "score": 9.726104
      },
      {
       "chunk_id": "estimate:u5mr__C#p3",
-      "score": 9.725278
+      "score": 9.726104
      },
      {
       "chunk_id": "estimate:unemp__C#p3",
-      "score": 9.725278
+      "score": 9.726104
      },
      {
       "chunk_id": "estimate:fatalities__C#p3",
-      "score": 9.678913
+      "score": 9.679743
      }
     ],
-    "top1_score": 9.772111,
+    "top1_score": 9.772933,
     "first_gold_rank": null
    }
   },
@@ -291,26 +291,26 @@
     "retrieved": [
      {
       "chunk_id": "card:incidents__C#p5",
-      "score": 14.700342
+      "score": 14.701729
      },
      {
       "chunk_id": "estimate:incidents__C#p3",
-      "score": 14.12341
+      "score": 14.124832
      },
      {
       "chunk_id": "card:incidents__A#p5",
-      "score": 14.042389
+      "score": 14.043916
      },
      {
       "chunk_id": "card:fatalities__C#p6",
-      "score": 12.396199
+      "score": 12.397337
      },
      {
       "chunk_id": "estimate:fatalities__C#p3",
-      "score": 11.922567
+      "score": 11.923736
      }
     ],
-    "top1_score": 14.700342,
+    "top1_score": 14.701729,
     "first_gold_rank": 3
    }
   },
@@ -348,26 +348,26 @@
     "retrieved": [
      {
       "chunk_id": "doc:estimates#s02#p13",
-      "score": 13.822597
+      "score": 13.824197
      },
      {
       "chunk_id": "result:B",
-      "score": 13.384994
+      "score": 13.386704
      },
      {
       "chunk_id": "doc:dags#node-vocabulary#p2",
-      "score": 12.156262
+      "score": 12.157727
      },
      {
       "chunk_id": "doc:estimates#s02#p11",
-      "score": 11.714749
+      "score": 11.716053
      },
      {
       "chunk_id": "doc:estimates#s02#p10",
-      "score": 10.657692
+      "score": 10.658834
      }
     ],
-    "top1_score": 13.822597,
+    "top1_score": 13.824197,
     "first_gold_rank": 2
    }
   },
@@ -377,7 +377,7 @@
    "retrieved": [
     {
      "chunk_id": "doc:robustness#s01#p2",
-     "score": 0.60539
+     "score": 0.59519
     },
     {
      "chunk_id": "doc:robustness#s05#p2",
@@ -388,16 +388,16 @@
      "score": 0.588571
     },
     {
-     "chunk_id": "doc:robustness#s01",
-     "score": 0.588449
-    },
-    {
      "chunk_id": "doc:robustness#s02#p3",
      "score": 0.582553
+    },
+    {
+     "chunk_id": "doc:robustness#s02",
+     "score": 0.581484
     }
    ],
-   "top1_score": 0.60539,
-   "first_gold_rank": 5,
+   "top1_score": 0.59519,
+   "first_gold_rank": 4,
    "refused": false,
    "bm25": {
     "id": "q05_design_b_robust",
@@ -405,26 +405,26 @@
     "retrieved": [
      {
       "chunk_id": "doc:robustness#s03#p4",
-      "score": 15.385596
+      "score": 15.386598
      },
      {
       "chunk_id": "doc:robustness#s01",
-      "score": 13.453589
+      "score": 13.192899
      },
      {
       "chunk_id": "doc:robustness#s01#p3",
-      "score": 11.453042
+      "score": 11.454023
      },
      {
       "chunk_id": "doc:robustness#s02#p3",
-      "score": 11.326396
+      "score": 11.327529
      },
      {
       "chunk_id": "doc:robustness#s03#p2",
-      "score": 11.30457
+      "score": 11.305608
      }
     ],
-    "top1_score": 15.385596,
+    "top1_score": 15.386598,
     "first_gold_rank": 4
    }
   },
@@ -462,26 +462,26 @@
     "retrieved": [
      {
       "chunk_id": "result:C",
-      "score": 10.134908
+      "score": 10.135945
      },
      {
       "chunk_id": "card:cpi_yoy__C#p5",
-      "score": 9.855896
+      "score": 9.856812
      },
      {
       "chunk_id": "card:fatalities__C#p6",
-      "score": 9.855896
+      "score": 9.856812
      },
      {
       "chunk_id": "card:immun_penta3__C#p5",
-      "score": 9.855896
+      "score": 9.856812
      },
      {
       "chunk_id": "card:incidents__C#p5",
-      "score": 9.855896
+      "score": 9.856812
      }
     ],
-    "top1_score": 10.134908,
+    "top1_score": 10.135945,
     "first_gold_rank": 1
    }
   },
@@ -519,26 +519,26 @@
     "retrieved": [
      {
       "chunk_id": "estimate:u5mr__C",
-      "score": 13.099397
+      "score": 13.100241
      },
      {
       "chunk_id": "estimate:mmr__C",
-      "score": 13.001991
+      "score": 13.002848
      },
      {
       "chunk_id": "card:u5mr__C#p4",
-      "score": 9.646076
+      "score": 9.646958
      },
      {
       "chunk_id": "card:mmr__C#p4",
-      "score": 9.591767
+      "score": 9.592653
      },
      {
       "chunk_id": "estimate:mmr__C#p3",
-      "score": 9.329841
+      "score": 9.330742
      }
     ],
-    "top1_score": 13.099397,
+    "top1_score": 13.100241,
     "first_gold_rank": 3
    }
   },
@@ -576,26 +576,26 @@
     "retrieved": [
      {
       "chunk_id": "doc:design-memo#s01",
-      "score": 16.249807
+      "score": 16.251468
      },
      {
       "chunk_id": "doc:limitations#s02",
-      "score": 15.172913
+      "score": 15.173874
      },
      {
       "chunk_id": "doc:data-dictionary#fact-metric-the-base-table#p2",
-      "score": 13.142534
+      "score": 13.144046
      },
      {
       "chunk_id": "doc:design-memo#s05#p2",
-      "score": 11.806673
+      "score": 11.807784
      },
      {
       "chunk_id": "doc:limitations#s02#p2",
-      "score": 11.456763
+      "score": 11.458047
      }
     ],
-    "top1_score": 16.249807,
+    "top1_score": 16.251468,
     "first_gold_rank": 2
    }
   },
@@ -633,26 +633,26 @@
     "retrieved": [
      {
       "chunk_id": "doc:limitations#s01",
-      "score": 14.394
+      "score": 14.395397
      },
      {
       "chunk_id": "doc:data-dictionary#fact-metric-the-base-table#p3",
-      "score": 12.847784
+      "score": 12.848479
      },
      {
       "chunk_id": "doc:estimates#s01",
-      "score": 10.180792
+      "score": 10.181872
      },
      {
       "chunk_id": "doc:events#s06",
-      "score": 9.238926
+      "score": 9.240042
      },
      {
       "chunk_id": "doc:data-dictionary#imputation-and-how-to-tell-it-apart-from-data",
-      "score": 8.764085
+      "score": 8.764477
      }
     ],
-    "top1_score": 14.394,
+    "top1_score": 14.395397,
     "first_gold_rank": 1
    }
   },
@@ -690,26 +690,26 @@
     "retrieved": [
      {
       "chunk_id": "doc:limitations#s04",
-      "score": 17.037019
+      "score": 17.038388
      },
      {
       "chunk_id": "doc:limitations#s04#p2",
-      "score": 14.874106
+      "score": 14.87557
      },
      {
       "chunk_id": "doc:dags#every-variable-and-where-it-comes-from#p7",
-      "score": 8.539193
+      "score": 8.540209
      },
      {
       "chunk_id": "doc:limitations#s14#p3",
-      "score": 6.571011
+      "score": 6.571508
      },
      {
       "chunk_id": "doc:data-dictionary#grains-at-a-glance#p5",
-      "score": 6.305157
+      "score": 6.305971
      }
     ],
-    "top1_score": 17.037019,
+    "top1_score": 17.038388,
     "first_gold_rank": 1
    }
   },
@@ -747,26 +747,26 @@
     "retrieved": [
      {
       "chunk_id": "coverage:registry",
-      "score": 16.267339
+      "score": 16.268816
      },
      {
       "chunk_id": "doc:registry#s05",
-      "score": 13.183203
+      "score": 13.184633
      },
      {
       "chunk_id": "doc:limitations#s12",
-      "score": 12.966506
+      "score": 12.967955
      },
      {
       "chunk_id": "doc:limitations#s14#p2",
-      "score": 10.234612
+      "score": 10.235886
      },
      {
       "chunk_id": "doc:registry#s01",
-      "score": 10.174863
+      "score": 10.175546
      }
     ],
-    "top1_score": 16.267339,
+    "top1_score": 16.268816,
     "first_gold_rank": 1
    }
   },
@@ -804,26 +804,26 @@
     "retrieved": [
      {
       "chunk_id": "doc:data-dictionary#imputation-and-how-to-tell-it-apart-from-data#p3",
-      "score": 18.18682
+      "score": 18.18797
      },
      {
       "chunk_id": "doc:limitations#s02",
-      "score": 15.664169
+      "score": 15.665179
      },
      {
       "chunk_id": "doc:data-dictionary#imputation-and-how-to-tell-it-apart-from-data",
-      "score": 13.860067
+      "score": 13.860688
      },
      {
       "chunk_id": "doc:data-dictionary#imputation-and-how-to-tell-it-apart-from-data#p2",
-      "score": 13.741923
+      "score": 13.743471
      },
      {
       "chunk_id": "doc:data-dictionary#fact-metric-the-base-table#p2",
-      "score": 13.07601
+      "score": 13.07732
      }
     ],
-    "top1_score": 18.18682,
+    "top1_score": 18.18797,
     "first_gold_rank": 1
    }
   },
@@ -861,26 +861,26 @@
     "retrieved": [
      {
       "chunk_id": "event:buhari_2015#p2",
-      "score": 24.689479
+      "score": 24.691179
      },
      {
       "chunk_id": "event:buhari_2015",
-      "score": 20.472604
+      "score": 20.473384
      },
      {
       "chunk_id": "doc:events#s05#p2",
-      "score": 17.00673
+      "score": 17.008068
      },
      {
       "chunk_id": "event:buhari_2015#p3",
-      "score": 15.077176
+      "score": 15.07816
      },
      {
       "chunk_id": "event:jonathan_2010#p2",
-      "score": 14.677083
+      "score": 14.678099
      }
     ],
-    "top1_score": 24.689479,
+    "top1_score": 24.691179,
     "first_gold_rank": 1
    }
   },
@@ -918,26 +918,26 @@
     "retrieved": [
      {
       "chunk_id": "shock:2",
-      "score": 21.133484
+      "score": 21.13463
      },
      {
       "chunk_id": "doc:design-memo#s05",
-      "score": 11.340663
+      "score": 11.34185
      },
      {
       "chunk_id": "shock:1",
-      "score": 10.844653
+      "score": 10.845035
      },
      {
       "chunk_id": "shock:3",
-      "score": 10.46003
+      "score": 10.460484
      },
      {
       "chunk_id": "doc:estimates#s02#p13",
-      "score": 9.667338
+      "score": 9.668386
      }
     ],
-    "top1_score": 21.133484,
+    "top1_score": 21.13463,
     "first_gold_rank": 1
    }
   },
@@ -975,26 +975,26 @@
     "retrieved": [
      {
       "chunk_id": "doc:events#s07",
-      "score": 9.19306
+      "score": 9.193751
      },
      {
       "chunk_id": "event:buhari_2015#p3",
-      "score": 9.19306
+      "score": 9.193751
      },
      {
       "chunk_id": "event:jonathan_2010#p3",
-      "score": 9.19306
+      "score": 9.193751
      },
      {
       "chunk_id": "event:yaradua_2007#p3",
-      "score": 9.119004
+      "score": 9.119704
      },
      {
       "chunk_id": "doc:data-dictionary#fact-metric-the-base-table#p3",
-      "score": 8.706639
+      "score": 8.707489
      }
     ],
-    "top1_score": 9.19306,
+    "top1_score": 9.193751,
     "first_gold_rank": null
    }
   },
@@ -1032,26 +1032,26 @@
     "retrieved": [
      {
       "chunk_id": "card:u5mr__A",
-      "score": 10.461381
+      "score": 10.462214
      },
      {
       "chunk_id": "card:u5mr__B",
-      "score": 10.346274
+      "score": 10.347117
      },
      {
       "chunk_id": "card:u5mr__C",
-      "score": 10.346274
+      "score": 10.347117
      },
      {
       "chunk_id": "estimate:u5mr__C",
-      "score": 9.860522
+      "score": 9.861403
      },
      {
       "chunk_id": "estimate:mmr__C",
-      "score": 9.75919
+      "score": 9.760078
      }
     ],
-    "top1_score": 10.461381,
+    "top1_score": 10.462214,
     "first_gold_rank": 1
    }
   },
@@ -1089,26 +1089,26 @@
     "retrieved": [
      {
       "chunk_id": "card:u5mr__A",
-      "score": 6.80214
+      "score": 6.802605
      },
      {
       "chunk_id": "card:u5mr__B",
-      "score": 6.737807
+      "score": 6.738279
      },
      {
       "chunk_id": "card:u5mr__C",
-      "score": 6.737807
+      "score": 6.738279
      },
      {
       "chunk_id": "estimate:u5mr__C",
-      "score": 6.464127
+      "score": 6.464627
      },
      {
       "chunk_id": "estimate:mmr__C",
-      "score": 6.40658
+      "score": 6.407085
      }
     ],
-    "top1_score": 6.80214,
+    "top1_score": 6.802605,
     "first_gold_rank": null,
     "refused": null
    }
@@ -1147,26 +1147,26 @@
     "retrieved": [
      {
       "chunk_id": "doc:events#s05#p7",
-      "score": 16.803335
+      "score": 16.804909
      },
      {
       "chunk_id": "doc:estimates#s01#p3",
-      "score": 15.585336
+      "score": 15.587011
      },
      {
       "chunk_id": "doc:events#s04#p3",
-      "score": 12.384946
+      "score": 12.386147
      },
      {
       "chunk_id": "estimate:u5mr__C",
-      "score": 10.705261
+      "score": 10.705915
      },
      {
       "chunk_id": "estimate:mmr__C",
-      "score": 10.629696
+      "score": 10.630361
      }
     ],
-    "top1_score": 16.803335,
+    "top1_score": 16.804909,
     "first_gold_rank": null,
     "refused": null
    }
@@ -1205,26 +1205,26 @@
     "retrieved": [
      {
       "chunk_id": "card:cpi_yoy__A",
-      "score": 5.861737
+      "score": 5.861989
      },
      {
       "chunk_id": "card:cpi_yoy__B",
-      "score": 5.816706
+      "score": 5.816966
      },
      {
       "chunk_id": "card:cpi_yoy__C",
-      "score": 5.816706
+      "score": 5.816966
      },
      {
       "chunk_id": "estimate:cpi_yoy__C",
-      "score": 5.460158
+      "score": 5.460476
      },
      {
       "chunk_id": "card:cpi_yoy__B#p5",
-      "score": 3.680751
+      "score": 3.681099
      }
     ],
-    "top1_score": 5.861737,
+    "top1_score": 5.861989,
     "first_gold_rank": null
    }
   },
@@ -1245,12 +1245,12 @@
      "score": 0.34357
     },
     {
-     "chunk_id": "doc:glossary#refusals#p4",
-     "score": 0.329623
-    },
-    {
      "chunk_id": "estimate:mmr__C",
      "score": 0.329026
+    },
+    {
+     "chunk_id": "estimate:mmr__C#p2",
+     "score": 0.328237
     }
    ],
    "top1_score": 0.361167,
@@ -1262,26 +1262,26 @@
     "retrieved": [
      {
       "chunk_id": "doc:data-dictionary#fact-donor-panel-and-state-panel",
-      "score": 6.605173
+      "score": 6.606061
      },
      {
       "chunk_id": "estimate:primary_completion__C",
-      "score": 4.729749
+      "score": 4.730295
      },
      {
       "chunk_id": "estimate:literacy_youth__C",
-      "score": 4.705442
+      "score": 4.705989
      },
      {
       "chunk_id": "estimate:ner_primary__C",
-      "score": 4.705442
+      "score": 4.705989
      },
      {
       "chunk_id": "doc:dags#every-variable-and-where-it-comes-from#p2",
-      "score": 4.459695
+      "score": 4.460333
      }
     ],
-    "top1_score": 6.605173,
+    "top1_score": 6.606061,
     "first_gold_rank": null
    }
   },
@@ -1319,26 +1319,26 @@
     "retrieved": [
      {
       "chunk_id": "doc:estimates#s02#p10",
-      "score": 6.336912
+      "score": 6.337591
      },
      {
       "chunk_id": "doc:limitations#s09#p4",
-      "score": 5.488766
+      "score": 5.489125
      },
      {
       "chunk_id": "doc:limitations#s03",
-      "score": 5.240301
+      "score": 5.241005
      },
      {
       "chunk_id": "doc:robustness#s01#p3",
-      "score": 4.555419
+      "score": 4.555871
      },
      {
       "chunk_id": "card:u5mr__A",
-      "score": 4.523369
+      "score": 4.523824
      }
     ],
-    "top1_score": 6.336912,
+    "top1_score": 6.337591,
     "first_gold_rank": null
    }
   },
@@ -1376,26 +1376,26 @@
     "retrieved": [
      {
       "chunk_id": "doc:data-dictionary#faac-state-allocation-the-fiscal-dose#p2",
-      "score": 8.794926
+      "score": 8.79556
      },
      {
       "chunk_id": "doc:data-dictionary#faac-state-allocation-the-fiscal-dose#p4",
-      "score": 7.906508
+      "score": 7.907199
      },
      {
       "chunk_id": "doc:data-dictionary#fact-donor-panel-and-state-panel#p4",
-      "score": 7.813734
+      "score": 7.814423
      },
      {
       "chunk_id": "doc:data-dictionary#faac-state-allocation-the-fiscal-dose",
-      "score": 7.660172
+      "score": 7.660478
      },
      {
       "chunk_id": "result:A",
-      "score": 6.714583
+      "score": 6.715335
      }
     ],
-    "top1_score": 8.794926,
+    "top1_score": 8.79556,
     "first_gold_rank": null
    }
   }

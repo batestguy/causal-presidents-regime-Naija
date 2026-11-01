@@ -2,11 +2,11 @@
  "schema_version": "0.1.0",
  "layer": "retrieval corpus (one card per model card, plus the results, the tables and the narrative)",
  "vintage": "2026-11-01",
- "generated_at": "2026-11-01T10:31:24+00:00",
+ "generated_at": "2026-11-01T11:04:00+00:00",
  "generator": {
   "script": "scripts/build_rag_corpus.py",
   "spec": "analysis/specs/rag.yml",
-  "git_sha": "63f3f0f"
+  "git_sha": "965ffab"
  },
  "registry": {
   "index": "registry/dags/index.json",
@@ -52,8 +52,8 @@
   "dim": 384,
   "normalised": true,
   "metric": "cosine",
-  "sha256": "e3b1792e65a3413710874821acfd923186b858b659166bfc89464a222d7efb8b",
-  "bytes": 781518,
+  "sha256": "410e02d3bfbaca92e9ef994c3c00f51f010805e17d9c4b7a6a584b9db00a4033",
+  "bytes": 781513,
   "n_chunk_vectors": 524,
   "n_query_vectors": 22,
   "library": {
@@ -110,7 +110,7 @@
   {
    "path": "docs/estimates.md",
    "role": "methodology",
-   "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889",
+   "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28",
    "bytes": 15441,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
@@ -124,8 +124,8 @@
   {
    "path": "docs/glossary.md",
    "role": "methodology",
-   "sha256": "a58b166b60f6541065541ca5102711c171b0f837f916f115fd0f8d92dab39ba2",
-   "bytes": 6328,
+   "sha256": "a13e605c8271e87298a51c941e4183ca80ba7d4fc22d515ba7abac51e917f1c2",
+   "bytes": 6391,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -152,8 +152,8 @@
   {
    "path": "docs/robustness.md",
    "role": "methodology",
-   "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff",
-   "bytes": 11343,
+   "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24",
+   "bytes": 11375,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -452,7 +452,7 @@
    "shock": 3
   },
   "chars": {
-   "total": 364773,
+   "total": 364864,
    "max": 1598,
    "min": 224
   }
@@ -4844,7 +4844,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s01",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 1. The presidential-tenure question is not answerable, and no estimator makes it so — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -4865,7 +4865,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s01",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 1. The presidential-tenure question is not answerable, and no estimator makes it so — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -4886,7 +4886,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s01",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 1. The presidential-tenure question is not answerable, and no estimator makes it so — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -4907,7 +4907,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -4928,7 +4928,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -4949,7 +4949,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -4970,7 +4970,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -4991,7 +4991,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5012,7 +5012,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5033,7 +5033,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5054,7 +5054,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5075,7 +5075,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5096,7 +5096,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5117,7 +5117,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5138,7 +5138,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5159,7 +5159,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5180,7 +5180,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5201,7 +5201,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5222,7 +5222,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5238,12 +5238,12 @@
    "chunk_id": "doc:estimates#s02#p7",
    "doc_type": "methodology",
    "title": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5",
-   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 7 of 19]\n\n`docs/robustness.md` refits this question 81 ways (`registry/robustness/2026-10-30/`). The result:\n**60 specifications positive, 21 negative**, and the check that fails is still the lead-shift placebo\n(p = 0.167, 10 of 60 mis-timed doses at least as large as the published estimate). The 36\nleave-one-state-out refits do *not* flip the sign (range [0.1429, 0.5950]), so the estimate is not carried\nby one unit. The grid's sign share moved when the UCDP history was revised (25.1 → 26.1, C-82): under 25.1\nit was 45 positive against 36 negative, and the lagged dose was negative in all three windows.",
+   "text": "What this project can actually answer\n\n## 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5\n\n[estimates — 2. What the data *can* carry is the  — part 7 of 19]\n\n`docs/robustness.md` refits this question 81 ways (`registry/robustness/2026-11-01/`). The result:\n**60 specifications positive, 21 negative**, and the check that fails is still the lead-shift placebo\n(p = 0.167, 10 of 60 mis-timed doses at least as large as the published estimate). The 36\nleave-one-state-out refits do *not* flip the sign (range [0.1429, 0.5950]), so the estimate is not carried\nby one unit. The grid's sign share moved when the UCDP history was revised (25.1 → 26.1, C-82): under 25.1\nit was 45 positive against 36 negative, and the lagged dose was negative in all three windows.",
    "vintage": "2026-11-01",
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5253,7 +5253,7 @@
     "n_parts": 19
    },
    "chars": 800,
-   "text_sha256": "977704cadc839128c2d62269920f1bd61e12059dd5c9af26f2f544088672f4ee"
+   "text_sha256": "70eb0156e4aa4a3e474d36f18238dfa2d564243ee67560d0d0814d74450a7464"
   },
   {
    "chunk_id": "doc:estimates#s02#p8",
@@ -5264,7 +5264,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5285,7 +5285,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s02",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 2. What the data *can* carry is the fiscal channel — and that is what landed after Stage 5 — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5306,7 +5306,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s03",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 3. The answer, in one paragraph — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5327,7 +5327,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s03",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 3. The answer, in one paragraph — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5348,7 +5348,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s04",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 4. What would change these answers — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5369,7 +5369,7 @@
    "source": {
     "path": "docs/estimates.md",
     "anchor": "s04",
-    "sha256": "b8f70286593ad8df7ac26cbe57d9632331c057c1affb2766ba092187ccdb0889"
+    "sha256": "0b18d4b9ec7be65010f967dc1bcaa04c7e72bdd47b8d5a1b834763226351ba28"
    },
    "citation": "estimates — 4. What would change these answers — docs/estimates.md (vintage 2026-11-01)",
    "metadata": {
@@ -5852,7 +5852,7 @@
    "source": {
     "path": "docs/glossary.md",
     "anchor": "refusals",
-    "sha256": "a58b166b60f6541065541ca5102711c171b0f837f916f115fd0f8d92dab39ba2"
+    "sha256": "a13e605c8271e87298a51c941e4183ca80ba7d4fc22d515ba7abac51e917f1c2"
    },
    "citation": "glossary — Refusals — docs/glossary.md (vintage 2026-11-01)",
    "metadata": {
@@ -5873,7 +5873,7 @@
    "source": {
     "path": "docs/glossary.md",
     "anchor": "refusals",
-    "sha256": "a58b166b60f6541065541ca5102711c171b0f837f916f115fd0f8d92dab39ba2"
+    "sha256": "a13e605c8271e87298a51c941e4183ca80ba7d4fc22d515ba7abac51e917f1c2"
    },
    "citation": "glossary — Refusals — docs/glossary.md (vintage 2026-11-01)",
    "metadata": {
@@ -5889,12 +5889,12 @@
    "chunk_id": "doc:glossary#refusals#p3",
    "doc_type": "methodology",
    "title": "glossary — Refusals",
-   "text": "Words this project uses, and what they mean\n\n## Refusals\n\n[glossary — Refusals — part 3 of 4]\n\n|\n| **G04** | The question asks the project to make a policy decision. The project measures what it can measure; it does not decide what should be done. |\n| **G05** | The question asks about a year the corpus does not cover, so there is nothing to quote for it. |\n| **G06** | The question asks which tenure did better, and this data cannot identify it: four to five administrations against twenty-two to twenty-three annual observations is arithmetic, not evidence. |\n| **G07** | The question asks the synthetic-control design for a causal answer, and that design did not identify one: it was fitted on four windows, none survived its placebos, and a synthetic control has no sampling distribution to read an interval from. |\n| **G08** | The question asks for advice rather than for what the record says.",
+   "text": "Words this project uses, and what they mean\n\n## Refusals\n\n[glossary — Refusals — part 3 of 4]\n\n|\n| **G04** | The question asks the project to make a policy decision. The project measures what it can measure; it does not decide what should be done. |\n| **G05** | The question asks about a year the corpus does not cover, so there is nothing to quote for it. |\n| **G06** | The question asks which tenure did better, and this data cannot identify it: four to five administrations against twenty-two to twenty-three annual observations is arithmetic, not evidence. |\n| **G07** | The question asks the synthetic-control design for a causal answer, and that design did not identify one: it was fitted for every outcome the donor panel carries — nine outcomes, 45 windows — and none survived its placebos, and a synthetic control has no sampling distribution to read an interval from.",
    "vintage": "2026-11-01",
    "source": {
     "path": "docs/glossary.md",
     "anchor": "refusals",
-    "sha256": "a58b166b60f6541065541ca5102711c171b0f837f916f115fd0f8d92dab39ba2"
+    "sha256": "a13e605c8271e87298a51c941e4183ca80ba7d4fc22d515ba7abac51e917f1c2"
    },
    "citation": "glossary — Refusals — docs/glossary.md (vintage 2026-11-01)",
    "metadata": {
@@ -5903,19 +5903,19 @@
     "part": 3,
     "n_parts": 4
    },
-   "chars": 899,
-   "text_sha256": "239b9a67a66bb37e59b9eb969480882c470da7600c3623e71428df3b96d53226"
+   "chars": 877,
+   "text_sha256": "5526d601fc36d815d66255fde69b76705b3827977421e448eb1b3ca6e6738da0"
   },
   {
    "chunk_id": "doc:glossary#refusals#p4",
    "doc_type": "methodology",
    "title": "glossary — Refusals",
-   "text": "Words this project uses, and what they mean\n\n## Refusals\n\n[glossary — Refusals — part 4 of 4]\n\n|\n| **G09** | The question asks about a country other than Nigeria. The corpus carries Nigerian data and a donor pool it was unable to download. |",
+   "text": "Words this project uses, and what they mean\n\n## Refusals\n\n[glossary — Refusals — part 4 of 4]\n\n|\n| **G08** | The question asks for advice rather than for what the record says. |\n| **G09** | The question asks about a country other than Nigeria. The corpus carries Nigerian data and a donor pool it was unable to download. |",
    "vintage": "2026-11-01",
    "source": {
     "path": "docs/glossary.md",
     "anchor": "refusals",
-    "sha256": "a58b166b60f6541065541ca5102711c171b0f837f916f115fd0f8d92dab39ba2"
+    "sha256": "a13e605c8271e87298a51c941e4183ca80ba7d4fc22d515ba7abac51e917f1c2"
    },
    "citation": "glossary — Refusals — docs/glossary.md (vintage 2026-11-01)",
    "metadata": {
@@ -5924,8 +5924,8 @@
     "part": 4,
     "n_parts": 4
    },
-   "chars": 241,
-   "text_sha256": "80b02dc548ffed1ee8a7ccb91f1a5dbfd336b66a8bb8ef3ad8216a7c12cae095"
+   "chars": 322,
+   "text_sha256": "67040195004c9c5e719f792915bdc812e070e85300abd28b8f5fdd010b1e51ed"
   },
   {
    "chunk_id": "doc:licences#open-licensing-questions-to-resolve-before-publi",
@@ -7170,12 +7170,12 @@
    "chunk_id": "doc:robustness#s01",
    "doc_type": "methodology",
    "title": "robustness — 1. The grid",
-   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 1. The grid\n\n[robustness — 1. The grid — part 1 of 3]\n\n129 specifications, declared in `robustness.yml` before any of them was fitted:\n\n| Design | Axes (levels) | Specifications |\n|---|---|---|\n| A — state dose-response (PPML) | outcome (3) × dose lag (3) × adjustment set (3) × sample window (3) | 81 |\n| B — national transmission (local projection) | **outcome (2)** × shock definition (2) × covariate set (4) × sample window (3) | 48 |",
+   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 1. The grid\n\n[robustness — 1. The grid — part 1 of 3]\n\n129 specifications, declared in `robustness.yml` before any of them was fitted:\n\n| Design | Axes (levels) | Specifications |\n|---|---|---|\n| A — state dose-response (PPML) | outcome (3) × dose lag (3) × adjustment set (3) × sample window (3) | 81 |\n| B — national transmission (local projection) | **outcome (2)** × shock definition (2) × covariate set (4) × sample window (3) | 48 | The design spec (§5.4) names eight axes.",
    "vintage": "2026-11-01",
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s01",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 1. The grid — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7184,19 +7184,19 @@
     "part": 1,
     "n_parts": 3
    },
-   "chars": 509,
-   "text_sha256": "9fb63a12f63353110f7d8d9cfb5b86b5624e1ad8e9c115a640a7dada8e1920f1"
+   "chars": 550,
+   "text_sha256": "bad7d008711ae19615fbf5820fcacc9452e57deba2bab9d568d4c85bf8bc4e6c"
   },
   {
    "chunk_id": "doc:robustness#s01#p2",
    "doc_type": "methodology",
    "title": "robustness — 1. The grid",
-   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 1. The grid\n\n[robustness — 1. The grid — part 2 of 3]\n\nThe design spec (§5.4) names eight axes. Four are live here; four are not, and the dead ones are declared with\ntheir reason rather than quietly dropped: **imputation handling** (no imputed value enters either design — the\ndose is read only where `dose_status = observed`, the count series is never interpolated, S6-05), **index\nanchor** (the designs use levels, so the anchor is a scaling constant the fixed effects absorb), **donor pool**\n(Design C is fitted in stage 8h on the one outcome the gate passes, and its pool axis — including the\nleave-one-donor-out sweep — is reported on that artifact, because neither design in this grid uses a donor\npool), and **event window** (neither design is an event study; the tenure design that would need one is not\nestimable at this sample size).",
+   "text": "Does the answer survive its own choices? — Stage 7, the multiverse\n\n## 1. The grid\n\n[robustness — 1. The grid — part 2 of 3]\n\nFour are live here; four are not, and the dead ones are declared with\ntheir reason rather than quietly dropped: **imputation handling** (no imputed value enters either design — the\ndose is read only where `dose_status = observed`, the count series is never interpolated, S6-05), **index\nanchor** (the designs use levels, so the anchor is a scaling constant the fixed effects absorb), **donor pool**\n(Design C is fitted in stage 8h for every outcome the donor panel carries — nine of them since C-91 — and\nits pool axis, including the leave-one-donor-out sweep, is reported on that artifact, because neither design\nin this grid uses a donor pool), and **event window** (neither design is an event study; the tenure design that would need one is not\nestimable at this sample size).",
    "vintage": "2026-11-01",
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s01",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 1. The grid — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7205,8 +7205,8 @@
     "part": 2,
     "n_parts": 3
    },
-   "chars": 914,
-   "text_sha256": "ae8ae10cfec5691d03de1dc06de7f0b0c6b58043481ff61e18767fdad2d6e0fa"
+   "chars": 905,
+   "text_sha256": "4ce3b3ea84aa1e4743410ff5e0eb8b7e0ff239b95960e0d341db8ef6fecee2ed"
   },
   {
    "chunk_id": "doc:robustness#s01#p3",
@@ -7217,7 +7217,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s01",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 1. The grid — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7238,7 +7238,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s02",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7259,7 +7259,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s02",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7280,7 +7280,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s02",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7301,7 +7301,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s02",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7322,7 +7322,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s02",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7343,7 +7343,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s02",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 2. Design B is robust in sign for the fiscal channel, and its timing is the weak part — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7364,7 +7364,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s03",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 3. Design A's sign survives most of the grid; its identification still fails — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7385,7 +7385,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s03",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 3. Design A's sign survives most of the grid; its identification still fails — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7406,7 +7406,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s03",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 3. Design A's sign survives most of the grid; its identification still fails — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7427,7 +7427,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s03",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 3. Design A's sign survives most of the grid; its identification still fails — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7448,7 +7448,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s03",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 3. Design A's sign survives most of the grid; its identification still fails — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7469,7 +7469,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s03",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 3. Design A's sign survives most of the grid; its identification still fails — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7490,7 +7490,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s04",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 4. What this changes about Stage 6 — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7511,7 +7511,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s04",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 4. What this changes about Stage 6 — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7532,7 +7532,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s04",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 4. What this changes about Stage 6 — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7553,7 +7553,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s05",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 5. Reproducing it — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7574,7 +7574,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s05",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 5. Reproducing it — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {
@@ -7595,7 +7595,7 @@
    "source": {
     "path": "docs/robustness.md",
     "anchor": "s05",
-    "sha256": "8909c32d6c2e4f3f828da19756a096260b276dd3df00f30750fe6b2faa954fff"
+    "sha256": "c323af4df342a071e2132c79a258b0d99609a7b4dc575da282a9e5d7fea5dc24"
    },
    "citation": "robustness — 5. Reproducing it — docs/robustness.md (vintage 2026-11-01)",
    "metadata": {

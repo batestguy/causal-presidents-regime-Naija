@@ -91,7 +91,7 @@ violence, and this design cannot distinguish that from any other timing. The que
 
 #### Stage 7 pushed on this: the grid now mostly agrees on the sign, and the verdict still fails
 
-`docs/robustness.md` refits this question 81 ways (`registry/robustness/2026-10-30/`). The result:
+`docs/robustness.md` refits this question 81 ways (`registry/robustness/2026-11-01/`). The result:
 **60 specifications positive, 21 negative**, and the check that fails is still the lead-shift placebo
 (p = 0.167, 10 of 60 mis-timed doses at least as large as the published estimate). The 36
 leave-one-state-out refits do *not* flip the sign (range [0.1429, 0.5950]), so the estimate is not carried

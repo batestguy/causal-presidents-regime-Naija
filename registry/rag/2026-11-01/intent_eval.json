@@ -2,12 +2,12 @@
  "schema_version": 2,
  "layer": "Stage 9 — the pre-retrieval intent gate",
  "vintage": "2026-11-01",
- "generated_at": "2026-11-01T10:33:01+00:00",
+ "generated_at": "2026-11-01T11:04:50+00:00",
  "generator": {
   "script": "scripts/eval_intent.py",
   "spec": "analysis/specs/intent_gate.yml",
   "eval_spec": "analysis/specs/intent_gate_eval_v4.yml",
-  "git_sha": "63f3f0fb5a9b827c5e2775f7664753632c108629"
+  "git_sha": "965ffabdc77596547298812b0455251fd63a1ef3"
  },
  "specs": {
   "gate": {
@@ -23,7 +23,7 @@
  },
  "corpus": {
   "path": "registry/rag/2026-11-01/corpus.json",
-  "sha256": "d9db0e228b34f3273289476f342161e8ca4561d45e3343358cb5cc63fed61edd",
+  "sha256": "58c374661b5ae01c33706c03a515061ac8d19d41d67213aa70074d6bd1c1ec46",
   "chunks": 524,
   "vintage": "2026-11-01"
  },
@@ -1304,11 +1304,11 @@
     "expected_refusal_cite": null,
     "route_matches_cite": true,
     "carries_a_needle": false,
-    "first_gold_rank": 5,
+    "first_gold_rank": 4,
     "retrieved": [
      {
       "chunk_id": "doc:robustness#s01#p2",
-      "score": 0.60539
+      "score": 0.59519
      },
      {
       "chunk_id": "doc:robustness#s05#p2",
@@ -1319,12 +1319,12 @@
       "score": 0.588571
      },
      {
-      "chunk_id": "doc:robustness#s01",
-      "score": 0.588449
-     },
-     {
       "chunk_id": "doc:robustness#s02#p3",
       "score": 0.582553
+     },
+     {
+      "chunk_id": "doc:robustness#s02",
+      "score": 0.581484
      }
     ]
    },
@@ -1844,12 +1844,12 @@
       "score": 0.34357
      },
      {
-      "chunk_id": "doc:glossary#refusals#p4",
-      "score": 0.329623
-     },
-     {
       "chunk_id": "estimate:mmr__C",
       "score": 0.329026
+     },
+     {
+      "chunk_id": "estimate:mmr__C#p2",
+      "score": 0.328237
      }
     ]
    },

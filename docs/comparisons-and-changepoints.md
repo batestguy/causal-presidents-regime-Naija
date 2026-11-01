@@ -209,7 +209,7 @@ closes the C-30 trap, and it is a failure condition, not a warning.
 ```json
 {
   "schema_version": "0.1.0",
-  "vintage": "2026-10-30",
+  "vintage": "2026-11-01",
   "generator": { "script": "analysis/R/09_changepoints.R", "git_sha": "abc1234" },
   "counts": { "outcomes_considered": 12, "outcomes_searched": 8, "outcomes_fixed_date": 0, "outcomes_refused": 4,
               "breaks_estimated": 10, "known_breaks_passed": 4 },
@@ -223,7 +223,7 @@ closes the C-30 trap, and it is a failure condition, not a warning.
         "coincides_with_inauguration": null }
     ],
     "plain_caption": "Security fatalities: 299 native observations; 2 marked months (2013-04, 2016-12).",
-    "figure": { "path": "registry/changepoints/2026-10-30/figures/fatalities.svg", "bytes": 42714 },
+    "figure": { "path": "registry/changepoints/2026-11-01/figures/fatalities.svg", "bytes": 42714 },
     "refused": null
   }]
 }
