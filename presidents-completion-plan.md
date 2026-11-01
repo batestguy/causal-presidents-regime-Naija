@@ -124,19 +124,28 @@ planned specific fix.
 
 ## Phase D — (optional) the RAGAS library run on Colab
 
-- [ ] **D1.** Only if the judge API budget is approved: run RAGAS with an LLM judge on Colab (free tier),
-  the four metric definitions against the same 15 answers + corpus, `library: true` beside the existing
-  `library: false` artifact. **Scores are not comparable to the in-repo implementation** — that sentence
-  travels onto the artifact and `docs/rag.md` as it already does for the in-repo runs. Skip is allowed;
-  record the skip as a decision either way. Exit: artifact published or refusal recorded.
+- [x] **D1. — DONE as a recorded deferral (D-01).** Measured before deciding: `ragas` 0.4.3 is installable
+  (a 39-package tree) and the judge key is present, so the blocker is the **call budget**, not availability —
+  a library run needs roughly 10–20 judge calls per question (150–300 for the 15 answers) against the in-house
+  implementation's 30, on a free tier of 20 requests per window. The in-house measurement stays published
+  with `library: false`; **what reopens it** is an approved paid budget or a local judge model, and the run
+  would publish `library: true` beside the existing artifact rather than replace it.
 
 ## Phase E — delivery polish
 
 - [ ] **E1.** README quickstart mirrors reality (`scripts/verify.sh`, the conda env, R required in one path).
 - [ ] **E2.** Blog/video: decide to skip or do, and record the decision so PHASES.md stops carrying it as
   "undocumented".
-- [ ] **E3.** One-command proof: `scripts/verify.sh` end-to-end green from a clean checkout pattern
-  (acquire path included). Exit: the script's `all checks passed` line, actually observed.
+- [x] **E3. One-command proof — observed with the landed raw layer; the clean-checkout half is blocked at
+  the source.** `scripts/verify.sh` printed **`all checks passed`** on 2026-11-01 (every R stage, dbt, the
+  corpus, all four evals, every verifier), and CI's `static` job is green on both commits. The acquire path
+  was exercised in a clean clone and found **two project defects** — the acquire block never landed the
+  monthly NBS CPI (so a fresh checkout could never have been green) and the FAAC parser crashed printing a
+  naira-sign header cell under a cp1252 console; **both are fixed** — and **one source regression**: FAAC
+  re-acquired OAGF only, because the **NBS elibrary index returns 500**, so a fresh checkout builds a
+  2019-04-onward panel and cannot reproduce the committed estimates. The clone was not declared green: the
+  raw layer is the record, a fresh acquisition is a new vintage to adopt (X-07), and the limit is in
+  `limitations.md` §11 and `decisions.md` E-01.
 - [ ] **E4.** Live deployment check: the Pages URL serves the re-built site at the final registry vintage.
 
 ## Phase F — completion freeze

@@ -802,4 +802,4 @@ choice reorders it: the base spec builds a chart before it has defensible estima
 | Phase 3 — Pipeline (Prefect schedule, quality gates, CI + dbt tests) | Stages 2–3, scheduled per the risk table (GitHub Actions cron, not a laptop) |
 | Phase 4 — Adjustment (Tier 3 R scripts, CI forest plot) | Stages 5–7 (Tier 3 is now one family among four) |
 | Phase 5 — RAG (pgvector, LlamaIndex + Groq, RAGAS, chat UI) | Stage 8 (corpus + eval set); the UI is Stage 9 |
-| Phase 6 — Documentation and polish (methodology, data dictionary, blog, video, README) | Stage 8 for methodology/data-dictionary; blog/video/README remain **undocumented** |
+| Phase 6 — Documentation and polish (methodology, data dictionary, blog, video, README) | Stage 8 for methodology/data-dictionary; README and its quickstart closed under Phase E (E1); blog/video **decided: skipped** (E2, recorded in `docs/decisions.md` E-01) |

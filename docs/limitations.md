@@ -227,9 +227,14 @@ not discriminate on this pool. Two further limits:
 
 - **`data/raw/` is gitignored** (redistribution constraints). A stranger with their own credentials can
   rebuild every aggregate; a stranger without them cannot.
-- **`oagf.gov.ng`'s TLS certificate expired 2026-10-17.** The FAAC vintage cannot be re-landed here or in
-  CI until the publisher renews it. Nothing is bypassed: disabling verification would make a dead source
-  look green.
+- **Re-acquisition is not reproduction, and two publishers show it.** `oagf.gov.ng`'s certificate — expired
+  on 2026-10-17 — has been renewed: the host answers 200 on 2026-11-01 and a clean clone landed **85 OAGF
+  documents**. The **NBS elibrary index now returns 500** while its individual document URLs still answer
+  200, so the same clean clone discovers **none** of the 91 NBS documents the committed vintage carries,
+  and the FAAC panel it would build starts in **2019-04** instead of 2016-12. Nothing is bypassed. The raw
+  layer is the record: `data/raw/` is immutable, the committed vintage is the one every estimate describes,
+  and a fresh acquisition is a *new* vintage (X-07) that has to be adopted and re-fitted — never assumed
+  equal to the last one.
 - **CI has no R.** The Stage 6, 7, 8 and 8b engines are skipped there, so CI verifies the committed
   artifacts against the rebuilt base rather than re-estimating. That is weaker than a local run and is
   labelled as such rather than passed off.

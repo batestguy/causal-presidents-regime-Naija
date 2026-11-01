@@ -2,11 +2,11 @@
  "schema_version": "0.1.0",
  "layer": "retrieval corpus (one card per model card, plus the results, the tables and the narrative)",
  "vintage": "2026-11-01",
- "generated_at": "2026-11-01T11:04:00+00:00",
+ "generated_at": "2026-11-01T11:29:18+00:00",
  "generator": {
   "script": "scripts/build_rag_corpus.py",
   "spec": "analysis/specs/rag.yml",
-  "git_sha": "965ffab"
+  "git_sha": "fd15f03"
  },
  "registry": {
   "index": "registry/dags/index.json",
@@ -52,9 +52,9 @@
   "dim": 384,
   "normalised": true,
   "metric": "cosine",
-  "sha256": "410e02d3bfbaca92e9ef994c3c00f51f010805e17d9c4b7a6a584b9db00a4033",
-  "bytes": 781513,
-  "n_chunk_vectors": 524,
+  "sha256": "6785263c8c371737925adaea16f0e378bb98ccccf565681c50208a43389e6b8f",
+  "bytes": 782943,
+  "n_chunk_vectors": 525,
   "n_query_vectors": 22,
   "library": {
    "sentence-transformers": "5.1.2",
@@ -138,8 +138,8 @@
   {
    "path": "docs/limitations.md",
    "role": "methodology",
-   "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79",
-   "bytes": 21827,
+   "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1",
+   "bytes": 22378,
    "hash_rule": "sha256 of the file with CRLF normalised to LF (the index's eol=lf)"
   },
   {
@@ -438,21 +438,21 @@
   }
  ],
  "counts": {
-  "chunks": 524,
+  "chunks": 525,
   "by_doc_type": {
    "administration": 5,
    "card_estimate": 52,
    "coverage": 2,
    "data_dictionary": 47,
    "event_study": 12,
-   "methodology": 201,
+   "methodology": 202,
    "model_card": 181,
    "published_result": 19,
    "scope": 2,
    "shock": 3
   },
   "chars": {
-   "total": 364864,
+   "total": 365623,
    "max": 1598,
    "min": 224
   }
@@ -5978,7 +5978,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s01",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 1. The question this project was asked is not answerable with this data — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -5999,7 +5999,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s01",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 1. The question this project was asked is not answerable with this data — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6020,7 +6020,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s01",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 1. The question this project was asked is not answerable with this data — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6041,7 +6041,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s01",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 1. The question this project was asked is not answerable with this data — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6062,7 +6062,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s02",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 2. Most of the monthly spine is not observed — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6083,7 +6083,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s02",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 2. Most of the monthly spine is not observed — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6104,7 +6104,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s03",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 3. Coverage limits, node by node — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6125,7 +6125,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s03",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 3. Coverage limits, node by node — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6146,7 +6146,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s03",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 3. Coverage limits, node by node — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6167,7 +6167,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s04",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 4. The quality gates flagged almost half the landed series — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6188,7 +6188,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s04",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 4. The quality gates flagged almost half the landed series — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6209,7 +6209,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6230,7 +6230,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6251,7 +6251,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6272,7 +6272,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6293,7 +6293,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s05",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 5. Design A is estimated, not identified — and its interval includes zero — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6314,7 +6314,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s06",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 6. Design B's channel is estimated; its timing and its decomposition are not — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6335,7 +6335,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s06",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 6. Design B's channel is estimated; its timing and its decomposition are not — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6356,7 +6356,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s06",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 6. Design B's channel is estimated; its timing and its decomposition are not — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6377,7 +6377,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s07",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 7. Design C was built for every outcome the panel can carry, and it identified none — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6398,7 +6398,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s07",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 7. Design C was built for every outcome the panel can carry, and it identified none — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6419,7 +6419,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s07",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 7. Design C was built for every outcome the panel can carry, and it identified none — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6440,7 +6440,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s07",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 7. Design C was built for every outcome the panel can carry, and it identified none — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6461,7 +6461,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s07",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 7. Design C was built for every outcome the panel can carry, and it identified none — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6482,7 +6482,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s08",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 8. Inference floors that no interval can hide — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6503,7 +6503,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s08",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 8. Inference floors that no interval can hide — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6524,7 +6524,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s09",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 9. Robustness: the sign survives for one design and not the other — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6545,7 +6545,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s09",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 9. Robustness: the sign survives for one design and not the other — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6566,7 +6566,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s09",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 9. Robustness: the sign survives for one design and not the other — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6587,7 +6587,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s09",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 9. Robustness: the sign survives for one design and not the other — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6608,7 +6608,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s10",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 10. Measurement limits no design fixes — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6624,22 +6624,43 @@
    "chunk_id": "doc:limitations#s11",
    "doc_type": "methodology",
    "title": "limitations — 11. Reproduction limits",
-   "text": "What this project cannot say — the limitations, written before the findings\n\n## 11. Reproduction limits\n\n- **`data/raw/` is gitignored** (redistribution constraints). A stranger with their own credentials can\n  rebuild every aggregate; a stranger without them cannot.\n- **`oagf.gov.ng`'s TLS certificate expired 2026-10-17.** The FAAC vintage cannot be re-landed here or in\n  CI until the publisher renews it. Nothing is bypassed: disabling verification would make a dead source\n  look green.\n- **CI has no R.** The Stage 6, 7, 8 and 8b engines are skipped there, so CI verifies the committed\n  artifacts against the rebuilt base rather than re-estimating. That is weaker than a local run and is\n  labelled as such rather than passed off.\n- **The verifiers need the `ds-general` Python**, not the system 3.14 interpreter (no `duckdb`).",
+   "text": "What this project cannot say — the limitations, written before the findings\n\n## 11. Reproduction limits\n\n[limitations — 11. Reproduction limits — part 1 of 2]\n\n- **`data/raw/` is gitignored** (redistribution constraints). A stranger with their own credentials can\n  rebuild every aggregate; a stranger without them cannot. - **Re-acquisition is not reproduction, and two publishers show it.** `oagf.gov.ng`'s certificate — expired\n  on 2026-10-17 — has been renewed: the host answers 200 on 2026-11-01 and a clean clone landed **85 OAGF\n  documents**. The **NBS elibrary index now returns 500** while its individual document URLs still answer\n  200, so the same clean clone discovers **none** of the 91 NBS documents the committed vintage carries,\n  and the FAAC panel it would build starts in **2019-04** instead of 2016-12. Nothing is bypassed.",
    "vintage": "2026-11-01",
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s11",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 11. Reproduction limits — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
     "document": "docs/limitations.md",
     "section": "11. Reproduction limits",
     "part": 1,
-    "n_parts": 1
+    "n_parts": 2
    },
-   "chars": 835,
-   "text_sha256": "724d9fde0f87028ead6084dfce7fa08b7e59397c26e94f764ffeb0ac23030b25"
+   "chars": 846,
+   "text_sha256": "9dc36460857892dae1fbd24bf4c820e44f106e3f12b1a2aca482beaf3eb7f613"
+  },
+  {
+   "chunk_id": "doc:limitations#s11#p2",
+   "doc_type": "methodology",
+   "title": "limitations — 11. Reproduction limits",
+   "text": "What this project cannot say — the limitations, written before the findings\n\n## 11. Reproduction limits\n\n[limitations — 11. Reproduction limits — part 2 of 2]\n\nThe raw\n  layer is the record: `data/raw/` is immutable, the committed vintage is the one every estimate describes,\n  and a fresh acquisition is a *new* vintage (X-07) that has to be adopted and re-fitted — never assumed\n  equal to the last one. - **CI has no R.** The Stage 6, 7, 8 and 8b engines are skipped there, so CI verifies the committed\n  artifacts against the rebuilt base rather than re-estimating. That is weaker than a local run and is\n  labelled as such rather than passed off. - **The verifiers need the `ds-general` Python**, not the system 3.14 interpreter (no `duckdb`).",
+   "vintage": "2026-11-01",
+   "source": {
+    "path": "docs/limitations.md",
+    "anchor": "s11",
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
+   },
+   "citation": "limitations — 11. Reproduction limits — docs/limitations.md (vintage 2026-11-01)",
+   "metadata": {
+    "document": "docs/limitations.md",
+    "section": "11. Reproduction limits",
+    "part": 2,
+    "n_parts": 2
+   },
+   "chars": 748,
+   "text_sha256": "065d30feff8f76525a5cc0bf3f501523eede4138c5d8289acbd901ae4aa614fd"
   },
   {
    "chunk_id": "doc:limitations#s12",
@@ -6650,7 +6671,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s12",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 12. What is still claimed, stated narrowly — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6671,7 +6692,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s12",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 12. What is still claimed, stated narrowly — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6692,7 +6713,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s13",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 13. What would change each answer — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6713,7 +6734,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s13",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 13. What would change each answer — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6734,7 +6755,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s14",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 14. How this document is checked — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6755,7 +6776,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s14",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 14. How this document is checked — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6776,7 +6797,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s14",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 14. How this document is checked — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {
@@ -6797,7 +6818,7 @@
    "source": {
     "path": "docs/limitations.md",
     "anchor": "s14",
-    "sha256": "897a8078ff9789e3e624363ca60844542be41900baa2d82ce42454ef66b10b79"
+    "sha256": "218164a7e33c3820608f604628a53a2d195cd5a6ff3d03b65634f7e2f4aef0d1"
    },
    "citation": "limitations — 14. How this document is checked — docs/limitations.md (vintage 2026-11-01)",
    "metadata": {

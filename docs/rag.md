@@ -18,7 +18,7 @@ authoritative-looking and wrong. Everything below is shaped by that.
 
 ## 1. What is in it
 
-**524 chunks from 53 attributed sources**, at vintage 2026-11-01 - the registry's vintage, not the build date,
+**525 chunks from 53 attributed sources**, at vintage 2026-11-01 - the registry's vintage, not the build date,
 so an answer that quotes a card is a statement about that data vintage whenever it is read.
 
 | Family | Chunks | Parent documents |
@@ -124,10 +124,10 @@ defines, judged by `gemini-3.5-flash-lite` at temperature 0:
 
 | Metric | Measured | What it means here |
 |---|---|---|
-| faithfulness | **0.936** | statements in an answer that its own cited contexts support |
-| answer relevancy | **0.806** | mean cosine between the question and three questions generated from the answer |
+| faithfulness | **0.996** | statements in an answer that its own cited contexts support |
+| answer relevancy | **0.813** | mean cosine between the question and three questions generated from the answer |
 | context precision | **0.989** | average precision over the cited chunks a judge calls useful for the reference answer |
-| context recall | **0.864** | reference-answer claims the cited contexts can support |
+| context recall | **0.817** | reference-answer claims the cited contexts can support |
 
 **This is not a `ragas` library run, and the artifact says so in its own fields.** The package is not
 installed in this repository or on this machine, and installing it would add a dependency tree to a project
@@ -139,11 +139,11 @@ RAGAS's per-item calls, because this key's free tier allows 20 requests per wind
 What the numbers say, read honestly:
 
 - **Faithfulness is high by construction, not by quality.** The answer is a selection of quoted corpus
-  paragraphs, so the check confirms the contract rather than judging retrieval. 0.936 here means "it quotes
+  paragraphs, so the check confirms the contract rather than judging retrieval. 0.996 here means "it quotes
   what it cites", nothing more — and earlier runs of the same measurement gave 0.952, 0.956, 0.964 and 0.971.
   This run's floor is `q07_u5mr_synthetic_control` at **0.083**, the Design C question: the answer is a reason
   and a set of caveats rather than a number, so most of its statements are not claims a context can support.
-- **Context recall 0.864 is the number that matters.** About one reference claim in seven is not supported
+- **Context recall 0.817 is the number that matters.** About one reference claim in six is not supported
   by the chunks the answer actually cited: in this run `q07_u5mr_synthetic_control` scored **0.000** and
   several others sit between 0.5 and 0.75.
   The answer quotes the right document but not always the paragraph that carries the reference claim —
@@ -199,7 +199,7 @@ machine (no network service, no GPU):
 
 `sentence-transformers==5.1.2`, `torch==2.14.1+cpu`, `numpy 2.4.6`; the model is `multi-qa-MiniLM-L6-cos-v1`
 (384 dims, 512 tokens). The first `--embed` downloads ~90 MB into the Hugging Face cache; after that the run
-is ~20 seconds for 524 chunks.
+is ~20 seconds for 525 chunks.
 
 **Then rebuild whenever a source changes.** The corpus records the sha256 of all 51 sources and
 `tests/verify_rag.py` fails when one no longer matches, with the rebuild command in the message. That is the

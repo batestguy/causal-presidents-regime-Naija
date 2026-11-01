@@ -793,7 +793,10 @@ def main(argv: list[str] | None = None) -> int:
             f"across {len(header_losses)} document(s) — see the report's unmapped_header_cells"
         )
         for cell in lost[:12]:
-            print(f"  - {cell}")
+            # A header cell can carry the naira sign; printing it raw crashes on a cp1252 console, which is
+            # how a clean-checkout run died in its own diagnostic after parsing every document (E3). The
+            # label is escaped so the message survives any stdout encoding.
+            print(f"  - {cell.encode('unicode_escape').decode('ascii')}")
 
     if failures:
         print()

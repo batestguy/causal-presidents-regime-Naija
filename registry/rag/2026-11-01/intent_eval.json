@@ -2,12 +2,12 @@
  "schema_version": 2,
  "layer": "Stage 9 — the pre-retrieval intent gate",
  "vintage": "2026-11-01",
- "generated_at": "2026-11-01T11:04:50+00:00",
+ "generated_at": "2026-11-01T11:30:18+00:00",
  "generator": {
   "script": "scripts/eval_intent.py",
   "spec": "analysis/specs/intent_gate.yml",
   "eval_spec": "analysis/specs/intent_gate_eval_v4.yml",
-  "git_sha": "965ffabdc77596547298812b0455251fd63a1ef3"
+  "git_sha": "fd15f03c5463d1f261b1fc36ff1075922ef930f4"
  },
  "specs": {
   "gate": {
@@ -23,8 +23,8 @@
  },
  "corpus": {
   "path": "registry/rag/2026-11-01/corpus.json",
-  "sha256": "58c374661b5ae01c33706c03a515061ac8d19d41d67213aa70074d6bd1c1ec46",
-  "chunks": 524,
+  "sha256": "6be7db6c0dc62167093e6e49976bb049112d37e31cd6dd6fa00ecb9bd0e4fb1c",
+  "chunks": 525,
   "vintage": "2026-11-01"
  },
  "rules": [

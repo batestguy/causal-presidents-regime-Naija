@@ -2,11 +2,11 @@
  "schema_version": "0.1.0",
  "layer": "RAG evaluation set (retrieval-gated; generation metrics declared, not measured)",
  "vintage": "2026-11-01",
- "generated_at": "2026-11-01T11:04:00+00:00",
+ "generated_at": "2026-11-01T11:29:18+00:00",
  "generator": {
   "script": "scripts/build_rag_corpus.py",
   "spec": "analysis/specs/rag_eval.yml",
-  "git_sha": "965ffab"
+  "git_sha": "fd15f03"
  },
  "corpus": "registry/rag/2026-11-01/corpus.json",
  "ragas": {

@@ -2566,6 +2566,49 @@ transition (A done with evidence -> B in_progress) is not falsely blocked. A gat
 red is broken: this one has been red five ways on purpose. Moving to the next phase means editing the
 state file only after the previous phase's exit criteria are observed green.
 
+## Twenty-fifth session (2026-11-01) — Phase D closed as a measured deferral, and Phase E's four checks
+
+**D was a decision, so it was taken on measurement rather than on taste (D-01).** `ragas` 0.4.3 installs —
+dragging a **39-package** tree (`langchain*`, `datasets`, `instructor`, `huggingface_hub`, `httpx2`) — and the
+judge key the in-house measurement already uses is present, so the blocker is **not availability**. It is the
+**call budget**: a library run decomposes each answer, scores each context and each reference claim, and needs
+roughly **150–300** judge calls for the 15 answers, against the in-house implementation's **30**, on a free tier
+of 20 requests per window. The published measurement stays `library: false`; the reopen condition is a paid
+budget or a local judge model, and a library run would sit **beside** the existing artifact rather than replace
+it.
+
+**E1 — the README now describes the chain that runs.** It opens with one command and the two interpreters, names
+the outcome-path acquisition, and every status-table count moved onto the 2026-11-01 artifacts. Two claims were
+not just stale but false — "there is no chat tab yet" and "RAGAS not_run (no key)" — and are gone.
+
+**E2 — blog/video: skipped, and recorded.** The site is the deliverable; a post would duplicate it without adding
+checkable content. `PHASES.md` no longer carries it as "undocumented".
+
+**E3 — the clean-checkout proof found three things, two of them ours.** `scripts/verify.sh` printed `all checks
+passed` with the landed raw layer, and CI's `static` job is green on both commits. A clean clone (no
+`data/raw/`) was then run with the acquire path included:
+
+1. **The acquire block never landed the monthly NBS CPI.** Stage 3 declares it a document source and refuses
+   a release with no gate result, so **a fresh checkout could never have been green** — a defect the local
+   runs could not show because the vintage was already on disk. The step is now in `verify.sh`.
+2. **The FAAC parser crashed after parsing every document**, printing an unmapped header cell that carried
+   the naira sign into a cp1252 console. The label is escaped and `verify.sh` pins `PYTHONIOENCODING=UTF-8`:
+   the chain's log is UTF-8 whatever the console's code page is.
+3. **Two publishers regressed at the source.** `oagf.gov.ng`'s expired certificate has been **renewed** (the
+   host answers 200; the clone landed 85 OAGF documents), but the **NBS elibrary index returns 500** while its
+   document URLs still answer 200 — so the clone discovers none of the 91 NBS FAAC documents and cannot fetch
+   the NBS CPI workbook. The panel it would build starts in **2019-04** instead of 2016-12.
+
+The chain was not declared green in the clone, because it cannot be. What the run proves is the acquire path
+and two real defects; what it also proves is that **re-acquisition is not reproduction**, now recorded in
+`limitations.md` §11 with the measured spans. The old TLS limitation is replaced by the renewal, not kept
+beside it.
+
+**E4 — the live URL serves this registry.** `https://batestguy.github.io/causal-presidents-regime-Naija/`
+returns the **2026-11-01** vintage; `/designs/` shows *9 outcomes, 31 windows estimated, 14 refused*; the
+methodology page shows *969 of 2,959* placebo fits. CI's `static` job is green on both commits, and the Pages
+deploy follows it.
+
 ## Next session starts here (written 2026-10-29, end of session)
 
 **Everything above is committed and pushed; `main` == `origin/main` at `4e86721`. The tree is clean.

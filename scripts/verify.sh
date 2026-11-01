@@ -13,6 +13,11 @@
 # Exit status is the first failing step's — set -e is deliberate: a partial run must not look green.
 set -euo pipefail
 
+# The chain's own output is UTF-8 whatever the console's code page is: several diagnostics quote publisher
+# strings and artifact prose, and a cp1252 console cannot encode every character a data value can carry
+# (a naira sign in a FAAC header cell stopped a clean-clone run after it had parsed every document).
+export PYTHONIOENCODING="${PYTHONIOENCODING:-UTF-8}"
+
 cd "$(git rev-parse --show-toplevel)"
 PYTHON="${PYTHON:-python}"
 
@@ -63,6 +68,11 @@ if [ -z "$(ls -A data/raw/worldbank 2>/dev/null || true)" ]; then
   $PYTHON ingestion/flows/pull_fred.py
   step "acquire: faac documents"
   $PYTHON ingestion/flows/pull_faac.py
+  # The monthly NBS CPI (C-81). It was missing from this list until a clean-clone run hit Stage 3, which
+  # declares it a document source and refuses a release with no gate result - so a fresh checkout could
+  # never have been green. It scrapes the NBS elibrary index, which returned 500 on 2026-11-01.
+  step "acquire: nbs monthly cpi"
+  $PYTHON ingestion/flows/pull_nbs_cpi.py
   step "acquire: ucdp security events"
   $PYTHON ingestion/flows/pull_ucdp.py
 else

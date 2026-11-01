@@ -63,12 +63,24 @@ phases:
         date: "2026-11-01"
   - id: D
     title: optional RAGAS library run on Colab
-    status: not_started
-    evidence: []
+    status: done
+    evidence:
+      - check: "decision recorded as D-01 in docs/decisions.md: ragas 0.4.3 installable (39-package tree), judge key present, blocker is the call budget (150-300 calls against 30), deferral with the reopen condition named"
+        date: "2026-11-01"
+      - check: "registry/rag/2026-11-01/answer_quality_eval.json carries library: false and the not-comparable sentence; tests/verify_answer_quality.py PASS"
+        date: "2026-11-01"
   - id: E
     title: delivery polish
-    status: not_started
-    evidence: []
+    status: done
+    evidence:
+      - check: "E1 README quickstart verified against the chain: the one command and both interpreters, the outcome-path acquisition, and every status-table count moved onto the 2026-11-01 artifacts"
+        date: "2026-11-01"
+      - check: "E2 blog/video decided (skipped) and recorded in docs/decisions.md E-01 and PHASES.md, which no longer carries it as undocumented"
+        date: "2026-11-01"
+      - check: "E3 scripts/verify.sh printed 'all checks passed' with the landed raw layer; a clean clone exercised the acquire path and found two project defects (the NBS CPI step was missing from verify.sh; the FAAC parser crashed printing a naira-sign header cell under cp1252 - both fixed) and one source regression (the NBS elibrary index returns 500, so FAAC re-acquired OAGF only). The clone was not declared green; the limit is published in limitations.md 11"
+        date: "2026-11-01"
+      - check: "E4 live URL https://batestguy.github.io/causal-presidents-regime-Naija/ serves the 2026-11-01 registry (designs page: 9 outcomes, 31 estimated, 14 refused; methodology page: 969 of 2959); CI static job green on 965ffab and fd15f03"
+        date: "2026-11-01"
   - id: F
     title: completion freeze
     status: not_started

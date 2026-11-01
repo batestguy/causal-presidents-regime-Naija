@@ -12,7 +12,7 @@ coefficient tables, intervals, diagnostics and sensitivity bounds.
 
 ---
 
-## Status: Stages 0–9, the analysis chain verified and the read-only app built — the registry carries two numbers
+## Status: Stages 0–9 complete and the chain verified end to end — the registry carries two numbers and a reason for every other card
 
 > **The headline finding (2026-10-18): an oil-price shock reaches Nigeria's states, federal money does not
 > visibly buy peace, and the tenure question has one answerable half.** A 10 % rise in Brent reaches state allocations as roughly **5 % more money, two
@@ -43,14 +43,16 @@ coefficient tables, intervals, diagnostics and sensitivity bounds.
 | Estimation | ✅ **Stage 6** — 21 specifications across two designs (3 Design A outcomes; Design B\u2019s 9 horizons on each of two outcome families), every one published with its interval and the check that decided its verdict. Verifier recomputes every number to 1e-12 |
 | Robustness | ✅ **Stage 7** — **129 specifications** declared before fitting and all published, with the specification curve drawn and the support counts computed from the fitted rows: Design B 24/24 positive, Design A 60 positive / 21 negative with one majority sign-flip level (2 of the 105 sit inside a declared ±0.02 near-zero band and are counted as such). Verifier re-fits every one of them (worst coefficient gap 6.5e-9) |
 | Within-tenure timing | ✅ **Stage 8b** — the transition event study: **4 in-window transitions** on 324 months of UCDP conflict (1999-01→2025-12, the only monthly outcome), 32 specifications, inference by **exhaustive placebo assignment** over 58 eligible months. **2 of 8 event-outcome cells survive both the placebo and the pre-trend check**, 4 fail the pre-trend, 1 event cannot be checked at all (declared, not scored as a pass), and the party split is published as **description with no test**. Verifier re-fits all 32 and re-enumerates the placebo distribution (worst HAC SE gap 0.002 %) |
-| Retrieval corpus | ✅ **Stage 8c** — **524 chunks from 53 attributed sources** at the registry's vintage: one document per model card (181 parts), the three design results (Design C one block per outcome), the narrative, the data dictionary, the transition events, the tables, the two coverage counts and the scope paragraph. Every chunk records its source's sha256, so a document edited without a rebuild fails the verifier. Measured on `multi-qa-MiniLM-L6-cos-v1`: **recall@5 0.944** (BM25 baseline 0.778), gold coverage 0.403, MRR 0.631; **two embedding refusal gates fail and are published** — reason-bearing refusals 0.5, out-of-scope 0.25, because a forecast about a covered outcome embeds closer than some real questions do; the rule-based intent gate in front of them measures 0.947 out-of-scope refusal on held-out questions. The four RAGAS definitions are implemented in house and measured (`library: false`); the `ragas` **library** run is `not_run`. `docs/rag.md` |
+| Retrieval corpus | ✅ **Stage 8c** — **525 chunks from 53 attributed sources** at the registry's vintage: one document per model card (181 parts), the three design results (Design C one block per outcome), the narrative, the data dictionary, the transition events, the tables, the two coverage counts and the scope paragraph. Every chunk records its source's sha256, so a document edited without a rebuild fails the verifier. Measured on `multi-qa-MiniLM-L6-cos-v1`: **recall@5 0.944** (BM25 baseline 0.778), gold coverage 0.403, MRR 0.631; **two embedding refusal gates fail and are published** — reason-bearing refusals 0.5, out-of-scope 0.25, because a forecast about a covered outcome embeds closer than some real questions do; the rule-based intent gate in front of them measures 0.947 out-of-scope refusal on held-out questions. The four RAGAS definitions are implemented in house and measured (`library: false`); the `ragas` **library** run is `not_run`. `docs/rag.md` |
 | Registry / dashboard | ✅ **Stage 8, complete** — **2 of 36 cards carry a published number, 34 carry a reason** (both Design A cards that can: fatalities +0.4678, incidents +0.5278, each with its interval, its `estimated_not_identified` verdict and the Stage 7 grid summary for its own outcome); Design B's nine specifications are published on the index as **channel-level** (`result_is_card_level: false`, because on every B card FAAC is a mediator) and **Design C's nine outcome blocks likewise** (45 windows, 31 estimated, none identified); every card without a number names a reason from a closed set, and `design_not_run` and `no_specification_declared` now carry none. Verifier re-derives the mapping and checks every number against the artifact it names |
 | The app | ✅ **Stage 9** — `app/streamlit_app.py`: pick an outcome, pick one of the three designs, and get the assumption, the digraph-computed adjustment set, the cannot-rule-out list and the Stage 5 pre-check — then the number with the verdict and the failed check behind it, or the reason there is none. Reads `registry/dags/` only: no database, no network, no model, no coefficient typed into the UI. `tests/verify_app.py` renders **all 36 cards** through Streamlit's own harness and compares the page against the card JSON. **The chat tab is built**: a rule-based intent gate refuses out-of-scope questions before retrieval (0.947 on held-out questions), BM25 retrieves lexically, and a post-check (R-04) replaces any answer missing a contract part with the refusal template; it answers **36 of 38 measured questions (0.947)**. The site carries the same layer in JavaScript, and `tests/verify_answer_js.py` requires it to reproduce all 38 measured answers field for field. The framework choice (Streamlit, and what it costs) is a recorded decision, not a default: `docs/decisions.md` UI-01…UI-08 |
 
 **The app runs, read-only, and it leads with the ratio instead of a number.** `2 of 36 model cards carry a
 published number; the rest say why not` is the first line on the page, because a reader who scans one card
-otherwise cannot tell whether this project estimated two things or failed to estimate thirty-four. There is no
-chat tab yet — see `docs/app.md` §3 for why that wait is deliberate.
+otherwise cannot tell whether this project estimated two things or failed to estimate thirty-four. The chat tab is
+built and measured: the rule-based intent gate refuses out-of-scope questions before retrieval (0.947 on
+held-out questions), and the answer layer answers 36 of the 38 measured questions (0.947) with a
+plain-language reading built from each answer's own numbers (`docs/answer.md`, `docs/intent.md`).
 
 ```bash
 conda run -p C:/Users/TOSHIBA/ds-general python -m streamlit run app/streamlit_app.py
@@ -88,6 +90,18 @@ against two events has no sampling distribution. [`docs/events.md`](docs/events.
 
 ## What works today
 
+**One command, in order, one exit status.** It re-uses the landed raw layer when `data/raw/` is present
+(the raw layer is immutable), and on a clean checkout it acquires every source first — the FAAC documents,
+the World Bank series and donor panels, FRED (needs a free key in `.env`) and the UCDP bulk archive.
+
+```bash
+PYTHON=/c/Users/TOSHIBA/ds-general/python.exe \
+RAG_PYTHON=/c/conda-envs/drlca-rag/python.exe \
+HF_HUB_OFFLINE=1 bash scripts/verify.sh
+```
+
+Then, stage by stage:
+
 ```bash
 PY="conda run -p C:/Users/TOSHIBA/ds-general python"
 
@@ -99,6 +113,8 @@ $PY ingestion/flows/pull_worldbank.py
 
 # Pull the synthetic-control donor panel (99 candidate countries x 5 screening predictors)
 $PY ingestion/flows/pull_worldbank_donors.py
+# ...and the four outcome paths for the same pool (its own source, so the predictor panel does not move)
+$PY ingestion/flows/pull_worldbank_donors.py --profile outcomes
 
 # Pull the oil covariate (Brent crude, daily) - needs a free FRED key in .env
 $PY ingestion/flows/pull_fred.py
@@ -106,7 +122,8 @@ $PY ingestion/flows/pull_fred.py
 # Prove the stored raw data is byte-identical to what the API returned, for every source
 $PY tests/verify_provenance.py
 
-# Build the causal graphs (R 4.5.2 + ggdag/dagitty): assumption, adjustment set, SVG, card
+# Build the causal graphs (R 4.5.2 + ggdag/dagitty): assumption, adjustment set, SVG, card.
+# Run AFTER Stage 5 - the cards carry its diagnostics; scripts/verify.sh is the authoritative order.
 Rscript analysis/R/01_build_dags.R
 $PY tests/verify_dags.py
 
@@ -129,7 +146,7 @@ $PY ingestion/flows/pull_ucdp.py && $PY ingestion/parsers/ucdp_events.py
 Rscript analysis/R/03_estimate.R        # -> registry/estimates/<vintage>/
 $PY tests/verify_stage6.py
 
-# Stage 7: fit the declared multiverse and draw the specification curve, then re-fit all 105 independently
+# Stage 7: fit the declared multiverse and draw the specification curve, then re-fit all 129 independently
 Rscript analysis/R/04_robustness.R      # -> registry/robustness/<vintage>/
 $PY tests/verify_stage7.py
 
@@ -141,10 +158,10 @@ $PY tests/verify_events.py
 scripts/verify.sh
 ```
 
-Last run: 22/22 national indicators, 5/5 donor-panel predictors, 1/1 oil series, 1/1 conflict archive and
-174 FAAC disbursement documents — **203 payloads across 5 sources**, every one reproducing its recorded
-`sha256`, 0 orphaned files. 36/36 DAGs built, and every one verified to be acyclic, schema-valid, and to
-have an adjustment set that provably blocks every backdoor path in its graph.
+Last run: the national World Bank series, the donor panel and its four outcome paths, the oil series, the
+conflict archive, the FAAC documents and the NBS CPI workbook — **every payload across 7 sources**, each
+reproducing its recorded `sha256`, 0 orphaned files. 36/36 DAGs built, and every one verified to be acyclic,
+schema-valid, and to have an adjustment set that provably blocks every backdoor path in its graph.
 
 The oil series is Brent crude from FRED: 10,275 daily observations spanning 1987→2026, provenance
 verified. It refuses to overwrite a landed vintage, because the raw layer is immutable.
@@ -153,7 +170,7 @@ The analytical base is 8,350 rows = 25 metrics × 334 months, built by dbt from 
 declared rules in `analysis/specs/harmonisation.yml`: a January-2000 index anchor (with the fallback
 recorded per metric), the base-spec §7 administration spine split into term-level party-by-tenure
 strata, the 37 × 334 state panel whose dose columns are filled for 4,104 state-months and declared gaps
-elsewhere, and every definition break the quality gates found. **136 data tests** hold it, and
+elsewhere, and every definition break the quality gates found. **179 data tests** hold it, and
 `tests/verify_harmonisation.py` recomputes the whole thing from `data/raw/` without importing a single
 dbt model.
 
