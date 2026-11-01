@@ -1,6 +1,6 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-11-01 (twenty-fourth session) — this session's record is the last section of this file · **Stage:** 9, and the **completion plan's Phases A, B and C are closed**: GED 26.1 adopted, Design B's monthly-CPI outcome fitted, and **Design C extended to every outcome the donor panel carries** (9 outcomes, 45 windows, none identified) so that **no card's reason is a shrug** · **verified at vintage 2026-11-01**: `dbt build` (179/179), every R stage, the corpus, all four evals and every verifier, plus `validate_artifacts` and the phase gate
+**Last updated:** 2026-11-01 (twenty-fifth session) — this session's record is the last section of this file · **Stage:** 9, and the **completion plan's Phases A, B, C, D and E are closed**: GED 26.1 adopted, Design B's monthly-CPI outcome fitted, **Design C extended to every outcome the donor panel carries** (9 outcomes, 45 windows, none identified), the optional RAGAS library run **deferred on a measured budget** (D-01), and delivery polish done with two real defects fixed by the clean-clone proof · **verified at vintage 2026-11-01**: `dbt build` (179/179), every R stage, the corpus, all four evals and every verifier, plus `validate_artifacts` and the phase gate · **frontier: F, the freeze**
 
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
