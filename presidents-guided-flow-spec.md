@@ -1,7 +1,9 @@
 # Presidents guided flow — specification
 
-**Short name:** `presidents-guided-flow` · **Status:** built — seven screens, two descriptive artifacts, both
-verifiers, and the Pages deploy. Portraits remain empty frames (§7.1).
+**Short name:** `presidents-guided-flow` · **Status:** built and frozen with the project (2026-11-01) — eleven
+pages, two descriptive artifacts, both verifiers, the Pages deploy, and the five licensed portraits supplied
+under `docs/portraits.md` (P-02/P-03/P-04 record the party backdrop, the 600 × 800 frame and the crop-only
+rule).
 **Written:** 2026-10-25 · **Revised:** 2026-10-25 (framework → static site; changepoint family added)
 
 Adds a guided front end over the published registry. The registry contract, the 36-card rule and the
