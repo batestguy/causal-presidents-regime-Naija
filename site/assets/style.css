@@ -421,6 +421,7 @@ body.wide-page .topnav { max-width: 1240px; }
   padding: 20px 22px;
 }
 .block[hidden] { display: none; }
+.block { min-width: 0; }
 .block.tone-good { border-left-color: var(--accent); }
 .block.tone-warn { border-left-color: var(--warn); }
 .block.tone-bad { border-left-color: var(--bad); }
@@ -592,7 +593,7 @@ img.chart { width: 100%; height: auto; background: #fff; border: 1px solid var(-
 .wide-page img.graph { border-radius: 10px; }
 .flow img.graph { width: 100%; height: auto; background: #fff; }
 .graph-figure { margin: 0 0 1.3rem; }
-.graph-figure img.graph { width: 100%; max-height: 68vh; object-fit: contain; }
+.graph-figure img.graph { width: 100%; height: auto; }
 .graph-figure figcaption { font-size: .82rem; color: var(--ink-faint); margin-top: .45rem; }
 
 /* ---------------------------------------------------------------- tenure deviations */
@@ -727,6 +728,8 @@ img.chart { width: 100%; height: auto; background: #fff; border: 1px solid var(-
   .steps { gap: .2rem .2rem; }
   .steps .step { padding: .2em .45em .2em .2em; }
   .step-dot { width: 1.55em; height: 1.55em; font-size: .66rem; }
+  .graph-figure { overflow-x: auto; }
+  .graph-figure img.graph { min-width: 640px; }
 }
 
 @media (max-width: 860px) {

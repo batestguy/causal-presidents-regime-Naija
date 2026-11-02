@@ -50,8 +50,8 @@ suppressPackageStartupMessages({
 SCHEMA_VERSION <- "0.2.0"   # 0.2.0 adds the required `diagnostics` block (Stage 5)
 GENERATOR <- "analysis/R/01_build_dags.R"
 NODE_WRAP <- 16   # characters per label line, so text stays inside the node circle
-NODE_SIZE <- 24   # node diameter in mm; at 72 px/inch this is ~68 px of room per label line
-TEXT_SIZE <- 2.3
+NODE_SIZE <- 32   # node diameter in mm; at 72 px/inch this is ~91 px of room per label line
+TEXT_SIZE <- 3.0
 ASSUMED_SUFFIX <- " (assumed absent)"
 
 # ------------------------------------------------------------------------------------------
@@ -291,6 +291,13 @@ for (outcome in outcomes) {
     lab_row[unobs_row] <- paste0(lab_row[unobs_row], "\n", wrap_label(trimws(ASSUMED_SUFFIX)))
     df$node_label <- lab_row
 
+    # The two ends of the graph get a red ring so a reader can find them without reading the caption:
+    # solid for the treatment, dashed for the outcome. The ring is drawn on the layout's own coordinates,
+    # so it moves with the node it marks.
+    df$role <- ifelse(df$name == design$exposure, "treatment",
+                      ifelse(df$name == design$outcome, "outcome", "other"))
+    df$unobserved <- unobs_row
+
     exposure_short <- labs[[design$exposure]]
     # The figure states the pre-check outcome, because a graph published with no indication that its
     # design failed its own gate is the most misleading artefact this layer could produce.
@@ -312,11 +319,20 @@ for (outcome in outcomes) {
     p <- ggplot(df, aes(x = x, y = y, xend = xend, yend = yend)) +
       geom_dag_edges() +
       geom_dag_node(size = NODE_SIZE) +
-      geom_dag_text(aes(label = node_label), size = TEXT_SIZE) +
+      geom_point(data = df[df$role != "other", , drop = FALSE],
+                 aes(x = x, y = y),
+                 size = NODE_SIZE * 1.18, shape = 21, stroke = 2.4,
+                 colour = "#c1121f", fill = NA, inherit.aes = FALSE) +
+      geom_dag_text(data = df[!df$unobserved, , drop = FALSE],
+                    aes(label = node_label), size = TEXT_SIZE) +
+      geom_dag_text(data = df[df$unobserved, , drop = FALSE],
+                    aes(label = node_label), size = TEXT_SIZE * 0.8) +
+      scale_x_continuous(expand = expansion(mult = .06)) +
+      scale_y_continuous(expand = expansion(mult = .14)) +
       theme_dag() +
       labs(
         title = sprintf("%s - Design %s: %s", outcome$label, design$id, design$name),
-        subtitle = sprintf("Unit: %s  |  Exposure: %s  |  Outcome: %s",
+        subtitle = sprintf("Unit: %s  |  Exposure: %s  |  Outcome: %s\nRed rings mark the treatment and the outcome.",
                            design$unit, exposure_short, outcome$short),
         caption = caption
       ) +

@@ -2694,6 +2694,15 @@ events. Six flow pages therefore get distinct trios and the four reference pages
 re-run**: no registry artifact, R stage, schema document or hash contract changed, and the site verifier is the
 one that reads what did. A full-chain run is the next person's first check.
 
+**DAG figures (same pass).** The 36 causal graphs were re-rendered because their labels were unreadable at
+page width: node diameter 24 → 32 mm, label text 2.3 → 3.0 mm, the unobserved node at 80 % so its four lines
+fit, and a 14 % y-expansion so no node is clipped by the panel. The **treatment and the outcome now carry a red
+ring**, stated in the figure's subtitle, so the two ends of the graph are findable without reading the caption.
+`01_build_dags.R` rewrites the 36 cards and `05_registry.R` re-attaches the published estimates, so the cards'
+`generated_at` moved to 2026-11-02 while the vintage stays 2026-11-01. `verify_dags`, `validate_artifacts` and
+`verify_site` are green. On the site the figure is no longer capped at 68 vh, and on a phone it scrolls
+horizontally at 640 px so the labels stay legible instead of shrinking.
+
 **Still open — presentation, not registry.**
 
 1. `presidents-guided-flow-spec.md` (Screens 1–2) still describes the coverage caption and the tenure paragraph,
