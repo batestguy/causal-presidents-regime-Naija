@@ -18,10 +18,10 @@ placeholders:
   administrations: "the number of administrations, from registry/reference/administrations.json"
   spine_total: "outcome-months covered by the twelve panels"
   spine_observed: "outcome-months that are observations"
-  spine_interpolated: "outcome-months filled in between observations"
-  spine_unobserved: "outcome-months with no observation at all"
   estimated: "cards carrying a published number, from registry/dags/index.json"
   cards: "cards in the registry"
+  outcomes: "outcomes in the catalogue, from registry/dags/index.json"
+  covariates: "catalogue metrics that are not outcomes, from dbt/seeds/raw_metric_catalogue.csv"
 
 cover:
   eyebrow: "Nigeria · 1999-present"
@@ -29,20 +29,34 @@ cover:
   caption: "Presidential transitions and national outcomes in Nigeria, 1999‑present."
   instruction: "Causal models have assumptions. Study them before you read the numbers."
   rail_heading: "Five administrations"
-  rail_note: "The faces are the study window, not a scorecard. No number on this site belongs to one president."
-  ratio: "{estimated} of {cards} model cards carry a published number; the rest say why not."
   models_line: "{models} models compared"
+  scope_line: "{outcomes} outcomes · {covariates} covariates · {spine_observed} of {spine_total} outcome-months observed"
   methods_line: "Two-way fixed effects, local projections and synthetic control"
   span_line: "{designs} identification designs · {specifications} fitted specifications · {first_year}–{last_year}"
   portrait_credits: "Photograph credits"
   paragraphs:
     - "What can and cannot be said about Nigeria between {window_first} and {window_last}, across {administrations} administrations."
-    - "The twelve outcomes cover {spine_total} outcome-months: {spine_observed} observed, {spine_interpolated} filled in, {spine_unobserved} with no observation at all. Each panel draws the three states differently."
+
+# What each catalogue outcome counts, in words a reader does not need a data dictionary for. Rendered in
+# brackets after the outcome's label on the study screen: the label names the metric, this says what it is.
+# The build refuses an outcome with no gloss rather than printing a bare label.
+outcome_plain:
+  u5mr: "children who die before their fifth birthday, out of every 1,000 born"
+  mmr: "mothers who die from pregnancy or childbirth, out of every 100,000 births"
+  immun_penta3: "babies who get the three-dose pentavalent vaccine, as a share of all surviving infants"
+  skilled_birth: "births attended by a trained health worker, as a share of all births"
+  literacy_youth: "people who can read and write, as a share of everyone aged 15 to 24"
+  primary_completion: "children who finish primary school, as a share of those of the age to be there"
+  ner_primary: "children of primary-school age enrolled in primary school, as a share of that age group"
+  fatalities: "people killed in reported conflict events, counted"
+  incidents: "reported conflict events, counted — one massacre counts once, whatever the death toll"
+  gdp_growth: "how much the economy grew or shrank over the year, after inflation"
+  cpi_yoy: "how fast prices rose over the last year, as a percentage"
+  unemp: "people who want work and cannot find it, as a share of the labour force"
 
 study:
   heading: "What do you want to study?"
-  intro: "Pick a category, then an outcome. Every outcome has a page: the comparison the data supports, or the reason there is none."
-  caption: "{spine_total} outcome-months across the twelve: {spine_observed} observed, {spine_interpolated} filled in, {spine_unobserved} with nothing."
+  intro: "Pick a category, then an outcome. Where no design can identify a cause, the series still gets a change-point search and a trend reading."
   next: "Next"
   next_disabled: "Pick at least one outcome to continue."
   category_label: "Category"
@@ -55,10 +69,8 @@ study:
 compare:
   heading: "What this data can tell you"
   intro: "The comparison the project judged usable for each outcome, and what it assumes."
-  tenure_note: "This page will not say which president did better. That needs a counterfactual this data does not have: 22 to 23 annual observations per outcome, against four to five administrations."
-  chosen_label: "The comparison chosen for you"
-  assumes_label: "What it assumes"
   number_label: "Number published"
+  number_note: "the estimate is on the next screen"
   no_number_label: "No number"
   closest_label: "The closest thing we have"
   prototype_note: "Prototype: this page is the second screen only. The graph, estimate and chart screens are specified and not yet built."
@@ -67,17 +79,17 @@ designs:
   A:
     name: "State dose-response DiD"
     short: "DiD"
-    plain_comparison: "states that received more federal money, compared with states that received less"
-    assumes: "that no other change moved states with high and low federal allocations differently in the same months"
+    plain_comparison: "states that got more federal money, against states that got less"
+    assumes: "that nothing else moved high-money and low-money states differently in the same months"
   B:
     name: "National VECM / ARDL time series"
     short: "Time series"
-    plain_comparison: "the national money that reached the states, after the oil price moved, compared with what happened before it moved"
-    assumes: "that the oil price is the only thing moving that channel in the same months"
+    plain_comparison: "the money that reached the states after the oil price moved, against what happened before"
+    assumes: "that nothing else moved that money in the same months"
   C:
     name: "Synthetic control (cross-country)"
     short: "Synthetic control"
-    plain_comparison: "Nigeria compared with a made-up Nigeria built from similar countries"
+    plain_comparison: "Nigeria against a made-up Nigeria built from similar countries"
     assumes: "that the made-up Nigeria tracks what Nigeria would have done without the change"
 
 # Stage 5's card verdicts, in the reader's words. The tone is the colour the page may use.
@@ -85,19 +97,19 @@ status:
   pass:
     word: "usable"
     tone: "good"
-    sentence: "The check this comparison needed passed before anything was estimated."
+    sentence: "its check passed before anything was estimated"
   degraded:
     word: "usable with a warning"
     tone: "warn"
-    sentence: "The comparison runs, but on a weaker version of what the design asked for."
+    sentence: "a weaker version of the design"
   fail:
     word: "the check it needed failed"
     tone: "bad"
-    sentence: "The comparison was tested and did not pass; the number it would carry is either absent or published as not identified."
+    sentence: "the result is absent or published as not identified"
   not_attempted:
     word: "not attempted"
     tone: "bad"
-    sentence: "The design could not be run for this outcome, so there is nothing to show."
+    sentence: "it could not be run for this outcome"
 
 # The registry's closed set of reasons a card carries no number.
 reasons:
@@ -116,6 +128,13 @@ coverage:
   ok: "measured"
   partial: "partly measured"
   declared_gap: "declared gap"
+
+# The bracket that tells a reader what the coverage word means. A word like "partly measured" is only useful if
+# the screen says what was partly measured.
+coverage_note:
+  ok: "observed in every period the series claims"
+  partial: "some periods are filled in or modelled, not observed"
+  declared_gap: "no data for part of the window — not a zero"
 
 # The parties the five administrations belong to, with the colours their Wikipedia infoboxes declare. The site
 # draws these as vertical bands behind each portrait — a declared backdrop, not an endorsement (see
@@ -151,6 +170,14 @@ labels:
   technical_expander: "The technical version"
   plain_reading: "What this says in plain words"
   graph_heading: "The assumption, drawn"
+  graph_assumption: "The assumption"
+  graph_caption: "The unobserved node is drawn and named rather than omitted. Adjustment sets are computed on the assumed graph, never hand-listed."
+  adjustment_heading: "Adjustment set"
+  absent_heading: "Assumed absent"
+  cannot_heading: "What this cannot rule out"
+  adjustment_gloss: "what the comparison holds fixed"
+  absent_gloss: "the thing that must not exist"
+  cannot_gloss: "what could still spoil it"
   chart_heading: "The comparison, drawn"
   alternatives_heading: "The other graphs for this outcome"
   failed_check_prefix: "Failed its check"
@@ -166,10 +193,25 @@ steps:
   chart: "The chart"
   ask: "Ask"
 
+# The header collage: three events per page, drawn from the sourced strip manifest. The pages name slugs, not
+# files, so a licence row and a file move together; the event's own attribution travels into the footer credits.
+event_strip:
+  study: ["independence_1960", "chibok_2014", "election_2023"]
+  compare: ["civil_war_1968", "campaign_2015", "endsars_2020"]
+  graph: ["oil_flares", "handover_2015", "election_2023"]
+  estimates: ["independence_1960", "bodo_creek", "campaign_2015"]
+  chart: ["civil_war_1968", "oil_flares", "endsars_2020"]
+  ask: ["chibok_2014", "handover_2015", "election_2023"]
+  designs: ["independence_1960", "campaign_2015", "endsars_2020"]
+  about: ["civil_war_1968", "bodo_creek", "handover_2015"]
+  methodology: ["oil_flares", "chibok_2014", "election_2023"]
+  technical: ["independence_1960", "campaign_2015", "bodo_creek"]
+
 ask:
   heading: "Ask the corpus"
   intro: "The same gate and passages the local app uses, running in this browser. Nothing is fetched and no model is called."
   placeholder: "e.g. how much of the monthly series is observed?"
+  input_label: "Your question"
   button: "Ask"
   empty: "Type a question about the study."
   loading: "Reading the corpus…"

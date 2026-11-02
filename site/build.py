@@ -289,6 +289,7 @@ def build_context(root: Path) -> dict:
             "unit": panel["unit"],
             "direction": term(guide, "direction", outcome["direction"]),
             "coverage": term(guide, "coverage", outcome["coverage_status"]),
+            "coverage_note": term(guide, "coverage_note", outcome["coverage_status"]),
             "native_frequency": panel["native_frequency"],
             "observations": panel["observations"],
             "native_in_window": panel["native_in_window"],
@@ -512,6 +513,8 @@ def build_context(root: Path) -> dict:
     counts = index["registry"]["card_estimate_counts"]
     spine = series["counts"]["spine_rows"]
     design_c = load(root / "registry" / "design_c" / vintage / "design_c.json")
+    with (root / "dbt" / "seeds" / "raw_metric_catalogue.csv").open(encoding="utf-8", newline="") as handle:
+        catalogue = list(csv.DictReader(handle))
     fills = {
         "window_first": series["window"]["first"],
         "window_last": series["window"]["last"],
@@ -526,6 +529,8 @@ def build_context(root: Path) -> dict:
         "no_number": counts["not_estimated"],
         "cards": counts["estimated"] + counts["not_estimated"],
         "models": counts["estimated"] + counts["not_estimated"],
+        "outcomes": len(index["outcomes"]),
+        "covariates": sum(1 for row in catalogue if row["is_outcome"] != "true"),
         "designs": len(index["designs"]),
         "specifications": len(estimates["specifications"]) + len(robustness["specifications"]),
         "donors": design_c["counts"]["donors"],
@@ -539,8 +544,6 @@ def build_context(root: Path) -> dict:
     tech = yaml.safe_load((root / "analysis" / "specs" / "technical.yml").read_text(encoding="utf-8"))
     estimation = yaml.safe_load((root / "analysis" / "specs" / "estimation.yml").read_text(encoding="utf-8"))
     grid = yaml.safe_load((root / "analysis" / "specs" / "robustness.yml").read_text(encoding="utf-8"))
-    with (root / "dbt" / "seeds" / "raw_metric_catalogue.csv").open(encoding="utf-8", newline="") as handle:
-        catalogue = list(csv.DictReader(handle))
     variables = [{
         "id": row["metric_id"],
         "label": row["label"],
@@ -614,7 +617,33 @@ def build_context(root: Path) -> dict:
                              (load(root / "registry" / "rag" / vintage / "answer_eval.json").get("questions") or [])
                              if q.get("set") == "published"],
         "tenure": tenure,
+        "events": load_events(root),
     }
+
+
+def load_events(root: Path) -> dict[str, dict]:
+    """The sourced event photographs, keyed by slug. The manifest is the licence record: a page may only show
+    an event it names, and an event with no row here is simply not drawn."""
+    path = root / "site" / "assets" / "events" / "manifest.json"
+    if not path.exists():
+        return {}
+    return {row["slug"]: row for row in load(path).get("events") or []}
+
+
+def event_strip(ctx: dict, key: str) -> str:
+    """The header collage: three photographs of national events, decorative so the page carries no caption.
+    The licences' attribution travels underneath, folded into a disclosure rather than printed."""
+    trio = (ctx["guide"].get("event_strip") or {}).get(key) or []
+    rows = [ctx["events"][slug] for slug in trio if slug in ctx["events"]]
+    if not rows:
+        return ""
+    items = "".join(
+        f'<li><img src="../assets/events/{html.escape(row["file"])}" '
+        f'style="object-position:{html.escape(row.get("focus") or "50% 32%")}" alt=""></li>' for row in rows)
+    credits = "".join(f"<li>{html.escape(row['attribution'])}</li>" for row in rows)
+    return (f'<section class="event-strip"><ul>{items}</ul>'
+            f'<details class="strip-credits"><summary>Photo credits</summary>'
+            f'<ul class="credit-list">{credits}</ul></details></section>')
 
 
 NAV_LABELS: dict[str, str] = {}
@@ -701,10 +730,13 @@ def render_cover(ctx: dict) -> str:
     <div class="cover-lead">
       <p class="eyebrow">{html.escape(cover['eyebrow'])}</p>
       <h1>{html.escape(cover['title'])}</h1>
-      <p class="caption">{html.escape(cover['caption'])} <span class="instruction">{html.escape(cover['instruction'])}</span></p>
+      <p class="caption">{html.escape(cover['caption'])}<br><span class="instruction">{html.escape(cover['instruction'])}</span></p>
     </div>
     <div class="cover-cta">
-      <p class="cover-count">{html.escape(fill_text(cover['models_line'], ctx['fills']))}</p>
+      <div class="cover-stat">
+        <p class="cover-count">{html.escape(fill_text(cover['models_line'], ctx['fills']))}</p>
+        <p class="cover-scope">{html.escape(fill_text(cover['scope_line'], ctx['fills']))}</p>
+      </div>
       <p class="cover-methods">{html.escape(cover['methods_line'])}</p>
       <p class="cover-span">{html.escape(fill_text(cover['span_line'], ctx['fills']))}</p>
       <a class="primary" href="study/">Begin</a>
@@ -716,14 +748,12 @@ def render_cover(ctx: dict) -> str:
     <ul class="president-grid">
 {''.join(slides)}
     </ul>
-    <p class="rail-note">{md(cover['rail_note'])}</p>
   </section>
 
   <footer class="cover-foot">
     <details class="about">
       <summary>About this study</summary>
       <div class="prose">{paragraphs}
-        <p class="ratio">{md(fill_text(cover['ratio'], ctx['fills']))}</p>
       </div>
     </details>
     {credits}
@@ -737,23 +767,50 @@ def render_cover(ctx: dict) -> str:
 # ------------------------------------------------------------------------------------------------------------
 # Flow shell
 # ------------------------------------------------------------------------------------------------------------
+def flow_steps(guide: dict) -> list[tuple[str, str]]:
+    """The six in-flow steps, in order. The cover is the door, not a step: numbering it would make every
+    screen say "of seven" against a spec that names six."""
+    return [(name, label) for name, label in guide["steps"].items() if name != "cover"]
+
+
+def steps_html(guide: dict, key: str) -> str:
+    """The step rail: numbered dots, all in the site green with white words, the current step darker and ringed."""
+    order = flow_steps(guide)
+    position = [name for name, _label in order].index(key)
+    items = []
+    for index, (name, label) in enumerate(order, start=1):
+        state = " is-active" if name == key else (" is-done" if index <= position else "")
+        current = ' aria-current="step"' if name == key else ""
+        items.append(f'<li class="step{state}"{current}><span class="step-dot">{index}</span>'
+                     f'<span class="step-label">{html.escape(label)}</span></li>')
+    return f'<ol class="steps" aria-label="Steps">{"".join(items)}</ol>'
+
+
+def step_counter(guide: dict, key: str) -> str:
+    order = [name for name, _label in flow_steps(guide)]
+    return f"step {order.index(key) + 1} of {len(order)}"
+
+
+def plain_gloss(guide: dict, outcome_id: str) -> str:
+    """What the outcome counts, in words. The build stops rather than show a bare label: the study screen is
+    where a reader decides what to study, and a metric name alone does not say what it measures."""
+    try:
+        return guide["outcome_plain"][outcome_id]
+    except KeyError as exc:
+        raise SystemExit(f"guide.yml carries no plain gloss for the outcome {outcome_id!r}") from exc
+
+
 def flow_page(ctx: dict, key: str, title: str, heading: str, intro: str, note: str | None,
               blocks: str, back: str, forward: str | None, extra_head: str = "",
               wide: bool = False) -> str:
     guide = ctx["guide"]
-    steps = list(guide["steps"].items())
-    order = [name for name, _label in steps]
-    position = order.index(key) + 1
-    labels = ""
-    for name, label in steps:
-        active = " is-active" if name == key else ""
-        labels += f'<li class="step{active}">{html.escape(label)}</li>'
     nxt = (f'<a class="primary" id="next" href="../{forward}/" aria-disabled="true">{html.escape(guide["labels"]["next"])}</a>'
            if forward else "")
     body = f"""<main class="flow">
-  <ol class="steps" aria-label="Steps">{labels}</ol>
+  {event_strip(ctx, key)}
   <header class="flow-head">
-    <p class="eyebrow"><a href="../">Causal Presidents</a> · step {position} of {len(order)}</p>
+    {steps_html(guide, key)}
+    <p class="eyebrow"><a href="../">Causal Presidents</a> · {step_counter(guide, key)}</p>
     <h1>{html.escape(heading)}</h1>
     <p class="caption">{html.escape(intro)}</p>
     {f'<p class="note">{md(note)}</p>' if note else ''}
@@ -776,7 +833,6 @@ def outcome_shell(outcome: dict, inner: str, tone: str | None = None) -> str:
     return f"""<article class="block{tone_class}" data-outcome="{outcome['id']}" hidden>
   <header class="block-head">
     <h2>{html.escape(outcome['label'])}</h2>
-    <span class="meta">{html.escape(outcome['unit'])} · {html.escape(outcome['direction'])} · {html.escape(outcome['coverage'])}</span>
   </header>
 {inner}
 </article>"""
@@ -797,8 +853,8 @@ def render_study(ctx: dict) -> str:
             f"""<li class="choice">
   <label>
     <input type="checkbox" name="outcome" value="{o['id']}" id="pick-{o['id']}">
-    <span class="choice-label">{html.escape(o['label'])}</span>
-    <span class="choice-meta">{html.escape(o['unit'])} · {html.escape(o['direction'])} · {html.escape(o['coverage'])}</span>
+    <span class="choice-label">{html.escape(o['label'])} <span class="choice-plain">({html.escape(plain_gloss(guide, o['id']))})</span></span>
+    <span class="choice-meta">{html.escape(o['unit'])} · {html.escape(o['direction'])} · {html.escape(o['coverage'])} ({html.escape(o['coverage_note'])})</span>
   </label>
 </li>"""
             for o in rows)
@@ -813,11 +869,12 @@ def render_study(ctx: dict) -> str:
     <select id="domain-select" name="domain">{options}</select>
   </div>"""
     body = f"""<main class="flow">
+  {event_strip(ctx, "study")}
   <header class="flow-head">
-    <p class="eyebrow"><a href="../">Causal Presidents</a> · step 1 of 6</p>
+    {steps_html(guide, "study")}
+    <p class="eyebrow"><a href="../">Causal Presidents</a> · {step_counter(guide, "study")}</p>
     <h1>{html.escape(study['heading'])}</h1>
     <p class="caption">{html.escape(study['intro'])}</p>
-    <p class="note">{md(fill_text(study['caption'], ctx['fills']))}</p>
   </header>
 {picker}
   <div class="domains">{''.join(sections)}</div>
@@ -841,20 +898,25 @@ def render_compare(ctx: dict) -> str:
     blocks = []
     for outcome in ctx["outcomes"]:
         c = outcome["compare"]
-        reason = (f'<p class="reason"><code>{html.escape(c["reason_code"])}</code> '
-                  f'{html.escape(c["reason_sentence"] or "")}</p>' if c["reason_code"] else
-                  '<p class="reason"><strong>Number published.</strong> The estimate is on the next screens.</p>')
-        blocker = f'<p class="blocker">{html.escape(c["blocker"])}</p>' if c["blocker"] else ""
+        # Short on purpose: the pill says how far the comparison can be trusted, the bold line says what it
+        # compares, the assumption says what it needs, and one line follows — the published number's pointer,
+        # or the plain reason there is none. The unit, direction and coverage are on the study screen; the
+        # reason code, the blocker and the detail are on the estimate screen. Nothing is repeated here.
+        if c["has_number"]:
+            tail = (f'<p class="reason"><strong>{html.escape(compare["number_label"])}:</strong> '
+                    f'{html.escape(compare["number_note"])}.</p>')
+        elif c["reason_sentence"]:
+            tail = f'<p class="reason">{html.escape(c["reason_sentence"])}</p>'
+        else:
+            tail = ""
         inner = f"""
-  <p class="chosen"><strong>{c['design']} — {html.escape(c['design_name'])}.</strong> {html.escape(c['plain'])}.</p>
-  <p class="assumes">What it assumes: {html.escape(c['assumes'])}.</p>
-  <p class="status-line"><span class="pill {c['tone']}">{html.escape(c['word'])}</span>
-     <span class="status-sentence">{html.escape(c['sentence'])}</span></p>
-  {reason}
-  {blocker}"""
+  <p class="chosen"><strong>{c['design']} — {html.escape(c['design_short'])}</strong>: {html.escape(c['plain'])}.</p>
+  <p class="assumes">Assumes {html.escape(c['assumes'])}.</p>
+  <p class="status-line"><span class="pill {c['tone']}">{html.escape(c['word'])}</span></p>
+  {tail}"""
         blocks.append(outcome_shell(outcome, inner, tone=c["tone"]))
     return flow_page(ctx, "compare", "What this data can tell you", compare["heading"], compare["intro"],
-                     compare["tenure_note"], "".join(blocks), back="study", forward="graph")
+                     None, "".join(blocks), back="study", forward="graph")
 
 
 # ------------------------------------------------------------------------------------------------------------
@@ -879,22 +941,21 @@ def render_graph(ctx: dict) -> str:
 </details>"""
             for a in g["alternatives"])
         inner = f"""
-  <p class="chosen"><strong>{g['design']} — {html.escape(g['design_name'])}.</strong> {html.escape(outcome['compare']['plain'])}.</p>
+  <p class="chosen"><strong>{g['design']} — {html.escape(g['design_name'])}</strong></p>
   <figure class="graph-figure">
     <img class="graph" src="../{g['svg']}" alt="Assumed causal graph for {html.escape(outcome['label'])} under Design {g['design']}">
-    <figcaption>The unobserved node is drawn and named rather than omitted. Adjustment sets are computed on the assumed graph, never hand-listed.</figcaption>
   </figure>
   <div class="columns">
     <div class="col">
-      <h3>{html.escape(labels['graph_heading'])}</h3>
+      <h3>{html.escape(labels['graph_assumption'])}</h3>
       <p class="assumption">{html.escape(g['assumption'])}</p>
     </div>
     <div class="col">
-      <h4>Adjustment set</h4>
+      <h4>{html.escape(labels['adjustment_heading'])} <span class="gloss">({html.escape(labels['adjustment_gloss'])})</span></h4>
       <ul class="tight">{adjustment}</ul>
-      <h4>Assumed absent</h4>
+      <h4>{html.escape(labels['absent_heading'])} <span class="gloss">({html.escape(labels['absent_gloss'])})</span></h4>
       <ul class="tight">{absent}</ul>
-      <h4>What this cannot rule out</h4>
+      <h4>{html.escape(labels['cannot_heading'])} <span class="gloss">({html.escape(labels['cannot_gloss'])})</span></h4>
       <ul class="tight">{caveats}</ul>
     </div>
   </div>
@@ -905,8 +966,8 @@ def render_graph(ctx: dict) -> str:
         blocks.append(outcome_shell(outcome, inner))
     return flow_page(ctx, "graph", "The assumption, drawn", labels["graph_heading"],
                      "This is the graph the chosen comparison rests on. If the assumption is false, the number "
-                     "below it is not an effect.", None, "".join(blocks), back="compare", forward="estimates",
-                     wide=True)
+                     "below it is not an effect.", labels["graph_caption"], "".join(blocks), back="compare",
+                     forward="estimates", wide=True)
 
 
 # ------------------------------------------------------------------------------------------------------------
@@ -1081,7 +1142,7 @@ def render_chart(ctx: dict) -> str:
             rows = [g for g in chart["groups"] if g["grouping"] == key]
             if rows:
                 body = "".join(
-                    f"<li><strong>{html.escape(g['plain'])}</strong> <span class='tech'>{html.escape(g['technical'])}</span>"
+                    f"<li><strong>{html.escape(g['plain'])}</strong> <span class='tech'>({html.escape(g['technical'])})</span>"
                     f"<br><span class='tech'>{html.escape(g['caption'])}</span></li>" for g in rows)
                 lists.append(f"<div class='group-list' data-grouping='{key}'><ul class='tight'>{body}</ul></div>")
             else:
@@ -1128,17 +1189,16 @@ def render_ask(ctx: dict) -> str:
     if overall.get("n"):
         measured = fill_text(copy["measured"], {"answered": overall["answered"], "total": overall["n"]})
     body = f"""<main class="flow ask">
-  <ol class="steps" aria-label="Steps">
-    {''.join(f'<li class="step{" is-active" if name == "ask" else ""}">{html.escape(label)}</li>' for name, label in guide['steps'].items())}
-  </ol>
+  {event_strip(ctx, "ask")}
   <header class="flow-head">
-    <p class="eyebrow"><a href="../">Causal Presidents</a> · step {len(guide['steps'])} of {len(guide['steps'])}</p>
+    {steps_html(guide, "ask")}
+    <p class="eyebrow"><a href="../">Causal Presidents</a> · {step_counter(guide, "ask")}</p>
     <h1>{html.escape(copy['heading'])}</h1>
     <p class="caption">{html.escape(copy['intro'])}</p>
     {f'<p class="note">{html.escape(measured)}</p>' if measured else ''}
   </header>
   <form class="ask-form" id="ask-form" autocomplete="off">
-    <label for="ask-input">{html.escape(copy['heading'])}</label>
+    <label for="ask-input">{html.escape(copy['input_label'])}</label>
     <input id="ask-input" name="question" type="text" list="ask-questions"
            placeholder="{html.escape(copy['placeholder'])}" autocomplete="off">
     <datalist id="ask-questions">{''.join(f'<option value="{html.escape(q)}"></option>' for q in ctx.get("answer_questions") or [])}</datalist>
@@ -1148,8 +1208,7 @@ def render_ask(ctx: dict) -> str:
   <section class="ask-answer" id="ask-answer" hidden aria-live="polite"></section>
   <footer class="controls">
     <a class="ghost" href="../chart/">{html.escape(guide['labels']['back'])}</a>
-    <a class="ghost" href="../designs/">{html.escape(copy['deeper'])}</a>
-    <a class="ghost" href="../">Causal Presidents</a>
+    <a class="primary" href="../designs/">{html.escape(copy['deeper'])}</a>
   </footer>
   <p class="vintage">Registry vintage {ctx['vintage']}</p>
 </main>
@@ -1213,6 +1272,7 @@ def render_designs(ctx: dict) -> str:
             + f"<p class=\"note\">{html.escape(copy['c_note'])}</p>")
 
     body = f"""<main class="flow designs">
+  {event_strip(ctx, "designs")}
   <header class="flow-head">
     <p class="eyebrow"><a href="../">Causal Presidents</a> · the design-level results</p>
     <h1>{html.escape(copy['heading'])}</h1>
@@ -1317,6 +1377,7 @@ def render_about(ctx: dict) -> str:
     paragraphs = "".join(f"<p>{md(p)}</p>" for p in about["paragraphs"])
     todo = "".join(f"<li>{html.escape(item)}</li>" for item in about["todo"])
     body = f"""<main class="flow page-about">
+  {event_strip(ctx, "about")}
   <header class="flow-head">
     <p class="eyebrow">{html.escape(about['eyebrow'])}</p>
     <h1>{html.escape(about['heading'])}</h1>
@@ -1368,6 +1429,7 @@ def render_methodology(ctx: dict) -> str:
 
     references = "".join(f"<li>{mark_doi(ref)}</li>" for ref in m["references"])
     body = f"""<main class="flow page-method">
+  {event_strip(ctx, "methodology")}
   <header class="flow-head">
     <p class="eyebrow">{html.escape(m['eyebrow'])}</p>
     <h1>{html.escape(m['heading'])}</h1>
@@ -1443,6 +1505,7 @@ def render_technical(ctx: dict) -> str:
             f'<dl class="terms">{terms}</dl></section>')
 
     body = f"""<main class="flow page-technical">
+  {event_strip(ctx, "technical")}
   <header class="flow-head">
     <p class="eyebrow">{html.escape(page_copy['eyebrow'])}</p>
     <h1>{html.escape(page_copy['heading'])}</h1>
@@ -1491,7 +1554,7 @@ def main() -> int:
                  "methodology", "technical"):
         (DIST / name).mkdir(parents=True, exist_ok=True)
     for name in ("assets", "assets/graphs", "assets/comparisons", "assets/series", "assets/breaks",
-                 "assets/designs", "assets/presidents", "data"):
+                 "assets/designs", "assets/presidents", "assets/events", "data"):
         (DIST / name).mkdir(parents=True, exist_ok=True)
 
     for name in ("style.css", "app.js", "answer.mjs", "ask.mjs"):
@@ -1530,6 +1593,11 @@ def main() -> int:
     for row in ctx["portraits"].values():
         source = REPO_ROOT / row["file"]
         shutil.copyfile(source, DIST / "assets" / "presidents" / source.name)
+
+    # The header collage. Drawn only from the events whose manifest rows carry a licence and an attribution.
+    for row in ctx["events"].values():
+        source = REPO_ROOT / "site" / "assets" / "events" / row["file"]
+        shutil.copyfile(source, DIST / "assets" / "events" / source.name)
 
     (DIST / "index.html").write_text(render_cover(ctx), encoding="utf-8", newline="\n")
     (DIST / "study" / "index.html").write_text(render_study(ctx), encoding="utf-8", newline="\n")

@@ -141,7 +141,7 @@ function initFlow() {
     }
     return;
   }
-  if (note) note.textContent = `${chosen.length} outcome${chosen.length > 1 ? "s" : ""} · ${note.textContent}`;
+  if (note) note.textContent = `${chosen.length} outcome${chosen.length > 1 ? "s" : ""} chosen`;
   if (next) {
     const target = next.getAttribute("href") || "";
     if (target && target !== "#") next.setAttribute("href", `${target.replace(/\/$/, "")}/${query}`);

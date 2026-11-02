@@ -84,11 +84,8 @@ def main() -> int:
     block_pages = [page for page in ("compare/index.html", "graph/index.html", "estimates/index.html",
                                      "chart/index.html")]
 
-    # ---- the cover states the ratio, names five administrations, and attributes nothing -----------------
+    # ---- the cover names five administrations, and attributes nothing ---------------
     counts = index["registry"]["card_estimate_counts"]
-    ratio = f"{counts['estimated']} of {counts['estimated'] + counts['not_estimated']} model cards carry a published number"
-    if ratio not in cover:
-        fail(failures, f"the cover does not state the ratio it exists to state ({ratio!r})")
     for admin in admins["administrations"]:
         if admin["president"] not in cover:
             fail(failures, f"the cover does not carry {admin['president']}")
@@ -99,9 +96,11 @@ def main() -> int:
             fail(failures, f"the cover names the outcome {outcome['label']!r} — the cover is a spine, not a "
                            f"place where an outcome is put next to a face")
 
-    # ---- the cover states what was compared, how, and over what span (2026-10-28) --------------------------
-    # The ratio moved into the About disclosure; the band states the comparison instead, and every part of it is
-    # derived from the registry, not typed into the renderer.
+    # ---- the cover states what was compared, how, over what span, and how much data rests under it --------
+    # The band carries the model count, the methods, the design and specification counts and the span; the
+    # scope line under the count carries the outcomes, the covariates and the observed months. Every part of
+    # it is derived from an artifact, not typed into the renderer. (The card ratio left the cover on
+    # 2026-11-02 at the requester's ask; it was not replaced by a typed number, only by derived counts.)
     vintage = index["vintage_date"]
     est_doc = json.loads(read(REPO_ROOT / "registry" / "estimates" / vintage / "estimates.json"))
     rob_doc = json.loads(read(REPO_ROOT / "registry" / "robustness" / vintage / "robustness.json"))
@@ -110,15 +109,59 @@ def main() -> int:
     models = counts["estimated"] + counts["not_estimated"]
     specs = len(est_doc["specifications"]) + len(rob_doc["specifications"])
     span = f"{series_doc['window']['first'][:4]}–{series_doc['window']['last'][:4]}"
+    with (REPO_ROOT / "dbt" / "seeds" / "raw_metric_catalogue.csv").open(encoding="utf-8", newline="") as handle:
+        catalogue_rows = list(csv.DictReader(handle))
+    covariates = sum(1 for row in catalogue_rows if row["is_outcome"] != "true")
+    spine_rows = series_doc["counts"]["spine_rows"]
+    observed = spine_rows["observed"]
+    total_months = sum(int(v) for v in spine_rows.values())
     for needle, what in (
         (f"{models} models compared", "the count of models compared"),
         ("Two-way fixed effects, local projections and synthetic control", "the methods used"),
+        (f"{len(index['outcomes'])} outcomes", "the outcome count"),
+        (f"{covariates} covariates", "the covariate count"),
+        (f"{observed:,} of {total_months:,} outcome-months observed", "the observed-month count"),
         (f"{len(index['designs'])} identification designs", "the design count"),
         (f"{specs} fitted specifications", "the specification count"),
         (span, "the time span"),
     ):
         if needle not in cover:
             fail(failures, f"the cover does not state {what} ({needle!r})")
+
+    # ---- the header collage: three sourced photographs per page, byte-matched, each with a licence --------
+    events_doc = json.loads(read(REPO_ROOT / "site" / "assets" / "events" / "manifest.json"))
+    events = {row["slug"]: row for row in events_doc["events"]}
+    for slug, row in events.items():
+        asset = REPO_ROOT / "site" / "assets" / "events" / row["file"]
+        if not asset.exists():
+            fail(failures, f"events/{slug}: the manifest names {row['file']}, which is not on disk")
+            continue
+        payload = asset.read_bytes()
+        if len(payload) != row["bytes"] or hashlib.sha256(payload).hexdigest() != row["sha256"]:
+            fail(failures, f"events/{slug}: {row['file']} does not match the bytes/sha256 the manifest records")
+        if not row.get("licence") or not row.get("attribution"):
+            fail(failures, f"events/{slug}: the manifest carries no licence/attribution row")
+    strip_pages = {"study/index.html": "study", "compare/index.html": "compare", "graph/index.html": "graph",
+                   "estimates/index.html": "estimates", "chart/index.html": "chart", "ask/index.html": "ask",
+                   "designs/index.html": "designs", "about/index.html": "about",
+                   "methodology/index.html": "methodology", "technical/index.html": "technical"}
+    for page, key in strip_pages.items():
+        markup = flow[page]
+        slugs = guide["event_strip"][key]
+        if len(slugs) != 3:
+            fail(failures, f"{page}: the spec names {len(slugs)} events for the strip, not three")
+        for slug in slugs:
+            row = events.get(slug)
+            if row is None:
+                fail(failures, f"{page}: the strip names {slug!r}, which has no manifest row")
+                continue
+            if f"assets/events/{row['file']}" not in markup:
+                fail(failures, f"{page}: the strip does not draw {slug} ({row['file']})")
+            if row["attribution"] not in markup:
+                fail(failures, f"{page}: {slug}'s attribution is not in the page's credits")
+        shown = re.findall(r"assets/events/[a-z0-9_]+\.(?:jpg|png)", markup)
+        if len(shown) != 3:
+            fail(failures, f"{page}: {len(shown)} event photograph(s) on the page, not three")
 
     # ---- the primary navigation, on every page ------------------------------------------------------------
     for page in PAGES:
@@ -617,7 +660,7 @@ def main() -> int:
         return 1
 
     print(f"built         : {len(PAGES)} pages at vintage {index['vintage_date']}")
-    print(f"checked       : the ratio, {len(admins['administrations'])} administrations, {len(expected_ids)} "
+    print(f"checked       : the scope line, {len(admins['administrations'])} administrations, {len(expected_ids)} "
           f"outcomes per screen, the chosen design per outcome")
     print(f"numbers       : {len((index.get('published_results', {}).get('A', {}) or {}).get('specifications', []))} "
           f"published coefficients, each on its own outcome with its verdict and failed check")

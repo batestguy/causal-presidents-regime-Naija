@@ -29,6 +29,25 @@ able to reproduce every aggregate.
 | Wikimedia Commons — `File:Muhammadu_Buhari,_President_of_the_Federal_Republic_of_Nigeria_(3x4_cropped).jpg` | direct file download, one-off | CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0 | **Yes**, with attribution | ✅ 200, 2026-10-27 | Cover portrait of Muhammadu Buhari; author Bayo Omoboriowo; cropped and resized; attribution `Bayo Omoboriowo — CC BY-SA 4.0, cropped and resized` printed in the cover footer |
 | Wikimedia Commons — `File:Bola_Tinubu_portrait.jpg` | direct file download, one-off | CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0 | **Yes**, with attribution | ✅ 200, 2026-10-27 | Cover portrait of Bola Ahmed Tinubu; author Nosa Asemota; cropped and resized; attribution `Nosa Asemota — CC BY-SA 4.0, cropped and resized` printed in the cover footer |
 
+## Event-strip photographs (flow pages, 2026-11-02)
+
+Nine events drawn behind the header of every page except the cover, three per page. Each row is the file
+page's own licence and author; the attribution string is the one printed in the page's "Photo credits"
+disclosure. Files are resized to 900 px on the long edge and re-encoded (EXIF dropped); the sha256 is in
+`site/assets/events/manifest.json`.
+
+| Source | Access | Licence / terms | Redistribute raw? | Verified | Notes |
+|---|---|---|---|---|---|
+| Wikimedia Commons — `File:Ahmadu_Bello_at_Nigerian_Independence_Celebration_in_Lagos.png` | direct file download, one-off | Public domain | **Yes** | ✅ 200, 2026-11-02 | Independence, 1960; author Moneta Sleet Jr.; Saint Louis Art Museum; resized and re-encoded |
+| Wikimedia Commons — `File:Aankomst_van_5_kinderen_uit_Biafra_op_Schiphol_twee_kinderen_in_de_ambulance,_Bestanddeelnr_921-7494.jpg` | direct file download, one-off | CC0 1.0 — https://creativecommons.org/publicdomain/zero/1.0/ | **Yes** | ✅ 200, 2026-11-02 | Civil war, 1968; author Ron Kroon / Anefo, Nationaal Archief |
+| Wikimedia Commons — `File:Niger_Delta_Gas-Flares.jpg` | direct file download, one-off | Public domain | **Yes** | ✅ 200, 2026-11-02 | Niger Delta gas flares; author Chebyshev1983 |
+| Wikimedia Commons — `File:Bodo_Creek.jpg` | direct file download, one-off | CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0 | **Yes**, with attribution | ✅ 200, 2026-11-02 | Ogoniland oil spill; author Ukpai Jeffrey |
+| Wikimedia Commons — `File:Okoroafor_demanding_for_the_rescue_of_the_276_Chibok_girls_abducted_by_Boko_Haram_in_2014.jpg` | direct file download, one-off | CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0 | **Yes**, with attribution | ✅ 200, 2026-11-02 | Chibok, 2014; author Suleiman.bako1982 |
+| Wikimedia Commons — `File:General_Buhari_holding_a_broom_at_a_campign_rally.jpg` | direct file download, one-off | CC BY-SA 2.0 — https://creativecommons.org/licenses/by-sa/2.0 | **Yes**, with attribution | ✅ 200, 2026-11-02 | 2015 campaign; author Heinrich-Böll-Stiftung |
+| Wikimedia Commons — `File:Secretary_Kerry_Shakes_Hands_With_Newly_Sworn-in_Nigerian_President_Buhari.jpg` | direct file download, one-off | Public domain | **Yes** | ✅ 200, 2026-11-02 | 2015 handover; U.S. Department of State |
+| Wikimedia Commons — `File:Protesters_at_the_endSARS_protest_in_Lagos,_Nigeria_88.jpg` | direct file download, one-off | CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0 | **Yes**, with attribution | ✅ 200, 2026-11-02 | EndSARS, 2020; author Kaizenify |
+| Wikimedia Commons — `File:NYSC_member_counting_votes_during_2023_presidential_election_in_Gombe.jpg` | direct file download, one-off | CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0 | **Yes**, with attribution | ✅ 200, 2026-11-02 | 2023 election count, Gombe; author Iyusuf615 |
+
 ## Open licensing questions to resolve before publishing anything
 
 1. **FRED/Brent** — does the EIA upstream licence permit redistribution of the series we store?
