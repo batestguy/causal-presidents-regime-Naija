@@ -16,7 +16,7 @@ economic metrics. Visitors ask causal questions of a model and inspect the fitte
 behind the answers. (Base spec title: "Nigeria Presidential Performance Dashboard" — the
 word *performance* is retired from all user-facing naming; see the title note above.)
 
-**Status: frozen at vintage 2026-11-01 — all six phases of the completion plan are closed and the registry the app reads exists.** Ingestion
+**Status: the registry is frozen at vintage 2026-11-01 — all six phases of the completion plan are closed and the registry the app reads exists.** The site's presentation was revised after the freeze (2026-11-02; `PROGRESS.md`, last section) without touching the registry. Ingestion
 works end to end on **five** sources and is provenance-verified — including 174 FAAC disbursement
 documents, which are the state fiscal dose, and the UCDP GED security events, which are the
 state-attributed outcome (keyless: its bulk archive needs no token, C-45) — 36 causal graphs are generated

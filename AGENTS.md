@@ -2,10 +2,11 @@
 
 Freebuff context for this repo: what runs, where things live, and the rules a change must not break.
 
-**Status: frozen at vintage 2026-11-01.** Every phase of `presidents-completion-plan.md` is closed
-with its exit criteria measured green (`presidents-completion-state.yml` carries the evidence), and
-the final section of `PROGRESS.md` is the completion statement: what the system claims, what it
-refuses to claim, and the limitations it leaves open. Nothing is queued behind the freeze.
+**Status: the registry is frozen at vintage 2026-11-01.** Every phase of `presidents-completion-plan.md` is
+closed with its exit criteria measured green (`presidents-completion-state.yml` carries the evidence), and
+the completion statement in `PROGRESS.md` — followed by the 2026-11-02 post-freeze presentation record —
+says what the system claims, what it refuses to claim, and the limitations it leaves open. Nothing is
+queued behind the freeze; the site's presentation was revised after it, the registry was not.
 
 ## Quickstart
 

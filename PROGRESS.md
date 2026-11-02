@@ -1,6 +1,6 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-11-01 (twenty-fifth session) — this session's record is the last section of this file · **Stage:** 9 · **The project is frozen at vintage 2026-11-01**: every phase of `presidents-completion-plan.md` is closed with its exit criteria measured green, and the **final** section states what the frozen system claims, refuses and leaves open
+**Last updated:** 2026-11-02 (post-freeze site pass) — this pass's record is the last section of this file · **Stage:** 9 · **The registry is frozen at vintage 2026-11-01**: every phase of `presidents-completion-plan.md` is closed with its exit criteria measured green, and the completion statement (the section before last) states what the frozen system claims, refuses and leaves open
 
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
@@ -2650,3 +2650,57 @@ denominator decision (X-09); D2 waits on NBS state IGR; monthly security after 2
 does not exist yet; monthly sub-national health waits on DHIS2 credentials; the RAGAS library run waits on a
 judge budget (D-01); and a re-acquisition waits on the NBS index (E-01). Each is named where it is measured, in
 `docs/limitations.md` §13, `robustness.json → unbuilt_axes` or the artifact that owns it.
+
+## Post-freeze presentation pass (2026-11-02)
+
+**A page-by-page design review of the built site, and nothing under it moved.** The registry, the card contract,
+every published number and every refusal are the 2026-11-01 vintage; `site/dist/` is rebuilt from the same
+artifacts. Committed and pushed as **`ddce559`** on `main` (16 files, +489/−103), origin at the same SHA.
+
+**The cover.** A scope line under *36 models compared* — **12 outcomes · 13 covariates · 788 of 4,008
+outcome-months observed** — with the outcome count from `index.json`, the covariate count from the catalogue's
+own `is_outcome` column, and the months from the series spine. The instruction moved to its own line. Removed:
+the rail note under the portraits, the coverage paragraph and the **2-of-36 ratio**. The ratio still appears on
+`/about/`, in `docs/app.md` and in `docs/limitations.md`; whether it returns to the cover is a requester decision.
+
+**The flow.** One header panel per page and a numbered six-step rail — green with black words, **white for the
+current step**, `aria-current="step"` — with a green Back that matches Next. Numbering now excludes the cover, so
+every flow page says *step n of 6* where the comparisons screen used to say *3 of 7*. The Ask screen, which had
+kept its own seven-step rail, uses the same shell.
+
+- **Study** — a layman gloss for each of the twelve outcomes (`guide.yml` → `outcome_plain`; the build refuses an
+  outcome with no gloss), the coverage words explained in brackets (`coverage_note`), and the coverage caption
+  replaced by one sentence on the change-point and trend alternative.
+- **Compare** — four lines per outcome: the chosen comparison, its assumption, the status pill, and either the
+  number pointer or the plain reason. Removed: unit/direction/coverage (they are on the study screen), the
+  generic status sentence, the reason code and the blocker. The blocker and detail remain on the estimate screen
+  and on the card, which still wins.
+- **Graph** — the unobserved-node caption moved from twelve blocks to the page header; the repeated *The
+  assumption, drawn* heading became *The assumption*; the three column headings carry plain brackets.
+- **Chart** — group labels print the technical id in brackets instead of running it into the sentence.
+- **Ask** — same rail and footer; the duplicated form label is now *Your question*.
+
+**Header collage (new asset family).** Nine events sourced one-off from Wikimedia Commons — public domain, CC0
+and CC BY-SA — shown three per page on all ten pages but the cover, declared in `guide.yml` → `event_strip` and
+recorded in `site/assets/events/manifest.json` (author, licence, licence URL, source, sha256, bytes, focal point);
+the licence rows are in `docs/licences.md`. The build copies only manifest rows, and `tests/verify_site.py`
+byte-matches every file, requires exactly three per page, and requires each page's credits to carry the
+attribution. **Nine events, not eighteen:** Commons holds no free-licensed photographs of the 1966/1979/1983
+coups, June 12 1993 or the 1999–2010 inaugurations, and this repo forbids generated reconstructions of real
+events. Six flow pages therefore get distinct trios and the four reference pages reuse events.
+
+**What was measured in this pass.** `site/build.py` (11 pages, 12 outcomes, vintage 2026-11-01) and
+**`tests/verify_site.py` green after every edit**, including the new strip checks. **`scripts/verify.sh` was not
+re-run**: no registry artifact, R stage, schema document or hash contract changed, and the site verifier is the
+one that reads what did. A full-chain run is the next person's first check.
+
+**Still open — presentation, not registry.**
+
+1. `presidents-guided-flow-spec.md` (Screens 1–2) still describes the coverage caption and the tenure paragraph,
+   and `docs/app.md` still describes the older flow wording: prose drift against the built page.
+2. Three card notes still read as schema prose — *"as the base spec §7 table has it"*, *"end_date deliberately
+   open"*. That is a `dbt/seeds/raw_administration.csv` edit plus a dbt rebuild, not a site edit.
+3. The 2-of-36 ratio is no longer on the home page. Cover, `/about/`, or nowhere is the requester's call.
+4. The cover's flag band still shows as a pale frame behind the cards.
+5. Nine photographs cover ten pages; nine more events — or press licences — would take the collage to one trio
+   per page with no repetition.
