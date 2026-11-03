@@ -201,6 +201,16 @@ table keeps inviting: a non-CI range that excludes zero is not significance, and
 the *difference between two presidents*, which is the contrast the artifact publishes (mmr Buhari vs
 Jonathan: [−6.65, +4.48], so neutral), not to either row's own range. `verify_site` green.
 
+**Findings replace the method boilerplate under every trend table.** The requester wanted that block to report
+what the table found, not re-explain ranges. Each trend table now ends with three generated lines, from the
+artifact rows and contrasts: the president furthest from the trend (name, mean distance, above or below),
+the president-to-president changes that hold across all three trend settings, and the pairs that stay
+neutral. Wording declared in `guide.yml` (`finding_furthest`, `finding_changes`, `finding_no_changes`,
+`finding_neutral`); the sentence about ranges versus confidence intervals moved out of the table block
+(the methodology page keeps the method; the table reports the finding). Example, maternal mortality:
+*Furthest from the trend: Yar'Adua, averaging 17.44 below it. Registered changes: Yar'Adua vs Obasanjo,
+good; Jonathan vs Yar'Adua, bad. No clear change: Buhari vs Jonathan.* `verify_site` green.
+
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
 is **estimated, not identified**: four windows, rank p 0.17–0.50, and a pre-fit gate that turned out not to

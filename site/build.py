@@ -1099,6 +1099,8 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
         contrasts[frozenset((c["a"], c["b"]))] = c
     heads = "".join(f"<th>{html.escape(h)}</th>" for h in copy["heads"])
     body_rows = []
+    changed = []
+    neutral = []
     prev = None
     for t in described:
         low, high = t["deviation_range"]
@@ -1116,10 +1118,13 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
                 diff_low, diff_high = low - prev["high"], high - prev["low"]
             if diff_low <= 0 <= diff_high:
                 change = copy["change_neutral"]
+                neutral.append(f"{t['president'].split()[-1]} vs {prev['president'].split()[-1]}")
             elif delta * good_sign > 0:
                 change = copy["change_good"]
+                changed.append(f"{t['president'].split()[-1]} vs {prev['president'].split()[-1]}, good")
             else:
                 change = copy["change_bad"]
+                changed.append(f"{t['president'].split()[-1]} vs {prev['president'].split()[-1]}, bad")
             change = fill_text(copy["change_vs"], {
                 "previous": prev["president"].split()[-1],
                 "label": change,
@@ -1132,6 +1137,20 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
             f"<td class='num'>{html.escape(change)}</td></tr>")
         prev = {"president": t["president"], "low": low, "high": high, "mean": mean}
     body = "".join(body_rows)
+    unit = outcome.get("unit")
+
+    # What this table found, in three plain lines.
+    furthest = max(described, key=lambda t: abs(t["mean_deviation"]))
+    side = copy["side_above"] if furthest["mean_deviation"] > 0 else copy["side_below"]
+    findings = [fill_text(copy["finding_furthest"], {
+        "president": furthest["president"],
+        "value": f"{abs(furthest['mean_deviation']):.2f}",
+        "side": side,
+    }).replace("  ", " ")]
+    findings.append(fill_text(copy["finding_changes"], {"items": copy["finding_join"].join(changed)})
+                    if changed else copy["finding_no_changes"])
+    if neutral:
+        findings.append(fill_text(copy["finding_neutral"], {"items": copy["finding_join"].join(neutral)}))
     contrast = ""
     if row["contrasts"]:
         best = max(row["contrasts"], key=lambda c: abs(c["difference"]))
@@ -1139,12 +1158,12 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
                     f"{html.escape(best['reading'])}.</p>")
     unit = outcome.get("unit")
     unit_tag = f" <span class='tech'>({html.escape(unit)})</span>" if unit else ""
-    explainer = "".join(f"<li>{html.escape(line)}</li>" for line in copy["explainer"])
+    findings_html = "".join(f"<li>{html.escape(line)}</li>" for line in findings)
     return f"""<section class="tenure">
   <h3>{html.escape(copy['heading'])}{unit_tag}</h3>
   <p class="tech">{html.escape(copy['note'])}</p>
   <table class="deviation-table"><thead><tr>{heads}</tr></thead><tbody>{body}</tbody></table>
-  <ul class="tight explainer">{explainer}</ul>
+  <ul class="tight explainer">{findings_html}</ul>
   {contrast}
 </section>"""
 

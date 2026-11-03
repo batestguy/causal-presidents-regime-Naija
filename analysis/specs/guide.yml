@@ -266,12 +266,16 @@ changepoint:
 tenure:
   heading: "Deviation from the long-run trend"
   note: "The trend is fitted without ever seeing who was in power."
-  # The guest explainer sits under every trend table: three lines, no jargon, and the one thing readers
-  # get wrong: the range is the spread across three trend settings, not a confidence interval.
-  explainer:
-    - "Deviation: how far the outcome sat from its fitted trend. The range is the spread across three trend settings, not a confidence interval."
-    - "Change: each president against the one before. Good and bad follow the outcome's own direction."
-    - "Neutral: the pair's range crosses zero, so the ordering can flip with the trend setting."
+  # The line under each trend table describes what *this* table found, in plain words: whose deviation
+  # was furthest from the trend, which president-to-president changes registered, and which pairs stayed
+  # neutral. Generated from the artifact rows; no number is typed here.
+  finding_furthest: "Furthest from the trend: {president}, averaging {value} {side} it."
+  finding_changes: "Registered changes: {items}."
+  finding_no_changes: "No president-to-president change holds across all trend settings."
+  finding_neutral: "No clear change: {items}."
+  finding_join: "; "
+  side_above: "above"
+  side_below: "below"
   # The change column compares each president with the one before him, using the artifact's own pairwise
   # contrasts (difference = earlier mean_deviation - later, with the range across the declared spans, not
   # a sampling interval). A change is claimed only when the contrast range cannot contain zero. Direction
