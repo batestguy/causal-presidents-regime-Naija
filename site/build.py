@@ -778,6 +778,9 @@ def render_cover(ctx: dict) -> str:
   </section>
 
   <footer class="cover-foot">
+    <blockquote class="why-estimates">
+      {''.join(f'<p>{html.escape(line)}</p>' for line in cover["why_lines"])}
+    </blockquote>
     <details class="about">
       <summary>About this study</summary>
       <div class="prose">{paragraphs}
