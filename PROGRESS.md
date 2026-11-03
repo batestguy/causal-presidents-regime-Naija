@@ -160,6 +160,22 @@ tables across the twelve outcomes read start / change, good / change, bad / no c
 ranges allow (the main fatalities table: Yar'Adua change good, Jonathan change bad, Buhari change good,
 Tinubu no change neutral).
 
+**Trend column audit and its fixes.** The requester asked whether Buhari really showed "no change" over
+Jonathan on maternal mortality, and why the dose control does nothing there. The audit
+(`.inspect/audit_change.py`, `.inspect/audit_chart_blocks.py`) found no mislabels: the artifact's own means
+are Jonathan +10.39 to Buhari +13.29, so relative to the trend Buhari is slightly worse, not better; the
+neutral label stands because the span-choice ranges overlap zero. Two presentation fixes came out of it.
+First, the direction is now read from the artifact's published `mean_deviation`, not a midpoint of the
+range, and every change cell shows the mean move beside the label (`no change, neutral (+2.90)`), so a
+neutral row can never be misread as "nothing moved". Second, the table heading carries the outcome's unit
+(`per 100,000 births`), which it had been missing. The `tenure.note` now states that the change column is
+relative to the trend, since the deviations are not raw levels. For the dose control: maternal mortality
+has a national annual series only, so there is no state panel to show; the radio is disabled and its label
+now says why at the control (`no state-level series`, declared), while the caption already said it in
+words. Audited all twelve: only fatalities and incidents carry a state panel; the four education outcomes
+have no tenure table (refused); all others carry one table with exactly one `start` row. `verify_site`
+green after the fixes.
+
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
 is **estimated, not identified**: four windows, rank p 0.17–0.50, and a pre-fit gate that turned out not to

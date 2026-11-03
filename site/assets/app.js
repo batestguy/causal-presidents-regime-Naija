@@ -240,13 +240,15 @@ function initGrouping() {
   };
 
   // A dead control is a lie: when none of the outcomes on screen carries a state panel in its figure,
-  // the dose radio dims and says why, instead of letting a reader click it and see nothing happen.
+  // the dose radio dims and says why at the control, instead of letting a reader click it and see nothing.
+  const doseNote = doseLabel?.querySelector(".dose-note");
   const updateUsable = () => {
     if (!dose) return;
     const visible = Array.from(document.querySelectorAll("article.block")).filter((a) => !a.hidden);
     const anyPanel = visible.some((a) => a.querySelector(".panel-window[data-split]"));
     dose.disabled = !anyPanel;
     doseLabel?.classList.toggle("is-muted", !anyPanel);
+    if (doseNote) doseNote.hidden = anyPanel;
   };
   radios.forEach((radio) => radio.addEventListener("change", apply));
   window.addEventListener("resize", apply);

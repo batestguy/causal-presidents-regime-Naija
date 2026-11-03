@@ -253,6 +253,7 @@ chart:
   # in short; the artifact figures keep their own printed stamp because they are frozen files.
   observed_mark: "a dot is a month that exists"
   interpolated_mark: "a dotted line is a month filled in between two observations"
+  dose_note: "no state-level series"
 
 changepoint:
   heading: "When the series changes"
@@ -264,11 +265,11 @@ changepoint:
 # Stage 8g - the tenure description (analysis/specs/tenure.yml)
 tenure:
   heading: "Deviation from the long-run trend"
-  note: "The trend is fitted without ever seeing who was in power: a deviation names a window, not a causal claim."
-  # The change column compares each span with the one before it. A change exists only when the difference
-  # of the two spans' deviation ranges does not overlap zero (the artifact publishes each span's range, so
-  # the difference interval is [low_i - high_prev, high_i - low_prev]); good and bad follow the outcome's
-  # own direction, never a president's.
+  note: "The trend is fitted without ever seeing who was in power: a deviation names a window, not a causal claim. The change column compares a span with the one before, relative to the trend."
+  # The change column compares each span with the one before it, relative to the trend. Direction comes
+  # from the artifact's mean_deviation; a change is claimed only when the difference of the two spans'
+  # span-choice ranges cannot contain zero (each range is [min, max] of mean_deviation across the declared
+  # spans, not a sampling interval). Good and bad follow the outcome's own direction, never a president.
   heads: ["Tenure", "Party", "Points", "Deviation, range across spans", "Change from the span before"]
   change_first: "start"
   change_neutral: "no change, neutral"

@@ -1089,39 +1089,46 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
                 f"({row['n_native']} native observations).</p></section>")
     described = [t for t in row["tenures"] if t["status"] == "described"]
     # The change column compares each span's deviation with the one before. A change is only claimed when
-    # the difference of the two spans' ranges cannot contain zero; good and bad follow the outcome's own
-    # direction (a "lower is better" outcome moves good when the deviation falls), never the president.
+    # the difference of the two spans' span-choice ranges cannot contain zero; good and bad follow the
+    # outcome's own direction (a "lower is better" outcome moves good when the deviation falls), never the
+    # president. Direction is read from the artifact's own mean_deviation, not a midpoint of the range.
     good_sign = 1 if outcome.get("direction", "").startswith("higher") else -1
     heads = "".join(f"<th>{html.escape(h)}</th>" for h in copy["heads"])
     body_rows = []
     prev = None
     for t in described:
         low, high = t["deviation_range"]
-        mid = (low + high) / 2
+        mean = t["mean_deviation"]
         if prev is None:
             change = copy["change_first"]
         else:
+            delta = mean - prev["mean"]
             diff_low, diff_high = low - prev["high"], high - prev["low"]
             if diff_low <= 0 <= diff_high:
                 change = copy["change_neutral"]
-            elif (mid - prev["mid"]) * good_sign > 0:
+            elif delta * good_sign > 0:
                 change = copy["change_good"]
             else:
                 change = copy["change_bad"]
+            # The mean move is shown beside the label, so "no change, neutral" cannot read as "nothing
+            # moved": the lean is visible even where the span ranges overlap zero.
+            change = f"{change} ({delta:+.2f})"
         body_rows.append(
             f"<tr><td>{html.escape(t['president'])}</td><td>{html.escape(t['party'])}</td>"
             f"<td class='num'>{t['n_native']}</td>"
             f"<td class='num'>{low:+.2f} &hellip; {high:+.2f}</td>"
             f"<td class='num'>{html.escape(change)}</td></tr>")
-        prev = {"low": low, "high": high, "mid": mid}
+        prev = {"low": low, "high": high, "mean": mean}
     body = "".join(body_rows)
     contrast = ""
     if row["contrasts"]:
         best = max(row["contrasts"], key=lambda c: abs(c["difference"]))
         contrast = (f"<p class='note'><strong>{html.escape(copy['contrast_heading'])}.</strong> "
                     f"{html.escape(best['reading'])}.</p>")
+    unit = outcome.get("unit")
+    unit_tag = f" <span class='tech'>({html.escape(unit)})</span>" if unit else ""
     return f"""<section class="tenure">
-  <h3>{html.escape(copy['heading'])}</h3>
+  <h3>{html.escape(copy['heading'])}{unit_tag}</h3>
   <p class="tech">{html.escape(copy['note'])}</p>
   <table class="deviation-table"><thead><tr>{heads}</tr></thead><tbody>{body}</tbody></table>
   {contrast}
@@ -1205,7 +1212,10 @@ def render_chart(ctx: dict) -> str:
     control = "".join(
         f"<label class='toggle'><input type='radio' name='grouping' value='{key}'"
         f"{' checked' if key == 'party_tenure' else ''}> {html.escape(groupings[key]['plain'])}"
-        f" <span class='tech'>({html.escape(groupings[key]['technical'])})</span></label>"
+        f" <span class='tech'>({html.escape(groupings[key]['technical'])})</span>"
+        + (f" <span class='dose-note tech' hidden>{html.escape(guide['chart']['dose_note'])}</span>"
+           if key == "state_dose_quartile" else "")
+        + "</label>"
         for key in ("party_tenure", "state_dose_quartile"))
     extra_head = f"""<div class="grouping-control" role="radiogroup" aria-label="Grouping">{control}</div>"""
 
