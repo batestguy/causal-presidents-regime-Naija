@@ -76,11 +76,69 @@ function layer() {
   return layerPromise;
 }
 
-/** The technical answer without the question echo: the reader just typed it. */
-function withoutQuestion(text) {
-  return String(text)
-    .replace(/^\s*(?:\*\*)?Question:(?:\*\*)?\s.*(?:\r?\n|$)/i, "")
-    .replace(/^\s+/, "");
+/** The artifact's text split on its `**Label:**` headings. */
+function splitSections(text) {
+  const sections = [];
+  let current = null;
+  for (const raw of String(text).split(/\r?\n/)) {
+    const match = raw.match(/^\s*\*\*([^*]{2,60}):\*\*\s*(.*)$/);
+    if (match) {
+      current = { title: match[1].trim(), lines: match[2] ? [match[2]] : [] };
+      sections.push(current);
+    } else if (current) {
+      current.lines.push(raw);
+    }
+  }
+  return sections.map((s) => ({ title: s.title, body: s.lines.join("\n").trim() }));
+}
+
+/** First n sentences, so a fact answer keeps its headline and its number but not the essay. */
+function firstSentences(text, n) {
+  const parts = String(text).split(/(?<=[.!?])\s+/);
+  return parts.slice(0, n).join(" ").trim();
+}
+
+/** The short answer: one section of the plain text, cut to the two sentences a reader needs. */
+function plainReading(answer) {
+  if (!answer.plain || !answer.plain.text) return answer.text;
+  const sections = splitSections(answer.plain.text);
+  const record = sections.find((s) => /^the record says/i.test(s.title));
+  if (record) return firstSentences(record.body, 2); // headline plus the number
+  const short = sections.find((s) => /^short answer/i.test(s.title));
+  if (!short) return answer.plain.text;
+  // The machine reason code is technical vocabulary; it stays in the collapsed section.
+  const plainOnly = short.body.replace(/\bReason code:\s*\S+\s*[.;]\s*/i, "");
+  return firstSentences(plainOnly, 2);
+}
+
+/**
+ * The technical pass, trimmed: question echo and duplicated prefixes dropped, the artifact path removed
+ * from the source line, and every section a bold label with its body. Only what a checking reader needs.
+ */
+function technicalReading(text) {
+  const sections = splitSections(text).filter((s) => !/^question/i.test(s.title));
+  const parts = [];
+  for (const section of sections) {
+    const label = section.title
+      .replace(/^the check that decided it$/i, "Deciding check")
+      .replace(/^identifying assumption$/i, "Assumption")
+      .replace(/^what it cannot rule out$/i, "Cannot rule out")
+      .replace(/^citation$/i, "Source");
+    let body = section.body
+      .replace(/^(?:the )?check that decided it:\s*/i, "")
+      .replace(/^identifying assumption:\s*/i, "")
+      .replace(/^what this design cannot rule out:\s*/i, "")
+      .replace(/^the published specification is\s*/i, "")
+      .replace(/registry\/\S+\.json\s*/g, "")
+      .replace(/\s+—\s+/g, " · ")
+      .trim();
+    if (/^citation$/i.test(section.title)) {
+      // Source, compact: drop the redundant "Card estimate" prefix and the word "vintage".
+      body = body.replace(/^Card estimate · /i, "").replace(/\(vintage ([\d-]+)\)/g, "$1");
+    }
+    if (body) parts.push(`**${label}.** ${body}`);
+  }
+  return parts.length ? render(parts.join("\n\n")) : "";
 }
 
 function paint(answer) {
@@ -88,14 +146,14 @@ function paint(answer) {
   const badge = answer.status === "answered"
     ? `<span class="pill good">answered · ${escapeHtml(answer.shape)}</span>`
     : `<span class="pill bad">${escapeHtml(answer.status)}${answer.refusal_code ? ` · ${escapeHtml(answer.refusal_code)}` : ""}</span>`;
-  // Plain first, in ordinary prose and with no label: the answer as a person would say it. The extracted,
-  // citation-heavy pass lives behind one collapsed control, mentioned once on the page.
-  const hasPlain = answer.plain && answer.plain.text;
-  const plain = hasPlain ? answer.plain.text : answer.text;
-  const technical = hasPlain
-    ? `<details class="technical"><summary>Technical</summary><div class="prose">${render(withoutQuestion(answer.text))}</div></details>`
+  // Plain first, in ordinary prose and with no label: just the answer. The checking version, with the
+  // assumption, the caveats and the citation, sits behind one collapsed control.
+  const plain = plainReading(answer);
+  const technical = answer.plain && answer.plain.text ? technicalReading(answer.text) : "";
+  const tech = technical
+    ? `<details class="technical"><summary>Technical</summary><div class="prose">${technical}</div></details>`
     : "";
-  panel.innerHTML = `<div class="ask-head">${badge}</div>${render(plain)}${technical}`;
+  panel.innerHTML = `<div class="ask-head">${badge}</div>${render(plain)}${tech}`;
   panel.hidden = false;
 }
 
