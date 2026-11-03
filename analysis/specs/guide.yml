@@ -266,26 +266,30 @@ changepoint:
 tenure:
   heading: "Deviation from the long-run trend"
   note: "The trend is fitted without ever seeing who was in power."
-  # The line under each trend table describes what *this* table found, in plain words: whose deviation
-  # was furthest from the trend, which president-to-president changes registered, and which pairs stayed
-  # neutral. Generated from the artifact rows; no number is typed here.
+  # The line under each trend table is one short paragraph of findings, not a method note: whose deviation
+  # was furthest from the trend, which president-to-president moves hold under every trend setting, and
+  # which moves stay neutral. Generated from the artifact rows and contrasts; no number is typed here.
   finding_furthest: "Furthest from the trend: {president}, averaging {value} {side} it."
-  finding_changes: "Registered changes: {items}."
-  finding_no_changes: "No president-to-president change holds across all trend settings."
-  finding_neutral: "No clear change: {items}."
+  finding_changes: "Across all settings, {items}."
+  finding_item: "{name} {direction} {previous}"
+  finding_better: "better than"
+  finding_worse: "worse than"
+  finding_no_changes: "No move between consecutive presidents holds across all trend settings."
+  finding_neutral: "The move from {previous} to {name} is not consistent across settings, so it is neutral."
   finding_join: "; "
   side_above: "above"
   side_below: "below"
-  # The change column compares each president with the one before him, using the artifact's own pairwise
+  # The table compares each president with the one before him, using the artifact's published pairwise
   # contrasts (difference = earlier mean_deviation - later, with the range across the declared spans, not
   # a sampling interval). A change is claimed only when the contrast range cannot contain zero. Direction
   # follows the outcome's own direction, never a president. The first span shows the start marker.
-  heads: ["Tenure", "Party", "Points", "Deviation, range across spans", "Change vs the president before"]
+  heads: ["Tenure", "Party", "Points", "Comparison with the president before", "Change"]
   change_first: "start"
+  change_none: "no earlier span"
   change_neutral: "no change, neutral"
   change_good: "change, good"
   change_bad: "change, bad"
-  change_vs: "vs {previous}: {label} ({delta})"
+  change_vs: "vs {previous}: {delta} [{range}]"
   contrast_heading: "Largest pairwise contrast"
   refused: "Too few native observations to describe a deviation."
 

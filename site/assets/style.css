@@ -502,10 +502,8 @@ figure.state-dose > .tenure-strip { opacity: 0; pointer-events: none; }
 .chart-figure .grouping-control label.is-muted { opacity: .45; cursor: not-allowed; }
 .chart-figure .grouping-control label.is-muted input { cursor: not-allowed; }
 
-/* The three-line guest explainer under every trend table: quiet, plain, answers the one question the
-   numbers invite (is that range a confidence interval? no). */
-.explainer { margin: .55rem 0 .2rem; padding-left: 1.1rem; }
-.explainer li { font-size: .86rem; color: var(--ink-soft); margin-bottom: .18rem; }
+/* The short findings paragraph under every trend table: plain, quiet, one reading. */
+.findings { font-size: .88rem; color: var(--ink-soft); margin: .55rem 0 .2rem; }
 .blocker { font-size: .87rem; color: var(--ink-faint); margin-top: .35rem; }
 .plain p { font-size: .98rem; }
 .plain p:first-child { font-family: var(--serif); font-size: 1.06rem; }

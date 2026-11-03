@@ -1106,51 +1106,71 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
         low, high = t["deviation_range"]
         mean = t["mean_deviation"]
         if prev is None:
+            compare = copy["change_none"]
             change = copy["change_first"]
         else:
             pair = contrasts.get(frozenset((prev["president"], t["president"])))
             if pair is not None:
-                # delta is current minus previous; the contrast stores earlier minus later.
-                delta = -pair["difference"] if pair["a"] == prev["president"] else pair["difference"]
-                diff_low, diff_high = pair["range"]
+                # delta is current minus previous; the contrast stores earlier minus later, and its range
+                # is on the same earlier-minus-later scale, so both are flipped together to match.
+                if pair["a"] == prev["president"]:
+                    delta = -pair["difference"]
+                    diff_low, diff_high = -pair["range"][1], -pair["range"][0]
+                else:
+                    delta = pair["difference"]
+                    diff_low, diff_high = pair["range"]
             else:
                 delta = mean - prev["mean"]
                 diff_low, diff_high = low - prev["high"], high - prev["low"]
+            compare = fill_text(copy["change_vs"], {
+                "previous": prev["president"].split()[-1],
+                "delta": f"{delta:+.2f}",
+                "range": f"{diff_low:+.2f} \u2026 {diff_high:+.2f}",
+            })
             if diff_low <= 0 <= diff_high:
                 change = copy["change_neutral"]
-                neutral.append(f"{t['president'].split()[-1]} vs {prev['president'].split()[-1]}")
+                neutral.append({"previous": prev["president"].split()[-1],
+                                "name": t["president"].split()[-1]})
             elif delta * good_sign > 0:
                 change = copy["change_good"]
-                changed.append(f"{t['president'].split()[-1]} vs {prev['president'].split()[-1]}, good")
+                changed.append({"previous": prev["president"].split()[-1],
+                                "name": t["president"].split()[-1], "good": True})
             else:
                 change = copy["change_bad"]
-                changed.append(f"{t['president'].split()[-1]} vs {prev['president'].split()[-1]}, bad")
-            change = fill_text(copy["change_vs"], {
-                "previous": prev["president"].split()[-1],
-                "label": change,
-                "delta": f"{delta:+.2f}",
-            })
+                changed.append({"previous": prev["president"].split()[-1],
+                                "name": t["president"].split()[-1], "good": False})
         body_rows.append(
             f"<tr><td>{html.escape(t['president'])}</td><td>{html.escape(t['party'])}</td>"
             f"<td class='num'>{t['n_native']}</td>"
-            f"<td class='num'>{low:+.2f} &hellip; {high:+.2f}</td>"
+            f"<td class='num'>{html.escape(compare)}</td>"
             f"<td class='num'>{html.escape(change)}</td></tr>")
         prev = {"president": t["president"], "low": low, "high": high, "mean": mean}
     body = "".join(body_rows)
     unit = outcome.get("unit")
 
-    # What this table found, in three plain lines.
+    # What this table found, as one short paragraph for a reader meeting it cold.
     furthest = max(described, key=lambda t: abs(t["mean_deviation"]))
     side = copy["side_above"] if furthest["mean_deviation"] > 0 else copy["side_below"]
-    findings = [fill_text(copy["finding_furthest"], {
+    finding = [fill_text(copy["finding_furthest"], {
         "president": furthest["president"],
         "value": f"{abs(furthest['mean_deviation']):.2f}",
         "side": side,
     }).replace("  ", " ")]
-    findings.append(fill_text(copy["finding_changes"], {"items": copy["finding_join"].join(changed)})
-                    if changed else copy["finding_no_changes"])
+    if changed:
+        items = copy["finding_join"].join(
+            fill_text(copy["finding_item"], {
+                "name": item["name"],
+                "previous": item["previous"],
+                "direction": copy["finding_better"] if item["good"] else copy["finding_worse"],
+            }) for item in changed)
+        finding.append(fill_text(copy["finding_changes"], {"items": items}))
+    else:
+        finding.append(copy["finding_no_changes"])
     if neutral:
-        findings.append(fill_text(copy["finding_neutral"], {"items": copy["finding_join"].join(neutral)}))
+        finding.append(copy["finding_join"].join(
+            fill_text(copy["finding_neutral"], {"previous": item["previous"], "name": item["name"]})
+            for item in neutral))
+    findings_para = " ".join(finding)
     contrast = ""
     if row["contrasts"]:
         best = max(row["contrasts"], key=lambda c: abs(c["difference"]))
@@ -1158,12 +1178,11 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
                     f"{html.escape(best['reading'])}.</p>")
     unit = outcome.get("unit")
     unit_tag = f" <span class='tech'>({html.escape(unit)})</span>" if unit else ""
-    findings_html = "".join(f"<li>{html.escape(line)}</li>" for line in findings)
     return f"""<section class="tenure">
   <h3>{html.escape(copy['heading'])}{unit_tag}</h3>
   <p class="tech">{html.escape(copy['note'])}</p>
   <table class="deviation-table"><thead><tr>{heads}</tr></thead><tbody>{body}</tbody></table>
-  <ul class="tight explainer">{findings_html}</ul>
+  <p class="findings">{html.escape(findings_para)}</p>
   {contrast}
 </section>"""
 

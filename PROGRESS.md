@@ -211,6 +211,17 @@ neutral. Wording declared in `guide.yml` (`finding_furthest`, `finding_changes`,
 *Furthest from the trend: Yar'Adua, averaging 17.44 below it. Registered changes: Yar'Adua vs Obasanjo,
 good; Jonathan vs Yar'Adua, bad. No clear change: Buhari vs Jonathan.* `verify_site` green.
 
+**Contrast in the table, findings in a paragraph.** Following the requester's note, the trend table now shows
+the president-vs-president contrast and its range in place of the deviation range: columns are
+Tenure | Party | Points | Comparison with the president before | Change, and a row reads
+*"vs Jonathan: +2.90 [−4.48 … +6.65]"* next to *no change, neutral*. The range is flipped with the
+difference so its sign matches the direction being shown (current minus previous). The findings below the
+table are now a single short paragraph for a first-time reader, e.g. *"Furthest from the trend: Yar'Adua,
+averaging 17.44 below it. Across all settings, Yar'Adua better than Obasanjo; Jonathan worse than Yar'Adua.
+The move from Jonathan to Buhari is not consistent across settings, so it is neutral."* Declared templates
+in `guide.yml` (`change_vs`, `finding_*`), rendered from the rows and the artifact contrasts. `verify_site`
+green.
+
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
 is **estimated, not identified**: four windows, rank p 0.17–0.50, and a pre-fit gate that turned out not to
