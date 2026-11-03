@@ -132,12 +132,14 @@ Multi-select of the 12 outcomes grouped Health / Education / Security / Economy,
 direction and coverage word. One caption under the list: 4,008 outcome-months, 764 observed, 1,826 filled in
 between, 1,418 with nothing. Next is disabled until something is chosen, and says why.
 
-### Screen 2 — What this data can tell you · `/compare/?outcomes=<ids>`
+### Screen 2 — What gets compared · `/compare/?outcomes=<ids>`
 
 One row per chosen outcome, left to right: plain label (term in brackets) → **the comparison the app chose**, in
-plain words, with design id → status word (*usable* / *usable with a warning* / *the check it needed failed* /
-*not attempted*) → one sentence on what that comparison assumes → the reason and next step where there is no
-usable design, with the two reader choices from D-09.
+plain words, with design id, folded together with the one sentence on what it assumes → status word riding
+inline (*usable* / *usable with a warning* / *the check it needed failed* / *not attempted*) → the reason where
+there is no usable design, with the two reader choices from D-09. No intro of its own and no pointer to the
+next screen — the heading says what the screen is and the Next button says where it goes; nothing a reader
+reads twice on separate screens.
 
 **The tenure paragraph appears once, at the top of this screen**, not per row.
 

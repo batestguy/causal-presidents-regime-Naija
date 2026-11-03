@@ -35,8 +35,8 @@ DIST = REPO_ROOT / "site" / "dist"
 
 # A-01, in two steps: a design that published a number for this outcome comes first (with its verdict and the
 # check that decided it), then the declared Stage 5 order `pass` > `degraded` > `fail` > `not_attempted`. Ranking
-# on status alone would put a `degraded` Design B — whose result is about the national money channel, not about
-# the outcome on the card — ahead of the one design that published a number for the outcome itself.
+# on status alone would put a `degraded` Design B, whose result is about the national money channel, not about
+# the outcome, on the card, ahead of the one design that published a number for the outcome itself.
 RANK = {"pass": 0, "degraded": 1, "fail": 2, "not_attempted": 3}
 DOMAIN_ORDER = ("health", "education", "security", "economy")
 PAGES = ("index.html", "study/index.html", "compare/index.html", "graph/index.html",
@@ -138,7 +138,7 @@ def party_emblem(code: str) -> str:
 
 
 def load_glossary(root: Path) -> dict[str, str]:
-    """The plain-language meanings, straight from `docs/glossary.md` — never retyped here."""
+    """The plain-language meanings, straight from `docs/glossary.md`, never retyped here."""
     path = root / "docs" / "glossary.md"
     entries: dict[str, str] = {}
     if not path.exists():
@@ -237,6 +237,17 @@ def build_context(root: Path) -> dict:
             })
 
         chosen = sorted(choices, key=lambda c: (0 if c["has_number"] else 1, RANK[c["status"]]))[0]
+        # The four kinds a card can be, decided by what the card has rather than by where it is shown: a
+        # published coefficient and its interval; a design that ran and was not identified; a result that
+        # is about the money channel; or a declared gap. Every flow screen shapes the card on this.
+        if chosen["has_number"]:
+            kind = "number"
+        elif chosen["reason_code"] == "design_estimated_not_identified":
+            kind = "described"
+        elif chosen["reason_code"] == "design_result_is_channel_level":
+            kind = "channel"
+        else:
+            kind = "gap"
         design = next(d for d in index["designs"] if d["id"] == chosen["design"])
         chosen_card = cards[(oid, chosen["design"])][1]
         labels = {node["id"]: node.get("label") or node["id"] for node in chosen_card.get("nodes") or []}
@@ -247,6 +258,7 @@ def build_context(root: Path) -> dict:
         verdict = estimate.get("verdict") or {}
 
         plain = []
+        numbers = None
         if spec:
             numbers = {
                 "coefficient": signed(spec["coefficient"]),
@@ -305,6 +317,7 @@ def build_context(root: Path) -> dict:
                 **{k: chosen[k] for k in ("status", "word", "tone", "sentence", "has_number",
                                           "reason_code", "reason_detail", "blocker",
                                           "published_result", "assumption")},
+                "kind": kind,
                 "reason_sentence": term(guide, "reasons", chosen["reason_code"], "sentence")
                 if chosen["reason_code"] in guide.get("reasons", {}) else None,
             },
@@ -330,10 +343,12 @@ def build_context(root: Path) -> dict:
             "estimate": {
                 "has_number": bool(spec),
                 "plain": plain,
+                "numbers": numbers if spec else None,
                 "spec": spec,
                 "verdict": verdict,
                 "status_word": chosen["word"],
                 "tone": chosen["tone"],
+                "kind": kind,
                 "reason_code": chosen["reason_code"],
                 "reason_sentence": term(guide, "reasons", chosen["reason_code"], "sentence")
                 if chosen["reason_code"] in guide.get("reasons", {}) else None,
@@ -647,12 +662,20 @@ def event_strip(ctx: dict, key: str) -> str:
 
 
 NAV_LABELS: dict[str, str] = {}
+# Set in main(): the registry vintage and the build time, used to version the asset URLs so a rebuild is
+# never served stale from a reader's browser cache.
+BUILD_VINTAGE = "vintage-set-by-main"
+BUILD_STAMP = 0
+ASSET_STAMP = "0"
 
 
 def page(title: str, depth: int, body: str, data: dict | None = None, wide: bool = False,
          nav_active: str = "") -> str:
     prefix = "../" * depth
     home = prefix or "./"
+    # Asset URLs carry the registry vintage and the build time, so every rebuild ships new behaviour and
+    # styles and no browser serves last build's script to a reader who hard-refreshes the page only.
+    stamp = ASSET_STAMP
     payload = ""
     if data is not None:
         payload = ('<script id="page-data" type="application/json">'
@@ -671,20 +694,20 @@ def page(title: str, depth: int, body: str, data: dict | None = None, wide: bool
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(title)}</title>
-<link rel="stylesheet" href="{prefix}assets/style.css">
+<link rel="stylesheet" href="{prefix}assets/style.css?v={stamp}">
 </head>
 <body data-page="{html.escape(title)}"{' class="wide-page"' if wide else ''}>
 {nav}
 {body}
 {payload}
-<script src="{prefix}assets/app.js" defer></script>
+<script src="{prefix}assets/app.js?v={stamp}" defer></script>
 </body>
 </html>
 """
 
 
 # ------------------------------------------------------------------------------------------------------------
-# Cover — large photographs, moving horizontally
+# Cover: large photographs, moving horizontally
 # ------------------------------------------------------------------------------------------------------------
 def render_cover(ctx: dict) -> str:
     guide = ctx["guide"]
@@ -812,7 +835,7 @@ def flow_page(ctx: dict, key: str, title: str, heading: str, intro: str, note: s
     {steps_html(guide, key)}
     <p class="eyebrow"><a href="../">Causal Presidents</a> · {step_counter(guide, key)}</p>
     <h1>{html.escape(heading)}</h1>
-    <p class="caption">{html.escape(intro)}</p>
+    {f'<p class="caption">{html.escape(intro)}</p>' if intro else ''}
     {f'<p class="note">{md(note)}</p>' if note else ''}
     {extra_head}
   </header>
@@ -828,9 +851,10 @@ def flow_page(ctx: dict, key: str, title: str, heading: str, intro: str, note: s
     return page(title, 1, body, data={"outcomes": [o["id"] for o in ctx["outcomes"]]}, wide=wide)
 
 
-def outcome_shell(outcome: dict, inner: str, tone: str | None = None) -> str:
+def outcome_shell(outcome: dict, inner: str, tone: str | None = None, kind: str | None = None) -> str:
     tone_class = f" tone-{tone}" if tone else ""
-    return f"""<article class="block{tone_class}" data-outcome="{outcome['id']}" hidden>
+    kind_class = f" kind-{kind}" if kind else ""
+    return f"""<article class="block{tone_class}{kind_class}" data-outcome="{outcome['id']}" hidden>
   <header class="block-head">
     <h2>{html.escape(outcome['label'])}</h2>
   </header>
@@ -839,7 +863,7 @@ def outcome_shell(outcome: dict, inner: str, tone: str | None = None) -> str:
 
 
 # ------------------------------------------------------------------------------------------------------------
-# Screen 1 — study
+# Screen 1: study
 # ------------------------------------------------------------------------------------------------------------
 def render_study(ctx: dict) -> str:
     guide = ctx["guide"]
@@ -854,7 +878,7 @@ def render_study(ctx: dict) -> str:
   <label>
     <input type="checkbox" name="outcome" value="{o['id']}" id="pick-{o['id']}">
     <span class="choice-label">{html.escape(o['label'])} <span class="choice-plain">({html.escape(plain_gloss(guide, o['id']))})</span></span>
-    <span class="choice-meta">{html.escape(o['unit'])} · {html.escape(o['direction'])} · {html.escape(o['coverage'])} ({html.escape(o['coverage_note'])})</span>
+    <span class="choice-meta">{html.escape(o['unit'])} · {html.escape(o['direction'])} · {html.escape(o['coverage'])}</span>
   </label>
 </li>"""
             for o in rows)
@@ -868,6 +892,12 @@ def render_study(ctx: dict) -> str:
     <label for="domain-select">{html.escape(study['category_label'])}</label>
     <select id="domain-select" name="domain">{options}</select>
   </div>"""
+    # The coverage words are explained once, on a legend line, rather than nine or twelve times in the option
+    # meta: the row carries the word, the legend carries what the word means. Both still read from the keys,
+    # so the legend cannot drift from the rows.
+    legend = " · ".join(
+        f"{html.escape(term(guide, 'coverage', k))} ({html.escape(term(guide, 'coverage_note', k))})"
+        for k in ("ok", "partial", "declared_gap"))
     body = f"""<main class="flow">
   {event_strip(ctx, "study")}
   <header class="flow-head">
@@ -875,6 +905,7 @@ def render_study(ctx: dict) -> str:
     <p class="eyebrow"><a href="../">Causal Presidents</a> · {step_counter(guide, "study")}</p>
     <h1>{html.escape(study['heading'])}</h1>
     <p class="caption">{html.escape(study['intro'])}</p>
+    <p class="note">Coverage: {legend}</p>
   </header>
 {picker}
   <div class="domains">{''.join(sections)}</div>
@@ -890,7 +921,7 @@ def render_study(ctx: dict) -> str:
 
 
 # ------------------------------------------------------------------------------------------------------------
-# Screen 2 — the comparison the app chose
+# Screen 2: the comparison the app chose
 # ------------------------------------------------------------------------------------------------------------
 def render_compare(ctx: dict) -> str:
     guide = ctx["guide"]
@@ -898,29 +929,33 @@ def render_compare(ctx: dict) -> str:
     blocks = []
     for outcome in ctx["outcomes"]:
         c = outcome["compare"]
-        # Short on purpose: the pill says how far the comparison can be trusted, the bold line says what it
-        # compares, the assumption says what it needs, and one line follows — the published number's pointer,
-        # or the plain reason there is none. The unit, direction and coverage are on the study screen; the
-        # reason code, the blocker and the detail are on the estimate screen. Nothing is repeated here.
-        if c["has_number"]:
-            tail = (f'<p class="reason"><strong>{html.escape(compare["number_label"])}:</strong> '
-                    f'{html.escape(compare["number_note"])}.</p>')
-        elif c["reason_sentence"]:
+        # The card's shape follows its kind, because the four kinds say different things at a glance: a
+        # card with a published number carries a pointer chip to it; a card whose design ran but found
+        # nothing solid reads as a dashed absence; a channel card wears the channel chip; a declared gap
+        # is visibly a hole. One sentence still carries comparison and assumption, the pill rides inline,
+        # and a line follows only where the reason is the content.
+        chip = ""
+        if c["kind"] == "number":
+            chip = f'<span class="stamp stamp-ahead">{html.escape(compare["number_chip"])}</span>'
+        elif c["kind"] == "described":
+            chip = f'<span class="stamp stamp-absent">{html.escape(compare["no_number_stamp"])}</span>'
+        elif c["kind"] == "channel":
+            chip = f'<span class="stamp stamp-channel">{html.escape(compare["channel_chip"])}</span>'
+        elif c["kind"] == "gap":
+            chip = f'<span class="stamp stamp-gap">{html.escape(compare["gap_stamp"])}</span>'
+        tail = ""
+        if c["kind"] != "number" and c["reason_sentence"]:
             tail = f'<p class="reason">{html.escape(c["reason_sentence"])}</p>'
-        else:
-            tail = ""
         inner = f"""
-  <p class="chosen"><strong>{c['design']} — {html.escape(c['design_short'])}</strong>: {html.escape(c['plain'])}.</p>
-  <p class="assumes">Assumes {html.escape(c['assumes'])}.</p>
-  <p class="status-line"><span class="pill {c['tone']}">{html.escape(c['word'])}</span></p>
+  <p class="chosen"><strong>{c['design']} · {html.escape(c['design_short'])}</strong>: {html.escape(c['plain'])}, assuming {html.escape(c['assumes'])}. <span class="pill {c['tone']}">{html.escape(c['word'])}</span>{chip}</p>
   {tail}"""
-        blocks.append(outcome_shell(outcome, inner, tone=c["tone"]))
-    return flow_page(ctx, "compare", "What this data can tell you", compare["heading"], compare["intro"],
-                     None, "".join(blocks), back="study", forward="graph")
+        blocks.append(outcome_shell(outcome, inner, tone=c["tone"], kind=c["kind"]))
+    return flow_page(ctx, "compare", "What gets compared", compare["heading"],
+                     "", None, "".join(blocks), back="study", forward="graph")
 
 
 # ------------------------------------------------------------------------------------------------------------
-# Screen 3 — the assumption, drawn
+# Screen 3: the assumption, drawn
 # ------------------------------------------------------------------------------------------------------------
 def render_graph(ctx: dict) -> str:
     guide = ctx["guide"]
@@ -934,14 +969,14 @@ def render_graph(ctx: dict) -> str:
         alternatives = "".join(
             f"""<details class="alt">
   <summary><span class="pill {a['tone']}">{html.escape(a['word'])}</span>
-    {a['design']} — {html.escape(a['design_name'])}
+    {a['design']} · {html.escape(a['design_name'])}
   </summary>
   <p class="assumes">{html.escape(a['assumption'] or 'not stated')}</p>
   <img class="graph" src="../{a['svg']}" alt="Assumed causal graph for {html.escape(outcome['label'])} under Design {a['design']}">
 </details>"""
             for a in g["alternatives"])
         inner = f"""
-  <p class="chosen"><strong>{g['design']} — {html.escape(g['design_name'])}</strong></p>
+  <p class="chosen"><strong>{g['design']} · {html.escape(g['design_name'])}</strong></p>
   <figure class="graph-figure">
     <img class="graph" src="../{g['svg']}" alt="Assumed causal graph for {html.escape(outcome['label'])} under Design {g['design']}">
   </figure>
@@ -971,7 +1006,7 @@ def render_graph(ctx: dict) -> str:
 
 
 # ------------------------------------------------------------------------------------------------------------
-# Screen 4 — the estimate, in plain words
+# Screen 4: the estimate, in plain words
 # ------------------------------------------------------------------------------------------------------------
 def render_estimates(ctx: dict) -> str:
     guide = ctx["guide"]
@@ -979,46 +1014,68 @@ def render_estimates(ctx: dict) -> str:
     blocks = []
     for outcome in ctx["outcomes"]:
         e = outcome["estimate"]
-        if e["has_number"]:
+        pointer = ('<p class="blocker">What this design found is on the '
+                   '<a href="../designs/">design-level results</a> page.</p>'
+                   if e["published_result"] else "")
+        # The expander carries the technique, not the bookkeeping: the artifact path and the rows that
+        # merely repeat the card's own header stay out. Provenance lives once, on the methodology page.
+        provenance_keys = {"artifact", "spec_index", "design", "outcome"}
+        if e["kind"] == "number":
             spec = e["spec"]
-            plain = "".join(f"<p>{html.escape(line)}</p>" for line in e["plain"])
+            n = e["numbers"]
+            # The published card leads with the number itself; the interval rides beside it as its
+            # qualifier, the sample keeps the footing, and the verdict and the check that decided it
+            # carry the honesty layer under the figure, not after it.
+            them = "".join(f"<p>{html.escape(line)}</p>" for line in e["plain"][1:])
             channel = (f'<p class="channel-note">{html.escape(results["channel_note"])}</p>'
                        if e["channel_level"] else "")
             rows = "".join(
                 f"<li><span class='k'>{html.escape(key.replace('_', ' '))}</span>"
                 f"<span class='v'>{html.escape(str(value))}</span></li>"
-                for key, value in spec.items() if value is not None)
+                for key, value in spec.items()
+                if value is not None and key not in provenance_keys)
             inner = f"""
   <p class="status-line"><span class="pill {e['tone']}">{html.escape(e['status_word'])}</span></p>
-  <div class="plain">{plain}</div>
+  <p class="num-hero"><span class="figure">{html.escape(n['coefficient'])}</span>
+  <span class="qual">95 % interval from {html.escape(n['ci_low'])} to {html.escape(n['ci_high'])} ·
+  p = {html.escape(n['p_value'])}</span></p>
+  <div class="plain">{them}</div>
   {channel}
   <details class="technical">
     <summary>{html.escape(results['expander'])}</summary>
     <ul class="spec-list">{rows}</ul>
   </details>"""
-        else:
-            pointer = (f'<p class="blocker">The design\'s own result is published once, at '
-                       f'<a href="../designs/">the design-level results</a> '
-                       f'(<code>{html.escape(e["published_result"])}</code>). It is not an estimate for this outcome.</p>'
-                       if e["published_result"] else "")
-            detail = f'<p class="blocker">{html.escape(e["reason_detail"])}</p>' if e["reason_detail"] else ""
+        elif e["kind"] == "described":
+            # The design ran and was not identified: the card reads as an honest absence, dashed, with its
+            # one sentence and the pointer to where the gap windows and placebos actually live.
             inner = f"""
-  <p class="status-line"><span class="pill {e['tone']}">{html.escape(e['status_word'])}</span></p>
-  <div class="plain">
-    <p>{html.escape(fill_text(results['no_number'], {'reason_sentence': e['reason_sentence'] or ''}))}</p>
-    {f'<p class="reason"><code>{html.escape(e["reason_code"])}</code></p>' if e['reason_code'] else ''}
-  </div>
-  {detail}
+  <p class="status-line"><span class="pill {e['tone']}">{html.escape(e['status_word'])}</span>
+  <span class="stamp stamp-absent">{html.escape(results['no_number_stamp'])}</span></p>
+  <p class="reason">{html.escape(e['reason_sentence'])}</p>
   {pointer}"""
-        blocks.append(outcome_shell(outcome, inner, tone=e["tone"]))
+        elif e["kind"] == "channel":
+            # The design's number is about the money channel: a chip names it once, the sentence says why
+            # no outcome number follows, and the pointer hands the reader to the design-level results.
+            inner = f"""
+  <p class="status-line"><span class="pill {e['tone']}">{html.escape(e['status_word'])}</span>
+  <span class="stamp stamp-channel">{html.escape(results['channel_chip'])}</span></p>
+  <p class="reason">{html.escape(e['reason_sentence'])}</p>
+  {pointer}"""
+        else:
+            # A declared gap: the outcome has no series here, which is an absence of data, not a finding
+            # of zero. The stamp says so before the reason does.
+            inner = f"""
+  <p class="status-line"><span class="pill {e['tone']}">{html.escape(e['status_word'])}</span>
+  <span class="stamp stamp-gap">{html.escape(results['gap_stamp'])}</span></p>
+  <p class="reason">{html.escape(e['reason_sentence'] or e['reason_detail'] or "")}</p>
+  {pointer}"""
+        blocks.append(outcome_shell(outcome, inner, tone=e["tone"], kind=e["kind"]))
     return flow_page(ctx, "estimates", results["heading"], results["heading"],
-                     "Plain reading first; the number with its interval, its verdict and the check that decided "
-                     "it; the technical version folded away.", None, "".join(blocks),
-                     back="graph", forward="chart")
+                     "", None, "".join(blocks), back="graph", forward="chart")
 
 
 # ------------------------------------------------------------------------------------------------------------
-# Screen 5 — the chart, described
+# Screen 5: the chart, described
 # ------------------------------------------------------------------------------------------------------------
 def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
     """Stage 8g: the outcome's deviation from a tenure-blind trend, and the largest pairwise contrast."""
@@ -1031,12 +1088,33 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
                 f"<p class='blocker'>{html.escape(copy['refused'])} "
                 f"({row['n_native']} native observations).</p></section>")
     described = [t for t in row["tenures"] if t["status"] == "described"]
-    body = "".join(
-        f"<tr><td>{html.escape(t['president'])}</td><td>{html.escape(t['party'])}</td>"
-        f"<td class='num'>{t['n_native']}</td>"
-        f"<td class='num'>{t['deviation_range'][0]:+.2f} &hellip; {t['deviation_range'][1]:+.2f}</td></tr>"
-        for t in described)
+    # The change column compares each span's deviation with the one before. A change is only claimed when
+    # the difference of the two spans' ranges cannot contain zero; good and bad follow the outcome's own
+    # direction (a "lower is better" outcome moves good when the deviation falls), never the president.
+    good_sign = 1 if outcome.get("direction", "").startswith("higher") else -1
     heads = "".join(f"<th>{html.escape(h)}</th>" for h in copy["heads"])
+    body_rows = []
+    prev = None
+    for t in described:
+        low, high = t["deviation_range"]
+        mid = (low + high) / 2
+        if prev is None:
+            change = copy["change_first"]
+        else:
+            diff_low, diff_high = low - prev["high"], high - prev["low"]
+            if diff_low <= 0 <= diff_high:
+                change = copy["change_neutral"]
+            elif (mid - prev["mid"]) * good_sign > 0:
+                change = copy["change_good"]
+            else:
+                change = copy["change_bad"]
+        body_rows.append(
+            f"<tr><td>{html.escape(t['president'])}</td><td>{html.escape(t['party'])}</td>"
+            f"<td class='num'>{t['n_native']}</td>"
+            f"<td class='num'>{low:+.2f} &hellip; {high:+.2f}</td>"
+            f"<td class='num'>{html.escape(change)}</td></tr>")
+        prev = {"low": low, "high": high, "mid": mid}
+    body = "".join(body_rows)
     contrast = ""
     if row["contrasts"]:
         best = max(row["contrasts"], key=lambda c: abs(c["difference"]))
@@ -1065,13 +1143,13 @@ def band_geometry(svg_path: Path) -> list[dict]:
     The bands are drawn by R from the base's half-open administration spans and clipped to the panel's window
     (`analysis/R/08_comparisons.R::tenure_bands`). Re-deriving them here from dates would be a second
     computation of the same fact, and the two would eventually disagree about where a band starts. So the
-    shaded rects are read back out of the published SVG — the top panel's, which is the party-by-tenure panel
-    that spans the whole window — and those coordinates are the same space the `<img>` is scaled into.
+    shaded rects are read back out of the published SVG (the top panel's, the party-by-tenure panel
+    that spans the whole window), and those coordinates are the same space the `<img>` is scaled into.
     """
     text = svg_path.read_text(encoding="utf-8")
     view = re.search(r"viewBox='0 0 ([\d.]+) ", text)
     if not view:
-        raise SystemExit(f"{svg_path}: no viewBox — the strip cannot be aligned to it")
+        raise SystemExit(f"{svg_path}: no viewBox, so the strip cannot be aligned to it")
     width = float(view.group(1))
     shaded = []
     for rect in re.findall(r"<rect[^>]*>", text):
@@ -1101,7 +1179,7 @@ def tenure_strip(ctx: dict, svg_path: Path, prefix: str) -> str:
     if len(bands) != len(admins):
         raise SystemExit(
             f"{svg_path.name}: {len(bands)} administration band(s) in the figure against "
-            f"{len(admins)} in the tenure seed — the strip cannot be paired without guessing"
+            f"{len(admins)} in the tenure seed, so the strip cannot be paired without guessing"
         )
     cells = []
     for band, admin in zip(bands, admins):
@@ -1148,12 +1226,28 @@ def render_chart(ctx: dict) -> str:
             else:
                 lists.append(f"<div class='group-list' data-grouping='{key}' hidden><p class='blocker'>No state "
                              f"grouping is declared for this outcome.</p></div>")
+        # The comparison artifact draws both groupings in one tall figure (two stacked panels). When the
+        # outcome carries both, the grouping radio turns the figure into a window that slides between the
+        # panels, so the same click that switches the numbers list moves the picture: the panels' own split
+        # point is read out of the published SVG rather than guessed.
+        figure_path = REPO_ROOT / "registry" / "comparisons" / ctx["vintage"] / "figures" / f"{outcome['id']}.svg"
+        split = ""
+        if chart["has_state"] and figure_path.exists():
+            svg_text = figure_path.read_text(encoding="utf-8", errors="replace")
+            plain_second = guide["groupings"]["state_dose_quartile"]["plain"]
+            y_match = re.search(rf"<text[^>]*y='([0-9.]+)'[^>]*>[^<]*{re.escape(plain_second)}", svg_text)
+            box_match = re.search(r"viewBox='[-0-9.]+ [-0-9.]+ [0-9.]+ ([0-9.]+)'", svg_text)
+            if y_match and box_match:
+                y2, height = float(y_match.group(1)), float(box_match.group(1))
+                if height and 0 < y2 < height:
+                    split = f' data-split="{max(0.2, (y2 - 8) / height):.4f}"'
         inner = f"""
   <p class="chosen">{html.escape(chart['caption'] or '')}</p>
   <figure class="chart-figure">
-    {tenure_strip(ctx, REPO_ROOT / "registry" / "comparisons" / ctx["vintage"] / "figures" / f"{outcome['id']}.svg", "../")}
-    <img class="chart" src="../{chart['figure']}" alt="Outcome series grouped for {html.escape(outcome['label'])}">
-    <figcaption>{html.escape(guide['chart']['stamp'])}. {html.escape(guide['results']['stamp_note'])}</figcaption>
+    {tenure_strip(ctx, figure_path, "../")}
+    <div class="panel-window"{split}>
+      <img class="chart" src="../{chart['figure']}" alt="Outcome series grouped for {html.escape(outcome['label'])}">
+    </div>
   </figure>
   <h3>{html.escape(guide['results']['groups_heading'])}</h3>
   {''.join(lists)}
@@ -1172,14 +1266,14 @@ def render_chart(ctx: dict) -> str:
                    f'<ul class="credit-list">{items}</ul></details>')
 
     return flow_page(ctx, "chart", "The comparison, drawn", guide["labels"]["chart_heading"],
-                     "Two ways to look at the same outcome: by who was in power, and — where the outcome is "
-                     "measured state by state — by how much money a state received.", None,
-                     "".join(blocks) + credits,
+                     "Two ways to look at the same outcome: by who was in power, and by how much money a "
+                     "state received, where the outcome is measured state by state.",
+                     guide["results"]["stamp_note"], "".join(blocks) + credits,
                      back="estimates", forward="ask", extra_head=extra_head, wide=True)
 
 
 # ------------------------------------------------------------------------------------------------------------
-# Screen 6 — ask the corpus, in the browser
+# Screen 6: ask the corpus, in the browser
 # ------------------------------------------------------------------------------------------------------------
 def render_ask(ctx: dict) -> str:
     guide = ctx["guide"]
@@ -1212,12 +1306,12 @@ def render_ask(ctx: dict) -> str:
   </footer>
   <p class="vintage">Registry vintage {ctx['vintage']}</p>
 </main>
-<script type="module" src="../assets/ask.mjs"></script>"""
+<script type="module" src="../assets/ask.mjs?v={ASSET_STAMP}"></script>"""
     return page("Ask the corpus", 1, body, nav_active="ask")
 
 
 # ------------------------------------------------------------------------------------------------------------
-# Screen 6b — the design-level results
+# Screen 6b: the design-level results
 # ------------------------------------------------------------------------------------------------------------
 def render_designs(ctx: dict) -> str:
     """One reader for the three figures Stage 8 published. Not a flow step: it is not per-outcome, so it sits
@@ -1230,7 +1324,7 @@ def render_designs(ctx: dict) -> str:
     def figure(block: dict, alt: str) -> str:
         return f"""<figure class="chart-figure">
     <img class="chart" src="../{block['figure']}" alt="{html.escape(alt)}">
-    <figcaption>{md(block['layout'])} <span class="tech">{html.escape(copy['figure_note'])}</span></figcaption>
+    <figcaption>{md(block['layout'])}</figcaption>
   </figure>"""
 
     a_rows = "".join(f"<li>{html.escape(row['line'])}</li>" for row in d["a"]["rows"])
@@ -1240,7 +1334,7 @@ def render_designs(ctx: dict) -> str:
     not_claimed = "".join(f"<li>{md(claim)}</li>" for claim in d["events"]["not_claimed"])
 
     # Design C publishes its own artifact: a synthetic control has no interval, so its gap cannot be a card
-    # number. The page prints the windows by year — never by name — and the two solvers side by side, because
+    # number. The page prints the windows by year, never by name, and the two solvers side by side, because
     # where they disagree the estimate is a property of the solver and saying so is the point.
     if d["c"]["status"] == "not_run":
         c_section = (f"<h2>{html.escape(copy['not_run_heading'])}</h2>"
@@ -1277,6 +1371,7 @@ def render_designs(ctx: dict) -> str:
     <p class="eyebrow"><a href="../">Causal Presidents</a> · the design-level results</p>
     <h1>{html.escape(copy['heading'])}</h1>
     <p class="caption">{html.escape(copy['intro'])}</p>
+    <p class="note">{html.escape(copy['figure_note'])}</p>
   </header>
 
   <section class="block design-section">
@@ -1333,19 +1428,27 @@ def render_designs(ctx: dict) -> str:
     return page("The design-level results", 1, body)
 
 
+def statement_one(text: str) -> str:
+    """The break's own sentence, without the artifact's appended disclaimer: the page header makes the
+    not-a-claim point once, so eight blocks do not repeat it. Anything with no marker passes through."""
+    marker = "This is a description of the series"
+    cut = text.find(marker)
+    return text[:cut].rstrip() if 0 < cut else text.rstrip()
+
+
 def render_breaks(outcome: dict, ctx: dict, guide: dict) -> str:
     """The changepoint half of the chart screen: when the series changes, and the rule that it is not a cause."""
     copy = guide["changepoint"]
     brk = outcome.get("breaks")
     if not brk:
         return ""
-    head = (f"<h3>{html.escape(copy['heading'])}</h3>"
-            f"<p class='tech'>{html.escape(copy['intro'])}</p>")
+    head = f"<h3>{html.escape(copy['heading'])}</h3>"
     if brk["status"] == "refused" or not brk["figure"]:
-        return (f"<section class='breaks'>{head}<p class='blocker'>{html.escape(copy['refused'])} "
-                f"{html.escape(brk['caption'])}</p></section>")
+        # The artifact's own caption is the refusal text; the site adds nothing further.
+        return (f"<section class='breaks'>{head}"
+                f"<p class='blocker'>{html.escape(brk['caption'])}</p></section>")
     rows = "".join(
-        f"<li><strong>{html.escape(r['month'])}</strong> — {html.escape(r['statement'])}"
+        f"<li><strong>{html.escape(r['month'])}</strong>: {html.escape(statement_one(r['statement']))}"
         + (f" <span class='tech'>({html.escape(copy['timing_note'])})</span>" if r["coincides"] else "")
         + "</li>" for r in brk["rows"])
     return f"""<section class="breaks">
@@ -1353,7 +1456,6 @@ def render_breaks(outcome: dict, ctx: dict, guide: dict) -> str:
   <figure class="chart-figure">
     {tenure_strip(ctx, REPO_ROOT / "registry" / "changepoints" / ctx["vintage"] / "figures" / f"{outcome['id']}.svg", "../")}
     <img class="chart" src="../{brk['figure']}" alt="Outcome series with its declared breaks for {html.escape(outcome['label'])}">
-    <figcaption>{html.escape(guide['chart']['stamp'])}. {html.escape(copy['note'])}</figcaption>
   </figure>
   <p class="chosen">{html.escape(brk['caption'])}</p>
   <ul class="tight">{rows}</ul>
@@ -1428,6 +1530,17 @@ def render_methodology(ctx: dict) -> str:
         sections.append("".join(parts))
 
     references = "".join(f"<li>{mark_doi(ref)}</li>" for ref in m["references"])
+    # Provenance lives here, once. Every other reader-facing page names what a number says; this is the one
+    # page that names the file it comes from, and the Technical page a link away is the detailed version.
+    artifacts = sorted({model["artifact"] for model in ctx["models"]})
+    file_rows = "".join(f"<li><code>{html.escape(path)}</code></li>" for path in artifacts)
+    provenance = f"""<section class="method-section provenance" id="where-the-numbers-live">
+  <h2>{html.escape(m['provenance_heading'])}</h2>
+  <p>{html.escape(m['provenance_note'])}</p>
+  <ul class="tight">{file_rows}</ul>
+  <p class="note">{html.escape(m['provenance_link_note']).replace('technical page', '<a href="../technical/">technical page</a>')}</p>
+</section>
+"""
     body = f"""<main class="flow page-method">
   {event_strip(ctx, "methodology")}
   <header class="flow-head">
@@ -1436,7 +1549,7 @@ def render_methodology(ctx: dict) -> str:
     <p class="caption">{html.escape(m['intro'])}</p>
   </header>
   {''.join(sections)}
-  <section class="method-section references">
+{provenance}  <section class="method-section references">
     <h2>{html.escape(m['references_heading'])}</h2>
     <p class="note">{html.escape(m['references_note'])}</p>
     <ol>{references}</ol>
@@ -1490,7 +1603,6 @@ def render_technical(ctx: dict) -> str:
             f"<strong>{html.escape(m['design'])}</strong>", html.escape(m["estimator"]),
             html.escape(m["outcome"]), f"<code>{html.escape(m['treatment'])}</code>",
             html.escape(m["controls"]), html.escape(m["inference"]),
-            f"<code>{html.escape(m['artifact'])}</code>",
         ])
     models = table(t["models"]["columns"], model_rows)
 
@@ -1499,7 +1611,7 @@ def render_technical(ctx: dict) -> str:
         terms = "".join(f"<dt>{mathify(symbol)}</dt><dd>{html.escape(meaning)}</dd>"
                         for symbol, meaning in block["terms"])
         equations.append(
-            f'<section class="equation-block"><h3>{html.escape(block["design"])} — '
+            f'<section class="equation-block"><h3>{html.escape(block["design"])} · '
             f'{html.escape(block["title"])}</h3>'
             f'<pre class="equation">{mathify(block["code"])}</pre>'
             f'<dl class="terms">{terms}</dl></section>')
@@ -1547,8 +1659,12 @@ def render_technical(ctx: dict) -> str:
 
 
 def main() -> int:
+    global BUILD_VINTAGE, BUILD_STAMP, ASSET_STAMP
     ctx = build_context(REPO_ROOT)
     NAV_LABELS.update(ctx["guide"]["nav"])
+    BUILD_VINTAGE = ctx["vintage"]
+    BUILD_STAMP = int(datetime.now(timezone.utc).timestamp())
+    ASSET_STAMP = f"{BUILD_VINTAGE}.{BUILD_STAMP}"
 
     for name in ("", "study", "compare", "graph", "estimates", "chart", "ask", "designs", "about",
                  "methodology", "technical"):
@@ -1632,7 +1748,7 @@ def main() -> int:
         }, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8", newline="\n")
 
-    print(f"built {DIST.relative_to(REPO_ROOT)} — {len(PAGES)} pages, {len(ctx['outcomes'])} outcomes, "
+    print(f"built {DIST.relative_to(REPO_ROOT)}: {len(PAGES)} pages, {len(ctx['outcomes'])} outcomes, "
           f"vintage {ctx['vintage']}")
     return 0
 

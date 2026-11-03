@@ -54,8 +54,8 @@ design_variables:
 
 models:
   heading: "Models"
-  note: "One row per design. The estimator, treatment and outcome strings are read from the committed specs; the artifact column names the file that carries the numbers."
-  columns: ["Design", "Estimator", "Outcome", "Treatment", "Controls", "Inference", "Artifact"]
+  note: "One row per design. The estimator, treatment and outcome strings are read from the committed specs; where each design's numbers are stored is stated once, on the methodology page."
+  columns: ["Design", "Estimator", "Outcome", "Treatment", "Controls", "Inference"]
 
 equations:
   heading: "Mathematical specification"

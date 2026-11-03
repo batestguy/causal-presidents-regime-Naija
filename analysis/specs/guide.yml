@@ -1,4 +1,4 @@
-# The guided flow's wording — declared, not typed into the renderer
+# The guided flow's wording: declared, not typed into the renderer
 #
 # Every sentence, status word and label the site can show lives here, so that the wording is reviewable as a
 # document and the site is not the place where prose is invented. `tests/verify_guide.py` checks coverage both
@@ -49,14 +49,14 @@ outcome_plain:
   primary_completion: "children who finish primary school, as a share of those of the age to be there"
   ner_primary: "children of primary-school age enrolled in primary school, as a share of that age group"
   fatalities: "people killed in reported conflict events, counted"
-  incidents: "reported conflict events, counted — one massacre counts once, whatever the death toll"
+  incidents: "reported conflict events, counted; one massacre counts once, whatever the death toll"
   gdp_growth: "how much the economy grew or shrank over the year, after inflation"
   cpi_yoy: "how fast prices rose over the last year, as a percentage"
   unemp: "people who want work and cannot find it, as a share of the labour force"
 
 study:
   heading: "What do you want to study?"
-  intro: "Pick a category, then an outcome. Where no design can identify a cause, the series still gets a change-point search and a trend reading."
+  intro: "Pick a category, then an outcome. A thin or gappy series still gets a change-point search and a trend reading."
   next: "Next"
   next_disabled: "Pick at least one outcome to continue."
   category_label: "Category"
@@ -67,30 +67,33 @@ study:
     economy: "Economy"
 
 compare:
-  heading: "What this data can tell you"
-  intro: "The comparison the project judged usable for each outcome, and what it assumes."
-  number_label: "Number published"
-  number_note: "the estimate is on the next screen"
-  no_number_label: "No number"
-  closest_label: "The closest thing we have"
-  prototype_note: "Prototype: this page is the second screen only. The graph, estimate and chart screens are specified and not yet built."
+  heading: "What gets compared"
+  # No intro: the heading already says it. Each card is one sentence, the comparison folded together with
+  # the one assumption it leans on plus the trust pill, and only a reason when the card carries no number.
+  # The stamp names the card's kind, so the four kinds (number, described, channel, gap) are visible from
+  # across the room. Where the rest of it lives: unit, direction and coverage on the study screen; the
+  # reason code, the blocker and the detail on the estimate screen; the assumption drawn, on the graph screen.
+  number_chip: "carries a published number"
+  no_number_stamp: "no number here"
+  channel_chip: "about the money channel"
+  gap_stamp: "a declared gap"
 
 designs:
   A:
     name: "State dose-response DiD"
     short: "DiD"
     plain_comparison: "states that got more federal money, against states that got less"
-    assumes: "that nothing else moved high-money and low-money states differently in the same months"
+    assumes: "nothing else moved them differently in the same months"
   B:
     name: "National VECM / ARDL time series"
     short: "Time series"
-    plain_comparison: "the money that reached the states after the oil price moved, against what happened before"
-    assumes: "that nothing else moved that money in the same months"
+    plain_comparison: "the states' money after an oil price move, against the months before"
+    assumes: "nothing else moved that money at the same time"
   C:
     name: "Synthetic control (cross-country)"
     short: "Synthetic control"
     plain_comparison: "Nigeria against a made-up Nigeria built from similar countries"
-    assumes: "that the made-up Nigeria tracks what Nigeria would have done without the change"
+    assumes: "the twin tracks Nigeria without the change"
 
 # Stage 5's card verdicts, in the reader's words. The tone is the colour the page may use.
 status:
@@ -111,14 +114,18 @@ status:
     tone: "bad"
     sentence: "it could not be run for this outcome"
 
-# The registry's closed set of reasons a card carries no number.
+# The registry's closed set of reasons a card carries no number, plus the one reason a card carries no
+# interval: a design may be estimated and still not identified, which is a different reader situation from
+# not being run. The site prints the sentence; the card and the app carry the detail.
 reasons:
+  design_estimated_not_identified:
+    sentence: "The design ran, but it cannot isolate an effect from this data, so there is no number here."
   outcome_series_absent:
     sentence: "There is no usable series to estimate on."
   no_specification_declared:
     sentence: "No specification was declared for this pair, so nothing was estimated."
   outcome_not_at_design_grain:
-    sentence: "The outcome exists, but not at the grain this design needs — for example only nationally, when the design compares states."
+    sentence: "The outcome exists, but not at the grain this design needs: for example only nationally, when the design compares states."
   design_result_is_channel_level:
     sentence: "This design was run, but its result is about the money channel rather than about this outcome."
   design_not_run:
@@ -134,10 +141,10 @@ coverage:
 coverage_note:
   ok: "observed in every period the series claims"
   partial: "some periods are filled in or modelled, not observed"
-  declared_gap: "no data for part of the window — not a zero"
+  declared_gap: "no data for part of the window, not a zero"
 
 # The parties the five administrations belong to, with the colours their Wikipedia infoboxes declare. The site
-# draws these as vertical bands behind each portrait — a declared backdrop, not an endorsement (see
+# draws these as vertical bands behind each portrait, a declared backdrop and not an endorsement (see
 # docs/portraits.md §1, and the override recorded in docs/decisions.md).
 parties:
   PDP:
@@ -171,7 +178,7 @@ labels:
   plain_reading: "What this says in plain words"
   graph_heading: "The assumption, drawn"
   graph_assumption: "The assumption"
-  graph_caption: "The unobserved node is drawn and named rather than omitted. Adjustment sets are computed on the assumed graph, never hand-listed."
+  graph_caption: "The unobserved node is drawn, not omitted; adjustment sets are computed, never hand-listed."
   adjustment_heading: "Adjustment set"
   absent_heading: "Assumed absent"
   cannot_heading: "What this cannot rule out"
@@ -224,41 +231,53 @@ ask:
 
 results:
   heading: "The estimate, in plain words"
-  number: "The published coefficient is {coefficient}, with a 95 % interval from {ci_low} to {ci_high} and p = {p_value}."
-  includes_zero: "That interval includes zero, so this data cannot rule out no effect at all."
-  excludes_zero: "That interval stays on one side of zero."
-  sample: "It rests on {n_obs} observations over {n_units} units, {first_month} to {last_month}."
+  number: "The estimate is {coefficient}, with a 95 % interval from {ci_low} to {ci_high} and p = {p_value}."
+  includes_zero: "The interval includes zero, so no effect stays possible."
+  excludes_zero: "The interval stays on one side of zero."
+  sample: "On {n_obs} observations over {n_units} units, {first_month} to {last_month}."
   verdict: "Verdict: {verdict}."
   failed_check: "The check that decided it: {failed_check}."
-  no_number: "There is no number for this comparison. {reason_sentence}"
+  no_number: "{reason_sentence}"
+  no_number_stamp: "no number here"
+  gap_stamp: "a declared gap, not a zero"
+  channel_chip: "about the money channel"
   channel_note: "The published number is about the national money channel, not about this outcome."
-  tiny_note: "A coefficient of this kind is read as a proportional change: {reading}."
+  tiny_note: "Read as a proportional change: {reading}."
   expander: "The technical version"
   groups_heading: "What each group's average is"
-  stamp_note: "Every chart on this page is a description of the series. None of them is a causal comparison."
+  stamp_note: "Charts describe. Claims live on the estimate screen."
 
 chart:
-  stamp: "description, not a causal comparison"
+  # The old per-figure stamp ("description, not a causal comparison", twice per outcome plus once inside
+  # every published SVG) said the same thing four times per screen. The page header now carries it once,
+  # in short; the artifact figures keep their own printed stamp because they are frozen files.
   observed_mark: "a dot is a month that exists"
   interpolated_mark: "a dotted line is a month filled in between two observations"
 
 changepoint:
   heading: "When the series changes"
-  intro: "A segmented fit on the native observations, with the number of breaks chosen by BIC. It describes the shape of the series and nothing about who was in office."
+  # No per-panel intro, no repeated break disclaimer: the method line under each figure carries the
+  # estimator, and a refusal is the artifact's own caption. One description per figure, no more.
   marker_label: "the series changes here"
-  note: "A break is a description of the series. It is not evidence that a presidency caused it."
-  refused: "No break is fitted for this outcome: it has too few native observations for the search to be meaningful."
   timing_note: "A break within two months of a swearing-in is recorded as timing only."
 
 # Stage 8g - the tenure description (analysis/specs/tenure.yml)
 tenure:
   heading: "Deviation from the long-run trend"
-  note: "Native observations only, against a trend fitted without knowing who was in power. A deviation names a window, not a causal claim about a president."
-  heads: ["Tenure", "Party", "Points", "Deviation, range across spans"]
+  note: "The trend is fitted without ever seeing who was in power: a deviation names a window, not a causal claim."
+  # The change column compares each span with the one before it. A change exists only when the difference
+  # of the two spans' deviation ranges does not overlap zero (the artifact publishes each span's range, so
+  # the difference interval is [low_i - high_prev, high_i - low_prev]); good and bad follow the outcome's
+  # own direction, never a president's.
+  heads: ["Tenure", "Party", "Points", "Deviation, range across spans", "Change from the span before"]
+  change_first: "start"
+  change_neutral: "no change, neutral"
+  change_good: "change, good"
+  change_bad: "change, bad"
   contrast_heading: "Largest pairwise contrast"
   refused: "Too few native observations to describe a deviation."
 
-# Screen 6b — the design-level results. One section per artifact family. Every value below is filled from an
+# Screen 6b: the design-level results. One section per artifact family. Every value below is filled from an
 # artifact field; the templates carry no number of their own.
 design_results:
   heading: "The design-level results"
@@ -266,13 +285,13 @@ design_results:
   figure_note: "The figure is the artifact. If it were one re-fit behind the table, its recorded byte count would no longer match the file."
   verdict_label: "Verdict"
   published_heading: "What was published"
-  row: "{outcome} — {coefficient}, 95 % interval [{interval}], {obs} observations"
+  row: "{outcome}: {coefficient}, 95 % interval [{interval}], {obs} observations"
   channel_outcome: "the national money that reached the states"
   outcome_labels:
     fatalities_civilians: "civilian fatalities (a UCDP item counted inside the security outcome)"
   checks_heading: "The checks that decided it"
   grid_heading: "What the grid found"
-  flip: "{axis} = {level} — {n_opposite} of {n} specifications point the other way"
+  flip: "{axis} = {level}: {n_opposite} of {n} specifications point the other way"
   support: "{n_positive} of {n} specifications are positive, {n_negative} negative, and {n_near_zero} sit inside the near-zero band."
   spread: "Across the grid the coefficient runs from {min} to {max}."
   placebo: "The in-time placebo returns p = {p_value} over {n_draws} shifted alignments."
@@ -282,7 +301,7 @@ design_results:
   next_step: "Next step"
   c_heading: "The synthetic counterfactual"
   c_intro: "{outcomes} outcomes, {estimated} windows estimated against a synthetic Nigeria built from {donors} donor countries; {refused} windows refused by the declared rule, and {identified} survived their placebos. Each outcome is its own fit in its own unit, so a gap of 2 in one is not twice a gap of 1 in another. The bracketed figure is the same problem under a ridge refit: where the two disagree in sign, the estimate belongs to the solver rather than to the data."
-  c_row: "{years} — gap {gap} (ridge {ridge}), placebo p = {p}, {status}"
+  c_row: "{years}: gap {gap} (ridge {ridge}), placebo p = {p}, {status}"
   c_note: "A synthetic control has no sampling distribution, so there is no interval here and none of these gaps is a card number. An outcome whose every window was refused is listed with the reason instead."
   c_refused_outcome: "Every declared window was refused for this outcome: Nigeria's series cannot fill a window of this design's declared length. The card carries the reason."
   transition_heading: "Did anything move at a transition?"
@@ -314,7 +333,7 @@ about:
   heading: "About this project"
   intro: "Causal Presidents is a working paper in the shape of a website: what five administrations and twenty-seven years of Nigerian data can support, and what they cannot."
   paragraphs:
-    - "The site is built from a registry of committed artifacts. Each outcome has a page carrying the comparison the data supports, the assumption it depends on, and the number — or the reason there is none. Nothing is fitted in the browser."
+    - "The site is built from a registry of committed artifacts. Each outcome has a page carrying the comparison the data supports, the assumption it depends on, and the number, or the reason there is none. Nothing is fitted in the browser."
     - "It is written for a reader who will check: journalists, students, policy analysts, and anyone who has been told that a president caused something. Every claim links back to the file that carries it."
     - "The provenance rule is the base spec's. Restricted raw sources are never republished; derived aggregates, code and the model cards are."
   todo_heading: "Still to come"
@@ -375,6 +394,11 @@ methodology:
         - "No forecast: the site publishes what happened, not what will."
         - "No monthly causal statement from an annual series."
         - "No causal verb without a named design, its assumption and its failed-check evidence."
+  # Provenance: the one section of the site that names the files. Every other page says what a number
+  # means; this says where it lives, and the Technical page a link away carries the detail.
+  provenance_heading: "Where the numbers live"
+  provenance_note: "Everything the site shows was already computed into these committed files when the registry was built. No page renders by reading a database or refitting anything."
+  provenance_link_note: "The detail, with the equations, the variables and the estimator tables, is on the technical page."
   references_heading: "References"
   references_note: "Bibliographic details checked against Crossref on 2026-10-28. DOIs are printed as text, not links: the site makes no network request, by design."
   references:

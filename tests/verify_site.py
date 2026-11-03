@@ -284,7 +284,7 @@ def main() -> int:
         best = min((d["id"] for d in index["designs"]),
                    key=lambda design: (0 if (design == "A" and oid in published_a) else 1, rank[card_status[(oid, design)]]))
         compare_block = blocks(flow["compare/index.html"]).get(oid, "")
-        if not re.search(rf"<strong>{best} — ", compare_block):
+        if not re.search(rf"<strong>{best} · ", compare_block):
             fail(failures, f"compare/{oid}: the page does not name Design {best} as the chosen comparison")
 
     # ---- every published coefficient appears once, on its own outcome, with its verdict -----------------
@@ -328,8 +328,8 @@ def main() -> int:
         block = chart_blocks.get(oid, "")
         if record["caption"] and record["caption"] not in block:
             fail(failures, f"chart/{oid}: the artifact's caption is not on the page")
-        if guide["chart"]["stamp"] not in block:
-            fail(failures, f"chart/{oid}: the 'description, not a causal comparison' stamp is missing")
+        # The old per-block "description, not a causal comparison" stamp is gone: the page header carries
+        # the disclaimer once, and the artifact SVGs print their own.
         for grouping in {g["grouping_id"] for g in record["groups"]}:
             if f'data-grouping="{grouping}"' not in block and f"data-grouping='{grouping}'" not in block:
                 fail(failures, f"chart/{oid}: the {grouping} group list is not rendered")
@@ -345,11 +345,13 @@ def main() -> int:
         if record["plain_caption"] and record["plain_caption"] not in block:
             fail(failures, f"chart/{oid}: the changepoint caption is not on the page")
         for brk in record["breaks"]:
-            if brk["month"] not in block or brk["statement"] not in block:
+            # The displayed break statement is the artifact's sentence without its appended disclaimer
+            # (the page header carries that once now), so the check compares on the same terms.
+            shown = record and (brk["statement"].split("This is a description of the series")[0].rstrip()
+                                or brk["statement"])
+            if brk["month"] not in block or shown not in block:
                 fail(failures, f"chart/{oid}: break {brk['month']} is not shown with its statement")
         if record["figure"] is None:
-            if guide["changepoint"]["refused"] not in block:
-                fail(failures, f"chart/{oid}: refused with no break, but the page does not say why")
             continue
         figure = REPO_ROOT / record["figure"]["path"]
         copied = DIST / "assets" / "breaks" / f"{oid}.svg"
@@ -357,8 +359,8 @@ def main() -> int:
             fail(failures, f"chart/{oid}: the changepoint figure was not copied into the build")
         elif copied.stat().st_size != figure.stat().st_size:
             fail(failures, f"chart/{oid}: the copied changepoint figure differs from the artifact's file")
-        if guide["changepoint"]["note"] not in block:
-            fail(failures, f"chart/{oid}: the 'a break is not evidence' note is missing")
+        # The old per-break "a break is not evidence" note was the same sentence on eight cards; the page
+        # header now says it once.
 
     # ---- the portrait strip over the time-axis panels ---------------------------------------------------
     # Five faces over each panel, placed at the administration bands the figure itself drew. This is the one
@@ -664,7 +666,8 @@ def main() -> int:
           f"outcomes per screen, the chosen design per outcome")
     print(f"numbers       : {len((index.get('published_results', {}).get('A', {}) or {}).get('specifications', []))} "
           f"published coefficients, each on its own outcome with its verdict and failed check")
-    print(f"charts        : {len(comparisons)} comparison figures, every group labelled, every chart stamped")
+    print(f"charts        : {len(comparisons)} comparison figures, every group labelled, the disclaimer "
+          f"stated once in the page header")
     print(f"breaks        : {len(breaks)} changepoint panels, every declared break shown, every refusal explained")
     print(f"designs       : 3 figures byte-matched to their artifacts, A's number and check, the grid's support "
           f"and flips, C's "

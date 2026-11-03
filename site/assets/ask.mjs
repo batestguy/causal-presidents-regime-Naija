@@ -6,7 +6,10 @@
  * only puts the answer on the page.
  */
 
-import { loadLayer } from "./answer.mjs";
+// The layer module is imported with the same version query this module was served with, so a rebuild
+// never pairs a new ask screen with the last build's answer code.
+const version = import.meta.url.split("?")[1] || "";
+const { loadLayer } = await import(new URL(`./answer.mjs${version ? `?${version}` : ""}`, import.meta.url).href);
 
 const form = document.getElementById("ask-form");
 const input = document.getElementById("ask-input");

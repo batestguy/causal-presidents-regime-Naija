@@ -13,7 +13,7 @@ Four rules are enforced here rather than trusted to the caller:
   * **The default is `answerable`.** The gate may add a refusal; it may never remove one. A question
     the corpus could have answered is not one the gate takes away.
   * **A refusal needs a reason.** A reason-bearing rule resolves its route against the corpus, and a
-    route that does not resolve to exactly one existing chunk falls back to `answerable` — the gate
+    route that does not resolve to exactly one existing chunk falls back to `answerable`: the gate
     will not refuse without something to cite.
   * **No number is typed here.** The study window and the vintage come from the artifacts, and the
     rules come from the spec. The only literals in this file are the regexes that read the spec's own
@@ -39,7 +39,7 @@ QUALITY_PATH = "registry/quality/{vintage}/report.json"
 COUNTRIES_PATH = "registry/reference/countries.json"
 
 # The normalisation the spec declares: lowercase, drop apostrophes, everything else that is not
-# alphanumeric becomes a space, then collapse the spaces. No stemming and no synonyms — a rule has to
+# alphanumeric becomes a space, then collapse the spaces. No stemming and no synonyms: a rule has to
 # be readable in the form it is matched in.
 NON_WORD = re.compile(r"[^a-z0-9]+")
 APOSTROPHES = ("'", "’")
@@ -68,7 +68,7 @@ def country_text(text: str) -> str:
 
 
 def first_sentence(text: str) -> str:
-    """The rule's own words, in one sentence — what a refusal template can carry."""
+    """The rule's own words, in one sentence, what a refusal template can carry."""
     flat = " ".join(str(text).split())
     parts = re.split(r"(?<=[.!?])\s+", flat, maxsplit=1)
     return parts[0].strip()
@@ -201,7 +201,7 @@ class Gate:
         raise ValueError(f"unknown year_window mode {mode!r}")
 
     def _matched(self, rule: dict, text: str) -> dict:
-        """Which of the rule's own patterns fired — so a decision can be argued with."""
+        """Which of the rule's own patterns fired, so a decision can be argued with."""
         conditions = rule.get("conditions") or {}
         hits: list[str] = []
         for group in conditions.get("all_of") or []:
@@ -227,7 +227,7 @@ class Gate:
         return None, "unresolved"
 
     def _resolve_section(self, route: dict) -> str | None:
-        """A documentation section, found by its heading — not by a typed chunk id.
+        """A documentation section, found by its heading, not by a typed chunk id.
 
         A document that renames its sections makes the route fail to resolve, and a route that cannot
         resolve falls back to `answerable` rather than refusing without a reason.
@@ -252,7 +252,7 @@ class Gate:
 
     # -- the corpus a chunk's parts belong to ---------------------------------------------------
     def parts_of(self, chunk_id: str) -> list[str]:
-        """The chunk and its parts — a reason is often in the part, not the parent."""
+        """The chunk and its parts; a reason is often in the part, not the parent."""
         return [cid for cid in self.chunks if cid == chunk_id or cid.startswith(f"{chunk_id}#p")]
 
     def chunk_text(self, chunk_id: str) -> str:

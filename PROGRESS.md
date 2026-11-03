@@ -1,6 +1,164 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-11-02 (post-freeze site pass) — this pass's record is the last section of this file · **Stage:** 9 · **The registry is frozen at vintage 2026-11-01**: every phase of `presidents-completion-plan.md` is closed with its exit criteria measured green, and the completion statement (the section before last) states what the frozen system claims, refuses and leaves open
+**Last updated:** 2026-11-03 (post-freeze site pass, continued) — this pass's record is the last section of this file · **Stage:** 9 · **The registry is frozen at vintage 2026-11-01**: every phase of `presidents-completion-plan.md` is closed with its exit criteria measured green, and the completion statement (the section before last) states what the frozen system claims, refuses and leaves open
+
+**Site pass, 2026-11-03: Screen 2 de-duplicated, then a full-site repetition scan, registry untouched.**
+The requester's ask: the comparisons screen repeats what neighbouring pages say; keep it direct and accessible.
+Changes: the heading became *What gets compared* and the intro sentence (a restatement of the heading) is gone;
+each outcome's card is now **one sentence**, the comparison folded together with its assumption
+(`{plain}, assuming {assumes}.`), with the pill riding inline, and the "Number published: the estimate is on
+the next screen" pointer removed (the Next button is that pointer). What survives untouched: the reason line
+where a card carries no number, the unit/direction/coverage on the study screen, and the deeper assumption on
+the graph screen. The stale unused `compare` keys (`number_label`, `number_note`, `no_number_label`,
+`closest_label`, `prototype_note`) left `guide.yml`. `site/build.py::flow_page` now skips an empty intro
+rather than printing an empty caption.
+
+**The scan.** A sentence-level scan of all eleven built pages (`.inspect/scan_repetition.py`, kept for
+re-runs) measured what was repeated where; the fixes, every one at its declared source:
+
+- **Estimate screen**: a declined card printed the machine reason code, the artifact path in `<code>`, the
+  "It is not an estimate for this outcome" sentence and a channel note that said the same thing twice, seven
+  times over. Now: pill, the plain reason sentence, the card's own detail, and one short pointer to the
+  design-level results. `results.no_number` lost its "There is no number" preamble (the pill already says it).
+- **Chart screen**: *"Every chart on this page is a description of the series…"* printed once per
+  figcaption ×12; it is a page-level statement and now appears once in the header. The per-panel
+  change-point intro said what the method line under the same figure already says; gone. `tenure.note` lost
+  its redundant first sentence. The per-figure stamp stays: the verifier requires it, and it stamps the figure.
+- **Design-level results**: *"The figure is the artifact…"* was printed under all three figures; it belongs
+  once, under the page intro, and now says it there.
+- **Study screen**: each option's coverage note (`partly measured (some periods are filled in or modelled…)`)
+  printed per row; the word stays on the row, the meaning is one legend line under the intro, built from the
+  same `coverage`/`coverage_note` keys so it cannot drift.
+
+Measured: study 507→438 words, estimates 1226→1048, chart 4404→3818, designs 1541→1495; zero machine codes
+and zero artifact paths left on the reader-facing estimate screen. `tests/verify_site.py` green after every
+edit; `py_compile` clean; ruff's two pre-existing findings recorded, not gating. No card, number, artifact,
+R stage or the Streamlit app changed (the app does not read `guide.yml`).
+
+**The de-dash pass, same day.** The requester asked that the em dash be reduced or eliminated: it reads as
+machine writing. Every em dash left the site's own declared copy and the app's visible strings:
+
+- `guide.yml`: glosses, reason sentences, the coverage note, the `design_results` row/flip/window templates
+  and the about paragraph now use colons, commas or semicolons; the design label reads `C · Synthetic control`,
+  which needed the matching needle change in `tests/verify_site.py` (`<strong>{best} · `).
+- `site/build.py`: comments, error messages and the chart page's intro rephrased; the file carries zero em dashes.
+- The app: `streamlit_app.py`, `answer_layer.py`, `intent_gate.py` and `registry_data.py` had every visible
+  string and comment stripped of em dashes (labels `A · DiD`, section headers as `**Adjustment set**: …`,
+  citation lines as `**Citation:** … · …`). One pinned default stays: `answer_layer`'s fallback refusal
+  template, which must reproduce the hash-pinned artifact's text until a new RAG vintage.
+- What was deliberately left: `registry/` artifacts (frozen; their dashes travel into the site's cover notes,
+  the graph cards' caveat bars and the events rule, 12 em dashes total across all eleven pages), the eval
+  specs with measured targets (`intent_gate_eval*`, `rag_eval`), the historical `docs/`, and the tests' own
+  messages. `docs/glossary.md` was left because the corpus fingerprints it; editing it would need an RAG rebuild.
+
+Runs after the pass: `py_compile` clean; `verify_site`, `verify_app`, `verify_intent`, `verify_answer`,
+`verify_answer_js`, `verify_answer_quality` all green. The scan scripts live in `.inspect/`
+(`scan_repetition.py`, `dedash.py`) for re-runs.
+
+**Estimate screen shortened, same day.** The requester's ask: short attention spans, one sentence per card.
+A declined card then printed the plain reason sentence AND the card's long detail AND a pointer, three
+renderings of one fact. Now the plain sentence wins (the card's detail stays on the card and in the app's
+answers), the detail is printed only when the closed set has no sentence for the code, and the page's
+"Plain reading first; …" intro is gone. The missing closed-set entry was declared:
+`reasons.design_estimated_not_identified` ("There is an estimate, but the design cannot identify it, so no
+interval and no card number is published."), which replaces a 60-word artifact run-on with 18 words.
+The published cards' templates tightened: *"The estimate is {coefficient}, with a 95 % interval from … to …
+and p = …"*, *"The interval includes zero, so no effect stays possible."*, *"On {n_obs} observations over
+{n_units} units, {first_month} to {last_month}."* Measured: the estimate page 1048→610 words at build (and
+the visible per-card text matches what the browser shows). `tests/verify_site.py` green after the edit.
+
+**Files off the reading pages, same day.** The requester's rule: readers have no business with file names,
+JSON paths or R scripts on the estimate screen; such mentions belong on the methodology page alone, with a
+link to the detailed documentation. A scan of all eleven built pages (`.inspect/scan_files.py`, kept for
+re-runs) found path mentions in the estimate expander and the technical page's model table. Now: the
+estimate expander drops the `artifact` key and the rows that repeat the card header (`spec_index`,
+`design`, `outcome`); the technical table loses its Artifact column; and the methodology page gained
+**Where the numbers live**, the site's single provenance section: the three artifact files, one sentence
+that no page refits anything, and a link to the technical page for the equations and estimator tables. The
+app got the same treatment: the model card's caption no longer names the card's path (it names the card id),
+and the spec expander dropped its "model card reference" path row. The refusal sentence was rewritten once
+more, plainly: "The design ran, but it cannot isolate an effect from this data, so there is no number here.",
+and the declined-card pointer reads "What this design found is on the design-level results page."
+The scan confirms path mentions remain on exactly one page: methodology. Verifiers green: `verify_site`,
+`verify_app`, `verify_intent`, `verify_answer`, `verify_answer_js`, `verify_answer_quality`.
+
+**Selection memory, same day.** The requester found that the Back link empties the flow: a reader who
+walked forward from the study screen and pressed Back returned to a page with every box unticked, because
+D-16's "a real URL per step, Back and Next carry the selection" had drifted to Next-only. Fixed in
+`site/assets/app.js`, with the URL as the single source of truth: the study screen now re-ticks every box
+the query names (and surfaces the category that holds them), every flow screen's Back link carries the
+query along with the Next link, and the Ask screen's Back link carries it even though that page shows no
+outcome blocks. Tested end to end in the browser: study, then next through four screens, then Back through
+all four, and the checked boxes are still exactly the two chosen at the start. A stale-cache hazard fell
+out of the test: a rebuilt site ships the same `assets/app.js` URL, and a browser that cached it will run
+the previous build's behaviour. Asset links now carry `?v=<vintage>.<build-stamp>` (`site/build.py::page`
+and `::render_ask`, and `ask.mjs` chains the same stamp onto its own import of `answer.mjs`), so every
+rebuild is served fresh. `tests/verify_site.py` green after the edits.
+
+**Card kinds, same day.** The requester asked to check whether the twelve variables' information differs and
+to make the presentation show it. The inventory (`.inspect/inventory_cards.py`) confirms four kinds, each a
+different fact: two outcomes carry a published coefficient with an `estimated_not_identified` verdict
+(fatalities, incidents); three ran on a design that was not identified and publish nothing (u5mr, mmr,
+unemp on C); four are channel-level (immun_penta3, skilled_birth, gdp_growth, cpi_yoy on B); three are
+declared gaps with no usable series (literacy_youth, primary_completion, ner_primary). Again the cards all
+rendered one shape, so the difference lived only in the words. Now a `kind` (number, described, channel,
+gap) is decided once, in `build_context`, from what the card has, and both the comparisons screen and the
+estimate screen shape on it. On the estimate screen: the number kind leads with the figure itself
+(+0.4678, interval and p riding beside it as a qualifier); `described` renders as a dashed green absence
+with the `no number here` stamp; `channel` carries an amber `about the money channel` chip; `gap` renders
+red, dashed, with a striped card and the `a declared gap, not a zero` stamp. On the comparisons screen the
+same kinds show as stamps: `carries a published number`, `no number here`, `about the money channel`,
+`a declared gap`, beside the existing pill. The stamps live in `guide.yml` (`compare`, `results`) so the
+wording stays declared, and `style.css` gained a "card kinds" section for the shapes. Verified in the
+browser on both screens with one outcome of each kind in view. `tests/verify_site.py` green; ruff back to
+its two pre-existing findings.
+
+**The grouping radio now moves the picture, same day.** The requester asked what the "who was in power /
+how much money" toggle is for when the chart never changes. The comparison artifact draws **both** groupings
+in one tall published figure (two stacked panels), and the radio only switched the numbers list below, so
+the clicks looked dead. Now the same click moves the picture: the build reads the second panel's title
+position out of the published SVG (`data-split` on the figure window), and `app.js` turns the figure into a
+window that slides between the party panel and the state-dose panel as the radio turns, fades the portrait
+strip while the state panel shows (its bands label the party panel), and re-measures on resize. Without
+JS, or before the image decodes, the whole figure shows, so nothing is hidden by default; the race where a
+cached SVG finished before the listener attached is closed with an animation-frame retry. For the ten
+outcomes whose artifact has no state panel, the radio still switches the numbers list and says plainly
+that no state grouping is declared. One CSS selector was fixed in passing (`figure.state-dose >
+.tenure-strip`, which had been written against a figure inside the figure). The verifier's chart pins
+(copied figure byte-match, caption, stamp, group lists) all still hold: `tests/verify_site.py` green.
+
+**The dead dose control dimmed, same day continued.** The requester still saw nothing: on ten of the twelve
+outcomes the artifact's figure carries no state panel at all, only fatalities and incidents have one, so on
+the other ten the dose radio could be clicked and do nothing to the picture. Now `app.js` checks the
+outcomes actually on screen: when none has a state panel, the dose radio is disabled and its label dims
+(`label.is-muted`), so the control never promises a change it cannot make; with a state-panel outcome on
+screen it is live again. In the browser: u5mr renders the dose radio disabled and dimmed, fatalities has it
+live and sliding (399px window on the party panel, 305px on the dose panel, strip faded to 0).
+`tests/verify_site.py` green after the edit.
+
+**The disclaimer said once, and the trend table reads, same day.** The requester asked for the repeated
+"not causal" statements to go: the page-level sentence, the per-figure stamp (twelve) and the per-break
+note (eight) all said the same thing. Now the chart screen carries it exactly once, in the header:
+*Charts describe. Claims live on the estimate screen.* The per-figure figcaption stamps and the per-break
+disclaimer are gone; break rows show the artifact's factual sentence alone ("2016-12: Security fatalities
+changes level around 2016-12."). What stays: the artifact SVGs keep their own printed stamp (frozen files,
+byte-matched) and the tenure table's one-line direction note. `guide.yml` lost `chart.stamp`,
+`changepoint.note` and `changepoint.refused` (a refusal is now the artifact's own caption, which was always
+pinned anyway), and `verify_site.py` dropped the three matching per-block assertions rather than widening
+anything: the page-level sentence is one line, the check counts zero repeats. The design-comparison
+sentences on the comparisons screen shortened ("…against states that got less, assuming nothing else moved
+them differently in the same months"), the study intro tightened, and the graph caption is one sentence.
+
+**The trend table's change column.** "Deviation from the long-run trend" gained a fifth column,
+*Change from the span before*. A change is claimed only when the difference of two spans' deviation ranges
+cannot contain zero (the difference interval is `[low_i - high_prev, high_i - low_prev]`, built from the
+ranges the artifact publishes), so wiggle inside overlapping ranges reads *no change, neutral*. When a
+change is real, good and bad follow the outcome's own direction (a "lower is better" outcome moves good
+when the deviation falls), never the president's. Values declared in `guide.yml` (`change_first: start`,
+`change_neutral`, `change_good`, `change_bad`), computed in `render_tenure`. Verifiers green: the trend
+tables across the twelve outcomes read start / change, good / change, bad / no change, neutral as the
+ranges allow (the main fatalities table: Yar'Adua change good, Jonathan change bad, Buhari change good,
+Tinubu no change neutral).
 
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict

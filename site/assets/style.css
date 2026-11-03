@@ -447,6 +447,60 @@ body.wide-page .topnav { max-width: 1240px; }
 .status-sentence { color: var(--ink-faint); font-size: .86rem; }
 .reason { color: var(--ink-soft); font-size: .92rem; margin: .45rem 0 0; }
 .reason code, .blocker code { font-size: .82rem; background: #efeadf; border-radius: 4px; padding: .05em .35em; }
+
+/* ---------------------------------------------------------------- card kinds
+   The four kinds of card a variable can be, shaped differently on every flow screen: a published number
+   leads with the figure; a design that ran and found nothing solid reads as a dashed absence; a channel
+   card carries an accent chip; a declared gap is visibly a hole. Colour words stay as the tones set them. */
+
+.kind-number { border-left-color: var(--accent); }
+.num-hero { display: flex; flex-wrap: wrap; align-items: baseline; gap: .4rem 1rem; margin: .5rem 0 .4rem; }
+.num-hero .figure { font-family: var(--serif); font-size: 2.1rem; font-weight: 650; letter-spacing: -.01em; }
+.num-hero .qual { font-size: .92rem; color: var(--ink-soft); }
+
+.stamp {
+  display: inline-block;
+  font-size: .72rem;
+  font-weight: 650;
+  letter-spacing: .04em;
+  padding: .2em .65em;
+  border-radius: 999px;
+  border: 1px dashed currentColor;
+  white-space: nowrap;
+}
+.stamp-absent { color: var(--accent); background: transparent; }
+.stamp-channel { color: var(--warn); background: var(--warn-soft); border-style: solid; }
+.stamp-gap { color: var(--bad); background: var(--bad-soft); border-style: solid; }
+.stamp-ahead { color: var(--accent); background: var(--accent-soft); border-style: solid; }
+
+.kind-described { border-left-style: dashed; }
+.kind-channel { border-left-color: var(--warn); }
+.kind-gap {
+  border-left-style: dashed;
+  background: repeating-linear-gradient(-45deg,
+      var(--bad-soft) 0 8px, transparent 8px 16px), var(--paper-raise);
+}
+
+/* ---------------------------------------------------------------- the grouping window
+   The comparison figure stacks both groupings' panels in one tall published image; the grouping radio
+   turns the shown part into a window on the selected panel, so the same click that swaps the numbers
+   list also moves the picture. Without JS the whole figure shows, nothing is hidden by default. */
+
+.panel-window {
+  position: relative;
+  overflow: hidden;
+  transition: height .35s ease;
+}
+.panel-window img.chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform .35s ease;
+}
+.chart-figure .tenure-strip { transition: opacity .3s ease; }
+figure.state-dose > .tenure-strip { opacity: 0; pointer-events: none; }
+.chart-figure .grouping-control label.is-muted { opacity: .45; cursor: not-allowed; }
+.chart-figure .grouping-control label.is-muted input { cursor: not-allowed; }
 .blocker { font-size: .87rem; color: var(--ink-faint); margin-top: .35rem; }
 .plain p { font-size: .98rem; }
 .plain p:first-child { font-family: var(--serif); font-size: 1.06rem; }

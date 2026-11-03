@@ -46,10 +46,10 @@ def direction_words(direction: str | None) -> str:
 
 def coverage_words(status: str | None) -> str:
     return {
-        "ok": "ok — a usable series reaches the study window",
-        "partial": "partial — a series exists but part of the window is interpolation or a declared gap",
-        "declared_gap": "declared gap — no usable series",
-        "blocked": "blocked — the source could not be reached or licensed",
+        "ok": "ok (a usable series reaches the study window)",
+        "partial": "partial (a series exists but part of the window is interpolation or a declared gap)",
+        "declared_gap": "declared gap (no usable series)",
+        "blocked": "blocked (the source could not be reached or licensed)",
     }.get(str(status), f"{status} (status undeclared)")
 
 
@@ -92,7 +92,7 @@ class Registry:
     def card(self, outcome_id: str, design_id: str) -> dict:
         dag_id = f"{outcome_id}__{design_id}"
         if dag_id not in self.cards:
-            raise RegistryError(f"no card for ({outcome_id}, {design_id}) — dag_id {dag_id!r}")
+            raise RegistryError(f"no card for ({outcome_id}, {design_id}); dag_id {dag_id!r}")
         return self.cards[dag_id]
 
     def card_path(self, card: dict) -> Path:
@@ -101,12 +101,12 @@ class Registry:
     def svg_path(self, card: dict) -> Path:
         return self.root / str((card.get("assets") or {}).get("svg", ""))
 
-    # -- outcome series -------------------------------------------------------------------------
+    # -- outcome series ---------
     def series_row(self, outcome_id: str) -> dict:
         rows = self.series or {}
         if outcome_id not in rows:
             raise RegistryError(
-                f"no outcome panel for {outcome_id!r} — every card names an outcome and every outcome has a "
+                f"no outcome panel for {outcome_id!r}: every card names an outcome and every outcome has a "
                 f"published series (run analysis/R/07_series_figures.R)"
             )
         return rows[outcome_id]
@@ -161,7 +161,6 @@ def estimate_rows(block: dict) -> list[tuple[str, str]]:
                    f"{spec.get('first_month', '?')} to {spec.get('last_month', '?')}"),
         ("verdict", str((block.get("verdict") or {}).get("status", "not stated"))),
         ("the number is for this card", str(block.get("the_number_is_for_this_card")).lower()),
-        ("model card reference", str(block.get("model_card_ref") or "not stated")),
     ]
     return rows
 
@@ -210,7 +209,7 @@ def series_marks_text(row: dict) -> str:
     for key, label in (("observed", "observed"), ("interpolated", "interpolated"),
                        ("unobserved", "no observation")):
         if marks.get(key):
-            parts.append(f"**{label}** — {marks[key]}")
+            parts.append(f"**{label}**: {marks[key]}")
     return "; ".join(parts)
 
 
@@ -222,7 +221,7 @@ def precheck_lines(card: dict) -> list[str]:
     for check in diag.get("checks") or []:
         if check.get("verdict") in ("pass", "computed"):
             continue
-        lines.append(f"- {check.get('id')}: {check.get('verdict')} — {check.get('detail')}")
+        lines.append(f"- {check.get('id')}: {check.get('verdict')}; {check.get('detail')}")
     return lines
 
 
@@ -247,7 +246,7 @@ def load_registry(root: Path | str | None = None) -> Registry:
     root = Path(root) if root is not None else Path(__file__).resolve().parents[1]
     index_path = root / CARDS_DIR / INDEX_FILE
     if not index_path.exists():
-        raise RegistryError(f"{index_path}: missing — run the Stage 8 assembly (analysis/R/05_registry.R)")
+        raise RegistryError(f"{index_path}: missing, run the Stage 8 assembly (analysis/R/05_registry.R)")
     index = json.loads(index_path.read_text(encoding="utf-8"))
     vintage = index.get("vintage_date")
     if not vintage:
@@ -263,7 +262,7 @@ def load_registry(root: Path | str | None = None) -> Registry:
             raise RegistryError(f"{path}: card carries no dag_id")
         if card.get("vintage_date") != vintage:
             raise RegistryError(
-                f"{path.name}: card vintage {card.get('vintage_date')!r} is not the index's {vintage!r} — "
+                f"{path.name}: card vintage {card.get('vintage_date')!r} is not the index's {vintage!r}; "
                 "the registry is mid-rebuild and a number from one vintage must not be shown beside another"
             )
         cards[dag_id] = card
@@ -274,20 +273,20 @@ def load_registry(root: Path | str | None = None) -> Registry:
     series_path = root / SERIES_DIR / str(vintage) / INDEX_FILE
     if not series_path.exists():
         raise RegistryError(
-            f"{series_path}: missing — run analysis/R/07_series_figures.R (the outcome panels are published "
+            f"{series_path}: missing, run analysis/R/07_series_figures.R (the outcome panels are published "
             "at the registry vintage)"
         )
     series_document = json.loads(series_path.read_text(encoding="utf-8"))
     if series_document.get("vintage") != vintage:
         raise RegistryError(
             f"registry/series: the panels are vintage {series_document.get('vintage')!r} and the cards are "
-            f"{vintage!r} — a series from one vintage must not be shown under a card from another"
+            f"{vintage!r}; a series from one vintage must not be shown under a card from another"
         )
     declared_outcomes = [row["id"] for row in index.get("outcomes") or []]
     series_rows = {row["id"]: row for row in series_document.get("outcomes") or []}
     if sorted(series_rows) != sorted(declared_outcomes):
         raise RegistryError(
-            f"registry/series: {len(series_rows)} panel(s) for {len(declared_outcomes)} declared outcome(s) — "
+            f"registry/series: {len(series_rows)} panel(s) for {len(declared_outcomes)} declared outcome(s), "
             f"missing {sorted(set(declared_outcomes) - set(series_rows))}"
         )
 
@@ -297,14 +296,14 @@ def load_registry(root: Path | str | None = None) -> Registry:
     outcomes, designs = expected.get("outcomes"), expected.get("designs")
     if outcomes and designs and len(cards) != int(outcomes) * int(designs):
         raise RegistryError(
-            f"{len(cards)} cards for {outcomes} x {designs} pairs — the registry is incomplete"
+            f"{len(cards)} cards for {outcomes} x {designs} pairs; the registry is incomplete"
         )
     estimated = sum(1 for card in cards.values()
                     if (card.get("estimate") or {}).get("status") == "estimated")
     declared = registry.card_counts().get("estimated")
     if declared is not None and declared != estimated:
         raise RegistryError(
-            f"the index says {declared} card(s) carry a published number and the cards say {estimated} — "
+            f"the index says {declared} card(s) carry a published number and the cards say {estimated}; "
             "the registry is stale against its own cards"
         )
     return registry

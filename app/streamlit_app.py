@@ -1,9 +1,9 @@
-"""Causal Presidents — the read-only app over the published registry.
+"""Causal Presidents: the read-only app over the published registry.
 
-What this is: outcome → identification design → the assumption it rests on → the published number, or the
-reason there is not one. Every value is read from `registry/dags/`; nothing is fitted at render time (base
-spec §18), nothing is computed, and no number is typed into this file — `tests/verify_app.py` greps for the
-published coefficients to keep it that way.
+What this is: outcome, then identification design, then the assumption it rests on, then the published number or
+the reason there is not one. Every value is read from `registry/dags/`; nothing is fitted at render time (base
+spec §18), nothing is computed, and no number is typed into this file (`tests/verify_app.py` greps for the
+published coefficients to keep it that way).
 
 The **Ask** tab is the same rule one level down: a question goes to the intent gate and then to the
 answer layer, and the answer is assembled from the registry's own passages and cites them. A question the
@@ -61,7 +61,7 @@ def _registry(root: str):
 # The questions the chat offers are the project's own published ones: the app reads their text from the
 # published evaluation set rather than carrying a copy, so an example cannot drift from the question the
 # measurement was run on. The ids are the only thing typed here, and they name one of each kind of
-# exchange — an estimate, a design that was not run, a fact, and a refusal.
+# exchange: an estimate, a design that was not run, a fact, and a refusal.
 CHAT_EXAMPLE_IDS = (
     "q01_fatalities_elasticity",
     "q06_design_c_status",
@@ -130,7 +130,7 @@ designs = registry.designs()
 design_short = {row["id"]: row["short"] for row in designs}
 
 # ---------------------------------------------------------------------------------------------
-# Sidebar — what the page is about
+# Sidebar: what the page is about
 # ---------------------------------------------------------------------------------------------
 with st.sidebar:
     st.markdown("### Choose a question")
@@ -145,7 +145,7 @@ with st.sidebar:
         "Causal model",
         key="causal_model",
         options=[row["id"] for row in designs],
-        format_func=lambda did: f"{did} — {registry.design(did)['name']}",
+        format_func=lambda did: f"{did} · {registry.design(did)['name']}",
     )
     st.divider()
     st.caption(
@@ -166,7 +166,7 @@ st.caption(
 )
 st.markdown(
     f"**{counts.get('estimated')} of {total_cards} model cards carry a published number; the rest say why "
-    f"not.** This page is showing *{outcome['label']}* under **Design {design_id} — {design['name']}**."
+    f"not.** This page is showing *{outcome['label']}* under **Design {design_id} · {design['name']}**."
 )
 
 card_tab, result_tab, about_tab, chat_tab = st.tabs(
@@ -177,7 +177,7 @@ card_tab, result_tab, about_tab, chat_tab = st.tabs(
 # Model card
 # ---------------------------------------------------------------------------------------------
 with card_tab:
-    st.subheader(f"{outcome['label']} — Design {design_id}: {design['name']}")
+    st.subheader(f"{outcome['label']} · Design {design_id}: {design['name']}")
     st.markdown(
         f"**Outcome.** `{outcome['id']}`. Unit: {outcome.get('unit', 'not stated')}. "
         f"Direction: {direction_words(outcome.get('direction'))}. "
@@ -199,12 +199,12 @@ with card_tab:
         st.markdown("#### The assumption this rests on")
         st.markdown(card.get("identifying_assumption", "not stated"))
         st.markdown(
-            f"**Adjustment set** — {design.get('adjustment_criterion', 'the declared')} criterion, resolved by "
+            f"**Adjustment set**: {design.get('adjustment_criterion', 'the declared')} criterion, resolved by "
             f"dagitty on the assumed graph in this card:"
         )
         labels = registry.adjustment_labels(card)
         st.markdown("\n".join(f"- {label}" for label in labels) or "- none")
-        st.markdown("**Assumed absent** — the node this design needs not to exist:")
+        st.markdown("**Assumed absent** (the node this design needs not to exist):")
         absent = registry.assumed_absent_labels(card)
         st.markdown("\n".join(f"- {label}" for label in absent) or "- none")
         st.markdown("**What this design cannot rule out:**")
@@ -245,7 +245,7 @@ with card_tab:
             if estimate.get("published_result"):
                 st.markdown(
                     f"The design's own result is published once, on the index, at "
-                    f"`{estimate['published_result']}` — see the *Design-level results* tab. It is not an "
+                    f"`{estimate['published_result']}`, see the *Design-level results* tab. It is not an "
                     f"estimate for this outcome."
                 )
 
@@ -284,7 +284,7 @@ with card_tab:
         st.caption(f"The series artifact names a figure at `{series_figure}` that is not on disk.")
 
     st.caption(
-        f"Card: `registry/dags/{card['dag_id']}.json` · vintage {registry.vintage} · "
+        f"Card `{card['dag_id']}` of the registry · vintage {registry.vintage} · "
         f"schema {card.get('schema_version', '?')}"
     )
 
@@ -302,7 +302,7 @@ with result_tab:
         "Design",
         options=[row["id"] for row in designs],
         horizontal=True,
-        format_func=lambda did: f"{did} — {design_short.get(did, did)}",
+        format_func=lambda did: f"{did} · {design_short.get(did, did)}",
         key="result_design",
     )
     result = registry.design_result(result_design)
@@ -334,7 +334,7 @@ with result_tab:
                     f"(p = {row['p']}, n = {row['n']}, {row['window']})"
                 )
         elif result_design == "C":
-            st.markdown("**Published specifications:** none — the design was not run.")
+            st.markdown("**Published specifications:** none; the design was not run.")
 
         robustness = result.get("robustness") or {}
         support = robustness.get("support") or {}
@@ -361,15 +361,15 @@ with result_tab:
 with about_tab:
     st.subheader("What this page reads, and what it refuses to do")
     st.markdown(
-        f"- `registry/dags/index.json` — the registry index, vintage **{registry.vintage}**\n"
-        f"- `registry/dags/<outcome>__<design>.json` — **{len(registry.cards)}** model cards\n"
-        f"- `registry/dags/<outcome>__<design>.svg` — the assumed causal graph beside each card"
+        f"- `registry/dags/index.json`: the registry index, vintage **{registry.vintage}**\n"
+        f"- `registry/dags/<outcome>__<design>.json`: **{len(registry.cards)}** model cards\n"
+        f"- `registry/dags/<outcome>__<design>.svg`: the assumed causal graph beside each card"
     )
     st.markdown(
-        f"- `registry/rag/{registry.vintage}/corpus.json` — the published corpus the **Ask** tab reads\n"
-        f"- `registry/rag/{registry.vintage}/eval_set.json` — the published questions the tab offers\n"
-        "- `analysis/specs/intent_gate.yml`, `analysis/specs/rag.yml` — the gate's rules and the answer contract\n"
-        "- `docs/glossary.md` — the plain meanings the answers use"
+        f"- `registry/rag/{registry.vintage}/corpus.json`: the published corpus the **Ask** tab reads\n"
+        f"- `registry/rag/{registry.vintage}/eval_set.json`: the published questions the tab offers\n"
+        "- `analysis/specs/intent_gate.yml`, `analysis/specs/rag.yml`: the gate's rules and the answer contract\n"
+        "- `docs/glossary.md`: the plain meanings the answers use"
     )
     st.markdown(
         "**Nothing is fitted at render time.** The app holds no model, opens no database and makes no network "
@@ -381,12 +381,12 @@ with about_tab:
         "published number. The rest carry a reason from a closed set, so an absent estimate is never silent:"
     )
     for code, count in (counts.get("not_estimated_by_reason") or {}).items():
-        st.markdown(f"- `{code}` — {count} card(s)")
+        st.markdown(f"- `{code}`: {count} card(s)")
     st.divider()
     st.markdown(
         "**What this page does not answer.** It renders published estimates and the assumptions they rest on. "
         "It does not compare tenures, forecast, or recommend policy. The tenure comparison is not identifiable "
-        "with this data — four to five administrations against 22–23 annual observations per outcome — and "
+        "with this data: four to five administrations against 22–23 annual observations per outcome, and "
         "`docs/limitations.md` is where that arithmetic is written down. The **Ask** tab answers from the "
         "published corpus and refuses what the corpus cannot answer, but it answers the registry's questions, "
         "not the reader's wishes: a forecast, a policy recommendation or a comparison of tenures is refused "
@@ -394,15 +394,15 @@ with about_tab:
     )
 
 # ---------------------------------------------------------------------------------------------
-# Ask the registry — the gate and the answer layer, in the reader's own words
+# Ask the registry: the gate and the answer layer, in the reader's own words
 # ---------------------------------------------------------------------------------------------
 with chat_tab:
     st.subheader("Ask the registry")
     st.markdown(
         "Ask about the published cards, the numbers they carry, or the reasons they do not. The answer is "
         "assembled from the registry's own passages and cites them; a question the registry cannot answer is "
-        "refused with the passage that says why. Nothing is generated — the retrieval is the same BM25 the "
-        "retrieval evaluation measures — so no model is called and no key is needed."
+        "refused with the passage that says why. Nothing is generated: the retrieval is the same BM25 the "
+        "retrieval evaluation measures, so no model is called and no key is needed."
     )
     examples = _chat_examples(str(REPO_ROOT), registry.vintage)
     if examples:

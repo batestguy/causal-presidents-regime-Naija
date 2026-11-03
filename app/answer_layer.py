@@ -8,20 +8,20 @@ passage that answers an answerable question, and it enforces the answer contract
 Five rules are enforced here rather than trusted:
 
   * **A refusal quotes the gate's own citation.** The refusal template is the contract's, the reason is the
-    rule's first sentence, and the citation is the pinned chunk's — so a refusal is an argument with a
+    rule's first sentence, and the citation is the pinned chunk's, so a refusal is an argument with a
     source, not a shrug. The plain reading of a refusal is the glossary's line for its code.
   * **An answer is extractive.** Every sentence in it is a paragraph of a committed chunk. Nothing is
     paraphrased and no number is typed: the layer selects passages and labels them in the contract's order.
-  * **The shape follows what the corpus actually has.** The contract has three shapes — an estimate, a
-    reason, and a fact — because 34 of the 36 cards carry a reason rather than a number, and refusing to
+  * **The shape follows what the corpus actually has.** The contract has three shapes (estimate, reason,
+    fact) because 34 of the 36 cards carry a reason rather than a number, and refusing to
     answer those was refusing for the wrong reason. A question that asks for a number is answered with the
     card that carries one, or with the card's reason when it carries none; a question that asks for
     something else is answered with the passage that says it.
   * **The post-check can overrule the answer.** If the assembled text does not carry the parts its shape
     requires, the contract says the response is replaced by the refusal template (R-04). That happens here,
     and the result says which part was missing.
-  * **No model is called.** Retrieval is Okapi BM25 over the corpus text — the same lexical scorer the
-    retrieval evaluation measures as its baseline — so the layer imports no embedding library, no database
+  * **No model is called.** Retrieval is Okapi BM25 over the corpus text, the same lexical scorer the
+    retrieval evaluation measures as its baseline, so the layer imports no embedding library, no database
     client, no network client and no fitting library. The committed vectors are used offline by
     `scripts/eval_rag.py`, not here.
 
@@ -97,7 +97,7 @@ ESTIMATE_ASK = re.compile(
 EFFECT_ASK = re.compile(r"\b(?:effects?|impacts?)\b", re.IGNORECASE)
 
 # Words that are too ordinary to identify an outcome on their own. A label term that no other label uses
-# is distinctive — unless it is one of these, in which case a question carrying it names no outcome.
+# is distinctive, unless it is one of these, in which case a question carrying it names no outcome.
 GENERIC_TERMS = {
     "under", "over", "rate", "net", "real", "level", "index", "value", "share", "series", "year", "month",
     "state", "national", "primary", "change", "current", "total", "other",
@@ -130,7 +130,7 @@ def normalise_term(token: str) -> str:
 
     Only the plural endings are folded, and nothing else. A prefix rule would fold "cover" into
     "coverage", and a question about a shock band would then name the immunisation outcome, whose
-    label says "coverage" — a wrong name restricts what may be quoted, which is worse than no name.
+    label says "coverage", so a wrong name restricts what may be quoted, which is worse than no name.
     """
     if token.endswith("ies") and len(token) > 4:
         return token[:-3] + "y"
@@ -253,7 +253,7 @@ class AnswerLayer:
         self.bm25 = BM25({cid: str(chunk.get("text") or "") for cid, chunk in self.chunks.items()})
         # Outcome labels, from the cards' own metadata: a question that names an outcome may only be
         # answered from a passage about that outcome. Without this, a design-level result that lists
-        # three other outcomes answers a fourth one with their numbers — the lending failure the app's
+        # three other outcomes answers a fourth one with their numbers, the lending failure the app's
         # results tab exists to prevent, one layer down.
         self.outcomes: dict[str, str] = {}
         # The `card_estimate` family: one chunk per (outcome, design), carrying that card's own fields.
@@ -271,7 +271,7 @@ class AnswerLayer:
                     self.designs.setdefault(str(design_id), str(metadata["design_name"]))
                 # Two families carry the same card: `card_estimate` is the card in one piece, and
                 # `model_card` is the same card split into parts. The layer assembles from the one
-                # that keeps the assumption, the caveats and the number in the same chunk — the
+                # that keeps the assumption, the caveats and the number in the same chunk: the
                 # split family put the number in one part and the assumption in another, and an
                 # answer assembled from a single part was missing half of what the contract requires.
                 if chunk.get("doc_type") == "card_estimate" or key not in self.cards:
@@ -435,7 +435,7 @@ class AnswerLayer:
         if design_id and design_id in self.designs and (assumption is None or cannot is None):
             # A design-level result carries no assumption of its own: the design's assumption lives on
             # its cards, and it is the same on every one of them. The borrow is not conditional on the
-            # question having named the design — a question that named it is exactly the question the
+            # question having named the design: a question that named it is exactly the question the
             # result answers, and it still needs the assumption the result does not carry.
             donor = self._design_donor(design_id)
             if donor and donor != source:
@@ -619,7 +619,7 @@ class AnswerLayer:
 
         A label is a phrase and a question names it by a run of that phrase: "under-5 mortality"
         is three words of "Under-5 mortality rate" in order, and "maternal mortality" is one word
-        of "Maternal mortality ratio" — the longer run wins, so a maternal question does not land on
+        of "Maternal mortality ratio"; the longer run wins, so a maternal question does not land on
         the under-5 card. A single word is enough only when no other label uses it, which is what
         keeps "fatalities" naming the fatality outcome and "cover" naming nothing at all.
         """
@@ -687,7 +687,7 @@ class AnswerLayer:
         return True
 
     def _named_designs(self, question: str) -> set[str]:
-        """The designs a question names — "Design B", or the design's own name."""
+        """The designs a question names: "Design B", or the design's own name."""
         named = {match.upper() for match in re.findall(r"\bdesign\s*([abc])\b", question.lower())}
         if named:
             return named
@@ -732,7 +732,7 @@ class AnswerLayer:
 
         The parent is used, not the paragraph: a card estimate is written in parts (assumption, caveats,
         the reason and the check), and a source that is one part carries only that part. Reading the
-        parent's parts is what lets a card answer carry its assumption and its caveats together — the
+        parent's parts is what lets a card answer carry its assumption and its caveats together: the
         failure this fixes was found when the Design C notes grew long enough to split every C card three
         ways, and the number path then had a reason block with no assumption to pair it with.
         """
@@ -759,10 +759,10 @@ class AnswerLayer:
         return max(candidates, key=lambda block: (len(matched_terms(terms, set(tokenize(block)))), -len(block)))
 
     def _carries_interval(self, chunk_id: str) -> bool:
-        """Whether a chunk carries a published interval — a number with the range the data cannot rule out.
+        """Whether a chunk carries a published interval, a number with the range the data cannot rule out.
 
         The search is over the chunk's text and its parts', not its identifier: the identifier says
-        which card it is, and the interval is what the card says — and a design-level result keeps
+        which card it is, and the interval is what the card says; a design-level result keeps
         its number in a part.
         """
         return any(INTERVAL.search(self._body(part))
@@ -794,7 +794,7 @@ class AnswerLayer:
             lines += [f"**What it cannot rule out:** {assembled['cannot']}", ""]
         if assembled.get("focus") and assembled["shape"] != "fact":
             lines += [f"**The passage that answers this:** {assembled['focus']}", ""]
-        lines.append(f"**Citation:** {assembled['citation']} — {source}")
+        lines.append(f"**Citation:** {assembled['citation']} · {source}")
         return "\n".join(lines).strip()
 
     # -- the plain-language view ----------------------------------------------------------------
@@ -843,10 +843,10 @@ class AnswerLayer:
                        if line.strip().startswith(("-", "*"))]
             cannot = "\n".join(bullets) if bullets else " ".join(cannot_full.split())
             lines += [f"**What it cannot tell you:** {cannot}", ""]
-        lines.append(f"**Where this comes from:** {assembled['citation']} — {source}")
+        lines.append(f"**Where this comes from:** {assembled['citation']} · {source}")
         if terms:
             lines += ["", "**What the words mean:**", ""]
-            lines += [f"- **{item['term']}** — {item['meaning']}" for item in terms]
+            lines += [f"- **{item['term']}**: {item['meaning']}" for item in terms]
         reading = None
         if assembled["shape"] == "estimate":
             estimate_full = " ".join(str(assembled.get("estimate") or "").split())
@@ -902,7 +902,7 @@ class AnswerLayer:
             sentence += ", and it includes zero, so this answer does not establish a direction."
         else:
             sentence += (", and it does not include zero, so the data are consistent with a "
-                        "relationship — the assumption below is what makes it credible.")
+                        "relationship; the assumption below is what makes it credible.")
         reading: dict = {"coefficient": coefficient.group(1), "interval_low": low_text,
                          "interval_high": high_text, "includes_zero": includes_zero,
                          "direction": direction}
@@ -965,7 +965,7 @@ def load_layer(root: Path | str | None = None) -> AnswerLayer:
 
 
 def load_glossary(root: Path | str | None = None) -> dict[str, str]:
-    """The plain-language meanings, straight from `docs/glossary.md` — never paraphrased in code."""
+    """The plain-language meanings, straight from `docs/glossary.md`, never paraphrased in code."""
     base = Path(root) if root is not None else Path(__file__).resolve().parents[1]
     path = base / GLOSSARY_PATH
     if not path.exists():
