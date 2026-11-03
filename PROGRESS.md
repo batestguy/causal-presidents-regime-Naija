@@ -239,6 +239,15 @@ are percentages*). The counter column is named for what it counts, read from the
 headers now carry the same right alignment as their cells (`.deviation-table th.num`), so the header row and
 the body line up. Declared in `guide.yml` (`head_*` keys); `verify_site` green.
 
+**The Ask screen was broken in every Chromium browser, and is fixed.** Testing the options with Playwright
+reproduced the user's report: the console showed `TypeError: ((intermediate value) || []).map is not a
+function` at `ask.mjs:93`. A `<datalist>`'s `.options` is an **HTMLCollection** in Chromium, not an array, so
+the submit handler crashed before asking anything — the page looked inert. `ask.mjs` now converts it with
+`Array.from(...)` before mapping. Browser-verified end to end: an answered estimate question (with its
+citation and the failed check), an answered fact question, and three refusals by the gate's own codes (G06
+presidential comparison, G05 forecast, G04 policy recommendation) all render. `verify_answer_js.py` gained a
+narrow check that the glue never maps `options` directly, so the crash cannot return unnoticed.
+
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
 is **estimated, not identified**: four windows, rank p 0.17–0.50, and a pre-fit gate that turned out not to

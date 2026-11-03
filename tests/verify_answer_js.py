@@ -154,6 +154,14 @@ def main() -> int:
     if re.search(r"[−+\-]\d\.\d{3,}", source):
         failures.append("site/assets/answer.mjs carries a coefficient-shaped literal")
 
+    # The Ask screen's own glue must stay browser-safe: a datalist's `.options` is an HTMLCollection in
+    # Chromium, not an array (the ask form crashed with "options.map is not a function" once). Assert the
+    # glue converts it explicitly rather than calling array methods on it directly.
+    glue = (REPO_ROOT / "site" / "assets" / "ask.mjs").read_text(encoding="utf-8")
+    if re.search(r"options\s*(?:\|\|[^)]*)?\)?\.map\(", glue) and "Array.from" not in glue:
+        failures.append("site/assets/ask.mjs maps a datalist's options directly; it is an HTMLCollection in "
+                        "Chromium — convert it with Array.from first")
+
     for path in (RUNNER, RESULT, questions):
         if path.exists():
             path.unlink()

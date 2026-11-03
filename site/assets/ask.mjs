@@ -90,7 +90,9 @@ form.addEventListener("submit", async (event) => {
   event.preventDefault();
   // Snap to the closest measured question before asking. The layer is only measured on its own question set, so
   // submitting free text would be a question nobody scored; the reader sees the snapped text in the field.
-  const questions = (document.getElementById("ask-questions")?.options || []).map((o) => o.value);
+  // `datalist.options` is an HTMLCollection in Chromium (truthy, but no .map), so it is converted explicitly.
+  const list = document.getElementById("ask-questions");
+  const questions = Array.from(list?.options || []).map((option) => option.value);
   const snap = (text) => {
     const words = (s) => new Set((s.toLowerCase().match(/[a-z0-9']+/g) || []));
     const target = words(text);
