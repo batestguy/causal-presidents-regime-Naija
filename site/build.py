@@ -1088,11 +1088,15 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
                 f"<p class='blocker'>{html.escape(copy['refused'])} "
                 f"({row['n_native']} native observations).</p></section>")
     described = [t for t in row["tenures"] if t["status"] == "described"]
-    # The change column compares each span's deviation with the one before. A change is only claimed when
-    # the difference of the two spans' span-choice ranges cannot contain zero; good and bad follow the
-    # outcome's own direction (a "lower is better" outcome moves good when the deviation falls), never the
-    # president. Direction is read from the artifact's own mean_deviation, not a midpoint of the range.
+    # The change column compares each president with the one before him. The comparison comes from the
+    # artifact's own pairwise contrasts (difference = earlier mean_deviation - later, with the range
+    # across the declared spans). A change is claimed only when that published range cannot contain
+    # zero; good and bad follow the outcome's own direction (a "lower is better" outcome moves good when
+    # the deviation falls), never the president.
     good_sign = 1 if outcome.get("direction", "").startswith("higher") else -1
+    contrasts = {}
+    for c in row.get("contrasts") or []:
+        contrasts[frozenset((c["a"], c["b"]))] = c
     heads = "".join(f"<th>{html.escape(h)}</th>" for h in copy["heads"])
     body_rows = []
     prev = None
@@ -1102,23 +1106,31 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
         if prev is None:
             change = copy["change_first"]
         else:
-            delta = mean - prev["mean"]
-            diff_low, diff_high = low - prev["high"], high - prev["low"]
+            pair = contrasts.get(frozenset((prev["president"], t["president"])))
+            if pair is not None:
+                # delta is current minus previous; the contrast stores earlier minus later.
+                delta = -pair["difference"] if pair["a"] == prev["president"] else pair["difference"]
+                diff_low, diff_high = pair["range"]
+            else:
+                delta = mean - prev["mean"]
+                diff_low, diff_high = low - prev["high"], high - prev["low"]
             if diff_low <= 0 <= diff_high:
                 change = copy["change_neutral"]
             elif delta * good_sign > 0:
                 change = copy["change_good"]
             else:
                 change = copy["change_bad"]
-            # The mean move is shown beside the label, so "no change, neutral" cannot read as "nothing
-            # moved": the lean is visible even where the span ranges overlap zero.
-            change = f"{change} ({delta:+.2f})"
+            change = fill_text(copy["change_vs"], {
+                "previous": prev["president"].split()[-1],
+                "label": change,
+                "delta": f"{delta:+.2f}",
+            })
         body_rows.append(
             f"<tr><td>{html.escape(t['president'])}</td><td>{html.escape(t['party'])}</td>"
             f"<td class='num'>{t['n_native']}</td>"
             f"<td class='num'>{low:+.2f} &hellip; {high:+.2f}</td>"
             f"<td class='num'>{html.escape(change)}</td></tr>")
-        prev = {"low": low, "high": high, "mean": mean}
+        prev = {"president": t["president"], "low": low, "high": high, "mean": mean}
     body = "".join(body_rows)
     contrast = ""
     if row["contrasts"]:

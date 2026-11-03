@@ -265,16 +265,17 @@ changepoint:
 # Stage 8g - the tenure description (analysis/specs/tenure.yml)
 tenure:
   heading: "Deviation from the long-run trend"
-  note: "The trend is fitted without ever seeing who was in power: a deviation names a window, not a causal claim. The change column compares a span with the one before, relative to the trend."
-  # The change column compares each span with the one before it, relative to the trend. Direction comes
-  # from the artifact's mean_deviation; a change is claimed only when the difference of the two spans'
-  # span-choice ranges cannot contain zero (each range is [min, max] of mean_deviation across the declared
-  # spans, not a sampling interval). Good and bad follow the outcome's own direction, never a president.
-  heads: ["Tenure", "Party", "Points", "Deviation, range across spans", "Change from the span before"]
+  note: "The trend is fitted without ever seeing who was in power: a deviation names a window, not a causal claim. The change column compares each president with the one before him, relative to the trend."
+  # The change column compares each president with the one before him, using the artifact's own pairwise
+  # contrasts (difference = earlier mean_deviation - later, with the range across the declared spans, not
+  # a sampling interval). A change is claimed only when the contrast range cannot contain zero. Direction
+  # follows the outcome's own direction, never a president. The first span shows the start marker.
+  heads: ["Tenure", "Party", "Points", "Deviation, range across spans", "Change vs the president before"]
   change_first: "start"
   change_neutral: "no change, neutral"
   change_good: "change, good"
   change_bad: "change, bad"
+  change_vs: "vs {previous}: {label} ({delta})"
   contrast_heading: "Largest pairwise contrast"
   refused: "Too few native observations to describe a deviation."
 

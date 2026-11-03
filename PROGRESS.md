@@ -176,6 +176,18 @@ words. Audited all twelve: only fatalities and incidents carry a state panel; th
 have no tenure table (refused); all others carry one table with exactly one `start` row. `verify_site`
 green after the fixes.
 
+**Change column is now president vs president, on the artifact's own contrasts.** The requester asked that
+the table compare presidents with each other, not each with the trend. The artifact already publishes
+exactly that: pairwise `contrasts` (difference = earlier mean_deviation − later, with the range across the
+declared spans). The change column now reads those published pairs instead of deriving a
+difference-of-ranges (which mixes worst cases across different span choices and was needlessly
+conservative). Each cell names its partner (`vs Jonathan: no change, neutral (+2.90)`), the header reads
+"Change vs the president before", and a change is claimed only when the contrast's own range excludes zero.
+Consequence worth recording: one label changed with the better rule (u5mr, Jonathan vs Yar'Adua: neutral
+became change, bad, because the paired ranges exclude zero), and the neutrals now sit only where the
+published contrast straddles zero (mmr Buhari, fatalities Tinubu, incidents Tinubu, unemp Yar'Adua).
+`.inspect/audit_contrasts.py` re-derives every row from the contrasts; `verify_site` green.
+
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
 is **estimated, not identified**: four windows, rank p 0.17–0.50, and a pre-fit gate that turned out not to
