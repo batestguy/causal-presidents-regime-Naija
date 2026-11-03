@@ -188,6 +188,19 @@ became change, bad, because the paired ranges exclude zero), and the neutrals no
 published contrast straddles zero (mmr Buhari, fatalities Tinubu, incidents Tinubu, unemp Yar'Adua).
 `.inspect/audit_contrasts.py` re-derives every row from the contrasts; `verify_site` green.
 
+**One caption, one explainer, and the confidence-interval confusion answered.** The requester saw the
+series caption twice per block (comparison figure and breakpoint section both printed the artifact's
+caption) and asked what the ranges mean. The duplicate is gone: each outcome block prints its caption once,
+at the top, and the break section keeps only its months and method line. Under every trend table there is
+now a three-line guest explainer, declared in `guide.yml` and identical for all twelve outcomes: what
+"deviation" measures (distance from the fitted trend; the range is the spread across three trend settings,
+not a confidence interval), what "change" compares (each president with the one before, good and bad by
+the outcome's direction), and what "neutral" means (the pair's range crosses zero, so the ordering can flip
+with the setting). `tenure.note` shrank to its one honest sentence. This also answers the CI question the
+table keeps inviting: a non-CI range that excludes zero is not significance, and the change test belongs to
+the *difference between two presidents*, which is the contrast the artifact publishes (mmr Buhari vs
+Jonathan: [−6.65, +4.48], so neutral), not to either row's own range. `verify_site` green.
+
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
 is **estimated, not identified**: four windows, rank p 0.17–0.50, and a pre-fit gate that turned out not to

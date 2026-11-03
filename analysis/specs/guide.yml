@@ -265,7 +265,13 @@ changepoint:
 # Stage 8g - the tenure description (analysis/specs/tenure.yml)
 tenure:
   heading: "Deviation from the long-run trend"
-  note: "The trend is fitted without ever seeing who was in power: a deviation names a window, not a causal claim. The change column compares each president with the one before him, relative to the trend."
+  note: "The trend is fitted without ever seeing who was in power."
+  # The guest explainer sits under every trend table: three lines, no jargon, and the one thing readers
+  # get wrong: the range is the spread across three trend settings, not a confidence interval.
+  explainer:
+    - "Deviation: how far the outcome sat from its fitted trend. The range is the spread across three trend settings, not a confidence interval."
+    - "Change: each president against the one before. Good and bad follow the outcome's own direction."
+    - "Neutral: the pair's range crosses zero, so the ordering can flip with the trend setting."
   # The change column compares each president with the one before him, using the artifact's own pairwise
   # contrasts (difference = earlier mean_deviation - later, with the range across the declared spans, not
   # a sampling interval). A change is claimed only when the contrast range cannot contain zero. Direction

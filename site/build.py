@@ -1139,10 +1139,12 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
                     f"{html.escape(best['reading'])}.</p>")
     unit = outcome.get("unit")
     unit_tag = f" <span class='tech'>({html.escape(unit)})</span>" if unit else ""
+    explainer = "".join(f"<li>{html.escape(line)}</li>" for line in copy["explainer"])
     return f"""<section class="tenure">
   <h3>{html.escape(copy['heading'])}{unit_tag}</h3>
   <p class="tech">{html.escape(copy['note'])}</p>
   <table class="deviation-table"><thead><tr>{heads}</tr></thead><tbody>{body}</tbody></table>
+  <ul class="tight explainer">{explainer}</ul>
   {contrast}
 </section>"""
 
@@ -1479,7 +1481,6 @@ def render_breaks(outcome: dict, ctx: dict, guide: dict) -> str:
     {tenure_strip(ctx, REPO_ROOT / "registry" / "changepoints" / ctx["vintage"] / "figures" / f"{outcome['id']}.svg", "../")}
     <img class="chart" src="../{brk['figure']}" alt="Outcome series with its declared breaks for {html.escape(outcome['label'])}">
   </figure>
-  <p class="chosen">{html.escape(brk['caption'])}</p>
   <ul class="tight">{rows}</ul>
   <p class="tech">{html.escape(brk['method'])}</p>
 </section>"""
