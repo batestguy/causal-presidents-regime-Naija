@@ -156,6 +156,23 @@ function initFlow() {
     return;
   }
 
+  // On the estimate screen the outcomes that carry a number lead. If the selection has at least one, the
+  // others fold behind a single counted line (their reasons are on the comparisons screen); a selection
+  // with no number at all shows every card, because the reason is the content.
+  const summary = document.getElementById("estimate-summary");
+  if (summary) {
+    const numbered = chosen.filter((block) => block.classList.contains("kind-number")).length;
+    if (numbered) {
+      chosen.forEach((block) => {
+        if (!block.classList.contains("kind-number")) block.hidden = true;
+      });
+      summary.textContent = (summary.dataset.template || "")
+        .replace("{numbered}", String(numbered))
+        .replace("{chosen}", String(chosen.length));
+      summary.hidden = false;
+    }
+  }
+
   // Both controls carry the selection, back and forth: the address is the memory, so no step of the flow
   // can strip it. (D-16: a real URL per step, with Back and Next links that carry the selection.)
   document.querySelectorAll(".controls a.ghost").forEach((link) => {

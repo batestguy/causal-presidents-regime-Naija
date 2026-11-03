@@ -216,14 +216,15 @@ event_strip:
 
 ask:
   heading: "Ask the corpus"
-  intro: "The same gate and passages the local app uses, running in this browser. Nothing is fetched and no model is called."
+  intro: "Answers come from the published corpus, through the same gate and contract the local app uses. No model is called."
   placeholder: "e.g. how much of the monthly series is observed?"
   input_label: "Your question"
   button: "Ask"
+  clear: "Clear"
   empty: "Type a question about the study."
   loading: "Reading the corpus…"
   error: "The answer layer did not load in this browser. The local app's Ask tab reads the same corpus."
-  measured: "{answered} of {total} questions in the measured set are answered; the rest are declined by the answer contract and say why."
+  measured: "{answered} of {total} questions are answered; the rest decline and say why."
   deeper: "The design-level results"
   refused_heading: "Why this is refused"
   declined_heading: "Why there is no answer"
@@ -246,6 +247,7 @@ results:
   expander: "The technical version"
   groups_heading: "What each group's average is"
   stamp_note: "Charts describe. Claims live on the estimate screen."
+  summary: "Outcomes with a number: {numbered} of {chosen}. The rest are explained on the comparisons screen."
 
 chart:
   # The old per-figure stamp ("description, not a causal comparison", twice per outcome plus once inside

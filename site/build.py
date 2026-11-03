@@ -634,8 +634,7 @@ def build_context(root: Path) -> dict:
         "changepoints_generated_at": changepoints.get("generated_at"),
         "answer_sets": load(root / "registry" / "rag" / vintage / "answer_eval.json").get("sets", {}),
         "answer_questions": [q["question"] for q in
-                             (load(root / "registry" / "rag" / vintage / "answer_eval.json").get("questions") or [])
-                             if q.get("set") == "published"],
+                             (load(root / "registry" / "rag" / vintage / "answer_eval.json").get("questions") or [])],
         "tenure": tenure,
         "events": load_events(root),
     }
@@ -1075,8 +1074,14 @@ def render_estimates(ctx: dict) -> str:
   <p class="reason">{html.escape(e['reason_sentence'] or e['reason_detail'] or "")}</p>
   {pointer}"""
         blocks.append(outcome_shell(outcome, inner, tone=e["tone"], kind=e["kind"]))
+    # The page leads with the outcomes that carry a number. When the selection holds at least one, the
+    # others collapse behind this one line (their reasons are on the comparisons screen); when it holds
+    # none, every chosen card still shows its one-line reason. app.js fills the counts.
+    summary = (f'<p class="note" id="estimate-summary" hidden '
+               f'data-template="{html.escape(results["summary"])}"></p>')
     return flow_page(ctx, "estimates", results["heading"], results["heading"],
-                     "", None, "".join(blocks), back="graph", forward="chart")
+                     "", None, "".join(blocks), back="graph", forward="chart",
+                     extra_head=summary)
 
 
 # ------------------------------------------------------------------------------------------------------------
@@ -1370,10 +1375,13 @@ def render_ask(ctx: dict) -> str:
   </header>
   <form class="ask-form" id="ask-form" autocomplete="off">
     <label for="ask-input">{html.escape(copy['input_label'])}</label>
-    <input id="ask-input" name="question" type="text" list="ask-questions"
-           placeholder="{html.escape(copy['placeholder'])}" autocomplete="off">
-    <datalist id="ask-questions">{''.join(f'<option value="{html.escape(q)}"></option>' for q in ctx.get("answer_questions") or [])}</datalist>
-    <button class="primary" type="submit">{html.escape(copy['button'])}</button>
+    <div class="ask-row">
+      <input id="ask-input" name="question" type="text" list="ask-questions"
+             placeholder="{html.escape(copy['placeholder'])}" autocomplete="off">
+      <datalist id="ask-questions">{''.join(f'<option value="{html.escape(q)}"></option>' for q in ctx.get("answer_questions") or [])}</datalist>
+      <button class="primary" type="submit">{html.escape(copy['button'])}</button>
+      <button class="ghost" type="button" id="ask-clear">{html.escape(copy['clear'])}</button>
+    </div>
   </form>
   <p class="control-note" id="ask-status" role="status">{html.escape(copy['empty'])}</p>
   <section class="ask-answer" id="ask-answer" hidden aria-live="polite"></section>

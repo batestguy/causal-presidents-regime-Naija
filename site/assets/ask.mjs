@@ -76,15 +76,36 @@ function layer() {
   return layerPromise;
 }
 
+/** The technical answer without the question echo: the reader just typed it. */
+function withoutQuestion(text) {
+  return String(text)
+    .replace(/^\s*(?:\*\*)?Question:(?:\*\*)?\s.*(?:\r?\n|$)/i, "")
+    .replace(/^\s+/, "");
+}
+
 function paint(answer) {
   if (!answer) return;
   const badge = answer.status === "answered"
     ? `<span class="pill good">answered · ${escapeHtml(answer.shape)}</span>`
     : `<span class="pill bad">${escapeHtml(answer.status)}${answer.refusal_code ? ` · ${escapeHtml(answer.refusal_code)}` : ""}</span>`;
-  const plain = (answer.plain && answer.plain.text) ? `<details class="technical"><summary>The plain reading</summary><div class="prose">${render(answer.plain.text)}</div></details>` : "";
-  panel.innerHTML = `<div class="ask-head">${badge}</div>${render(answer.text)}${plain}`;
+  // Plain first, in ordinary prose and with no label: the answer as a person would say it. The extracted,
+  // citation-heavy pass lives behind one collapsed control, mentioned once on the page.
+  const hasPlain = answer.plain && answer.plain.text;
+  const plain = hasPlain ? answer.plain.text : answer.text;
+  const technical = hasPlain
+    ? `<details class="technical"><summary>Technical</summary><div class="prose">${render(withoutQuestion(answer.text))}</div></details>`
+    : "";
+  panel.innerHTML = `<div class="ask-head">${badge}</div>${render(plain)}${technical}`;
   panel.hidden = false;
 }
+
+document.getElementById("ask-clear")?.addEventListener("click", () => {
+  input.value = "";
+  panel.hidden = true;
+  panel.innerHTML = "";
+  status.textContent = emptyCopy;
+  input.focus();
+});
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();

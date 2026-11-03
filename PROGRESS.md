@@ -248,6 +248,23 @@ citation and the failed check), an answered fact question, and three refusals by
 presidential comparison, G05 forecast, G04 policy recommendation) all render. `verify_answer_js.py` gained a
 narrow check that the glue never maps `options` directly, so the crash cannot return unnoticed.
 
+**Ask screen: plain first, one Technical button, all questions, Clear.** The answer now opens with the plain
+reading in ordinary prose, with no "plain reading" label; the extracted, citation-heavy pass sits behind a
+single collapsed `Technical` control (question echo removed, so the word appears once in the answer UI). A
+`Clear` button sits at the far right beside `Ask`, empties the field, hides the answer and refocuses the
+input. The autocomplete now lists every question in the measured set, all 38 (16 published + 22 held-out),
+matching the stated "36 of 38 questions are answered"; before it offered only the 16 answerable published
+ones. Intro and measured copy shortened. Browser-verified: 38 options, plain-first answer with one
+Technical control, Clear resets, and Enter/Ask both work.
+
+**The estimate screen is now number-first.** The recommendation was accepted: when the chosen outcomes
+include at least one number, the estimate screen shows only the numbered cards, with one counted line above
+them ("Outcomes with a number: 1 of 3. The rest are explained on the comparisons screen."), so the ten
+absence cards no longer repeat themselves. A selection with no numbers still shows each card's one-line
+reason, because there the reason is the content. All twelve blocks remain in the markup for the selection
+mechanics and the verifier; the collapse is a build flag (declared `results.summary`) applied by `app.js`.
+`verify_site` and `verify_answer_js` green.
+
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
 is **estimated, not identified**: four windows, rank p 0.17–0.50, and a pre-fit gate that turned out not to
