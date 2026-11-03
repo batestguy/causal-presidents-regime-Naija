@@ -663,6 +663,7 @@ img.chart { width: 100%; height: auto; background: #fff; border: 1px solid var(-
 }
 .deviation-table td { padding: .35rem .5rem; border-bottom: 1px dashed var(--rule); }
 .deviation-table td.num { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; text-align: right; }
+.deviation-table th.num { text-align: right; }
 
 /* ---------------------------------------------------------------- small screens */
 

@@ -232,6 +232,13 @@ build time rather than typed into the renderer. Audited all twelve built blocks:
 carry the five-column table and the generated findings paragraph; four refused ones carry the same heading
 and a findings paragraph with no table. `verify_site` green.
 
+**Trend table naming and alignment.** The heading is now *Each president against the trend* (the "(%)" suffix
+left the heading; the unit moved into the note as a clause: *Figures are in per 100,000 births*, or *Figures
+are percentages*). The counter column is named for what it counts, read from the panel's native frequency:
+*Years* for annual series, *Months* for monthly ones (either can appear, outcome by outcome). Numeric column
+headers now carry the same right alignment as their cells (`.deviation-table th.num`), so the header row and
+the body line up. Declared in `guide.yml` (`head_*` keys); `verify_site` green.
+
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
 is **estimated, not identified**: four windows, rank p 0.17–0.50, and a pre-fit gate that turned out not to

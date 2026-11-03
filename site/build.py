@@ -1089,12 +1089,11 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
     if not row:
         return ""
     unit = outcome.get("unit")
-    unit_tag = f" <span class='tech'>({html.escape(unit)})</span>" if unit else ""
     if row["status"] != "described":
         # The same heading and the same reading style as a table, with the reason in place of the table.
         message = fill_text(copy["refused"], {"minimum": ctx.get("tenure_min_native", 20),
                                               "points": row["n_native"]})
-        return (f'<section class="tenure"><h3>{html.escape(copy["heading"])}{unit_tag}</h3>'
+        return (f'<section class="tenure"><h3>{html.escape(copy["heading"])}</h3>'
                 f'<p class="findings">{html.escape(message)}</p></section>')
     described = [t for t in row["tenures"] if t["status"] == "described"]
     # The change column compares each president with the one before him. The comparison comes from the
@@ -1106,7 +1105,13 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
     contrasts = {}
     for c in row.get("contrasts") or []:
         contrasts[frozenset((c["a"], c["b"]))] = c
-    heads = "".join(f"<th>{html.escape(h)}</th>" for h in copy["heads"])
+    # The counter column is named for what it counts: years for annual series, months for monthly ones.
+    frequency = str(outcome.get("native_frequency") or "").lower()
+    points_head = copy.get(f"head_points_{frequency}", copy["head_points_default"])
+    heads = (f"<th>{html.escape(copy['head_tenure'])}</th><th>{html.escape(copy['head_party'])}</th>"
+             f"<th class='num'>{html.escape(points_head)}</th>"
+             f"<th class='num'>{html.escape(copy['head_compare'])}</th>"
+             f"<th class='num'>{html.escape(copy['head_change'])}</th>")
     body_rows = []
     changed = []
     neutral = []
@@ -1184,9 +1189,13 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
         best = max(row["contrasts"], key=lambda c: abs(c["difference"]))
         contrast = (f"<p class='note'><strong>{html.escape(copy['contrast_heading'])}.</strong> "
                     f"{html.escape(best['reading'])}.</p>")
+    # The unit lives in the note as a short clause, not tacked onto the heading as an acronym.
+    unit_clause = ""
+    if unit:
+        unit_clause = " Figures are percentages." if unit == "%" else f" Figures are in {unit}."
     return f"""<section class="tenure">
-  <h3>{html.escape(copy['heading'])}{unit_tag}</h3>
-  <p class="tech">{html.escape(copy['note'])}</p>
+  <h3>{html.escape(copy['heading'])}</h3>
+  <p class="tech">{html.escape(copy['note'])}{html.escape(unit_clause)}</p>
   <table class="deviation-table"><thead><tr>{heads}</tr></thead><tbody>{body}</tbody></table>
   <p class="findings">{html.escape(findings_para)}</p>
   {contrast}

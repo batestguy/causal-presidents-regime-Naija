@@ -264,8 +264,16 @@ changepoint:
 
 # Stage 8g - the tenure description (analysis/specs/tenure.yml)
 tenure:
-  heading: "Deviation from the long-run trend"
+  heading: "Each president against the trend"
   note: "The trend is fitted without ever seeing who was in power."
+  head_tenure: "Tenure"
+  head_party: "Party"
+  head_points_annual: "Years"
+  head_points_monthly: "Months"
+  head_points_quarterly: "Quarters"
+  head_points_default: "Points"
+  head_compare: "Comparison with the president before"
+  head_change: "Change"
   # The line under each trend table is one short paragraph of findings, not a method note: whose deviation
   # was furthest from the trend, which president-to-president moves hold under every trend setting, and
   # which moves stay neutral. Generated from the artifact rows and contrasts; no number is typed here.
@@ -283,7 +291,6 @@ tenure:
   # contrasts (difference = earlier mean_deviation - later, with the range across the declared spans, not
   # a sampling interval). A change is claimed only when the contrast range cannot contain zero. Direction
   # follows the outcome's own direction, never a president. The first span shows the start marker.
-  heads: ["Tenure", "Party", "Points", "Comparison with the president before", "Change"]
   change_first: "start"
   change_none: "no earlier span"
   change_neutral: "no change, neutral"
