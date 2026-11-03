@@ -202,6 +202,10 @@ def build_context(root: Path) -> dict:
     # Stage 8g: the tenure description. Loaded by vintage like every other artifact.
     tenure_path = root / "registry" / "tenure" / vintage / "tenure.json"
     tenure = {row["id"]: row for row in load(tenure_path)["outcomes"]} if tenure_path.exists() else {}
+    # The refusal threshold is declared in the spec that R fits against; the site reads it rather than
+    # typing the number, so the sentence and the rule cannot drift.
+    tenure_spec = yaml.safe_load((root / "analysis" / "specs" / "tenure.yml").read_text(encoding="utf-8"))
+    tenure_min_native = (tenure_spec.get("refusals") or {}).get("min_native", 20)
 
     cards: dict[tuple[str, str], tuple[dict, dict]] = {}
     for entry in index["dags"]:
@@ -620,6 +624,7 @@ def build_context(root: Path) -> dict:
         "models": models,
         "administrations": admins["administrations"],
         "portraits": portraits,
+        "tenure_min_native": tenure_min_native,
         "outcomes": outcomes,
         "counts": counts,
         "fills": fills,
@@ -1083,10 +1088,14 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
     row = (ctx.get("tenure") or {}).get(outcome["id"])
     if not row:
         return ""
+    unit = outcome.get("unit")
+    unit_tag = f" <span class='tech'>({html.escape(unit)})</span>" if unit else ""
     if row["status"] != "described":
-        return (f"<section class='tenure'><h3>{html.escape(copy['heading'])}</h3>"
-                f"<p class='blocker'>{html.escape(copy['refused'])} "
-                f"({row['n_native']} native observations).</p></section>")
+        # The same heading and the same reading style as a table, with the reason in place of the table.
+        message = fill_text(copy["refused"], {"minimum": ctx.get("tenure_min_native", 20),
+                                              "points": row["n_native"]})
+        return (f'<section class="tenure"><h3>{html.escape(copy["heading"])}{unit_tag}</h3>'
+                f'<p class="findings">{html.escape(message)}</p></section>')
     described = [t for t in row["tenures"] if t["status"] == "described"]
     # The change column compares each president with the one before him. The comparison comes from the
     # artifact's own pairwise contrasts (difference = earlier mean_deviation - later, with the range
@@ -1146,7 +1155,6 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
             f"<td class='num'>{html.escape(change)}</td></tr>")
         prev = {"president": t["president"], "low": low, "high": high, "mean": mean}
     body = "".join(body_rows)
-    unit = outcome.get("unit")
 
     # What this table found, as one short paragraph for a reader meeting it cold.
     furthest = max(described, key=lambda t: abs(t["mean_deviation"]))
@@ -1176,8 +1184,6 @@ def render_tenure(outcome: dict, ctx: dict, guide: dict) -> str:
         best = max(row["contrasts"], key=lambda c: abs(c["difference"]))
         contrast = (f"<p class='note'><strong>{html.escape(copy['contrast_heading'])}.</strong> "
                     f"{html.escape(best['reading'])}.</p>")
-    unit = outcome.get("unit")
-    unit_tag = f" <span class='tech'>({html.escape(unit)})</span>" if unit else ""
     return f"""<section class="tenure">
   <h3>{html.escape(copy['heading'])}{unit_tag}</h3>
   <p class="tech">{html.escape(copy['note'])}</p>

@@ -222,6 +222,16 @@ The move from Jonathan to Buhari is not consistent across settings, so it is neu
 in `guide.yml` (`change_vs`, `finding_*`), rendered from the rows and the artifact contrasts. `verify_site`
 green.
 
+**The same trend style for all twelve outcomes.** The style now holds for every variable, including the ones
+the artifact refuses. Where a table exists, each row reads *"vs Jonathan: +2.90 [−4.48 … +6.65]"* beside its
+`Change` label and the findings paragraph follows; where the artifact refuses (the four education outcomes,
+7 to 9 native observations), the section keeps the same heading (with unit) and the same one-paragraph
+reading style, saying why in the artifact's own terms: *"A trend needs at least 20 native observations, and
+this series has 7."* The threshold (20) is read from `analysis/specs/tenure.yml` (`refusals.min_native`) at
+build time rather than typed into the renderer. Audited all twelve built blocks: eight described outcomes
+carry the five-column table and the generated findings paragraph; four refused ones carry the same heading
+and a findings paragraph with no table. `verify_site` green.
+
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
 is **estimated, not identified**: four windows, rank p 0.17–0.50, and a pre-fit gate that turned out not to

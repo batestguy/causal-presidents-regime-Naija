@@ -291,7 +291,7 @@ tenure:
   change_bad: "change, bad"
   change_vs: "vs {previous}: {delta} [{range}]"
   contrast_heading: "Largest pairwise contrast"
-  refused: "Too few native observations to describe a deviation."
+  refused: "A trend needs at least {minimum} native observations, and this series has {points}."
 
 # Screen 6b: the design-level results. One section per artifact family. Every value below is filled from an
 # artifact field; the templates carry no number of their own.
