@@ -24,6 +24,20 @@ __pycache__/
 # not evidence and must not become part of the record by accident. Kept on disk, never committed.
 .probe/
 
+# Browser-pass screenshots. A screenshot is a way of looking at a page, not a record of it: the page
+# is rebuilt from registry/ and the specs, and a captured PNG of a stale build is worse than no
+# evidence at all. Root-level and .inspect/ captures stay on disk, never in the history.
+/*.png
+.inspect/*.png
+
+# One-question probes and the exploratory pilots under .inspect/. Their declared equivalents are
+# tracked: a probe that matters becomes a script in scripts/ with a spec in analysis/specs/.
+.inspect/pilot_*
+.inspect/probe_*
+.inspect/export_*.py
+.inspect/c_gaps.py
+.inspect/u5mr_panel.csv
+
 # Browser-automation session artifacts (playwright-cli). These hold page snapshots, and a
 # snapshot of a credential-issuing page holds the credential — one such file captured the FRED
 # API key on 2026-10-11. Never commit them.

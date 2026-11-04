@@ -35,6 +35,22 @@ the trend table reports president-vs-president contrasts from the published arti
 the plain answer first with one collapsed Technical section. Verifiers: `tests/verify_site.py`,
 `tests/verify_answer_js.py` (which also guards the datalist bug), the usual `scripts/verify.sh` chain.
 
+## Agent workflow
+
+The process — classify, plan, fan out for independent reads, verify with a different family, escalate the
+model rather than the agent count — is global: `~/.config/opencode/AGENTS.md` is loaded into every session, in
+every project. `docs/agentic-workflow.md` carries the routing and the allowance arithmetic. What this repo
+adds:
+
+- **Only `ml-builder`, `causal-analyst` and `writer` may write.** Recon, planning and review are edit-denied
+  by permission, not by good intentions.
+- **R stages and `dbt build` run alone.** `03_estimate.R`, `04_robustness.R` and `05_registry.R` write shared
+  state; two of them in one fan-out is a corrupted run, not a speed-up.
+- **The registry is frozen for agents too.** A correction is a new vintage produced by the engine — never a
+  hand-edit, even when the number improves.
+- **`scripts/verify.sh` is the acceptance command.** A reviewer may run `pytest`, `ruff`, `python` and
+  read-only `git`; `Rscript` is denied there, because `05_registry.R` writes the artifact it would audit.
+
 ## Quickstart
 
 The verified interpreter on this machine is the `ds-general` conda env (3.12); the default `python` on PATH

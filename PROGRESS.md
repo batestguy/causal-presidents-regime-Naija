@@ -3048,3 +3048,53 @@ horizontally at 640 px so the labels stay legible instead of shrinking.
 4. The cover's flag band still shows as a pale frame behind the cards.
 5. Nine photographs cover ten pages; nine more events — or press licences — would take the collage to one trio
    per page with no repetition.
+
+## 2026-11-04 - the agent workflow, routed against the Go allowance
+
+**What changed.** A global OpenCode roster of seven subagents and five commands, a global
+`AGENTS.md` that loads the workflow into every session, plus `docs/agentic-workflow.md`. No registry
+artifact, R stage, schema, hash contract or site page was touched; `scripts/verify.sh` was not re-run
+because nothing it checks moved.
+
+**Why it was not a model ranking.** Go is a $10/month subscription whose real constraint is a **per-model
+monthly dollar allowance** — 20 % of it per five hours. Kimi K3.1 Pro is the strongest long-horizon model in
+the lineup (67.2 % on Terminal-Bench 4.0) and allows ~147 requests per five hours; DeepSeek V4.1 Flash is
+better than the V4 Pro it replaced and allows ~43,330. So the whole roster sits on the Flash, GLM-5.3-Flash
+carries the review lane because it is a different family, and the two $15 models are escalations rather than
+defaults. Every model on a normal day lands under 1 % of its own five-hour window.
+
+**Re-routed the same day, after the first pass was too expensive.** V4 Pro is gone from the roster:
+DeepSeek retired it on 14 September 2026 and routed its traffic to V4.1 Flash, which leads on the agentic
+tests (74.2 vs 62.7 DeepSWE, 90.6 vs 87.9 Terminal-Bench 2.1) at a third of the price — though it trails
+on factual recall (GPQA 90.9 vs 92.4, SimpleQA 42.3 vs 55.2), which is why the reviewer stays a different
+family and no agent may invent a citation. Gemini 4 Argon went too — 1M context now ships on the $60
+models, so it was $30 of allowance for a capability we already had. MiMo-V2.6-Flash was cut despite its
+$60 allowance: an independent hands-on review found it weaker at coding than recent peers and the most
+prompt-injection-susceptible of the set. Three models now carry the work — DeepSeek V4.1 Flash ($100),
+GLM-5.3-Flash ($60), and **Muse Spark 1.3 Contributor** ($60, ~45,300 requests per five hours) as a
+public-work volume lane via `/muse-build`. Muse is available from Nigeria — Meta's restricted-territory list
+does not include it — but the Contributor tier trains on prompts, so it is barred from client data and
+embargoed work. That is the trade the user accepted.
+
+**Exclusions worth recording.** Beam Free *is* geo-blocked in Nigeria, so no workflow may depend on it.
+`MiniMax M3.1 Flash` is not used for verification: it answered 56 % of AA-Omniscience correctly while
+attempting nearly every question, which is the opposite of the behaviour an auditor needs.
+
+**The parallel rule, stated once.** Three subagents by default, five at the cap, and only for independent
+reads. A spawn costs roughly 20k tokens before it does anything, and multi-agent traces run about 15× the
+tokens of the same work in one context; three focused agents beat five scattered ones. R stages, `dbt build`
+and anything writing `registry/` or `data/analytics.duckdb` therefore run alone, and `experimental.subagent_depth`
+is pinned to 1 so a recon cannot become a nine-way fan-out two levels down.
+
+**Made global, so no session has to remember it.** The contract lives in `~/.config/opencode/AGENTS.md`,
+which OpenCode discovers and loads into every session in every project — classify, plan, fan out for reads,
+verify with a different family, escalate the model. The roster supplies the capability and the commands the
+shortcut; that file supplies the default behaviour. This repo's `AGENTS.md` now carries only the domain rules
+(registry frozen for agents too, R stages serial, `verify.sh` as the acceptance command) instead of repeating
+the process. `default_agent` stays `build` on purpose: a custom primary agent replaces the base coding prompt
+with its own, which costs more than the workflow gains.
+
+**What was measured.** `opencode debug agents` prints the merged roster — seven subagents, each with the
+intended model and step cap — and `opencode debug config` accepts the file without a warning. That is the
+whole verification: the routing is a prior from published third-party runs, not a result reproduced on this
+repo. A task-set replay would be the honest test, and it has not been run.
