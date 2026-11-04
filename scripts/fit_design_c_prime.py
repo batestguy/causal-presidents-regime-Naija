@@ -482,15 +482,24 @@ def main() -> None:
                     f"in_time placebo at +{too_big[0]['backdate']} yrs moves {too_big[0]['gap']:+.2f}, "
                     f"at least the estimate"
                 )
-            if gsynth is None:
-                failures.append(f"{[k for k in ('sdid', 'gsynth') if gap_of(k) is None][0]} arm refused, so sign agreement cannot be shown")
-            elif sdid is not None and np.sign(round(sdid, 6)) != np.sign(round(row["mean_gap"], 6)):
-                failures.append(f"sdid sign {sdid:+.2f} against matrix completion")
+            # "All three agree" is only checkable when all three ran; a refused arm is a failure in its own
+            # right, and a disagreement between any two that did run is a failure too.
+            missing = [name for name, value in (("sdid", sdid), ("gsynth", gsynth)) if value is None]
+            if missing:
+                failures.append(f"{' and '.join(missing)} arm refused, so sign agreement cannot be shown")
+            else:
+                signs = {np.sign(round(value, 6)) for value in (row["mean_gap"], sdid, gsynth)}
+                if len(signs) > 1:
+                    failures.append(
+                        f"arms disagree on sign: mc {row['mean_gap']:+.2f}, sdid {sdid:+.2f}, gsynth {gsynth:+.2f}"
+                    )
             row["gate_failures"] = failures
             row["gate_status"] = "identified" if not failures else "estimated_not_identified"
             print(f"  {row['id']:<9} {row['gate_status']}: {'; '.join(failures) if failures else 'all three checks pass'}")
 
-        # Holm across the windows that carry a rank p, printed rather than merely declared.
+        # Holm across the windows that carry a rank p, printed rather than merely declared. The scope is the
+        # windows fitted in this run: with one outcome that is the declared multiplicity set, and if P5 ever
+        # opens, the set must span the outcomes too (the artifact records the scope it used).
         ranked = sorted((r for r in results if r["status"] == "estimated"),
                         key=lambda r: r["placebo"]["rank_p"])
         m = len(ranked)
@@ -508,6 +517,7 @@ def main() -> None:
         "windows": results,
         "arms": arms,
         "placebos": placebos,
+        "holm_scope": [r["id"] for r in results if r["status"] == "estimated"],
     }
     out = INSPECT / f"design_c_prime_{args.outcome}_fits.json"
     out.write_text(json.dumps(doc, indent=2, allow_nan=False) + "\n", encoding="utf-8")

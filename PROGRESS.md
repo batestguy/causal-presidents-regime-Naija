@@ -3179,7 +3179,7 @@ own penalty:
 | Yar'Adua | -4.38 | 0.43 | -15.65 to +6.72 | 0 flips / 99 | none runnable (pre-period too short) |
 | Jonathan | -2.21 | 0.78 | -22.00 to +10.24 | 0 / 99 | +3 yrs: -4.89 (larger than the estimate) |
 | Buhari | +4.03 | 0.55 | -15.62 to +10.23 | 0 / 99 | +3/-1.61, +5/-2.78, +7/-4.53 (the last is larger) |
-| Tinubu | +6.64 | 0.38 | -35.18 to +9.60 | 0 / 99 | +3/+6.57, +5/+6.51, +7/+4.35 (all larger) |
+| Tinubu | +6.64 | 0.38 | -35.18 to +9.60 | 0 / 99 | +3/+6.57, +5/+6.51, +7/+4.35 (none larger) |
 
 The smallest attainable p on 99 placebos is 0.01, and Holm at 0.05 across four windows sets thresholds of
 0.0125 to 0.0500. **No window clears the gate**, and each failure is recorded in the artifact rather than
@@ -3193,11 +3193,15 @@ boundary, that the SDID variance fallback and the declared leave-one-out sweep w
 the gate's Holm step and per-window failure list were declared but not computed, and that four prose numbers
 did not match their artifacts. All of it was fixed and the pass re-run; the verdict did not change, but the
 reason it holds is now much stronger. Two further defects surfaced only while re-running: the SDID
-placebo-variance fallback is not reproducible even under a fixed seed (12.01, 12.09, 14.58 on the same
-window), so it was replaced with a jackknife computed in the arm script; and the penalty path, once reported
+placebo-variance fallback is not reproducible even under a fixed seed (three runs of the same window returned
+12.01, 12.09 and 14.58; that comparison is a session observation, not a kept artifact), so it was replaced
+with a jackknife computed in the arm script, which an independent two-window run reproduces exactly; and the
+penalty path, once reported
 rather than hidden, showed the sign of Buhari's gap reversing inside the declared range. The statistician's
 own check added one finding this entry had missed: the placebo null is not driven by outliers, and
-studentising by the pre-fit error makes p larger, not smaller (0.43 to 0.62 on yaradua).
+studentising the placebo statistic by the pre-fit error made p larger rather than smaller on the two windows
+it tested. That re-check was exploratory and is not kept as an artifact, so it is recorded here as a review
+finding rather than as a measured number.
 
 **Three defects caught before any number was reported**, all by the solver cross-check or the first run
 itself: a `sum(alpha) = 0` constraint pushed the panel's level into `L` and inflated the nuclear norm from 47
