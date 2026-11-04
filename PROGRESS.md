@@ -304,6 +304,18 @@ placebos, a placebo-based 95 percent bound declared as randomization inference, 
 estimators, Holm across outcomes and windows). First milestone: `u5mr` only, exploratory, to see whether
 matrix completion removes the solver dependence before any other outcome is attempted.
 
+**What-if recommendation documented in full.** The requester asked for an ML alternative so outcomes without
+an identifiable estimate can still show something, and then asked for the recommendation to be written up
+ahead of follow-up. `docs/counterfactual-recommendation.md` records: the three groups behind the 34 blank
+cards (identified, estimated-not-identified, no series); the definition of a what-if as a matched-path
+counterfactual and not an effect; the three-estimator design (simplex, SDID, matrix completion / gsynth),
+Design C's inherited windows and donor rule, and placebo-based bounds; the pilot table for u5mr (simplex
++2.11 against SDID -0.87 on Yar'Adua; -11.56 against +1.51 on Jonathan, with a placebo SE near 8, so two of
+four windows flip sign); the presentation contract (a separate what-if block, no causal verbs, no averaging,
+every window shown, "methods agree" or "methods disagree"); the coverage map (9 of 12 outcomes, education
+excluded); the artifact contract for a new vintage; the verifier; the seven-stage work plan; and the five
+decisions still needed (placement, vintage, scope, inflation reclassification, education refusal wording).
+
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
 is **estimated, not identified**: four windows, rank p 0.17–0.50, and a pre-fit gate that turned out not to
