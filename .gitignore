@@ -38,6 +38,13 @@ __pycache__/
 .inspect/c_gaps.py
 .inspect/u5mr_panel.csv
 
+# Derived exploratory outputs. The panel, the fits and the placebo distributions are reproducible from
+# data/analytics.duckdb plus analysis/specs/design_c_prime.yml, so committing them would put a second copy
+# of a number in the repo, free to disagree with the spec that produced it. The command that rebuilds them
+# is named in docs/causal-phases.md.
+.inspect/design_c_prime_*
+.inspect/*.log
+
 # Browser-automation session artifacts (playwright-cli). These hold page snapshots, and a
 # snapshot of a credential-issuing page holds the credential — one such file captured the FRED
 # API key on 2026-10-11. Never commit them.

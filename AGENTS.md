@@ -18,9 +18,13 @@ Two tracks are documented and waiting, both read via `PROGRESS.md`'s 2026-11-04 
   PCMCI smoke run exists in `.inspect/discovery_smoke.py`; nothing is published.
 - **What-if counterfactuals** — `docs/counterfactual-recommendation.md` (full recommendation, presentation
   contract, artifact contract, five open decisions), with the method menu in `docs/causal-ml-options.md`
-  and the execution plan in `docs/causal-ml-plan.md`. Pilot evidence: on `u5mr`, the simplex and SDID gaps
-  flip sign on two of four windows, so any published what-if must show all estimators and the disagreement.
-  **No fitting has started and the frozen registry is untouched.**
+  and the execution plan in `docs/causal-ml-plan.md`. **The first pass has now run and stopped at its own
+  gate** (2026-11-04): matrix completion on `u5mr` gives gaps of -5.2, -2.3, +3.8 and +4.2 per 1,000, and
+  every one sits inside its own 99-placebo distribution (rank p 0.28 to 0.79 against a 0.05 gate). The
+  solver dependence is gone (cross-check spread 1e-5), the disagreement is not the problem, and the stop
+  rule fired: `mmr` and `unemp` are not fitted and no what-if number is published. The phase workflow,
+  its gates and its live status board are `docs/causal-phases.md`; the numbers are in `PROGRESS.md`,
+  2026-11-04. The frozen registry is still untouched.
 
 The causal work runs in the conda env **`causality-handbook`** (Python 3.11), not `ds-general`:
 `C:\Users\TOSHIBA\miniconda3\envs\causality-handbook\python.exe` carries `duckdb`, `doubleml`,

@@ -1,16 +1,25 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-11-04 (site pass continued, causal-ML plans documented) — this pass's record is the last section of this file · **Stage:** 9 · **The registry is frozen at vintage 2026-11-01**: every phase of `presidents-completion-plan.md` is closed with its exit criteria measured green, and the completion statement (the section before last) states what the frozen system claims, refuses and leaves open
+**Last updated:** 2026-11-04 (causal first pass run and stopped) — this pass's record is the last section of this
+file · **Stage:** 9 · **The registry is frozen at vintage 2026-11-01**: every phase of
+`presidents-completion-plan.md` is closed with its exit criteria measured green, and the completion statement
+(the section before last) states what the frozen system claims, refuses and leaves open. The causal first
+pass started after the freeze and wrote nothing into `registry/`.
 
 ## Start here (next session)
 
 - **Repo state:** `main` is clean and pushed; the frozen registry has not been edited. Re-run
   `tests/verify_site.py` after any presentation change; the full chain is `scripts/verify.sh`
   (Git Bash, `PYTHON=/c/Users/TOSHIBA/ds-general/python.exe`).
-- **Causal work is planning-only.** Read, in order: `docs/causal-discovery.md` (what can be discovered and
-  why only two outcomes), `docs/causal-ml-options.md` (the defensible method menu and the polish map),
-  `docs/causal-ml-plan.md` (the declared first pass), and `docs/counterfactual-recommendation.md` (the full
-  what-if recommendation, presentation and artifact contracts, and the five open decisions).
+- **Causal work: the first pass ran and stopped.** P0–P4 of `docs/causal-phases.md` are closed: the
+  matrix-completion counterfactual was declared, fitted on `u5mr` and tested against 99 placebos, and its
+  gaps sit inside their own placebo distributions on all four windows. The stop rule fired, so `mmr` and
+  `unemp` were **not** fitted and nothing was published. Read the phase board in `docs/causal-phases.md`
+  first, then the 2026-11-04 entry at the end of this file.
+- **Causal docs, in order (unchanged, but read the plan as partly executed):** `docs/causal-discovery.md`
+  (what could be discovered and why only two outcomes), `docs/causal-ml-options.md` (the method menu),
+  `docs/causal-ml-plan.md` (the declared first pass), and `docs/counterfactual-recommendation.md` (the
+  what-if contract and the five decisions, still unanswered).
 - **Environment:** causal work runs in the conda env `causality-handbook`
   (`C:\Users\TOSHIBA\miniconda3\envs\causality-handbook\python.exe`); `ds-general` is back to the verified
   build set. R 4.5.2 has `synthdid`, `gsynth`, `did`, `dagitty`.
@@ -3098,3 +3107,81 @@ with its own, which costs more than the workflow gains.
 intended model and step cap — and `opencode debug config` accepts the file without a warning. That is the
 whole verification: the routing is a prior from published third-party runs, not a result reproduced on this
 repo. A task-set replay would be the honest test, and it has not been run.
+
+## 2026-11-04 - the causal first pass: declared, fitted, stopped at its own gate
+
+**What changed.** `docs/causal-phases.md` (the phase workflow and its status board),
+`analysis/specs/design_c_prime.yml` (P0, declared before any fit), `scripts/extract_design_c_prime.py`
+(P1), `scripts/fit_design_c_prime.py` and `analysis/R/12_design_c_prime_arms.R` (P2 and P3). No registry
+artifact, R stage, schema, dbt model or site page was touched; the frozen 2026-11-01 vintage was read only,
+as an input to a year check. Every intermediate lands in `.inspect/`, which is not committed.
+
+**What the header used to say, and does not now.** The plan said 99 donors make the simplex underdetermined
+and that matrix completion would replace it. It also said the pass would only open `mmr` and `unemp` if the
+clearest case survived. It did not.
+
+**The declaration.** `design_c_prime.yml` carries the windows from `design_c.yml` back to
+`diagnostics.yml`, Nigeria from `fact_observation_native` (never the interpolated spine), the donor pool as
+a rule, nuclear-norm matrix completion with cross-validated penalty, SDID and gsynth as comparison arms, the
+placebo schedule, the gate, the wording refusals and the stop rule. The gate is the plan's, transcribed:
+rank p <= 0.05, every runnable in-time placebo smaller than the estimate, and sign agreement across arms.
+
+**Extraction, reconciled.** 26 native Nigeria years 1999-2024, 2,574 donor rows across 99 countries, 99
+donors complete on every runnable window, and all five derived window years byte-checked against
+`registry/design_c/2026-11-01`. The pilots under `.inspect/` used the spine's annual mean instead of the
+native series; the two agree to within 0.3 per 1,000 across 2005-2024, so the pilot's direction was not an
+artefact of that choice, and the declared pass used the native series anyway.
+
+**The gaps (`u5mr`, per 1,000 live births, mean over each window's post years).**
+
+| Window | Matrix completion | SDID | Design C simplex (published) |
+|---|---|---|---|
+| Yar'Adua 2007-2009 | **-5.22** | -0.72 | +2.11 |
+| Jonathan 2010-2014 | **-2.28** | +1.63 | -11.56 |
+| Buhari 2015-2022 | **+3.77** | +5.81 | +8.59 |
+| Tinubu 2023-2024 | **+4.15** | +1.62 | +18.53 |
+
+gsynth was refused on all four windows under the declared validity rule: on yaradua its CV-selected rank 2
+tracks the pre-period to 0.93 then extrapolates the counterfactual to -211 in 2009; on the other three its
+pre-fit error exceeds 10 % of the pre-period standard deviation. Its CV folds are also unseeded, so the
+seed is now fixed at 20261104; without it the selected rank changed between runs. The arm is published as
+refused with the number that failed, not dropped.
+
+**Inference.** 99 in-space placebos per window, each refitted at the treated fit's own penalty:
+
+| Window | gap | rank p | placebo 2.5-97.5 % | in-time placebos |
+|---|---|---|---|---|
+| Yar'Adua | -5.22 | 0.43 | -17.45 to +7.58 | none runnable (pre-period too short) |
+| Jonathan | -2.28 | 0.79 | -23.02 to +10.69 | +3 yrs: -6.01 (larger than the estimate) |
+| Buhari | +3.77 | 0.70 | -17.52 to +11.82 | +3/-1.85, +5/-3.09, +7/-5.38 |
+| Tinubu | +4.15 | 0.28 | -27.82 to +8.55 | +3/+5.55, +5/+6.93, +7/+4.97 (all larger) |
+
+The smallest attainable p on 99 placebos is 0.01. Every treated gap sits inside its own placebo
+distribution, and on two windows a backdated placebo is the same size or larger. **No window clears the
+gate**, so each is `estimated_not_identified` for a different reason, and the sign agreement that looked
+like the story in the pilot is the smaller problem: the disagreement is now inside a noise band both arms
+share.
+
+**Three defects caught before any number was reported.** A `sum(alpha) = 0` constraint pushed the panel's
+level into `L` and inflated the nuclear norm from 47 to 7,651 on a test panel, so the optimum described the
+constraint rather than the data; the solver cross-check is what exposed it. A window with zero pre years
+(obasanjo) reached the fit before the declared floor was applied. And gsynth's `att.avg` is not the
+post-period gap in 1.4.0 (it returned 113.8 on a window whose gap is about -13), so the gap is now computed
+from `Y.ct`.
+
+**The verdict, and what it forbids.** The stop rule asked whether matrix completion reproduces the
+published direction and whether the solver dependence disappears. The second half is answered yes: the
+SCS/ADMM spread is 1e-5 or smaller on every fit, against a simplex that returned different signs from two
+solvers. The first half is answered no in the way that matters: the gaps are indistinguishable from
+treating a random donor. **P5 (`mmr`, `unemp`) does not open, and P6 (a published what-if) has nothing
+stable to publish.** No what-if number may reach the site from this pass.
+
+**Verification.** `py_compile` clean on both scripts; `design_c_prime.yml` parses; extraction and fit
+re-run from scratch reproduce every number above; `tests/verify_site.py` green (no site file changed).
+`scripts/verify.sh` was not run: it re-runs the R stages that write the registry, and nothing it checks
+moved.
+
+**Still open.** The five requester decisions in `counterfactual-recommendation.md` section 9, unchanged and
+now more pointed: if a refusal is worth publishing, it needs a new vintage and a verifier; if not, the
+finding stays in these documents. The discovery track stays closed for the reasons in
+`docs/causal-discovery.md`, now written down with its smoke-run evidence.

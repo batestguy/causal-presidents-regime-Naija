@@ -1,0 +1,230 @@
+# P0 — Design C′: a matrix-completion counterfactual, declared before any fit
+#
+# This spec was written **before any weight, rank or penalty was fitted** (2026-11-04), for `u5mr` alone.
+# It exists because the plan says the synthetic control's simplex fit is not the estimator this donor pool
+# can support: 99 donors against 8 to 24 pre-treatment years leaves the quadratic program with a face of
+# equally good optima, so the weights — and, on two of four windows, the sign of the gap — are properties of
+# the solver's vertex rather than of the data (docs/causal-ml-plan.md; the ridge refit in
+# `design_c.yml → estimator.solver_sensitivity` is the diagnostic that showed it).
+#
+# The replacement is the estimator built for that case: **nuclear-norm matrix completion** over the
+# country × year panel (Athey, Bayati, Doudchenko, Imbens, Khosravi 2021), with unit and year fixed effects
+# and the regularisation chosen by cross-validation on the masked pre-period. It does not need a simplex,
+# it does not need a rank chosen by hand, and it can use donors whose series is incomplete.
+#
+# What this spec is not
+# ---------------------------------------------------------------------------------------------
+# It is not a publication. P0 through P4 are exploratory, and the only artifact they write lands under
+# `.inspect/`. A what-if reaches `registry/` in P6, in a **new vintage**, with the verifier that
+# `counterfactual-recommendation.md` §7 declares. The frozen 2026-11-01 vintage is input, never output.
+#
+# The comparison arms are declared here, in the same file, on the same windows and donors, because the
+# pilot's finding is a disagreement and a disagreement cannot be reported by one estimator. On `u5mr` the
+# simplex and SDID flip sign on Yar'Adua (+2.11 against −0.87) and Jonathan (−11.56 against +1.51, placebo
+# SE ≈ 8.0). Reproducing one arm and calling it the answer is the specific failure this design prevents.
+version: 1
+labelled: "2026-11-04"          # the day the declaration was made, not the data vintage
+stamp: "declared 2026-11-04, before any fit; outcomes, windows, donors, penalties, placebos, gate and stop rule all fixed here"
+stage: "P0"
+engine: "scripts/fit_design_c_prime.py"
+engine_r: "analysis/R/12_design_c_prime_arms.R"
+verifier: "tests/verify_design_c_prime.py"   # written in P6, not before: there is no artifact to verify yet
+
+# ---------------------------------------------------------------------------------------------
+# Inputs
+# ---------------------------------------------------------------------------------------------
+input:
+  database: "data/analytics.duckdb"
+  donor_table: "main_analytics.fact_donor_panel"
+  native_table: "main_analytics.fact_observation_native"
+  metric_table: "main_analytics.dim_metric"
+  # Nigeria's path is the native annual observation, never the interpolated monthly spine. The spine
+  # declares its own provenance per month (`fact_metric.observation_type`): `interpolated` months are the
+  # engine's own fill, and a counterfactual fitted to them would be fitted partly to that fill rule.
+  #
+  # The exploratory pilots under `.inspect/` used the spine's annual mean; the two series agree to within
+  # 0.3 per 1,000 on u5mr across 2005–2024 (checked 2026-11-04), so the pilot's direction is not an
+  # artefact of that choice. The declared pass uses the native series regardless, because "close" is not
+  # the same as "the declared input".
+  treated_scope: "NGA"
+  treated_series: "fact_observation_native where scope = 'NGA', at its native annual grain"
+  # A donor is a country, never a hand-picked set. The pool is a rule:
+  #   every country in `fact_donor_panel` that is not the treated unit and carries a value in **every**
+  #   year of the window's pre-period.
+  # Matrix completion tolerates gaps in the post-period (that is the whole point of the estimator), so
+  # completeness is required only where the fit is trained. SDID and gsynth need a balanced panel over the
+  # full window, so the comparison arms use the intersection: donors complete across the whole window.
+  # The two pools are declared, and their sizes are printed on every fit, because a gap is not comparable
+  # between arms fitted on different donors.
+  donor_rule:
+    unit: "country_iso3 in fact_donor_panel where is_treated_unit = false"
+    minimum_donors: 20
+    completeness:
+      matrix_completion: "every pre-period year of the window"
+      sdid_and_gsynth: "every year of the window, both periods"
+    on_shortfall: >-
+      a window whose pool falls below `minimum_donors` for an arm publishes that arm as refused with the
+      count it had, and is never fitted on a smaller hand-chosen set
+  years:
+    first: 1999
+    last: 2024
+
+# ---------------------------------------------------------------------------------------------
+# Windows — carried from Design C, not retyped
+# ---------------------------------------------------------------------------------------------
+# The windows are read from `design_c.yml → windows` (which itself reads
+# `diagnostics.yml → windows.candidate_treated_windows`). Two copies of a treatment date is how a window
+# silently moves, so there is one copy.
+#
+# The calendar-year rule is Design C's, unchanged: a year belongs to the administration in office on
+# 1 July. That yields yaradua 2007–2009, jonathan 2010–2014, buhari 2015–2022, tinubu 2023–2024.
+# Obasanjo (1999–2006) has no post year inside the study window and is refused by the gate, not here.
+windows:
+  source: "analysis/specs/design_c.yml"
+  key: "windows"
+  ids: [obasanjo, yaradua, jonathan, buhari, tinubu]
+  require_pre_years: 8        # Design C's floor, carried
+  require_post_years: 2
+  pre_rule: >-
+    every year from 1999 to the year before the window's first post year, inclusive, exactly as Design C
+    defines it: a later window's pre-period contains the earlier tenures, and the windows are therefore not
+    additive.
+
+# ---------------------------------------------------------------------------------------------
+# Estimators — three arms, same window, same years
+# ---------------------------------------------------------------------------------------------
+estimators:
+  primary:
+    name: "nuclear-norm matrix completion with two-way fixed effects"
+    model: >-
+      Y[i,t] = alpha[i] + beta[t] + L[i,t] + e[i,t], where L is low-rank in the nuclear-norm sense. Fit by
+      minimising 0.5 * ||P_obs(Y - alpha - beta - L)||_F^2 + lambda * ||L||_* over the observed cells,
+      with the treated unit's post-period cells held out as unobserved.
+    penalty: >-
+      lambda chosen by K-fold cross-validation over the observed **pre-period** cells only: entries are
+      masked at random, the model is refit, and the penalty that minimises held-out squared error wins. The
+      treated unit's post-period cells are never touched by the selection.
+    cv:
+      folds: 5
+      mask_fraction: 0.15
+      seeds: [20261104, 20261105, 20261106]   # three independent maskings; the reported penalty is the mode
+      lambda_grid: "lambda_max * [0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 0.9], lambda_max = largest singular value of the observed residual matrix"
+    # Amended 2026-11-04, before any fit ran, after a timing probe on a 100 x 26 panel: CLARABEL took 124 s
+    # per solve against SCS's 0.9 s, and the stop rule's solver check does not need an interior-point polish.
+    # The nuclear-norm objective is strictly convex in L on a band of observed cells, so the optimiser has a
+    # unique solution and the simplex's face-of-optima pathology cannot arise by construction; the check
+    # exists to confirm that rather than to fix it. The second opinion is therefore a different **algorithm**
+    # at the same lambda: an alternating soft-impute (singular-value thresholding with the two-way effects
+    # profiled out), not a different interior-point solver on the same programme.
+    solver: "cvxpy SCS, eps = 1e-6, max_iters = 50000"
+    solver_check: >-
+      re-solve the final fit at the same lambda by alternating soft-impute and report the gap spread. A spread
+      above 1e-3 of the gap means the solve is not converged and the fit is rejected rather than reported.
+    gap: "mean over post years of (observed - counterfactual), in the outcome's own unit"
+    why_this_estimator: >-
+      the simplex is underdetermined on this pool and returned a different sign under two solvers; matrix
+      completion has no simplex constraint and shrinks toward a low-rank path, so the gap is a property of
+      the held-out cells rather than of a vertex of a face of optima
+  arms:
+    - id: sdid
+      name: "synthetic difference-in-differences (Arkhangelsky et al. 2021)"
+      engine: "R synthdid 0.0.9, synthdid_estimate()"
+      requires: "balanced panel over the window"
+      variance: "jackknife; placebo variance reported when the jackknife is unavailable"
+    - id: gsynth
+      name: "generalized synthetic control (Xu 2017)"
+      engine: "R gsynth 1.4.0, force = 'two-way', CV = TRUE, r = c(0, 5)"
+      requires: "balanced panel over the window"
+      variance: "gsynth's own parametric bootstrap, reported as the arm's own interval and never combined with the placebo interval"
+      # Declared after the first diagnostic run (2026-11-04) but before any window was reported: on yaradua the
+      # CV-selected rank 2 tracks the pre-period to 0.93 and then extrapolates the treated counterfactual to
+      # -211 in the final year. `att.avg` is not the post-period gap in this version, so the gap is computed
+      # from `Y.ct`; the arm is refused when the counterfactual is non-physical.
+      validity_rule: >-
+        an arm is reported as `refused`, with the number that failed, when any post-period counterfactual is
+        negative or above twice the window's largest observation, or when its pre-fit RMSE exceeds 10 % of the
+        pre-period standard deviation. The measurement is published either way; nothing is averaged in.
+      reproducibility: "set.seed(20261104) before the call: gsynth's CV folds are otherwise unseeded and the selected rank changes between runs"
+  # The arms are reported side by side and never averaged. Averaging is how a disagreement becomes a
+  # number nobody can check.
+  aggregation: "none — every window publishes one gap per arm that ran; a `methods disagree` verdict is a result, not an error"
+
+# ---------------------------------------------------------------------------------------------
+# Inference — placebo-based, as Design C declares it
+# ---------------------------------------------------------------------------------------------
+placebos:
+  in_space:
+    assignment: "every donor is treated in turn on the same window; the counterfactual is refitted from the remaining donors"
+    gaps: "the mean post-period gap for each placebo, in outcome units"
+    p_rule: >-
+      p = #{placebos with |gap| >= |treated gap|} / (1 + n_placebos). Two-sided on magnitude, because the
+      what-if has no prior direction: a transition can sit above or below the matched path. The smallest
+      attainable p is 1/(1+n), which is printed rather than left to be inferred.
+    reported: "the full placebo gap distribution, not only the p"
+  in_time:
+    backdate_years: [3, 5, 7]
+    rule: >-
+      move the window back k years and estimate the gap in a period that had no transition. Refuse a
+      backdated window whose pre-period falls below `require_pre_years` and say so. A credible design
+      returns no gap in a period that had no treatment.
+    reported: "each placebo's mean gap and its ratio to the treated gap"
+  leave_one_donor_out:
+    rule: "drop each donor in turn, refit, and report the range of the gap and how many fits flip its sign"
+    why: "the donor pool's definition is a declared robustness axis (design spec §5.3); this is the sweep it names"
+  interval:
+    method: "2.5th and 97.5th percentiles of the in-space placebo gap distribution"
+    declared_as: >-
+      randomization inference, not a sampling interval. There is no population parameter being estimated
+      here, so a standard error would answer a question nobody asked.
+
+# ---------------------------------------------------------------------------------------------
+# The publication gate — fixed before the numbers exist
+# ---------------------------------------------------------------------------------------------
+# These are the plan's own conditions, transcribed rather than re-decided. P0–P4 compute and report them;
+# only P6 acts on them, and P6 needs requester sign-off first.
+gate:
+  window_is_identified: >-
+    all three hold: (1) the in-space rank p at or below 0.05; (2) every in-time placebo that could be run
+    returns a mean gap smaller in absolute value than the treated gap; (3) matrix completion, SDID and
+    gsynth agree on the sign of the gap. Otherwise the window is `estimated_not_identified`, with each
+    failed check named.
+  multiplicity: "Holm at 0.05 across the outcomes and windows that carry a rank p"
+  stability_flag:
+    stable: "every arm that ran agrees on the sign"
+    unstable: "any two arms disagree on the sign; the range is published and the block says so"
+  never: "a 'best' window or a 'best' estimator chosen after seeing the results"
+
+# ---------------------------------------------------------------------------------------------
+# The stop rule for P4 — this is why the workflow exists
+# ---------------------------------------------------------------------------------------------
+# P5 (mmr, unemp) does not open on enthusiasm. It opens only if the clearest case survives:
+stop_rule:
+  question: >-
+    On `u5mr`, does matrix completion reproduce the direction of Design C's published gap on the windows
+    where the simplex and SDID disagreed (yaradua, jonathan), and does the solver dependence that broke the
+    simplex disappear?
+  passes_if: >-
+    the matrix-completion gap is not explained by the solver (the SCS/CLARABEL spread is small relative to
+    the gap), the in-space rank p is a real rank rather than a saturated one, and the three arms' signs are
+    reported with the disagreement if it remains.
+  fails_if: >-
+    matrix completion itself flips sign between solvers, or its gap sits inside its own placebo distribution
+    on every window. Then the plan is revised before any further outcome is fitted.
+  recorded_in: "PROGRESS.md, before P5 is marked open"
+
+# ---------------------------------------------------------------------------------------------
+# What this artifact will never carry
+# ---------------------------------------------------------------------------------------------
+refusals:
+  - "no causal verb: no 'caused', 'effect of', 'because of', 'improved', 'worsened', 'blame', 'credit'"
+  - "no single number for a window whose arms disagree; the disagreement is the published fact"
+  - "no standard error, confidence interval or p-value other than the placebo rank — the interval is randomization inference"
+  - "no per-president wording: windows are keyed by tenure id and the output prints no surname"
+  - "no donor selection, and no donor removed because its gap was inconvenient"
+
+not_claimed:
+  - "This is not the effect of a president. It is the gap between Nigeria's observed path and a path built from other countries' paths after a transition."
+  - "The counterfactual is not observed. A good pre-fit shows the panel can reproduce the pre-period, not that it would have reproduced the post-period without the transition."
+  - "The donor pool is countries, not Nigerian states: it cannot hold constant anything Nigeria-specific — the oil cycle, the naira, the security environment."
+  - "The windows overlap in their pre-periods: a later window's counterfactual already contains the earlier tenures, so the gaps are not additive."
+  - "The outcomes are not comparable to one another. Each is its own fit against its own donor paths, in its own unit."
