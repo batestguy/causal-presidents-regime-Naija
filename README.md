@@ -22,12 +22,13 @@ It is an installable web app, not just a page: open it on a phone and use **Add 
 
 [![Demo video: the site, screen by screen](docs/demo/01_cover.png)](docs/demo/demo.mp4)
 
-▶ **[Watch the 1:22 demo](docs/demo/demo.mp4)**: every screen in order, from the premise to the Ask box,
-captured on the live site. Music: *Nobody Fails* by Ofege, then *I Am William* by 2Shotz featuring M.I Abaga —
-each taken from 0:19, forty-one seconds each. The stills and the builder are in `docs/demo/` and `tools/`.
+▶ **[Watch the 1:37 demo](docs/demo/demo.mp4)**: a real walk through the site — the two outcomes ticked on
+the study screen, the comparison, the graph, the refused cards, the chart's grouping switch and tenure table,
+the published card with its technical section opened, the design-level results, and the Ask box answering a
+question. Captured at 1600×900 on the built site, navigation and scrolling included. Music: *Nobody Fails* by
+Ofege, from 0:19. The recorder and the builder are in `tools/`.
 
-The screenshots below are the whole thing, frame by frame: no server, no database, no network call at render
-time.
+The screenshots below are frame by frame: no server, no database, no network call at render time.
 
 <table>
   <tr>

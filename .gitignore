@@ -93,3 +93,8 @@ docs/demo/build/
 # redistributed, so they stay on the machine that made the video.
 *.m4a
 
+
+# The demo take: the raw .webm and the shot log it produced. The finished cut in docs/demo/ is what ships,
+# and the take is 22 MB of a screen nobody needs twice.
+/build/
+

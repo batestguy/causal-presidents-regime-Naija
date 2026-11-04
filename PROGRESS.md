@@ -3295,23 +3295,30 @@ Tampering a card with `difference: 99.0` and a fake break date fails with both p
 **Verification.** `verify_registry`, `verify_app`, `verify_dags`, `validate_artifacts` and `verify_site` all
 exit 0 after the regeneration; `py_compile` clean on the app and the R script parses.
 
-## 2026-11-04 - the demo video, built the way the Tableau atlas built its own
+## 2026-11-04 - the demo video, recorded rather than assembled
 
-**What.** `docs/demo/` carries ten stills of the live site at 1600x1000 and `demo.mp4` (1:22, 13 MB, 30 fps,
-AAC stereo). The README embeds a clickable poster, the same shape the Tableau Nigeria MPI Equity Atlas uses:
-a cover still that links to the file, a one-line watch link, and the music credit.
+**What.** `docs/demo/demo.mp4`: 1:37, 1600x900, 30 fps, AAC stereo, 8.4 MB. A real walk through the built
+site — pointer, clicks, page changes and scrolling — with one caption pill per shot and one record underneath.
+`docs/demo/01_cover.png` is a frame from the cut, so the README thumbnail matches the film.
 
-**How it is made.** `tools/build_demo.py` declares the shot list — file, seconds, caption — and does the rest:
-a 5 % push per still so ten screenshots do not read as ten slides, one caption pill bottom-right in the site's
-accent, the shots concatenated, then the soundtrack. The music is *Nobody Fails* by Ofege and *I Am William*
-by 2Shotz featuring M.I Abaga, each entered at 0:19 and run for 41 seconds; the second is fed with
-`-stream_loop -1` so the cut can grow past 82 seconds without the bed running out. The per-shot encodes are
-gitignored (`docs/demo/build/`), and so are the source `.m4a` files: the finished cut is committed for the
-README, the recordings are not redistributed.
+**The walk.** Home (hover a portrait) → Begin → study, two outcomes ticked → Next → comparison, scrolled →
+graph, scrolled to the adjustment set → estimates, two refused cards, each with its trend line → chart, the
+changepoint panel, the grouping switch, the tenure table → study again, one outcome → the published card
+(+0.4678, its interval and its trend line) with the technical section opened to show the p-value, sample and
+failed check → design-level results, scrolled through the forest plot, the grid, the synthetic counterfactual
+and the transitions → methodology's limits → Ask, a question typed and answered, technical collapsed → end
+card.
 
-**Why stills and not a screen recording.** The Tableau demo is a sequence of stills with captions, and that
-suits a site whose point is what is written on the page rather than what happens when you click. It is also
-reproducible: a screenshot does not drift between runs the way a recording does, so the builder can declare
-durations instead of reading a take log.
+**Why two selection passes.** The estimate screen leads with the cards that carry a number and collapses the
+rest behind one line, so a single selection cannot show both a refusal and a published figure. The take shows
+the study screen twice, which is also the honest demonstration of what the control does.
 
-**Not done.** No caption track (burned-in only), no 9:16 cut, and no voice-over.
+**How it is made.** `tools/record_demo.mjs` drives the site with Playwright and writes a shot log; the mark is
+taken at the instant the frame changes, not after the hold. `tools/build_demo.py --take desktop` trims the
+head from the first mark, turns each mark into a caption window ending at the next mark, burns the pill, and
+lays *Nobody Fails* by Ofege under it from 0:19 with fades. A `--stills` path still assembles the ten stills if
+a browser is unavailable. Three takes were needed: a hidden expander, a hidden radio behind its label, and a
+`#pick-fatalities` checkbox inside a collapsed domain all failed fast once short timeouts were set, and the
+recorder now clicks labels rather than inputs.
+
+**Not done.** No caption sidecar, no 9:16 cut, no voice-over.
