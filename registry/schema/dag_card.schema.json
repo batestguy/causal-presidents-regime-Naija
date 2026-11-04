@@ -32,56 +32,156 @@
       "pattern": "^[a-z0-9_]+__(A|B|C)$",
       "description": "<outcome_id>__<design_id>"
     },
-    "schema_version": { "type": "string" },
+    "schema_version": {
+      "type": "string"
+    },
     "vintage_date": {
       "type": "string",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
     },
-    "generated_at": { "type": "string" },
+    "generated_at": {
+      "type": "string"
+    },
     "generator": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["script", "git_sha"],
+      "required": [
+        "script",
+        "git_sha"
+      ],
       "properties": {
-        "script": { "type": "string" },
-        "git_sha": { "type": ["string", "null"] }
+        "script": {
+          "type": "string"
+        },
+        "git_sha": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       }
     },
     "outcome": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "label", "short", "domain", "unit", "direction", "frequency", "source", "coverage_status"],
+      "required": [
+        "id",
+        "label",
+        "short",
+        "domain",
+        "unit",
+        "direction",
+        "frequency",
+        "source",
+        "coverage_status"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "label": { "type": "string" },
-        "short": { "type": "string" },
-        "domain": { "type": "string", "enum": ["health", "education", "security", "economy"] },
-        "unit": { "type": "string" },
-        "direction": { "type": "string", "enum": ["up", "down"], "description": "up = higher is better, down = lower is better" },
-        "frequency": { "type": "string" },
-        "source": { "type": "string" },
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "short": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string",
+          "enum": [
+            "health",
+            "education",
+            "security",
+            "economy"
+          ]
+        },
+        "unit": {
+          "type": "string"
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "up",
+            "down"
+          ],
+          "description": "up = higher is better, down = lower is better"
+        },
+        "frequency": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
         "coverage_status": {
           "type": "string",
-          "enum": ["ok", "partial", "declared_gap", "blocked"]
+          "enum": [
+            "ok",
+            "partial",
+            "declared_gap",
+            "blocked"
+          ]
         },
-        "coverage_note": { "type": "string" }
+        "coverage_note": {
+          "type": "string"
+        }
       }
     },
     "design": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "name", "short", "unit", "estimand", "estimator", "exposure_node", "outcome_node", "adjustment_criterion", "design_controls"],
+      "required": [
+        "id",
+        "name",
+        "short",
+        "unit",
+        "estimand",
+        "estimator",
+        "exposure_node",
+        "outcome_node",
+        "adjustment_criterion",
+        "design_controls"
+      ],
       "properties": {
-        "id": { "type": "string", "enum": ["A", "B", "C"] },
-        "name": { "type": "string" },
-        "short": { "type": "string" },
-        "unit": { "type": "string" },
-        "estimand": { "type": "string" },
-        "estimator": { "type": "string" },
-        "exposure_node": { "type": "string" },
-        "outcome_node": { "type": "string" },
-        "adjustment_criterion": { "type": "string", "enum": ["backdoor"] },
-        "design_controls": { "type": "array", "items": { "type": "string" } }
+        "id": {
+          "type": "string",
+          "enum": [
+            "A",
+            "B",
+            "C"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "short": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "estimand": {
+          "type": "string"
+        },
+        "estimator": {
+          "type": "string"
+        },
+        "exposure_node": {
+          "type": "string"
+        },
+        "outcome_node": {
+          "type": "string"
+        },
+        "adjustment_criterion": {
+          "type": "string",
+          "enum": [
+            "backdoor"
+          ]
+        },
+        "design_controls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
     "nodes": {
@@ -90,12 +190,35 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "label", "short", "role", "observed", "source", "source_status"],
+        "required": [
+          "id",
+          "label",
+          "short",
+          "role",
+          "observed",
+          "source",
+          "source_status"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "label": { "type": "string" },
-          "short": { "type": "string" },
-          "role": { "type": "string", "enum": ["exposure", "outcome", "confounder", "mediator", "modifier"] },
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "short": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "exposure",
+              "outcome",
+              "confounder",
+              "mediator",
+              "modifier"
+            ]
+          },
           "observed": {
             "type": "boolean",
             "description": "false = a node the estimate requires to be absent; drawn on the graph, listed in assumption_required, and dropped from the graph used to compute the adjustment set"
@@ -107,7 +230,13 @@
           },
           "source_status": {
             "type": "string",
-            "enum": ["acquired", "gap", "derived", "construct", "unobserved"],
+            "enum": [
+              "acquired",
+              "gap",
+              "derived",
+              "construct",
+              "unobserved"
+            ],
             "description": "acquired = a landing flow exists and the series has been pulled; gap = no usable source yet (recorded, never silently absent); derived = computed from other nodes; construct = a design artefact such as a fixed effect; unobserved = the node the estimate assumes absent"
           }
         }
@@ -119,30 +248,55 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["from", "to"],
+        "required": [
+          "from",
+          "to"
+        ],
         "properties": {
-          "from": { "type": "string" },
-          "to": { "type": "string" }
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          }
         }
       }
     },
     "adjustment_set": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "The minimal backdoor adjustment set, computed by dagitty on the assumed graph (unobserved nodes removed). Empty means no open backdoor path."
     },
     "adjustment_sets": {
       "type": "array",
-      "items": { "type": "array", "items": { "type": "string" } },
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
       "description": "Every valid adjustment set dagitty returned, for transparency when more than one exists."
     },
     "assumption_required": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "Node ids the estimate requires to be absent (the identifying assumption in graph form)"
     },
-    "identifying_assumption": { "type": "string", "minLength": 20 },
-    "cannot_rule_out": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "identifying_assumption": {
+      "type": "string",
+      "minLength": 20
+    },
+    "cannot_rule_out": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
     "dagitty_full": {
       "type": "string",
       "description": "The displayed graph as a dagitty DAG string, including unobserved nodes"
@@ -154,12 +308,25 @@
     "diagnostics": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status", "checks", "blocker", "note", "coverage_status", "vintage", "source"],
+      "required": [
+        "status",
+        "checks",
+        "blocker",
+        "note",
+        "coverage_status",
+        "vintage",
+        "source"
+      ],
       "description": "Stage 5 pre-analysis diagnostics for this (outcome, design) pair, attached by analysis/R/01_build_dags.R from registry/diagnostics/<vintage>/diagnostics.json. A card whose status is not `pass` must name the blocker: PHASES.md Stage 6 forbids a card rendered with a gap.",
       "properties": {
         "status": {
           "type": "string",
-          "enum": ["pass", "degraded", "fail", "not_attempted"],
+          "enum": [
+            "pass",
+            "degraded",
+            "fail",
+            "not_attempted"
+          ],
           "description": "pass = every pre-check passed; degraded = estimable but not as specified; fail = a pre-check failed, so this design is dropped for this outcome; not_attempted = the outcome has no usable series, so no pre-check could run"
         },
         "checks": {
@@ -168,45 +335,97 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["id", "verdict", "detail"],
+            "required": [
+              "id",
+              "verdict",
+              "detail"
+            ],
             "properties": {
-              "id": { "type": "string" },
+              "id": {
+                "type": "string"
+              },
               "verdict": {
                 "type": "string",
-                "enum": ["pass", "computed", "flag", "inconclusive", "deviation", "fail", "not_run", "weak_fit"]
+                "enum": [
+                  "pass",
+                  "computed",
+                  "flag",
+                  "inconclusive",
+                  "deviation",
+                  "fail",
+                  "not_run",
+                  "weak_fit"
+                ]
               },
-              "detail": { "type": "string" }
+              "detail": {
+                "type": "string"
+              }
             }
           }
         },
         "blocker": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "What stops this card passing. Required (non-null) whenever status is not `pass`."
         },
-        "note": { "type": "string" },
+        "note": {
+          "type": "string"
+        },
         "coverage_status": {
           "type": "string",
-          "enum": ["ok", "partial", "declared_gap", "blocked"]
+          "enum": [
+            "ok",
+            "partial",
+            "declared_gap",
+            "blocked"
+          ]
         },
-        "vintage": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
-        "source": { "type": "string" }
+        "vintage": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "source": {
+          "type": "string"
+        }
       }
     },
     "assets": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["svg"],
+      "required": [
+        "svg"
+      ],
       "properties": {
-        "svg": { "type": "string" }
+        "svg": {
+          "type": "string"
+        }
       }
     },
     "estimate": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status", "model_card_ref", "the_number_is_for_this_card", "note"],
+      "required": [
+        "status",
+        "model_card_ref",
+        "the_number_is_for_this_card",
+        "note"
+      ],
       "properties": {
-        "status": { "type": "string", "enum": ["not_estimated", "estimated"] },
-        "model_card_ref": { "type": ["string", "null"] },
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_estimated",
+            "estimated"
+          ]
+        },
+        "model_card_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "the_number_is_for_this_card": {
           "type": "boolean",
           "description": "True only when the attached specification is about this card's own outcome. The registry never publishes a number that fails this test; the field exists so that if it ever did, the app and the verifier would both see it as false rather than as a number"
@@ -214,80 +433,318 @@
         "specification": {
           "type": "object",
           "description": "Copied field for field from the estimates artifact named in `artifact`. Present iff status is `estimated`",
-          "required": ["artifact", "spec_index", "design", "outcome", "coefficient_name", "coefficient", "standard_error", "ci_low", "ci_high", "n_obs"],
+          "required": [
+            "artifact",
+            "spec_index",
+            "design",
+            "outcome",
+            "coefficient_name",
+            "coefficient",
+            "standard_error",
+            "ci_low",
+            "ci_high",
+            "n_obs"
+          ],
           "properties": {
-            "artifact": { "type": "string" },
-            "spec_index": { "type": "integer", "minimum": 1 },
-            "design": { "type": "string", "enum": ["A", "B"] },
-            "outcome": { "type": "string" },
-            "coefficient_name": { "type": "string" },
-            "coefficient": { "type": "number" },
-            "standard_error": { "type": "number", "minimum": 0 },
-            "ci_low": { "type": "number" },
-            "ci_high": { "type": "number" },
-            "p_value": { "type": "number" },
-            "n_obs": { "type": "integer", "minimum": 1 },
-            "n_units": { "type": "integer", "minimum": 1 },
-            "first_month": { "type": "string" },
-            "last_month": { "type": "string" },
-            "estimator": { "type": "string" },
-            "formula": { "type": "string" },
-            "covariance": { "type": "string" }
+            "artifact": {
+              "type": "string"
+            },
+            "spec_index": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "design": {
+              "type": "string",
+              "enum": [
+                "A",
+                "B"
+              ]
+            },
+            "outcome": {
+              "type": "string"
+            },
+            "coefficient_name": {
+              "type": "string"
+            },
+            "coefficient": {
+              "type": "number"
+            },
+            "standard_error": {
+              "type": "number",
+              "minimum": 0
+            },
+            "ci_low": {
+              "type": "number"
+            },
+            "ci_high": {
+              "type": "number"
+            },
+            "p_value": {
+              "type": "number"
+            },
+            "n_obs": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "n_units": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "first_month": {
+              "type": "string"
+            },
+            "last_month": {
+              "type": "string"
+            },
+            "estimator": {
+              "type": "string"
+            },
+            "formula": {
+              "type": "string"
+            },
+            "covariance": {
+              "type": "string"
+            }
           }
         },
         "verdict": {
           "type": "object",
           "description": "The Stage 6 verdict for this card's design, with the check that decided it. An estimate can be published on a card whose pre-check failed: both statements travel together",
-          "required": ["status", "rule"],
+          "required": [
+            "status",
+            "rule"
+          ],
           "properties": {
-            "status": { "type": "string" },
-            "rule": { "type": "string" },
-            "failed_checks": { "type": ["string", "null"] },
-            "checked_at": { "type": "object" }
+            "status": {
+              "type": "string"
+            },
+            "rule": {
+              "type": "string"
+            },
+            "failed_checks": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "checked_at": {
+              "type": "object"
+            }
           }
         },
         "robustness": {
           "type": "object",
           "description": "Stage 7's summary for this card's own axis level, so 'this number is one cell of a grid' travels with the number (Stage 8, S8-03)",
-          "required": ["artifact", "axis", "axis_level", "design_support", "near_zero_band"],
+          "required": [
+            "artifact",
+            "axis",
+            "axis_level",
+            "design_support",
+            "near_zero_band"
+          ],
           "properties": {
-            "artifact": { "type": "string" },
-            "axis": { "type": "string" },
-            "preferred_specification": { "type": "string" },
-            "this_specification_is_the_preferred_one": { "type": "boolean" },
-            "axis_level": { "type": "object" },
-            "design_support": { "type": "object" },
-            "design_flip_levels": { "type": "integer", "minimum": 0 },
-            "near_zero_band": { "type": "number", "minimum": 0 },
-            "rule": { "type": "string" }
+            "artifact": {
+              "type": "string"
+            },
+            "axis": {
+              "type": "string"
+            },
+            "preferred_specification": {
+              "type": "string"
+            },
+            "this_specification_is_the_preferred_one": {
+              "type": "boolean"
+            },
+            "axis_level": {
+              "type": "object"
+            },
+            "design_support": {
+              "type": "object"
+            },
+            "design_flip_levels": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "near_zero_band": {
+              "type": "number",
+              "minimum": 0
+            },
+            "rule": {
+              "type": "string"
+            }
           }
         },
         "not_estimated_reason": {
           "type": "object",
           "description": "Present iff status is `not_estimated`: a closed set of reasons, so 'no estimate' is never silent",
-          "required": ["code", "detail"],
+          "required": [
+            "code",
+            "detail"
+          ],
           "properties": {
             "code": {
               "type": "string",
-              "enum": ["outcome_series_absent", "no_specification_declared", "outcome_not_at_design_grain", "design_result_is_channel_level", "design_not_run", "design_estimated_not_identified"]
+              "enum": [
+                "outcome_series_absent",
+                "no_specification_declared",
+                "outcome_not_at_design_grain",
+                "design_result_is_channel_level",
+                "design_not_run",
+                "design_estimated_not_identified"
+              ]
             },
-            "detail": { "type": "string", "minLength": 20 }
+            "detail": {
+              "type": "string",
+              "minLength": 20
+            }
           }
         },
-        "published_result": { "type": ["string", "null"] },
-        "note": { "type": "string", "minLength": 20 }
+        "published_result": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "note": {
+          "type": "string",
+          "minLength": 20
+        }
       },
       "allOf": [
         {
-          "if": { "properties": { "status": { "const": "estimated" } }, "required": ["status"] },
-          "then": {
-            "required": ["specification", "verdict", "robustness"],
-            "properties": { "the_number_is_for_this_card": { "const": true } }
+          "if": {
+            "properties": {
+              "status": {
+                "const": "estimated"
+              }
+            },
+            "required": [
+              "status"
+            ]
           },
-          "else": { "required": ["not_estimated_reason"] }
+          "then": {
+            "required": [
+              "specification",
+              "verdict",
+              "robustness"
+            ],
+            "properties": {
+              "the_number_is_for_this_card": {
+                "const": true
+              }
+            }
+          },
+          "else": {
+            "required": [
+              "not_estimated_reason"
+            ]
+          }
         }
       ],
       "description": "Filled by analysis/R/05_registry.R (Stage 8) from the Stage 6 and Stage 7 artifacts. While status is not_estimated the app must show the assumption and the adjustment set with no number, and must say why."
+    },
+    "description": {
+      "type": "object",
+      "description": "What the outcome's series shows, published beside a refusal. Present on Design C cards only, and never an estimate: the tenure trend's widest president-to-president contrast (in years, not surnames) and the changepoint search's result. Absent on A and B cards, where repeating it would print the same sentence three times for one reader.",
+      "additionalProperties": false,
+      "required": [
+        "not_an_estimate",
+        "note"
+      ],
+      "properties": {
+        "not_an_estimate": {
+          "type": "boolean",
+          "const": true
+        },
+        "status": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "trend": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "method": {
+              "type": "string"
+            },
+            "spans": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "n_native": {
+              "type": "number"
+            },
+            "widest_contrast": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "a_years",
+                "b_years",
+                "difference",
+                "range",
+                "unit"
+              ],
+              "properties": {
+                "a_years": {
+                  "type": "string",
+                  "description": "Tenure span as YYYY-YYYY, never a name"
+                },
+                "b_years": {
+                  "type": "string"
+                },
+                "difference": {
+                  "type": "number"
+                },
+                "range": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "unit": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "breaks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "n_native": {
+              "type": "number"
+            },
+            "dates": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "caption": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   }
 }

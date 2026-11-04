@@ -1,6 +1,6 @@
 {
   "dag_id": "skilled_birth__C",
-  "schema_version": "0.3.0",
+  "schema_version": "0.4.0",
   "vintage_date": "2026-11-01",
   "generated_at": "2026-11-02T03:46:06+0100",
   "generator": {
@@ -202,5 +202,19 @@
     },
     "published_result": "registry/design_c/2026-11-01/design_c.json",
     "note": "No estimate for (skilled_birth, C). The synthetic control was run for this outcome and every declared window was refused (gate_window_not_runnable, treated_series_incomplete): obasanjo: 0 pre and 8 post years against the declared minima of 8 and 2 (the year belongs to the administration in office on 1 July); yaradua: Nigeria has no native observation in at least one year of the window (fact_observation_native at its native grain; monthly counts summed to the calendar year); jonathan: Nigeria has no native observation in at least one year of the window (fact_observation_native at its native grain; monthly counts summed to the calendar year); buhari: Nigeria has no native observation in at least one year of the window (fact_observation_native at its native grain; monthly counts summed to the calendar year); tinubu: Nigeria has no native observation in at least one year of the window (fact_observation_native at its native grain; monthly counts summed to the calendar year). The series exists, but it cannot fill a window of this design's declared length, so this is a statement about the data that exists rather than a question left open."
+  },
+  "description": {
+    "not_an_estimate": true,
+    "trend": {
+      "status": "refused",
+      "n_native": 8
+    },
+    "breaks": {
+      "status": "refused",
+      "n_native": 8,
+      "dates": [],
+      "caption": "Skilled birth attendance: 8 native observations in the window. Too few to say when the series changes, and the stage does not fit a date it was told to find."
+    },
+    "note": "A description of the series, published beside the refusal. It is not an estimate and carries no causal claim."
   }
 }

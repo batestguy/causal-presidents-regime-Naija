@@ -19,11 +19,8 @@ pass started after the freeze and wrote nothing into `registry/`.
   gaps sit inside their own placebo distributions on all four windows. The stop rule fired, so `mmr` and
   `unemp` were **not** fitted and nothing was published. Read the phase board in `docs/causal-phases.md`
   first, then the causal entry in this file.
-- **Next, in order:** (1) the card description block agreed on 2026-11-04 but not built — president contrasts
-  and break dates on the eight design-C cards, which needs a `description` field in
-  `registry/schema/dag_card.schema.json`, a reader in `analysis/R/05_registry.R`, one check in
-  `tests/verify_dags.py` and `tests/verify_registry.py`, and a regenerated card set; (2) the demo walkthrough
-  link, whose placeholder sits in `README.md`.
+- **Next, in order:** (1) the demo walkthrough link, whose placeholder sits in `README.md`; (2) nothing else
+  is queued — the card description block landed on 2026-11-04 and the site is deployed.
 - **Causal docs, in order (read the plan as partly executed):** `docs/causal-discovery.md`
   (what could be discovered and why only two outcomes), `docs/causal-ml-options.md` (the method menu),
   `docs/causal-ml-plan.md` (the declared first pass), and `docs/counterfactual-recommendation.md` (the
@@ -3268,3 +3265,32 @@ counts come from the changepoint artifact, which measures the same density the o
 
 **Not done.** The card-level description block discussed for the 8 design-C cards (president contrasts and
 break dates) is still not built: it needs a schema field, two verifiers and a regenerated card set.
+
+## 2026-11-04 - the description block: a refusal that now says what the series does
+
+**Why.** A Design C card refuses because the counterfactual is not identified. The refusal was correct and
+left the reader with nothing, while the project already publishes two descriptions of the same series: how far
+each tenure sits from its own trend, and where the series changes. Neither is an estimate.
+
+**What changed.** `analysis/specs/registry.yml` declares the two new inputs (`registry/tenure`,
+`registry/changepoints`). `analysis/R/05_registry.R` reads them and attaches a `description` block to the
+**twelve Design C cards** only: the tenure trend's widest president-to-president contrast, in years rather than
+surnames, with its range across the three declared spans, and the changepoint search's status and dates. A
+refused series carries the refusal and its observed count instead. `registry/schema/dag_card.schema.json` gains
+the field (schema 0.3.0 -> 0.4.0). `app/registry_data.py` and `app/streamlit_app.py` render it under the card,
+headed *What the series shows, not an estimate*.
+
+**The registry was regenerated, and this is the part to read carefully.** All 36 cards were rewritten by
+`05_registry.R`, so every card's `schema_version` moved to 0.4.0; the twelve C cards gained the block. **No
+published number changed**: the estimate blocks are rebuilt from the same artifacts, `generated_at` is
+preserved, and `tests/verify_registry.py` re-derives every card number from the artifact it names. The vintage
+is still 2026-11-01. This is the first content change to `registry/` since the freeze, and it is a description,
+not an estimate.
+
+**The check, proven to bite.** `tests/verify_registry.py` now requires: a description on every C card and none
+on A or B; `not_an_estimate: true`; the widest contrast equal to the tenure artifact's own widest, its range
+equal, the break dates equal to the changepoint artifact's; and no president's name anywhere in the block.
+Tampering a card with `difference: 99.0` and a fake break date fails with both problems named.
+
+**Verification.** `verify_registry`, `verify_app`, `verify_dags`, `validate_artifacts` and `verify_site` all
+exit 0 after the regeneration; `py_compile` clean on the app and the R script parses.

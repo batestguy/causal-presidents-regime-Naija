@@ -43,6 +43,14 @@ input:
   robustness_root: "registry/robustness"
   estimates_artifact: "estimates.json"
   robustness_artifact: "robustness.json"
+  # The two descriptive layers the design-C cards carry beside their refusal: the tenure trend (LOESS
+  # deviations and the president-to-president contrasts) and the changepoint search. Neither is an estimate,
+  # and both are already published on the site; putting them on the card is a rendering change, not a new
+  # number.
+  tenure_root: "registry/tenure"
+  tenure_artifact: "tenure.json"
+  changepoints_root: "registry/changepoints"
+  changepoints_artifact: "changepoints.json"
 
 # The registry vintage is the *data* vintage: the vintage of the estimates it publishes, which must equal
 # the cards' own vintage_date (they carry Stage 5's), the robustness vintage and the newest estimates

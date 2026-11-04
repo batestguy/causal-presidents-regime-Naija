@@ -1,6 +1,6 @@
 {
   "dag_id": "fatalities__C",
-  "schema_version": "0.3.0",
+  "schema_version": "0.4.0",
   "vintage_date": "2026-11-01",
   "generated_at": "2026-11-02T03:46:06+0100",
   "generator": {
@@ -202,5 +202,28 @@
     },
     "published_result": "registry/design_c/2026-11-01/design_c.json",
     "note": "No estimate on this card for (fatalities, C). The synthetic control was fitted for this outcome in stage 8h: 4 of 5 windows estimated, none identified. The mean gap runs from -6728.37 to +3349.09 count against the synthetic counterfactual, and the in-space placebo rank from p = 0.46 to 0.95 over 99 to 99 placebos. A synthetic control has no sampling distribution, so there is no interval to publish and the honesty layer keeps a number without one off the card. The artifact carries every gap path, the placebos and the check that failed."
+  },
+  "description": {
+    "not_an_estimate": true,
+    "trend": {
+      "status": "described",
+      "method": "LOESS, degree 1, evaluated at the observed points",
+      "spans": [0.5, 0.75, 1],
+      "n_native": 299,
+      "widest_contrast": {
+        "a_years": "2007–2010",
+        "b_years": "2010–2015",
+        "difference": -209.988,
+        "range": [-283.195, -115.056],
+        "unit": "count"
+      }
+    },
+    "breaks": {
+      "status": "search",
+      "n_native": 299,
+      "dates": ["2013-04", "2016-12"],
+      "caption": "Security fatalities: 299 native observations; 2 marked months (2013-04, 2016-12)."
+    },
+    "note": "A description of the series, published beside the refusal. It is not an estimate and carries no causal claim."
   }
 }

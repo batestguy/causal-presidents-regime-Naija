@@ -73,13 +73,16 @@ The screenshots below are the whole thing: no server, no database, no network ca
 > [`docs/events.md`](docs/events.md) — and the boundary all three sit inside,
 > [`docs/limitations.md`](docs/limitations.md).
 
-**Since the freeze (2026-11-04).** Two passes ran outside the registry and neither changed a published number.
-The causal first pass replaced Design C's 99-donor simplex with a matrix-completion counterfactual, fitted it
-on under-5 mortality against 99 placebos, and **stopped at its own gate**: every window's gap sits inside the
-range that treating a random country produces, so `mmr` and `unemp` were not fitted and no what-if number is
-published ([`docs/causal-phases.md`](docs/causal-phases.md), `PROGRESS.md`). The presentation pass then cut
-the estimate screen from 1,048 visible words to 513 and put the refusal on three screens. The registry is
-still vintage 2026-11-01; nothing under `registry/` moved.
+**Since the freeze (2026-11-04).** Two passes ran outside the registry's numbers, and no published figure
+moved. The causal first pass replaced Design C's 99-donor simplex with a matrix-completion counterfactual,
+fitted it on under-5 mortality against 99 placebos, and **stopped at its own gate**: every window's gap sits
+inside the range that treating a random country produces, so `mmr` and `unemp` were not fitted and no what-if
+number is published ([`docs/causal-phases.md`](docs/causal-phases.md), `PROGRESS.md`). The presentation pass
+then cut the estimate screen from 1,048 visible words to 513, put the refusal on three screens, and made the
+site an installable offline app. The registry is still vintage 2026-11-01, and **no published number
+changed**; the card layer was regenerated on the same day to carry a description block on the Design C cards
+(the tenure trend's widest contrast in years, and the changepoint search's result), which is derived from the
+tenure and changepoint artifacts and verified against them.
 
 | | |
 |---|---|

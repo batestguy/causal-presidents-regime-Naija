@@ -1,6 +1,6 @@
 {
   "dag_id": "ner_primary__C",
-  "schema_version": "0.3.0",
+  "schema_version": "0.4.0",
   "vintage_date": "2026-11-01",
   "generated_at": "2026-11-02T03:46:06+0100",
   "generator": {
@@ -182,5 +182,19 @@
     },
     "published_result": "index.json#published_results.design.C",
     "note": "No estimate for (ner_primary, C). Stage 5 pre-checked this pair and the design's own donor panel carries no path for this outcome, so no synthetic control can be fitted: outcome ner_primary is not in the donor panel (predictors: cpi_yoy, fatalities, gdp_growth, immun_penta3, incidents, mmr, oil_rents, population, skilled_birth, u5mr, unemp). That is a statement about the data that exists, not a question left open."
+  },
+  "description": {
+    "not_an_estimate": true,
+    "trend": {
+      "status": "refused",
+      "n_native": 9
+    },
+    "breaks": {
+      "status": "refused",
+      "n_native": 9,
+      "dates": [],
+      "caption": "Net enrolment (primary): 9 native observations in the window. Too few to say when the series changes, and the stage does not fit a date it was told to find."
+    },
+    "note": "A description of the series, published beside the refusal. It is not an estimate and carries no causal claim."
   }
 }

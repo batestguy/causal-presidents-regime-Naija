@@ -1,6 +1,6 @@
 {
   "dag_id": "primary_completion__A",
-  "schema_version": "0.3.0",
+  "schema_version": "0.4.0",
   "vintage_date": "2026-11-01",
   "generated_at": "2026-11-02T03:46:06+0100",
   "generator": {

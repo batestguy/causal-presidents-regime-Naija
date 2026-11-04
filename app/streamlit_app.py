@@ -38,6 +38,7 @@ sys.path.insert(0, str(REPO_ROOT))
 from registry_data import (  # noqa: E402  (the path is set above so the app runs from any cwd)
     RegistryError,
     coverage_words,
+    description_lines,
     direction_words,
     estimate_rows,
     interval,
@@ -248,6 +249,14 @@ with card_tab:
                     f"`{estimate['published_result']}`, see the *Design-level results* tab. It is not an "
                     f"estimate for this outcome."
                 )
+
+    description = card.get("description") or {}
+    if description:
+        st.divider()
+        st.markdown("#### What the series shows, not an estimate")
+        for line in description_lines(description):
+            st.markdown(line)
+        st.caption(description.get("note", ""))
 
     st.divider()
     st.markdown("#### Stage 5 pre-check, run before anything was estimated")

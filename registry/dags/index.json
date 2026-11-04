@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.3.0",
+  "schema_version": "0.4.0",
   "layer": "causal DAGs + published results (the app's data contract)",
   "vintage_date": "2026-11-01",
   "generated_at": "2026-11-02T03:46:06+0100",
@@ -779,7 +779,7 @@
     "Youth literacy (15-24) [NBS / UNESCO UIS]"
   ],
   "registry": {
-    "generated_at": "2026-11-02T03:46:34+0100",
+    "generated_at": "2026-11-04T11:15:00+0100",
     "generated_by": "analysis/R/05_registry.R",
     "spec": "analysis/specs/registry.yml",
     "rule": "A card with design `A` is `estimated` **iff** the estimates artifact publishes a Design A specification whose `outcome` is the card's outcome id. The number, interval and sample are copied from that specification, not from anywhere else.",

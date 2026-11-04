@@ -301,6 +301,64 @@ def main() -> int:
                        f"{declared_without}")
     print("index: " + json.dumps(counts.get("not_estimated_by_reason", {})))
 
+    # ---- 4b. the description block, on the C cards only, copied from its artifacts ---------------
+    # A description is not an estimate, so it is checked against the artifacts that publish it rather than
+    # against the numbers: the widest contrast must be the tenure artifact's widest, its range the artifact's
+    # range, and the break dates the changepoint artifact's. The block may not name a president, because the
+    # card layer keys tenures by years.
+    tenure_path = REPO_ROOT / "registry" / "tenure" / est_vintage / "tenure.json"
+    breaks_path = REPO_ROOT / "registry" / "changepoints" / est_vintage / "changepoints.json"
+    tenure = {row["id"]: row for row in json.loads(tenure_path.read_text(encoding="utf-8"))["outcomes"]}
+    breaks = {row["id"]: row for row in json.loads(breaks_path.read_text(encoding="utf-8"))["outcomes"]}
+    for dag_id, card in cards.items():
+        described = card.get("description")
+        if card["design"]["id"] != "C":
+            if described:
+                fail(failures, f"{dag_id}: a {card['design']['id']} card carries a description; the block is "
+                               f"a property of the outcome's series and belongs on the C card only")
+            continue
+        if not described:
+            fail(failures, f"{dag_id}: a Design C card has no description block — the refusal should carry the "
+                           f"one description the artifacts publish for this outcome")
+            continue
+        if described.get("not_an_estimate") is not True:
+            fail(failures, f"{dag_id}: the description does not declare itself not_an_estimate")
+        outcome = card["outcome"]["id"]
+        trend = described.get("trend") or {}
+        source = tenure.get(outcome) or {}
+        if source.get("status") == "described":
+            if trend.get("status") != "described":
+                fail(failures, f"{dag_id}: the tenure artifact describes this outcome, the card refuses")
+            contrast = trend.get("widest_contrast") or {}
+            contrasts = source.get("contrasts") or []
+            if contrasts:
+                widest = max(contrasts, key=lambda c: abs(c["difference"]))
+                if contrast.get("difference") is None or not close(contrast["difference"], widest["difference"]):
+                    fail(failures, f"{dag_id}: widest contrast {contrast.get('difference')} but the tenure "
+                                   f"artifact's widest is {widest['difference']}")
+                if [round(float(x), 6) for x in contrast.get("range", [])] != \
+                        [round(float(x), 6) for x in widest["range"]]:
+                    fail(failures, f"{dag_id}: contrast range {contrast.get('range')} but the tenure artifact "
+                                   f"publishes {widest['range']}")
+                for field in ("a", "b"):
+                    if contrast.get(f"{field}_years") in (None, "", "NA–NA"):
+                        fail(failures, f"{dag_id}: the widest contrast does not resolve to tenure years")
+        elif trend and not str(trend.get("status", "")).startswith(("refused", "insufficient")):
+            fail(failures, f"{dag_id}: tenure status {source.get('status')!r} on the card as "
+                           f"{trend.get('status')!r}")
+        break_block = described.get("breaks") or {}
+        break_source = breaks.get(outcome) or {}
+        if break_source.get("status") == "search":
+            want_dates = sorted(b["month"] for b in break_source.get("breaks") or [])
+            got_dates = sorted(break_block.get("dates") or [])
+            if got_dates != want_dates:
+                fail(failures, f"{dag_id}: break dates {got_dates} but the changepoint artifact found "
+                               f"{want_dates}")
+        text = json.dumps(described, ensure_ascii=False)
+        for name in ("Obasanjo", "Yar'Adua", "Jonathan", "Buhari", "Tinubu"):
+            if name in text:
+                fail(failures, f"{dag_id}: the description names {name}; the card keys tenures by years")
+
     # ---- 5. the card wins ---------------------------------------------------------------------
     # The rule PHASES.md Stage 8 states is that when a card and the narrative disagree the card wins. It
     # can only be checked where the narrative is machine-readable: the two documents that quote a Stage 7

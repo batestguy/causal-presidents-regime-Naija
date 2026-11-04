@@ -213,6 +213,49 @@ def series_marks_text(row: dict) -> str:
     return "; ".join(parts)
 
 
+def description_lines(description: dict) -> list[str]:
+    """The card's description block, as two sentences: the trend contrast and the breaks.
+
+    Both are copies of published artifacts. Neither is an estimate, so every line says what it is, and the
+    contrast is named in years because the card may not print a surname.
+    """
+    if description.get("status") == "unavailable":
+        return ["No description artifact covers this outcome at this vintage."]
+    lines: list[str] = []
+    trend = description.get("trend") or {}
+    if trend.get("status") == "described":
+        contrast = trend.get("widest_contrast") or {}
+        if contrast:
+            low, high = contrast["range"]
+            lines.append(
+                f"**Trend.** Widest gap from the trend: {contrast['a_years']} against "
+                f"{contrast['b_years']}, {contrast['difference']:+.2f} {contrast['unit']} "
+                f"(range {low:+.2f} to {high:+.2f})."
+            )
+        else:
+            lines.append("**Trend.** Described, with no contrast between tenures to report.")
+    elif trend:
+        native = trend.get("n_native")
+        lines.append(
+            f"**Trend.** Refused: {native} native observations, below the twenty a trend needs."
+            if native is not None else "**Trend.** Refused."
+        )
+    breaks = description.get("breaks") or {}
+    if breaks:
+        dates = breaks.get("dates") or []
+        if breaks.get("status") == "search":
+            lines.append(
+                f"**Breaks.** {len(dates)} found{': ' + ', '.join(dates) if dates else ''}."
+            )
+        else:
+            native = breaks.get("n_native")
+            lines.append(
+                f"**Breaks.** Refused: {native} native observations, below the twenty the search needs."
+                if native is not None else "**Breaks.** Refused."
+            )
+    return lines
+
+
 def precheck_lines(card: dict) -> list[str]:
     diag = card.get("diagnostics") or {}
     lines = [f"Stage 5 pre-check: **{diag.get('status', 'not run')}**"]

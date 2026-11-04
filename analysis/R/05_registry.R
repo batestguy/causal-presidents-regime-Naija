@@ -52,7 +52,7 @@ find_root <- function() {
 root <- find_root()
 spec_file <- "analysis/specs/registry.yml"
 spec <- read_yaml(file.path(root, spec_file))
-SCHEMA_VERSION <- "0.3.0"
+SCHEMA_VERSION <- "0.4.0"
 GENERATOR <- "analysis/R/05_registry.R"
 
 `%||%` <- function(a, b) if (is.null(a)) b else a
@@ -91,6 +91,17 @@ robustness <- fromJSON(rob_path, simplifyVector = FALSE)
 # `not_run` block Stage 6 used to carry. Optional so a vintage without a Design C run still assembles.
 design_c_path <- file.path(root, "registry", "design_c", vintage, "design_c.json")
 design_c <- if (file.exists(design_c_path)) fromJSON(design_c_path, simplifyVector = FALSE) else NULL
+
+# The descriptive layers the C cards carry. Optional: a vintage without them assembles, and the card then
+# says the description is unavailable rather than inventing one.
+read_optional <- function(root_key, artifact_key) {
+  path <- file.path(root, spec$input[[root_key]], vintage, spec$input[[artifact_key]])
+  if (!file.exists(path)) return(NULL)
+  rows <- fromJSON(path, simplifyVector = FALSE)$outcomes
+  setNames(rows, vapply(rows, function(r) r$id, character(1)))
+}
+tenure_rows <- read_optional("tenure_root", "tenure_artifact")
+breaks_rows <- read_optional("changepoints_root", "changepoints_artifact")
 
 # ---- the cards, and the vintage they claim -------------------------------------------------
 card_files <- sort(list.files(cards_dir, pattern = "^[a-z0-9_]+__(A|B|C)\\.json$", full.names = TRUE))
@@ -388,6 +399,69 @@ build_block <- function(card) {
   )
 }
 
+# ---- the description block: what the series shows, on the C card ---------------------------------
+# A Design C card refuses a number because the counterfactual is not identified. That refusal used to leave the
+# reader with nothing, when the project already publishes two descriptions of the same series: how far each
+# tenure sits from its own trend (with the range across the declared spans) and where the series changes.
+# Neither is an estimate. Both are copied here from their artifacts, in years rather than surnames, so the card
+# cannot name a president — the same rule the site follows.
+year_of <- function(value) {
+  if (is.null(value) || is.na(value) || !nzchar(as.character(value))) return(NA_character_)
+  substr(as.character(value), 1, 4)
+}
+
+describe_series <- function(outcome_id, unit) {
+  ten <- if (!is.null(tenure_rows)) tenure_rows[[outcome_id]] else NULL
+  brk <- if (!is.null(breaks_rows)) breaks_rows[[outcome_id]] else NULL
+  if (is.null(ten) && is.null(brk)) return(NULL)
+
+  out <- list(not_an_estimate = TRUE)
+  out$trend <- if (!is.null(ten) && identical(as.character(ten$status), "described")) {
+    tenures <- ten$tenures %||% list()
+    span_of <- setNames(
+      vapply(tenures, function(t) paste0(year_of(t$start), "\u2013", year_of(t$end)), character(1)),
+      vapply(tenures, function(t) as.character(t$president), character(1))
+    )
+    contrasts <- ten$contrasts %||% list()
+    widest <- if (length(contrasts)) {
+      contrasts[[which.max(vapply(contrasts, function(c) abs(as.numeric(c$difference)), numeric(1)))]]
+    } else NULL
+    block <- list(
+      status = "described",
+      method = "LOESS, degree 1, evaluated at the observed points",
+      spans = c(0.5, 0.75, 1.0),
+      n_native = as.numeric(ten$n_native)
+    )
+    if (!is.null(widest)) {
+      a <- span_of[[as.character(widest$a)]]
+      b <- span_of[[as.character(widest$b)]]
+      if (!is.null(a) && !is.null(b) && !is.na(a) && !is.na(b)) {
+        block$widest_contrast <- list(
+          a_years = a, b_years = b,
+          difference = as.numeric(widest$difference),
+          range = as.numeric(unlist(widest$range)),
+          unit = as.character(unit)
+        )
+      }
+    }
+    block
+  } else if (!is.null(ten)) {
+    list(status = as.character(ten$status), n_native = as.numeric(ten$n_native %||% NA))
+  } else NULL
+
+  out$breaks <- if (!is.null(brk)) {
+    dates <- vapply(brk$breaks %||% list(), function(b) as.character(b$month), character(1))
+    list(status = as.character(brk$status),
+         n_native = as.numeric(brk$native_in_window),
+         dates = I(dates),
+         caption = as.character(brk$plain_caption))
+  } else NULL
+
+  out$note <- paste("A description of the series, published beside the refusal.",
+                    "It is not an estimate and carries no causal claim.")
+  out
+}
+
 # ---- write ----------------------------------------------------------------------------------
 n_estimated <- 0L
 reason_counts <- list()
@@ -401,6 +475,18 @@ for (id in names(cards)) {
   }
   card$schema_version <- SCHEMA_VERSION
   card$estimate <- block
+  # The description rides on the C cards only: it is a property of the outcome's series, and repeating it on
+  # A and B would print the same sentence three times for one reader.
+  if (identical(as.character(card$design$id), "C")) {
+    described <- describe_series(as.character(card$outcome$id), as.character(card$outcome$unit))
+    card$description <- described %||% list(
+      not_an_estimate = TRUE,
+      status = "unavailable",
+      note = "No description artifact covers this outcome at this vintage."
+    )
+  } else {
+    card$description <- NULL
+  }
   cards[[id]] <- card
   writeLines(jsonlite::toJSON(card, auto_unbox = TRUE, pretty = TRUE, null = "null", na = "null",
                               digits = 10),
