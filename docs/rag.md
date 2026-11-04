@@ -124,10 +124,10 @@ defines, judged by `gemini-3.5-flash-lite` at temperature 0:
 
 | Metric | Measured | What it means here |
 |---|---|---|
-| faithfulness | **0.996** | statements in an answer that its own cited contexts support |
-| answer relevancy | **0.813** | mean cosine between the question and three questions generated from the answer |
+| faithfulness | **0.967** | statements in an answer that its own cited contexts support |
+| answer relevancy | **0.805** | mean cosine between the question and three questions generated from the answer |
 | context precision | **0.989** | average precision over the cited chunks a judge calls useful for the reference answer |
-| context recall | **0.817** | reference-answer claims the cited contexts can support |
+| context recall | **0.874** | reference-answer claims the cited contexts can support |
 
 **This is not a `ragas` library run, and the artifact says so in its own fields.** The package is not
 installed in this repository or on this machine, and installing it would add a dependency tree to a project
@@ -139,17 +139,19 @@ RAGAS's per-item calls, because this key's free tier allows 20 requests per wind
 What the numbers say, read honestly:
 
 - **Faithfulness is high by construction, not by quality.** The answer is a selection of quoted corpus
-  paragraphs, so the check confirms the contract rather than judging retrieval. 0.996 here means "it quotes
-  what it cites", nothing more — and earlier runs of the same measurement gave 0.952, 0.956, 0.964 and 0.971.
-  This run's floor is `q07_u5mr_synthetic_control` at **0.083**, the Design C question: the answer is a reason
-  and a set of caveats rather than a number, so most of its statements are not claims a context can support.
-- **Context recall 0.817 is the number that matters.** About one reference claim in six is not supported
-  by the chunks the answer actually cited: in this run `q07_u5mr_synthetic_control` scored **0.000** and
-  several others sit between 0.5 and 0.75.
-  The answer quotes the right document but not always the paragraph that carries the reference claim —
-  and both zeros are questions whose reference answer spans two design-level artefacts rather than one.
-- **The judge is noisy, and that is published too.** Fourteen runs of the same measurement gave faithfulness
-  0.933–1.000, answer relevancy 0.800–0.834, context precision 0.885–1.000 and context recall 0.792–0.870. A
+  paragraphs, so the check confirms the contract rather than judging retrieval. 0.967 here means "it quotes
+  what it cites", nothing more — and earlier runs of the same measurement gave 0.952, 0.956, 0.964, 0.971
+  and 0.996. This run's floor is `q05_design_b_robust` at **0.5**: the robustness question is answered by
+  quoting the result's specification rows, and half of what the answer says is not a claim a context can
+  support. The same question scored 1.000 in the run before, on the same answer text, which is the judge
+  moving rather than the answer.
+- **Context recall 0.874 is the number that matters.** About one reference claim in eight is not supported
+  by the chunks the answer actually cited: in this run `q02_fatalities_identified` and
+  `q07_u5mr_synthetic_control` scored **0.6** and `q05_design_b_robust` 0.667.
+  The answer quotes the right document but not always the paragraph that carries the reference claim.
+- **The judge is noisy, and that is published too.** Runs of the same measurement have given faithfulness
+  0.933–1.000, answer relevancy 0.800–0.834, context precision 0.885–1.000 and context recall 0.792–0.874; this
+  run sits inside the first three of those ranges and sets the recall ceiling. A
   lite judge at temperature 0 is not deterministic, and context precision scored every chunk useful in some
   runs and not in the others — a weak instrument, said so here rather than averaged into respectability. The
   artifact records the values of *its* run; `tests/verify_answer_quality.py` checks that every score

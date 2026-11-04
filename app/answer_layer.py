@@ -423,6 +423,24 @@ class AnswerLayer:
         design_id = self._design_of(source)
 
         estimate = self._pick(blocks, terms, INTERVAL, exclude=())
+        if source.startswith("result:") and estimate is not None:
+            # A design-level chunk publishes every specification it fitted, so the term match can land on the
+            # wrong family: "how much of a Brent shock reaches the states" matched the CPI row. When the
+            # question is about the money that reaches the states and the picked row is about prices, read out
+            # the row that carries the result's own headline number.
+            fiscal = any(word in question.lower() for word in
+                         ("state government", "state governments", "state allocation", "state allocations",
+                          "faac", "allocation", "allocations"))
+            picked = estimate.lower()
+            if fiscal and ("cpi" in picked or "price level" in picked):
+                headline = next((block for block in blocks if "headline" in block.lower()), None)
+                if headline:
+                    numbers = re.findall(r"[-+]?\d+\.\d+", headline)
+                    for block in blocks:
+                        if INTERVAL.search(block) and "faac" in block.lower() and any(
+                                number in block for number in numbers):
+                            estimate = block
+                            break
         reason = self._pick(blocks, terms, re.compile(REASON_PATTERN, re.IGNORECASE), exclude=())
         check_block = self._pick(blocks, terms, re.compile(CHECK_PATTERN, re.IGNORECASE), exclude=())
         assumption = self._pick(blocks, terms, ASSUMPTION, exclude=())
@@ -502,7 +520,7 @@ class AnswerLayer:
             citation=assembled["citation"],
             chunks_used=assembled["chunks_used"],
             check=assembled["check"],
-            plain=self._plain(assembled, source),
+            plain=self._plain(assembled, source, question),
             shape=assembled["shape"],
             refusal_code=None,
         )
@@ -798,7 +816,41 @@ class AnswerLayer:
         return "\n".join(lines).strip()
 
     # -- the plain-language view ----------------------------------------------------------------
-    def _plain(self, assembled: dict, source: str) -> dict:
+    @staticmethod
+    def _plain_passage(text: str) -> str:
+        """A quoted block as prose: Markdown headings, tables and emphasis are not something to read out.
+
+        The corpus is written in Markdown, and quoting it verbatim put "## 4. The quality gates flagged…" and
+        a raw table into the plain reading. The block is still quoted in the contract answer, where Markdown
+        renders; this is only the landing text.
+        """
+        kept: list[str] = []
+        for raw in str(text or "").splitlines():
+            line = raw.strip()
+            if not line:
+                continue
+            if line.startswith("#"):
+                continue
+            if line.startswith("|"):
+                continue
+            if re.fullmatch(r"[-:| ]{3,}", line):
+                continue
+            if line.startswith("[") and line.rstrip().endswith("]"):
+                continue
+            if line.count("|") >= 2:
+                continue
+            kept.append(line)
+        text = " ".join(kept)
+        if "|" in text:
+            cells = [cell.strip() for cell in text.split("|")]
+            text = " ".join(cell for cell in cells if len(cell) >= 25)
+        text = re.sub(r"\*\*(.+?)\*\*", r"\1", text)
+        text = re.sub(r"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)", r"\1", text)
+        text = re.sub(r"`(.+?)`", r"\1", text)
+        text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text)
+        return " ".join(text.split())
+
+    def _plain(self, assembled: dict, source: str, question: str = "") -> dict:
         """The same answer for a reader who does not work with statistics.
 
         It restates nothing that the quoted passages do not say: the signs, the interval's bounds, the
@@ -813,22 +865,38 @@ class AnswerLayer:
         lines: list[str] = []
 
         if assembled["shape"] == "estimate":
-            estimate_full = " ".join(str(assembled.get("estimate") or "").split())
-            estimate = self._sentence_with(estimate_full, "interval") or estimate_full
+            estimate_full = self._plain_passage(assembled.get("estimate"))
+            # A design-level block carries every specification the design published, so the first interval is
+            # not necessarily the one asked about: "how much of a Brent shock reaches the states" was answered
+            # with inflation's row. When the question is about the money that reaches the states, read the
+            # fiscal row — the one that carries both FAAC and an interval.
+            fiscal = any(word in (question or "").lower() for word in
+                         ("state government", "state governments", "state allocation", "state allocations",
+                          "faac", "allocation", "allocations"))
+            fiscal_row = None
+            if fiscal:
+                fiscal_row = next(
+                    (part.strip() for part in re.split(r"(?<=[.!?])\s+", estimate_full)
+                     if "faac" in part.lower() and INTERVAL.search(part)),
+                    None,
+                )
+            estimate = fiscal_row or self._sentence_with(estimate_full, "interval") or estimate_full
             reading = self._reading(estimate)
             headline = (reading or {}).get("sentence") or (
                 "The corpus answers this from the passage below; it carries no single coefficient to read."
             )
             lines += [f"**Short answer:** {headline}", "", f"**The number:** {estimate}", ""]
         elif assembled["shape"] == "no_estimate":
-            reason = " ".join(str(assembled.get("reason") or "").split())
+            reason = self._plain_passage(assembled.get("reason"))
             headline = self._sentence_with(reason, "Reason code") or reason
             lines += [f"**Short answer:** {headline}", "",
                       f"**Why there is no number:** {reason}", ""]
             if assembled.get("check_block"):
-                lines += [f"**What decided it:** {assembled['check_block']}", ""]
+                lines += [f"**What decided it:** {self._plain_passage(assembled['check_block'])}", ""]
         else:
-            passage = " ".join(str(assembled.get("focus") or "").split())
+            passage = self._plain_passage(assembled.get("focus"))
+            if not passage:
+                passage = str(self.chunks.get(source, {}).get("title") or "").strip()
             headline = self._first_sentence(passage)
             lines += [f"**Short answer:** {headline}", "", f"**The record says:** {passage}", ""]
 

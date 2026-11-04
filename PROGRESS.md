@@ -3330,3 +3330,51 @@ The demo asks the card count, the tenure refusal and the observed-versus-interpo
 answer correctly. The three above are logged as the next work on the answer layer, not as a video problem.
 
 **Not done.** No caption sidecar, no 9:16 cut, no voice-over.
+
+## 2026-11-04 - the three answer-layer defects, fixed and measured
+
+**What was wrong.** The three defects logged at the end of the demo section above were in the plain reading,
+not in retrieval: the post-check passed each answer because the contract's slots were filled, but the sentence
+a reader lands on quoted the wrong row or quoted Markdown.
+
+**The fix, in `app/answer_layer.py`.** Three narrow rules, each keyed to what the question asked:
+
+1. `_plain_passage` strips headings, table rows, part markers, emphasis and link syntax before a quoted block
+   is read out. The block is still quoted verbatim in the contract answer, where Markdown renders; only the
+   landing text changes. A block that is nothing but a table falls back to the chunk's own title.
+2. A question about the money that reaches the states gets the fiscal row. Design B publishes both outcome
+   families in one chunk, so the term match landed on the price-level row; when the question names the state
+   channel and the picked row is about prices, `_assemble` reads out the row carrying the result's own
+   headline number and `_plain` reads out the row that has both FAAC and an interval.
+3. `_plain` now receives the question, because which row is the right one is a property of the question, not
+   of the block.
+
+All three now answer: oil shock → **+0.5181, interval +0.1919 to +0.8443**; quality gates → **"1070 series are
+gated: 577 ok, 491 flagged, 2 empty."**; Buhari transition → **"Read the verdict column, not the shift
+column: two of the eight cells survive both checks…"**.
+
+**The mirror, and a gate that had been passing on a stale artifact.** `site/assets/answer.mjs` must reproduce
+the Python layer field for field, and `verify_answer_js` failed on all 38 questions until three long-standing
+formatting drifts were aligned: the citation joiner (`·` in the engine, `—` in the browser), the glossary
+bullet (`**term**: meaning` vs `**term** — meaning`) and the reading sentence's semicolon. The committed
+artifact carried the browser's `—`, so the parity gate had been green against an artifact the engine no longer
+produced — the drift predates this session. It now reads 38 of 38, field for field.
+
+**The numbers.** Answer rate **0.947 (36 of 38)** unchanged; needles **14 of 16 (0.875)** and **22 of 25
+(0.880)** unchanged. Answer quality, re-measured because the artifact's own input fingerprint said it
+described the pre-fix answers: faithfulness **0.967**, answer relevancy **0.805**, context precision
+**0.989**, context recall **0.874** (was 0.996 / 0.813 / 0.989 / 0.817). `docs/rag.md` carries the four new
+values. The faithfulness drop is one question: `q05_design_b_robust` scored 1.000 in the run before and 0.500
+in this one on the same answer text, which is the lite judge moving, not the answer.
+
+**Verified.** `verify_answer`, `verify_answer_js` (38 of 38), `verify_answer_quality`, `verify_site` and
+`verify_app` all exit 0. The three questions the demo film asks still return the same answers, so the video
+still describes the app.
+
+**One gate was already red, and is not fixed here.** `verify_rag` reports 38 attribution problems: the
+recorded sha256 of the 36 `registry/dags/*.json` cards and two other sources does not match the files on disk
+(`u5mr__A.json` is recorded at 8,649 bytes and is 8,810 now). It fails identically at `fd46fbd` with this
+session's three files stashed, so it predates the work: the card-description commit (`a95b4b8`) changed the
+registry after the corpus was built at the freeze. The remedy is a corpus regeneration and the eval chain that
+depends on it — a new vintage produced by the engine, not a hand edit and not a re-stamp of the attribution
+record — and is left as the next job on the RAG layer rather than folded into this one.

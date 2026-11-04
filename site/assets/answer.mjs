@@ -428,7 +428,25 @@ export class AnswerLayer {
     const terms = tokenize(question);
     const designId = this.designOf(source);
 
-    const estimate = this.pick(blocks, terms, INTERVAL, []);
+    let estimate = this.pick(blocks, terms, INTERVAL, []);
+    if (source.startsWith("result:") && estimate !== null) {
+      // A design-level chunk publishes every specification it fitted. When the question is about the money
+      // that reaches the states and the picked row is about prices, read the row carrying the headline number.
+      const fiscal = ["state government", "state governments", "state allocation", "state allocations",
+        "faac", "allocation", "allocations"].some((word) => question.toLowerCase().includes(word));
+      const picked = String(estimate || "").toLowerCase();
+      if (fiscal && (picked.includes("cpi") || picked.includes("price level"))) {
+        const headline = blocks.find((block) => block.toLowerCase().includes("headline"));
+        if (headline) {
+          const numbers = headline.match(/[-+]?\d+\.\d+/g) || [];
+          const match = blocks.find(
+            (block) => INTERVAL.test(block) && block.toLowerCase().includes("faac")
+              && numbers.some((number) => block.includes(number)),
+          );
+          if (match) estimate = match;
+        }
+      }
+    }
     const reason = this.pick(blocks, terms, REASON_PATTERN, []);
     const checkBlock = this.pick(blocks, terms, CHECK_PATTERN, []);
     let assumption = this.pick(blocks, terms, ASSUMPTION, []);
@@ -484,7 +502,7 @@ export class AnswerLayer {
     return {
       status: "answered", question, text: this.render(question, source, assembled),
       intent: decision.intent, rule_id: decision.ruleId, route: null, citation: assembled.citation,
-      chunks_used: assembled.chunks_used, check: assembled.check, plain: this.plain(assembled, source),
+      chunks_used: assembled.chunks_used, check: assembled.check, plain: this.plain(assembled, source, question),
       shape: assembled.shape, refusal_code: null,
     };
   }
@@ -684,11 +702,11 @@ export class AnswerLayer {
     if (assembled.focus && assembled.shape !== "fact") {
       lines.push(`**The passage that answers this:** ${assembled.focus}`, "");
     }
-    lines.push(`**Citation:** ${assembled.citation} — ${source}`);
+    lines.push(`**Citation:** ${assembled.citation} · ${source}`);
     return lines.join("\n").trim();
   }
 
-  plain(assembled, source) {
+  plain(assembled, source, question = "") {
     const quoted = ["estimate", "reason", "check_block", "assumption", "cannot", "focus"]
       .map((slot) => String(assembled[slot] || "")).join(" ");
     const terms = [];
@@ -698,23 +716,61 @@ export class AnswerLayer {
     }
     const lines = [];
     let headline;
+    // The corpus is written in Markdown. The contract answer keeps it (it renders); the plain reading must
+    // not start with "## 4." or a raw table.
+    const plainPassage = (text) => {
+      const kept = [];
+      for (const raw of String(text || "").split(/\r?\n/)) {
+        const line = raw.trim();
+        if (!line) continue;
+        if (line.startsWith("#")) continue;
+        if (line.startsWith("|")) continue;
+        if (/^[-:| ]{3,}$/.test(line)) continue;
+        if (line.startsWith("[") && line.endsWith("]")) continue;
+        if ((line.match(/\|/g) || []).length >= 2) continue;
+        kept.push(line);
+      }
+      let joined = kept.join(" ");
+      if (joined.includes("|")) {
+        joined = joined.split("|").map((cell) => cell.trim()).filter((cell) => cell.length >= 25).join(" ");
+      }
+      const flat = joined
+        .replace(/\*\*(.+?)\*\*/g, "$1")
+        .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, "$1")
+        .replace(/`(.+?)`/g, "$1")
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+      return flat.split(/\s+/).filter(Boolean).join(" ");
+    };
     if (assembled.shape === "estimate") {
-      const estimateFull = String(assembled.estimate || "").split(/\s+/).filter(Boolean).join(" ");
-      const estimate = sentenceWith(estimateFull, "interval") || estimateFull;
+      const estimateFull = plainPassage(assembled.estimate);
+      const fiscal = ["state government", "state governments", "state allocation", "state allocations",
+        "faac", "allocation", "allocations"].some((word) => String(question || "").toLowerCase().includes(word));
+      let fiscalRow = null;
+      if (fiscal) {
+        fiscalRow = estimateFull.split(/(?<=[.!?])\s+/).map((part) => part.trim())
+          .find((part) => part.toLowerCase().includes("faac") && INTERVAL.test(part)) || null;
+      }
+      const estimate = fiscalRow || sentenceWith(estimateFull, "interval") || estimateFull;
       const reading = readingOf(estimate);
       headline = (reading || {}).sentence
         || "The corpus answers this from the passage below; it carries no single coefficient to read.";
       lines.push(`**Short answer:** ${headline}`, "", `**The number:** ${estimate}`, "");
     } else if (assembled.shape === "no_estimate") {
-      const reason = String(assembled.reason || "").split(/\s+/).filter(Boolean).join(" ");
+      const reason = plainPassage(assembled.reason);
       // The Python layer looks for the literal `Reason code` in the lowercased sentence, so it never
       // matches and the headline is the whole reason. Reproduced deliberately: this module is measured
       // against the artifact, not against a tidier reading of it.
       headline = sentenceWith(reason, "Reason code") || reason;
       lines.push(`**Short answer:** ${headline}`, "", `**Why there is no number:** ${reason}`, "");
-      if (assembled.check_block) lines.push(`**What decided it:** ${assembled.check_block}`, "");
+      if (assembled.check_block) {
+        lines.push(`**What decided it:** ${plainPassage(assembled.check_block)}`, "");
+      }
     } else {
-      const passage = String(assembled.focus || "").split(/\s+/).filter(Boolean).join(" ");
+      let passage = plainPassage(assembled.focus);
+      if (!passage) {
+        const chunk = this.chunks.get(source);
+        passage = String((chunk && chunk.title) || "").trim();
+      }
       const match = /[.!?]\s+/.exec(passage);
       headline = (match ? passage.slice(0, match.index + 1) : passage).trim();
       lines.push(`**Short answer:** ${headline}`, "", `**The record says:** ${passage}`, "");
@@ -728,10 +784,10 @@ export class AnswerLayer {
       const bullets = full.split(/\r?\n/).map((line) => line.trim()).filter((line) => line.startsWith("-") || line.startsWith("*"));
       lines.push(`**What it cannot tell you:** ${bullets.length ? bullets.join("\n") : full.split(/\s+/).filter(Boolean).join(" ")}`, "");
     }
-    lines.push(`**Where this comes from:** ${assembled.citation} — ${source}`);
+    lines.push(`**Where this comes from:** ${assembled.citation} · ${source}`);
     if (terms.length) {
       lines.push("", "**What the words mean:**", "");
-      for (const item of terms) lines.push(`- **${item.term}** — ${item.meaning}`);
+      for (const item of terms) lines.push(`- **${item.term}**: ${item.meaning}`);
     }
     let reading = null;
     if (assembled.shape === "estimate") {
@@ -803,7 +859,7 @@ function readingOf(estimate) {
   sentence += `The range the data cannot rule out runs from ${lowText} to ${highText}`;
   sentence += includesZero
     ? ", and it includes zero, so this answer does not establish a direction."
-    : ", and it does not include zero, so the data are consistent with a relationship — the assumption below is what makes it credible.";
+    : ", and it does not include zero, so the data are consistent with a relationship; the assumption below is what makes it credible.";
   const reading = { coefficient: coefficient[1], interval_low: lowText, interval_high: highText, includes_zero: includesZero, direction };
   const sample = SAMPLE.exec(estimate);
   if (sample) {
