@@ -1450,6 +1450,7 @@ def render_designs(ctx: dict) -> str:
             f"<p class=\"status-line\"><span class=\"tech\">{html.escape(copy['verdict_label'])}</span> "
             f"<strong>{html.escape(d['c']['status'])}</strong></p>"
             f"<p>{html.escape(fill_text(copy['c_intro'], counts))}</p>"
+            f"<p>{html.escape(copy['c_refusal_note'])}</p>"
             + "".join(groups_html)
             + f"<p class=\"note\">{html.escape(copy['c_note'])}</p>")
 

@@ -249,7 +249,7 @@ results:
   tiny_note: "Read as a proportional change: {reading}."
   expander: "The technical version"
   groups_heading: "What each group's average is"
-  stamp_note: "Charts describe. Claims live on the estimate screen."
+  stamp_note: "Charts describe. Claims live on the estimate screen. A 99-country comparison was tried for under-5 mortality and refused, so no line here is a verdict on a tenure."
   summary: "Outcomes with a number: {numbered} of {chosen}. The rest are explained on the comparisons screen."
 
 chart:
@@ -330,6 +330,7 @@ design_results:
   c_heading: "The synthetic counterfactual"
   c_intro: "{outcomes} outcomes, {estimated} windows estimated against a synthetic Nigeria built from {donors} donor countries; {refused} windows refused by the declared rule, and {identified} survived their placebos. Each outcome is its own fit in its own unit, so a gap of 2 in one is not twice a gap of 1 in another. The bracketed figure is the same problem under a ridge refit: where the two disagree in sign, the estimate belongs to the solver rather than to the data."
   c_row: "{years}: gap {gap} (ridge {ridge}), placebo p = {p}, {status}"
+  c_refusal_note: "One outcome was fitted a second way in 2026, with an estimator that does not depend on the 99-donor simplex: under-5 mortality. It refused as well, every window sitting inside the range that treating a random country produces, so the refusal does not rest on the ridge check alone. That second fit is reported in the project's documentation, not on this page, and no number from it is published."
   c_note: "A synthetic control has no sampling distribution, so there is no interval here and none of these gaps is a card number. An outcome whose every window was refused is listed with the reason instead."
   c_refused_outcome: "Every declared window was refused for this outcome: Nigeria's series cannot fill a window of this design's declared length. The card carries the reason."
   transition_heading: "Did anything move at a transition?"
@@ -421,6 +422,7 @@ methodology:
         - "No party comparison: two events against two events has no sampling distribution."
         - "No forecast: the site publishes what happened, not what will."
         - "No monthly causal statement from an annual series."
+        - "No country comparison: a 99-country match was tried for under-5 mortality and could not separate any tenure from what a random country produces."
         - "No causal verb without a named design, its assumption and its failed-check evidence."
   # Provenance: the one section of the site that names the files. Every other page says what a number
   # means; this says where it lives, and the Technical page a link away carries the detail.

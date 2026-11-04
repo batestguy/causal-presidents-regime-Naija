@@ -81,3 +81,6 @@ desktop.ini
 # Remove these two lines if you do want them public.
 TOOLING.md
 .agents/
+
+# Browser-pass screenshots taken while reviewing a page (playwright output). Not evidence.
+shots/
