@@ -279,6 +279,17 @@ italic serif directly under the five portraits, above the earlier lines about th
 pull quote and its styles are gone, and the premise now ends: *"We show what can and cannot be compared."*
 The premise is the only statement under the portraits.
 
+**Discovery readiness.** The requester asked to get ready for causal discovery. Nothing under the frozen
+registry moved. Preparation recorded in `docs/causal-discovery.md`: the native-monthly national system that
+can support PCMCI (oil, NBS CPI, FAAC national, UCDP; 94 common months after differencing, five variables),
+the per-state FAAC/security panel (36 states, about 107 months each) as a second target, and the exclusion of
+the twenty annual-interpolated series whose monthly fills would manufacture edges. Tooling installed in the
+`ds-general` interpreter: `causal-learn` 0.1.4.8 (PC/GES/FCI/LiNGAM) and `tigramite` 5.2.10.1 (PCMCI).
+A smoke run (93 rows, ParCorr, tau_max 3, alpha 0.05) found 15 links, mostly own autocorrelation, which
+proves the pipeline runs and that the sample is thin. The document fixes, in advance, the parameters, the
+block-bootstrap stability rule (80 percent frequency and 80 percent p below 0.01), the FDR level, the
+per-state reporting rule, and what discovery may never produce (a card number or a causal verb).
+
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
 is **estimated, not identified**: four windows, rank p 0.17–0.50, and a pre-fit gate that turned out not to
