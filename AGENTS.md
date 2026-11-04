@@ -40,6 +40,15 @@ the trend table reports president-vs-president contrasts from the published arti
 the plain answer first with one collapsed Technical section. Verifiers: `tests/verify_site.py`,
 `tests/verify_answer_js.py` (which also guards the datalist bug), the usual `scripts/verify.sh` chain.
 
+**The site is an installable web app** (2026-11-04). `site/build.py` emits `manifest.webmanifest`, the icons
+under `site/assets/icons/`, and a `sw.js` whose precache list is the build's own file list; every page
+registers it. Pages are network-first, everything else cache-first with the build stamp in the cache name, so
+a rebuild is not masked by the previous build's cache. `tests/verify_site.py` refuses a build whose manifest
+field is missing, whose declared icon size disagrees with the real pixel size, whose worker stops precaching a
+page or a data file, or whose page stops registering it. `.github/workflows/pages.yml` deploys `site/dist/` to
+GitHub Pages **after** that check: <https://batestguy.github.io/causal-presidents-regime-Naija/>. The manifest
+copy, colours and icon list live in `guide.yml → pwa`, because the renderer may carry no typed literal.
+
 **The estimate screen is two lines a card** (2026-11-04). A card with a number shows the figure and its
 interval, one sentence saying what is associated with what (built from the artifact's formula, never typed),
 and whether the interval includes zero. A card without one shows its refusal sentence plus a single

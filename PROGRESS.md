@@ -8,9 +8,12 @@ pass started after the freeze and wrote nothing into `registry/`.
 
 ## Start here (next session)
 
-- **Repo state:** `main` is clean and pushed at `4c6db10` (ten commits: handoff, causal first pass, site pass).
-  The frozen registry has not been edited. Re-run `tests/verify_site.py` after any presentation change; the
-  full chain is `scripts/verify.sh` (Git Bash, `PYTHON=/c/Users/TOSHIBA/ds-general/python.exe`).
+- **Repo state:** `main` is clean and pushed; the frozen registry has not been edited. Re-run
+  `tests/verify_site.py` after any presentation change; the full chain is `scripts/verify.sh`
+  (Git Bash, `PYTHON=/c/Users/TOSHIBA/ds-general/python.exe`).
+- **The site is live and installable:** <https://batestguy.github.io/causal-presidents-regime-Naija/>,
+  deployed by `.github/workflows/pages.yml` after `verify_site.py` passes. The build emits the manifest, the
+  icons and a service worker, so a phone can add it to the home screen and read it offline.
 - **Causal work: the first pass ran and stopped.** P0–P4 of `docs/causal-phases.md` are closed: the
   matrix-completion counterfactual was declared, fitted on `u5mr` and tested against 99 placebos, and its
   gaps sit inside their own placebo distributions on all four windows. The stop rule fired, so `mmr` and

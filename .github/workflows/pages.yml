@@ -1,0 +1,57 @@
+# Publish the static site to GitHub Pages.
+#
+# `site/dist/` is gitignored on purpose: it is a build of `registry/` plus `analysis/specs/`, and a committed
+# copy could disagree with the artifacts without anyone noticing. So Pages builds it here instead of serving
+# a checked-in directory.
+#
+# One step matters beyond the build: `verify_site.py` rebuilds the pages and compares them with the registry,
+# and it now also checks the installable-app contract (manifest, icon pixel sizes, the worker's precache list,
+# and that every page registers it). A broken manifest therefore fails the deploy rather than shipping an app
+# that cannot install.
+
+name: pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: build the site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: install the build's own dependency
+        run: pip install PyYAML==6.0.3
+      - name: build the pages
+        run: python site/build.py
+      - name: the page contract, including the installable-app contract
+        run: python tests/verify_site.py
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/dist
+
+  deploy:
+    name: deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

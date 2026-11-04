@@ -646,6 +646,64 @@ def main() -> int:
     if not all(entry.get("word") for entry in guide["status"].values()):
         fail(failures, "a declared status has no word — guide.yml and the renderer disagree")
 
+    # ---- the installable app: manifest, icons, worker, and every page wired to them --------------------
+    manifest_path = DIST / "manifest.webmanifest"
+    if not manifest_path.exists():
+        fail(failures, "no manifest.webmanifest — the build is not installable")
+    else:
+        manifest = json.loads(read(manifest_path))
+        for key in ("name", "short_name", "description", "start_url", "scope", "display", "theme_color",
+                    "background_color", "icons"):
+            if not manifest.get(key):
+                fail(failures, f"manifest.webmanifest has no {key!r}")
+        declared = guide.get("pwa") or {}
+        if declared.get("theme_color") and manifest.get("theme_color") != declared["theme_color"]:
+            fail(failures, "the manifest's theme colour is not the one guide.yml declares")
+        sizes = {icon.get("sizes") for icon in manifest.get("icons") or []}
+        for needed in ("192x192", "512x512"):
+            if needed not in sizes:
+                fail(failures, f"the manifest declares no {needed} icon")
+        for icon in manifest.get("icons") or []:
+            path = DIST / icon["src"]
+            if not path.exists():
+                fail(failures, f"manifest icon {icon['src']} is missing from the build")
+                continue
+            raw = path.read_bytes()
+            if not raw.startswith(b"\x89PNG"):
+                fail(failures, f"{icon['src']} is not a PNG")
+                continue
+            width = int.from_bytes(raw[16:20], "big")
+            height = int.from_bytes(raw[20:24], "big")
+            want = icon["sizes"].split("x")[0]
+            if {str(width), str(height)} != {want}:
+                fail(failures, f"{icon['src']} is {width}x{height}, the manifest declares {icon['sizes']}")
+
+    worker = DIST / "sw.js"
+    if not worker.exists():
+        fail(failures, "no sw.js — the site cannot be read with the network off")
+    else:
+        source = read(worker)
+        for asset in ("index.html", "assets/style.css", "data/site.json", "manifest.webmanifest"):
+            if f'"./{asset}"' not in source:
+                fail(failures, f"sw.js does not precache {asset}")
+        if "causal-presidents-" not in source:
+            fail(failures, "sw.js carries no cache name, so a rebuild could serve last build's pages")
+    if not (DIST / ".nojekyll").exists():
+        fail(failures, "no .nojekyll — GitHub Pages would run Jekyll over the build")
+
+    for page, html in flow.items():
+        if 'rel="manifest"' not in html:
+            fail(failures, f"{page}: no manifest link")
+        match = re.search(r'"serviceWorker" in navigator[\s\S]{0,400}?register\("([^"]+)"', html)
+        if not match:
+            fail(failures, f"{page}: does not register the service worker")
+            continue
+        depth = html.count('href="../')
+        expected = "../" * 1 if page.count("/") else ""
+        resolved = (DIST / page.replace("/index.html", "") / match.group(1)).resolve()
+        if not resolved.exists():
+            fail(failures, f"{page}: registers {match.group(1)!r}, which does not resolve to the built worker")
+
     # ---- the renderer carries no typed number ------------------------------------------------------------
     build_source = read(REPO_ROOT / "site" / "build.py")
     for number in re.findall(r"\b\d[\d,]{2,}\b", build_source):
@@ -676,6 +734,10 @@ def main() -> int:
           f"not-claimed statements")
     print(f"ask           : the gate's own rules, the contract and the corpus emitted; the measured limit stated")
     print("wording       : every status pill is a declared word; no count is typed into the renderer")
+    icons = len(json.loads(read(DIST / "manifest.webmanifest"))["icons"])
+    precached = len(re.findall(r'"\./', read(DIST / "sw.js")))
+    print(f"installable   : manifest with {icons} icons at their declared pixel sizes, {precached} files "
+          f"precached, and every page registering the worker")
     return 0
 
 

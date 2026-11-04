@@ -10,6 +10,28 @@
 # slots are listed under `placeholders` and are the only names the renderer will fill.
 
 version: 1
+
+# The installable-app block. The manifest, the theme colour and the icon list are copy and configuration, not
+# renderer logic, so they live here: `tests/verify_site.py` fails the build if the renderer carries a typed
+# number, and a manifest written in Python would be exactly that. `site/build.py` emits these fields verbatim.
+pwa:
+  name: "Causal Presidents: Nigerian presidencies and national outcomes"
+  short_name: "Causal Presidents"
+  description: "A causal-inference explorer for Nigerian presidential transitions and national outcomes, 1999 to present. Every displayed number is a field of a published artifact."
+  lang: "en"
+  dir: "ltr"
+  start_url: "./"
+  scope: "./"
+  display: "standalone"
+  orientation: "portrait-primary"
+  theme_color: "#008751"
+  background_color: "#eef6f0"
+  categories: ["education", "government", "news"]
+  apple_touch_icon: "assets/icons/apple-touch-icon.png"
+  icons:
+    - {src: "assets/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any"}
+    - {src: "assets/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any"}
+    - {src: "assets/icons/icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable"}
 layer: "plain words for the guided flow: design names, status words, reasons, cover copy"
 
 placeholders:

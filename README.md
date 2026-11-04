@@ -14,11 +14,16 @@ coefficient tables, intervals, diagnostics and sensitivity bounds.
 
 ## Demo
 
+**Live:** <https://batestguy.github.io/causal-presidents-regime-Naija/>
+
+It is an installable web app, not just a page: open it on a phone and use **Add to Home Screen** (Safari) or
+**Install app** (Chrome), and it opens full-screen and works with the network off. The whole site is about
+5 MB and the service worker precaches every page, figure and JSON file at build time.
+
 <!-- TODO(requester): paste the recorded walkthrough link here, and delete the italic placeholder. -->
 _Walkthrough video: link pending._
 
-The site is a static build from `registry/` and `analysis/specs/`, so the screenshots below are the whole
-thing: no server, no database, no network call at render time.
+The screenshots below are the whole thing: no server, no database, no network call at render time.
 
 <table>
   <tr>
@@ -384,13 +389,24 @@ The eleven pages are a static build: `site/build.py` reads `registry/` and `anal
 writes `site/dist/`, which is gitignored because it is derived. No page opens a database, calls a network, or
 refits anything.
 
+The same build is an **installable app**. `site/build.py` also emits `manifest.webmanifest`, the icon set and
+a `sw.js` whose precache list is the build's own file list, so a page added tomorrow is cached without anyone
+remembering to add it. The worker serves pages network-first (a rebuild reaches an online reader immediately)
+and everything else cache-first (assets carry the build stamp, so they cannot go stale), with the cache name
+keyed to that stamp so activating a new build deletes the old one.
+
 ```bash
 PY=/c/Users/TOSHIBA/ds-general/python.exe
 
 $PY site/build.py                                            # writes site/dist/
 $PY -m http.server 8765 --bind 127.0.0.1 --directory site/dist
-$PY tests/verify_site.py                                     # the page contract, wording and counts
+$PY tests/verify_site.py                                     # the page contract and the installable contract
 ```
+
+`tests/verify_site.py` fails the build if the manifest is missing a required field, if a declared icon's real
+pixel size disagrees with the manifest, if the worker stops precaching a page or a data file, or if a page
+stops registering it. `.github/workflows/pages.yml` runs that check before deploying to GitHub Pages, so a
+broken manifest fails the deploy rather than shipping an app that cannot install.
 
 ## Repository layout
 

@@ -827,6 +827,11 @@ img.chart { width: 100%; height: auto; background: #fff; border: 1px solid var(-
   .step-dot { width: 1.55em; height: 1.55em; font-size: .66rem; }
   .graph-figure { overflow-x: auto; }
   .graph-figure img.graph { min-width: 640px; }
+  /* The tenure table has five columns and a monospace number column, so on a phone it is wider than the
+     panel it sits in. It scrolls inside its own box rather than pushing the whole page sideways. */
+  .tenure { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .deviation-table { font-size: .78rem; }
+  .deviation-table th, .deviation-table td { padding-left: .35rem; padding-right: .35rem; }
 }
 
 @media (max-width: 860px) {
