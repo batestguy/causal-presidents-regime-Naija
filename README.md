@@ -225,7 +225,7 @@ and the whole pass is recorded in [`docs/causal-phases.md`](docs/causal-phases.m
 Bai–Perron structural-break search on a mean-only model of the **native** observations:
 
 $$
-y_t=\mu_j+\varepsilon_t,\quad \tau_{j-1}<t\le\tau_j,
+y_t=\mu_j+\varepsilon_t,\quad \tau_{j-1}\lt t\le\tau_j,
 \qquad
 \hat J=\arg\min_{0\le J\le J_{\max}}\ \mathrm{BIC}(J)
 $$
