@@ -124,7 +124,7 @@ reasons:
   design_estimated_not_identified:
     sentence: "The design ran, but it cannot isolate an effect from this data, so there is no number here."
   outcome_series_absent:
-    sentence: "There is no usable series to estimate on."
+    sentence: "There are too few observed years to estimate on."
   no_specification_declared:
     sentence: "No specification was declared for this pair, so nothing was estimated."
   outcome_not_at_design_grain:
@@ -236,6 +236,7 @@ ask:
 results:
   heading: "The estimate"
   trend_label: "Description, not an estimate: "
+  sparse_label: "What we have: "
   designs_link: "design-level results"
   number: "The estimate is {coefficient}, with a 95 % interval from {ci_low} to {ci_high} and p = {p_value}."
   includes_zero: "The interval includes zero, so no effect stays possible."

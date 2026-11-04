@@ -372,6 +372,7 @@ def build_context(root: Path) -> dict:
                 "caption": breaks[oid]["plain_caption"],
                 "method": breaks[oid]["method_detail"],
                 "native": breaks[oid]["native_in_window"],
+                "span": breaks[oid].get("span"),
                 "refused": breaks[oid].get("refused"),
                 "rows": [{
                     "month": brk["month"],
@@ -1049,6 +1050,29 @@ def widest_trend_sentence(ctx: dict, outcome: dict) -> str | None:
             f"(range {float(low):+.2f} to {float(high):+.2f}).")
 
 
+def sparse_series_sentence(ctx: dict, outcome: dict, minimum: int) -> str | None:
+    """For an outcome with a series but too few observed years: how many there are, and when.
+
+    The card already refuses, but "there is no usable series" overstates it, and a reader deserves the count.
+    Both numbers come from the changepoint artifact, which measures the same density the tenure and comparison
+    layers refuse on.
+    """
+    block = (outcome.get("breaks") or {})
+    if block.get("status") != "refused":
+        return None
+    refused = block.get("refused") or {}
+    if refused.get("reason") != "too_few_native_observations":
+        return None
+    span = block.get("span") or {}
+    native = block.get("native")
+    if not native or not span.get("first") or not span.get("last"):
+        return None
+    frequency = str(outcome.get("frequency") or outcome.get("native_frequency") or "").lower()
+    unit = "months" if "month" in frequency else "years"
+    return (f"the series is observed in {int(native)} {unit}, "
+            f"{str(span['first'])[:4]} to {str(span['last'])[:4]}, and a trend needs {minimum}.")
+
+
 def render_estimates(ctx: dict) -> str:
     guide = ctx["guide"]
     results = guide["results"]
@@ -1061,6 +1085,13 @@ def render_estimates(ctx: dict) -> str:
         trend = widest_trend_sentence(ctx, outcome)
         trend_line = (f'<p class="trend">{html.escape(results["trend_label"])}'
                       f'{html.escape(trend)}</p>' if trend else "")
+        if not trend_line:
+            # No trend description exists, but the series may still have a measurable density. Where it does,
+            # say how much is there rather than leaving "no series" standing in for "too few points".
+            sparse = sparse_series_sentence(ctx, outcome, ctx.get("tenure_min_native", 20))
+            if sparse:
+                trend_line = (f'<p class="trend">{html.escape(results["sparse_label"])}'
+                              f'{html.escape(sparse)}</p>')
         # The expander carries the technique, not the bookkeeping: the artifact path and the rows that
         # merely repeat the card's own header stay out. Provenance lives once, on the methodology page.
         provenance_keys = {"artifact", "spec_index", "design", "outcome"}
