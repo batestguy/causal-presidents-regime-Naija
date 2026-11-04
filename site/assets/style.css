@@ -397,6 +397,14 @@ a.ghost::before { content: "←"; font-size: 1.05em; line-height: 1; }
             border-top: 1px solid var(--rule); }
 .controls > .primary { margin-left: auto; }
 .control-note { flex: 1; font-size: .85rem; color: var(--ink-faint); }
+/* The design-level results link, centred between Back and Next. The count note sits under it so the
+   footer still says what was chosen without the link drifting off-centre. */
+.controls-centre { flex: 1; display: flex; flex-direction: column; align-items: center;
+                   gap: .1rem; text-align: center; }
+.controls-link { font-size: .92rem; color: var(--ink); text-decoration: underline;
+                 text-underline-offset: .16em; }
+.controls-link:hover { text-decoration-thickness: 2px; }
+.controls-centre .control-note { flex: none; }
 
 /* ---------------------------------------------------------------- ask */
 

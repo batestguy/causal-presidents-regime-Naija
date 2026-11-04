@@ -832,10 +832,12 @@ def plain_gloss(guide: dict, outcome_id: str) -> str:
 
 def flow_page(ctx: dict, key: str, title: str, heading: str, intro: str, note: str | None,
               blocks: str, back: str, forward: str | None, extra_head: str = "",
-              wide: bool = False) -> str:
+              wide: bool = False, centre: str | None = None) -> str:
     guide = ctx["guide"]
     nxt = (f'<a class="primary" id="next" href="../{forward}/" aria-disabled="true">{html.escape(guide["labels"]["next"])}</a>'
            if forward else "")
+    middle = centre or ('<span class="control-note" id="count-note">'
+                        'Pick at least one outcome on the first screen.</span>')
     body = f"""<main class="flow">
   {event_strip(ctx, key)}
   <header class="flow-head">
@@ -849,7 +851,7 @@ def flow_page(ctx: dict, key: str, title: str, heading: str, intro: str, note: s
   <div class="blocks">{blocks}</div>
   <footer class="controls">
     <a class="ghost" href="../{back}/">{html.escape(guide["labels"]["back"])}</a>
-    <span class="control-note" id="count-note">Pick at least one outcome on the first screen.</span>
+    {middle}
     {nxt}
   </footer>
   <p class="vintage">Registry vintage {ctx['vintage']}</p>
@@ -1015,15 +1017,38 @@ def render_graph(ctx: dict) -> str:
 # ------------------------------------------------------------------------------------------------------------
 # Screen 4: the estimate, in plain words
 # ------------------------------------------------------------------------------------------------------------
+def widest_trend_sentence(ctx: dict, outcome: dict) -> str | None:
+    """The largest pairwise contrast on the outcome's own trend, in years rather than surnames.
+
+    The estimate screen must not name a president (tests/verify_site.py enforces it, and the rule is the
+    artifact's own: windows are keyed by tenure). So the contrast is rebuilt from the artifact's years and
+    its published difference and range, never from its `reading`, which carries names.
+    """
+    row = (ctx.get("tenure") or {}).get(outcome["id"])
+    if not row or row.get("status") != "described":
+        return None
+    contrasts = row.get("contrasts") or []
+    if not contrasts:
+        return None
+    widest = max(contrasts, key=lambda c: abs(float(c["difference"])))
+    spans = {t["president"]: (str(t["start"])[:4], str(t["end"])[:4])
+             for t in row["tenures"] if t.get("status") == "described"}
+    first, second = spans.get(widest["a"]), spans.get(widest["b"])
+    if not first or not second:
+        return None
+    low, high = widest["range"]
+    unit = outcome.get("unit") or ""
+    return (f"the widest gap from the trend is between {first[0]}\u2013{first[1]} and "
+            f"{second[0]}\u2013{second[1]}: {float(widest['difference']):+.2f} {unit} "
+            f"(range {float(low):+.2f} to {float(high):+.2f}).")
+
+
 def render_estimates(ctx: dict) -> str:
     guide = ctx["guide"]
     results = guide["results"]
     blocks = []
     for outcome in ctx["outcomes"]:
         e = outcome["estimate"]
-        pointer = ('<p class="blocker">What this design found is on the '
-                   '<a href="../designs/">design-level results</a> page.</p>'
-                   if e["published_result"] else "")
         # The expander carries the technique, not the bookkeeping: the artifact path and the rows that
         # merely repeat the card's own header stay out. Provenance lives once, on the methodology page.
         provenance_keys = {"artifact", "spec_index", "design", "outcome"}
@@ -1054,37 +1079,46 @@ def render_estimates(ctx: dict) -> str:
   </details>"""
         elif e["kind"] == "described":
             # The design ran and was not identified: the card reads as an honest absence, dashed, with its
-            # one sentence and the pointer to where the gap windows and placebos actually live.
+            # one sentence and, below it, the widest description the series itself carries. The pointer to
+            # the design-level results now lives in the footer, between Back and Next, so the card stays
+            # two lines long and the link is reachable from every card rather than repeated under each.
+            trend = widest_trend_sentence(ctx, outcome)
+            trend_line = (f'<p class="trend">{html.escape(results["trend_label"])}'
+                          f'{html.escape(trend)}</p>' if trend else "")
             inner = f"""
   <p class="status-line"><span class="pill {e['tone']}">{html.escape(e['status_word'])}</span>
   <span class="stamp stamp-absent">{html.escape(results['no_number_stamp'])}</span></p>
   <p class="reason">{html.escape(e['reason_sentence'])}</p>
-  {pointer}"""
+  {trend_line}"""
         elif e["kind"] == "channel":
-            # The design's number is about the money channel: a chip names it once, the sentence says why
-            # no outcome number follows, and the pointer hands the reader to the design-level results.
+            # The design's number is about the money channel: a chip names it once and the sentence says why
+            # no outcome number follows. The design-level pointer is in the footer.
             inner = f"""
   <p class="status-line"><span class="pill {e['tone']}">{html.escape(e['status_word'])}</span>
   <span class="stamp stamp-channel">{html.escape(results['channel_chip'])}</span></p>
-  <p class="reason">{html.escape(e['reason_sentence'])}</p>
-  {pointer}"""
+  <p class="reason">{html.escape(e['reason_sentence'])}</p>"""
         else:
             # A declared gap: the outcome has no series here, which is an absence of data, not a finding
             # of zero. The stamp says so before the reason does.
             inner = f"""
   <p class="status-line"><span class="pill {e['tone']}">{html.escape(e['status_word'])}</span>
   <span class="stamp stamp-gap">{html.escape(results['gap_stamp'])}</span></p>
-  <p class="reason">{html.escape(e['reason_sentence'] or e['reason_detail'] or "")}</p>
-  {pointer}"""
+  <p class="reason">{html.escape(e['reason_sentence'] or e['reason_detail'] or "")}</p>"""
         blocks.append(outcome_shell(outcome, inner, tone=e["tone"], kind=e["kind"]))
     # The page leads with the outcomes that carry a number. When the selection holds at least one, the
     # others collapse behind this one line (their reasons are on the comparisons screen); when it holds
     # none, every chosen card still shows its one-line reason. app.js fills the counts.
     summary = (f'<p class="note" id="estimate-summary" hidden '
                f'data-template="{html.escape(results["summary"])}"></p>')
+    # The design-level results sit in the footer, centred between Back and Next, because a reader who
+    # wants the gap windows and placebos should not have to find the same link under nine cards. The count
+    # note stays beneath it so the footer still says what was chosen.
+    centre = ('<span class="controls-centre">'
+              f'<a class="controls-link" href="../designs/">{html.escape(results["designs_link"])}</a>'
+              '<span class="control-note" id="count-note"></span></span>')
     return flow_page(ctx, "estimates", results["heading"], results["heading"],
                      "", None, "".join(blocks), back="graph", forward="chart",
-                     extra_head=summary)
+                     extra_head=summary, centre=centre)
 
 
 # ------------------------------------------------------------------------------------------------------------

@@ -234,7 +234,9 @@ ask:
   source_heading: "Where this comes from"
 
 results:
-  heading: "The estimate, in plain words"
+  heading: "The estimate"
+  trend_label: "Description, not an estimate: "
+  designs_link: "design-level results"
   number: "The estimate is {coefficient}, with a 95 % interval from {ci_low} to {ci_high} and p = {p_value}."
   includes_zero: "The interval includes zero, so no effect stays possible."
   excludes_zero: "The interval stays on one side of zero."
