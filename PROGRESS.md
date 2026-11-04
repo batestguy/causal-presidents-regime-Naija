@@ -275,6 +275,10 @@ outcomes. We did the groundwork: what can, and cannot, be compared statistically
 italic serif directly under the five portraits, above the earlier lines about the work. Declared in
 `guide.yml` (`cover.premise_lines`), styled `.field-note`. `verify_site` green.
 
+**Revised same day at the requester's word.** The "model can answer once someone assembles the data"
+pull quote and its styles are gone, and the premise now ends: *"We show what can and cannot be compared."*
+The premise is the only statement under the portraits.
+
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
 is **estimated, not identified**: four windows, rank p 0.17–0.50, and a pre-fit gate that turned out not to
