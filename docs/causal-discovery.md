@@ -13,11 +13,18 @@ new artifact family, linked from the methodology page, never as a card number an
 
 Two properties of this data bound the exercise:
 
-- **Sample size.** Most catalogue series are annual (27 native points). That is below every established
+- **Sample size.** Most catalogue series are annual: 27 native points inside the study window, 66 if you
+  extend to 1960 (the World Bank series start there). Even 66 annual points is below every established
   discovery sample-size floor once more than a handful of variables and lags are involved.
 - **Fill versus record.** Twenty of the twenty-three national series are monthly *interpolations* of annual
   values (`fact_metric.observation_type = 'interpolated'`). A discovery algorithm run on those months would
   recover the fill rule, not the economy. They are excluded.
+
+**Per-outcome verdict.** Only **fatalities** and **incidents** have native monthly outcome series (UCDP,
+1990-09 onward; 343 national months, 37 units by 424 state-months). The other ten catalogue outcomes are
+annual. Inflation is the near-exception: the catalogue series is annual, but an NBS monthly CPI source exists
+(`nbs_cpi_national_monthly`, 358 months) and can serve as a monthly covariate. Discovery is therefore a
+two-outcome exercise, not a twelve-outcome one; running it on the annual ten would mine the smoother.
 
 ## What the data can support
 
@@ -37,7 +44,10 @@ runnable time-series graph with lags.
 **Native monthly, state panel (second target).** `state_panel` holds 12,358 state-months of FAAC allocation
 and UCDP security outcomes for 36 units from 2016-12. Per-state series run about 107 months; a pooled run
 would ignore state heterogeneity, so the declared design should run PCMCI **per state** and report edge
-stability across states (how many of 36 states show the edge) rather than one pooled graph.
+stability across states (how many of 36 states show the edge) rather than one pooled graph. Two caveats:
+`state_panel.d1_faac_per_capita` is empty for every row (the dose gate did not pass), so FAAC discovery at
+state level must join `faac_state_allocation` (4,104 state-months, 2016-12 onward); and the security
+outcomes alone run from 1990-09 in `ucdp_state_month` (37 units by 424 months) if the window is widened.
 
 **Not discovery-grade.** The annual series (education, health spending, ODA, oil rents, population, GDP per
 capita, unemployment) have 27 native points; they stay inside the existing declared designs.
