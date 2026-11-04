@@ -1037,9 +1037,15 @@ def widest_trend_sentence(ctx: dict, outcome: dict) -> str | None:
     if not first or not second:
         return None
     low, high = widest["range"]
-    unit = outcome.get("unit") or ""
+    unit = (outcome.get("unit") or "").strip()
+    difference = float(widest["difference"])
+    # "count" is a placeholder unit rather than a measurement, so it is phrased as a change in a count.
+    # Everything else keeps the unit exactly as the artifact publishes it, because the chart page prints the
+    # same contrast with the same string and two screens must not describe one contrast two ways.
+    quantity = (f"{difference:+.2f} in the count" if unit.lower() in {"count", "counts", ""}
+                else f"{difference:+.2f} {unit}")
     return (f"the widest gap from the trend is between {first[0]}\u2013{first[1]} and "
-            f"{second[0]}\u2013{second[1]}: {float(widest['difference']):+.2f} {unit} "
+            f"{second[0]}\u2013{second[1]}: {quantity} "
             f"(range {float(low):+.2f} to {float(high):+.2f}).")
 
 
@@ -1049,6 +1055,12 @@ def render_estimates(ctx: dict) -> str:
     blocks = []
     for outcome in ctx["outcomes"]:
         e = outcome["estimate"]
+        # The trend description is a property of the outcome's series, not of the design, so it appears on
+        # every card whose outcome has one, whatever the card's own verdict: 8 of the 12 do. The label keeps
+        # it from being read as the estimate, which is the whole reason it is allowed here at all.
+        trend = widest_trend_sentence(ctx, outcome)
+        trend_line = (f'<p class="trend">{html.escape(results["trend_label"])}'
+                      f'{html.escape(trend)}</p>' if trend else "")
         # The expander carries the technique, not the bookkeeping: the artifact path and the rows that
         # merely repeat the card's own header stay out. Provenance lives once, on the methodology page.
         provenance_keys = {"artifact", "spec_index", "design", "outcome"}
@@ -1073,6 +1085,7 @@ def render_estimates(ctx: dict) -> str:
   p = {html.escape(n['p_value'])}</span></p>
   <div class="plain">{them}</div>
   {channel}
+  {trend_line}
   <details class="technical">
     <summary>{html.escape(results['expander'])}</summary>
     <ul class="spec-list">{rows}</ul>
@@ -1081,10 +1094,7 @@ def render_estimates(ctx: dict) -> str:
             # The design ran and was not identified: the card reads as an honest absence, dashed, with its
             # one sentence and, below it, the widest description the series itself carries. The pointer to
             # the design-level results now lives in the footer, between Back and Next, so the card stays
-            # two lines long and the link is reachable from every card rather than repeated under each.
-            trend = widest_trend_sentence(ctx, outcome)
-            trend_line = (f'<p class="trend">{html.escape(results["trend_label"])}'
-                          f'{html.escape(trend)}</p>' if trend else "")
+            # short and the link is reachable from every card rather than repeated under each.
             inner = f"""
   <p class="status-line"><span class="pill {e['tone']}">{html.escape(e['status_word'])}</span>
   <span class="stamp stamp-absent">{html.escape(results['no_number_stamp'])}</span></p>
@@ -1096,14 +1106,16 @@ def render_estimates(ctx: dict) -> str:
             inner = f"""
   <p class="status-line"><span class="pill {e['tone']}">{html.escape(e['status_word'])}</span>
   <span class="stamp stamp-channel">{html.escape(results['channel_chip'])}</span></p>
-  <p class="reason">{html.escape(e['reason_sentence'])}</p>"""
+  <p class="reason">{html.escape(e['reason_sentence'])}</p>
+  {trend_line}"""
         else:
             # A declared gap: the outcome has no series here, which is an absence of data, not a finding
             # of zero. The stamp says so before the reason does.
             inner = f"""
   <p class="status-line"><span class="pill {e['tone']}">{html.escape(e['status_word'])}</span>
   <span class="stamp stamp-gap">{html.escape(results['gap_stamp'])}</span></p>
-  <p class="reason">{html.escape(e['reason_sentence'] or e['reason_detail'] or "")}</p>"""
+  <p class="reason">{html.escape(e['reason_sentence'] or e['reason_detail'] or "")}</p>
+  {trend_line}"""
         blocks.append(outcome_shell(outcome, inner, tone=e["tone"], kind=e["kind"]))
     # The page leads with the outcomes that carry a number. When the selection holds at least one, the
     # others collapse behind this one line (their reasons are on the comparisons screen); when it holds

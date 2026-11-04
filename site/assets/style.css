@@ -397,13 +397,16 @@ a.ghost::before { content: "←"; font-size: 1.05em; line-height: 1; }
             border-top: 1px solid var(--rule); }
 .controls > .primary { margin-left: auto; }
 .control-note { flex: 1; font-size: .85rem; color: var(--ink-faint); }
-/* The design-level results link, centred between Back and Next. The count note sits under it so the
-   footer still says what was chosen without the link drifting off-centre. */
+/* The design-level results link, centred between Back and Next, wearing the same pill as those two so it
+   reads as a third control rather than a footnote. No arrow: it is the only one that is not a step. */
 .controls-centre { flex: 1; display: flex; flex-direction: column; align-items: center;
-                   gap: .1rem; text-align: center; }
-.controls-link { font-size: .92rem; color: var(--ink); text-decoration: underline;
-                 text-underline-offset: .16em; }
-.controls-link:hover { text-decoration-thickness: 2px; }
+                   gap: .35rem; text-align: center; }
+.controls-link { display: inline-flex; align-items: center; gap: .5em; color: #fff; text-decoration: none;
+                 padding: .62em 1.1em; font-size: .92rem; font-weight: 550; background: var(--accent);
+                 border: 1px solid var(--accent); border-radius: 999px;
+                 transition: background .15s ease, border-color .15s ease; }
+.controls-link:hover { background: #17594b; border-color: #17594b; color: #fff; }
+.controls-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .controls-centre .control-note { flex: none; }
 
 /* ---------------------------------------------------------------- ask */
