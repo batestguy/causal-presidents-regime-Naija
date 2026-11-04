@@ -14,10 +14,37 @@ coefficient tables, intervals, diagnostics and sensitivity bounds.
 
 ## Demo
 
-<!-- TODO(requester): paste the recorded walkthrough link here. Nothing else in the repository needs it; the
-     site itself is a static build from `registry/` and `analysis/specs/`, so a video is the only way to show
-     it without a server. -->
+<!-- TODO(requester): paste the recorded walkthrough link here, and delete the italic placeholder. -->
 _Walkthrough video: link pending._
+
+The site is a static build from `registry/` and `analysis/specs/`, so the screenshots below are the whole
+thing: no server, no database, no network call at render time.
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screens/home.png" alt="Home: the premise, the five administrations, the counts"><br><em>Home: the premise, the five administrations, and the counts</em></td>
+    <td width="50%"><img src="docs/screens/study.png" alt="Step 1: choose outcomes"><br><em>Step 1: choose outcomes, with each one's coverage stated</em></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screens/compare.png" alt="Step 2: what gets compared"><br><em>Step 2: what gets compared, assuming what</em></td>
+    <td><img src="docs/screens/graph.png" alt="Step 3: the assumption, drawn"><br><em>Step 3: the assumption, drawn, with the adjustment set</em></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screens/estimates.png" alt="Step 4: the estimate"><br><em>Step 4: the estimate, two lines a card</em></td>
+    <td><img src="docs/screens/chart.png" alt="Step 5: the comparison, drawn"><br><em>Step 5: the series, its breaks, and each tenure against the trend</em></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screens/designs.png" alt="The design-level results"><br><em>The design-level results: forest plot, grid, synthetic counterfactual, transitions</em></td>
+    <td><img src="docs/screens/ask.png" alt="Ask"><br><em>Ask: a gated answer, plain first, technical collapsed</em></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screens/methodology.png" alt="Methodology"><br><em>Methodology: the rules, what it does not claim, where the numbers live</em></td>
+    <td><img src="docs/screens/technical.png" alt="Technical"><br><em>Technical: estimators, adjustment sets, every published coefficient</em></td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="docs/screens/about.png" alt="About"><br><em>About: the provenance rule, and the two-note limit</em></td>
+  </tr>
+</table>
 
 ---
 
@@ -103,6 +130,159 @@ one, each against a 58-month placebo distribution at p = 0.017 — the floor of 
 resolve. Four cells fail the pre-trend placebo (the 2015 fall in fatalities is real but already under way 24
 months earlier), one transition cannot be checked at all, and **no party comparison is made**: two events
 against two events has no sampling distribution. [`docs/events.md`](docs/events.md).
+
+## The designs, and what each one computes
+
+Three identification designs over twelve outcomes, plus three descriptive layers that make no causal claim.
+Every estimator below is declared in `analysis/specs/` before it is fitted, and every published number is a
+field of an artifact under `registry/`.
+
+### A — state dose-response (published: two numbers)
+
+Does a larger federal allocation per state go with less reported violence? Fit on 36 state-months × 108
+months (3,888 rows), December 2016 onward, the intersection of the FAAC and UCDP series.
+
+$$
+\mathbb{E}\!\left[y_{it}\mid \alpha_i,\gamma_t,x_{it}\right]
+= \exp\!\left(\alpha_i+\gamma_t+\beta\,\log x_{it}\right)
+$$
+
+$y_{it}$ is monthly conflict fatalities in state $i$; $x_{it}$ is that state's FAAC gross allocation;
+$\alpha_i$ is a state fixed effect and $\gamma_t$ a year-month fixed effect. Estimated by Poisson
+pseudo-maximum-likelihood (`fixest::fepois`), because 80 % of the cells are zeros and 6.2 is the mean: a
+log-OLS would drop or fudge the zeros, and a linear model would let fitted negatives appear. $\beta$ is an
+elasticity, so it reads as *a 1 % larger allocation goes with $\beta$ % more fatalities*. Standard errors are
+clustered by state, the level the dose is assigned at, and 36 clusters is few, so the p-values are stated as
+lower bounds on uncertainty rather than exact.
+
+The decisive check is a **lead-shift placebo**: the dose is moved 24 months forward inside each state, and a
+coefficient of comparable size means the specification is reading a shared pattern rather than the dose.
+`identified` requires the lead-shift p-value below 0.05 *and* the placebo estimate smaller in magnitude than
+the estimate. Both cards fail it, which is why they carry a number and a `estimated_not_identified` verdict
+rather than a finding.
+
+### B — local projections (published: no card number, channel results)
+
+How much of an oil shock reaches the states, and when?
+
+$$
+y_{t+h}-y_{t-1}=\beta_h\,\Delta\log P_t^{\text{Brent}}+\delta_h\,\text{month}_t+\varepsilon_{t,h},
+\qquad h\in\{0,1,2,3,4,5,6,9,12\}
+$$
+
+One OLS per horizon, with month-of-year controls and Newey–West standard errors at 12 lags, because the
+overlapping-horizon residuals are autocorrelated by construction. The shock enters as a first difference in
+logs, never as a level: two trending series regressed in levels report a shared trend. Two families share the
+shock — the national FAAC allocation (the fiscal channel) and the NBS monthly CPI index (the price level) —
+and they are reported separately, never pooled. The lead placebo is six months: a *future* shock that
+"predicts" today's outcome means common trend, not transmission.
+
+The published fiscal-channel result is a cumulative elasticity of about $+0.52$ at $h=2$ (HAC SE 0.17), with
+the sign holding across the grid. The timing is the weak part, and the site says so.
+
+### C — synthetic control (published: nine design-C cards, none identified)
+
+Nigeria's path against a weighted combination of 99 donor countries, per tenure window.
+
+$$
+\hat w=\arg\min_{w\ge 0,\ \sum_j w_j=1}\ \left\lVert z_1-Z_0w\right\rVert_2^2,
+\qquad
+\hat\tau_t=y_{1t}-z_{1t}^{\top}\hat w
+$$
+
+$\hat\tau_t$ is the gap in year $t$; the published statistic is its mean over the window's post years. The
+weights are solved as a quadratic program against the pre-treatment outcome path, with a ridge refit published
+beside them as a solver diagnostic. Inference is placebo-based: every donor is treated in turn, and
+
+$$
+p=\frac{1+\#\left\{j:\ \left|\hat\tau^{(j)}\right|\ge\left|\hat\tau\right|\right\}}{1+J},
+$$
+
+a rank among 99 placebos, not a sampling distribution. The gate also requires a pre-fit ratio at or below 0.10
+and every runnable in-time placebo (window backdated 3, 5 and 7 years) smaller than the estimate. With 99
+donors and 8 to 24 pre-years the fit is underdetermined, so a low pre-fit ratio is interpolation rather than
+validation, and the artifact says that in as many words.
+
+### C′ — matrix completion (first pass, 2026-11-04, not published)
+
+The pass that replaced the simplex, and then refused:
+
+$$
+Y_{it}=\alpha_i+\beta_t+L_{it}+e_{it},
+\qquad
+\min_{\alpha,\beta,L}\ \tfrac12\left\lVert P_{\Omega}\!\left(Y-\alpha\mathbf{1}^{\top}-\mathbf{1}\beta^{\top}-L\right)\right\rVert_F^2+\lambda\lVert L\rVert_*
+$$
+
+Penalty chosen by 5-fold cross-validation that holds out whole **countries** across the pre-period, crossed
+with 12 seeds; the gap is reported across the whole $\lambda$ path, from 0.01 to 0.9 of its maximum. On
+under-5 mortality the gaps are $-4.4$, $-2.2$, $+4.0$ and $+6.6$ per 1,000, every one inside its own placebo
+band (rank $p$ 0.38 to 0.78), and the gap moves by 4 to 8 per 1,000 across the penalty path with Buhari's
+sign changing inside it. The stop rule fired: `mmr` and `unemp` were never fitted, no what-if was published,
+and the whole pass is recorded in [`docs/causal-phases.md`](docs/causal-phases.md).
+
+### Changepoints (descriptive)
+
+Bai–Perron structural-break search on a mean-only model of the **native** observations:
+
+$$
+y_t=\mu_j+\varepsilon_t,\quad \tau_{j-1}<t\le\tau_j,
+\qquad
+\hat J=\arg\min_{0\le J\le J_{\max}}\ \mathrm{BIC}(J)
+$$
+
+with 15 % trimming, at most two breaks on a monthly series and one on an annual one, at least 20 native
+points to search at all, and no break winning a tie. The interpolated monthly spine is never fitted, because a
+filled month is a rule and not a record. No break is described as an effect of a presidency; a break within
+±2 months of a swearing-in records the *timing only*.
+
+### Band comparison (descriptive)
+
+Each party-by-tenure group's mean over the months its series covers,
+
+$$
+\bar y_g=\frac{1}{|T_g|}\sum_{t\in T_g} y_t ,
+$$
+
+reported beside its native-only mean where the two differ, with at least three units per group and no
+inference fields at all: no p-value, no standard error, no interval. A month without an observation is a gap,
+never a zero.
+
+### Tenure trend and president-to-president contrasts (descriptive)
+
+A LOESS smoother, degree 1, fitted to the native points and evaluated only where observations exist:
+
+$$
+d_t=y_t-\hat m_s(t),
+\qquad
+\Delta_{ab}=\bar d_a^{\,s}-\bar d_b^{\,s},
+\qquad s\in\{0.5,\,0.75,\,1.0\}
+$$
+
+$d_t$ is how far a point sits from its own trend; $\Delta_{ab}$ compares two tenures' mean deviations. The
+span is an analyst choice, not a sampling quantity, so the contrast is published **as a range across the
+three spans**, which is the range of that choice. Fewer than 20 native points refuses the outcome; fewer than
+three per tenure publishes "insufficient points". The wording rule is absolute: never *caused*, never
+*added*, never a share of a total.
+
+### Robustness grid
+
+129 specifications declared before fitting and all published: 105 for Design A across dose definitions and
+outcomes, 24 for Design B across horizons and controls. The published output is the **support** (the share
+that keeps the majority sign) and the flip count, never the best-looking specification. Design A: 60 positive
+against 21 negative, with one sign flip at a level of the dose grid.
+
+## Inference and honesty rules
+
+- **A number needs four things**: the design that produced it, its identifying assumption, the interval, and
+  the check that could have killed it. A card missing any of them carries a reason instead of a number.
+- **No number at render time.** The site and the app read committed artifacts; neither opens a database nor
+  imports a fitting library, and `tests/verify_site.py` greps the renderers for typed literals.
+- **A failed check is published.** Two retrieval gates measure 0.5 and 0.25 against declared targets and stay
+  in the artifact. The synthetic control's ridge disagreement is printed beside every gap.
+- **Counts are published, not implied.** 2 of 36 cards carry a number; the other 34 name a reason from a
+  closed set, so a missing estimate is never silent.
+- **Vintage discipline.** A correction is a new vintage directory produced by the engine, never a hand edit.
+  The registry has been frozen at 2026-11-01 since the completion statement.
 
 ## What works today
 
@@ -198,6 +378,20 @@ Key-gated sources read free credentials from a gitignored `.env` — copy `.env.
 | ~~`UCDP_ACCESS_TOKEN`~~ | Organised-violence fatalities | ✅ **Not needed** — its *API* wants a token (401), its **bulk archive** does not (200, 29 MB, CC-BY), and that is what landed (C-45) |
 | ACLED | Security events (now **OAuth**, not a key) | not yet wired |
 
+## The site
+
+The eleven pages are a static build: `site/build.py` reads `registry/` and `analysis/specs/guide.yml` and
+writes `site/dist/`, which is gitignored because it is derived. No page opens a database, calls a network, or
+refits anything.
+
+```bash
+PY=/c/Users/TOSHIBA/ds-general/python.exe
+
+$PY site/build.py                                            # writes site/dist/
+$PY -m http.server 8765 --bind 127.0.0.1 --directory site/dist
+$PY tests/verify_site.py                                     # the page contract, wording and counts
+```
+
 ## Repository layout
 
 ```
@@ -284,6 +478,8 @@ may not be republished, so the repository ships code, derived aggregates and acq
 
 - [`docs/causal-discovery.md`](docs/causal-discovery.md) — what causal discovery can and cannot run on here
   (two native-monthly outcomes), the toolchain, and the stability rule fixed before any edge is declared
+- [`docs/causal-phases.md`](docs/causal-phases.md) — the phase workflow for the causal work, its exit
+  criteria, the live status board, and why P5 and P6 are blocked
 - [`docs/causal-ml-options.md`](docs/causal-ml-options.md) — the defensible modern causal-ML menu for this
   data, and the map of which blank cards can be polished
 - [`docs/causal-ml-plan.md`](docs/causal-ml-plan.md) — the declared first pass (matrix completion, SDID,
