@@ -8,24 +8,30 @@ pass started after the freeze and wrote nothing into `registry/`.
 
 ## Start here (next session)
 
-- **Repo state:** `main` is clean and pushed; the frozen registry has not been edited. Re-run
-  `tests/verify_site.py` after any presentation change; the full chain is `scripts/verify.sh`
-  (Git Bash, `PYTHON=/c/Users/TOSHIBA/ds-general/python.exe`).
+- **Repo state:** `main` is clean and pushed at `4c6db10` (ten commits: handoff, causal first pass, site pass).
+  The frozen registry has not been edited. Re-run `tests/verify_site.py` after any presentation change; the
+  full chain is `scripts/verify.sh` (Git Bash, `PYTHON=/c/Users/TOSHIBA/ds-general/python.exe`).
 - **Causal work: the first pass ran and stopped.** P0–P4 of `docs/causal-phases.md` are closed: the
   matrix-completion counterfactual was declared, fitted on `u5mr` and tested against 99 placebos, and its
   gaps sit inside their own placebo distributions on all four windows. The stop rule fired, so `mmr` and
   `unemp` were **not** fitted and nothing was published. Read the phase board in `docs/causal-phases.md`
-  first, then the 2026-11-04 entry at the end of this file.
-- **Causal docs, in order (unchanged, but read the plan as partly executed):** `docs/causal-discovery.md`
+  first, then the causal entry in this file.
+- **Next, in order:** (1) the card description block agreed on 2026-11-04 but not built — president contrasts
+  and break dates on the eight design-C cards, which needs a `description` field in
+  `registry/schema/dag_card.schema.json`, a reader in `analysis/R/05_registry.R`, one check in
+  `tests/verify_dags.py` and `tests/verify_registry.py`, and a regenerated card set; (2) the demo walkthrough
+  link, whose placeholder sits in `README.md`.
+- **Causal docs, in order (read the plan as partly executed):** `docs/causal-discovery.md`
   (what could be discovered and why only two outcomes), `docs/causal-ml-options.md` (the method menu),
   `docs/causal-ml-plan.md` (the declared first pass), and `docs/counterfactual-recommendation.md` (the
   what-if contract and the five decisions, still unanswered).
 - **Environment:** causal work runs in the conda env `causality-handbook`
   (`C:\Users\TOSHIBA\miniconda3\envs\causality-handbook\python.exe`); `ds-general` is back to the verified
   build set. R 4.5.2 has `synthdid`, `gsynth`, `did`, `dagitty`.
-- **Pilot evidence to carry forward:** on `u5mr`, simplex and SDID gaps flip sign on two of four windows
-  (Yar'Adua +2.11 vs −0.87; Jonathan −11.56 vs +1.51, placebo SE ≈ 8). Any published what-if must show all
-  estimators and the disagreement; no averaging, no causal verbs.
+- **The old pilot is superseded.** It said the simplex and SDID flip sign on two of four windows; the first
+  pass replaced the simplex, and the pilot's own scripts used the interpolated spine rather than the native
+  series. Treat it as history: the live numbers are the four in the causal entry below, and they are all
+  inside their placebo bands.
 - **Five decisions waiting** are listed in `docs/counterfactual-recommendation.md` §9: placement, new
   vintage, scope, the `cpi_yoy` reclassification, and the education refusal wording.
 - **Local site server:** `python -m http.server 8765 --bind 127.0.0.1 --directory site/dist` from the repo

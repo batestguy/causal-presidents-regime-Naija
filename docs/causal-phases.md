@@ -152,7 +152,7 @@ line it printed; the full output lives in `PROGRESS.md`.
 | P3 | 2026-11-04 | 99 in-space placebos and 99 leave-one-donor-out refits per window; rank p 0.43 / 0.78 / 0.55 / 0.38; leave-one-out sign flips 0/99 on every window; in-time placebos run on 1, 3 and 3 cases and refused with the count where the pre-period is too short |
 | P4 | 2026-11-04 | **stop rule fails**: no window clears the gate (rank p, in-time placebos on two windows, and the refused third arm), and the gap moves 4 to 8 per 1,000 across the penalty path with Buhari's sign flipping, so P5 does not open |
 | P5 | — | blocked by P4: not opened |
-| P6 | — | blocked: there is no stable what-if to publish, and the five requester decisions are unanswered |
+| P6 | — | **blocked for numbers**: there is no stable what-if to publish, and the five requester decisions are unanswered. The refusal itself was published on 2026-11-04 as number-free site copy (methodology, designs, chart header), which needs no artifact because it carries no figure |
 
 ---
 

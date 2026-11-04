@@ -77,7 +77,7 @@ or a constant declared in an `analysis/specs/` file. The page computes nothing.
 | D-18 | Hosting | **GitHub Pages, deployed from CI only when `verify.sh` is green.** The Streamlit app stays in the repo as the local working tool. |
 | D-19 | Framework | **Static site generated from the registry** (HTML/CSS/SVG, no framework, no npm dependency), because the content is already static and the flow needs real layout and real URLs. |
 | D-20 | Changepoints | **In scope for this build**: a third descriptive family describing when each outcome series changes, held to the rules in §6.3. |
-| D-22 | Design-level figures | **One page, `/designs/`, outside the flow.** The forest plot, the specification curve and the event study already exist as artifact-backed figures with recorded byte counts; they were reachable from nowhere. The page reads them and the fields that decided each verdict, shows transitions by month rather than by president, and is linked from the estimate screen and the Ask footer. |
+| D-22 | Design-level figures | **One page, `/designs/`, outside the flow.** The forest plot, the specification curve and the event study already exist as artifact-backed figures with recorded byte counts; they were reachable from nowhere. The page reads them and the fields that decided each verdict, shows transitions by month rather than by president, and is linked from the estimate screen's footer (a centred pill between Back and Next) and the Ask footer. |
 
 ### Assumptions where the interview left a gap
 
@@ -149,17 +149,23 @@ The chosen design's SVG as the main exhibit, with the assumption in a sentence, 
 `label (node_id)`, the node assumed absent, and the cannot-rule-out list. Beneath: a collapsed "other graphs for
 this outcome", each with its assumption and an amber label naming the check it failed. Browsing is read-only.
 
-### Screen 4 — The estimate in plain words · `/estimates/?outcomes=<ids>`
+### Screen 4 — The estimate · `/estimates/?outcomes=<ids>`
 
-One block per outcome, in the order chosen:
+One block per outcome, in the order chosen. **Revised 2026-11-04**: the cards were cut to two lines plus the
+figure, because a coefficient and a p-value answer no question a general reader has.
 
-1. **Plain reading** — direction, whether the range includes zero, the sample, the assumption in one sentence,
-   caveats, and the technical words the answer uses defined from the glossary.
-2. **The number**, when published — coefficient, 95 % interval, p, observations, units, months, verdict and the
-   check that decided it.
-3. **Or the reason** — code in plain words, detail sentence, pointer to the design-level result.
-4. **Technical expander** (D-14) — every field of the specification, the adjustment set, the Stage 5 pre-check,
-   one Stage 7 grid line, the artifact path.
+1. **What is associated with what**, in words, built from the artifact's own formula — *a 1 % higher federal
+   allocation received by the state goes with 0.47 % more reported security fatalities*.
+2. **Whether the interval includes zero** — one short sentence.
+3. **One descriptive line**: the widest gap from the tenure trend, in years rather than surnames, or — where
+   the series is too sparse for a trend — how many years are observed against the twenty a trend needs.
+4. **The figure**, when published: the coefficient and its 95 % interval. The p-value, the sample, the verdict
+   word and the check that decided it now live in the technical expander (D-14), beside the adjustment set, the
+   Stage 5 pre-check, one Stage 7 grid line and the artifact path.
+5. **Or the reason**, in one plain sentence, when no number is published.
+
+The **design-level results** link is not repeated under each card: it sits in the page footer, centred between
+Back and Next, with the outcome count beneath it.
 
 A Design B number says in those words that it is about the **national FAAC channel**, not the card's outcome.
 

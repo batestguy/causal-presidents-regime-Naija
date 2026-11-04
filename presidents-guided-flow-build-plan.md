@@ -85,7 +85,7 @@ the four short education series refused with a reason, and the counts in `counts
 | Deliverable | Gate |
 |---|---|
 | Graph screen: chosen graph as exhibit, alternatives collapsed with their failed check | browsing cannot change the estimate screen |
-| Estimate screen: plain reading first, number with verdict, reason when there is none, technical expander | a Design B number never appears on an outcome page |
+| Estimate screen: what is associated with what, the figure and its interval, one descriptive line, reason when there is none, technical expander (revised 2026-11-04) | a Design B number never appears on an outcome page |
 | Chart screen: grouping control, trend lines, definition breaks, changepoint markers, "description, not a causal comparison" | every chart label and stamp comes from `guide.yml` |
 | `tests/verify_site.py` extended to all six screens | all 12 outcomes reachable; the 36-card contract still holds on the card pages |
 

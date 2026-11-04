@@ -12,6 +12,15 @@ coefficient tables, intervals, diagnostics and sensitivity bounds.
 
 ---
 
+## Demo
+
+<!-- TODO(requester): paste the recorded walkthrough link here. Nothing else in the repository needs it; the
+     site itself is a static build from `registry/` and `analysis/specs/`, so a video is the only way to show
+     it without a server. -->
+_Walkthrough video: link pending._
+
+---
+
 ## Status: frozen at vintage 2026-11-01 — Stages 0–9 complete, the chain verified end to end, and the registry carries two numbers with a reason for every other card
 
 > **The headline finding (2026-10-18): an oil-price shock reaches Nigeria's states, federal money does not
@@ -32,6 +41,14 @@ coefficient tables, intervals, diagnostics and sensitivity bounds.
 > [`docs/events.md`](docs/events.md) — and the boundary all three sit inside,
 > [`docs/limitations.md`](docs/limitations.md).
 
+**Since the freeze (2026-11-04).** Two passes ran outside the registry and neither changed a published number.
+The causal first pass replaced Design C's 99-donor simplex with a matrix-completion counterfactual, fitted it
+on under-5 mortality against 99 placebos, and **stopped at its own gate**: every window's gap sits inside the
+range that treating a random country produces, so `mmr` and `unemp` were not fitted and no what-if number is
+published ([`docs/causal-phases.md`](docs/causal-phases.md), `PROGRESS.md`). The presentation pass then cut
+the estimate screen from 1,048 visible words to 513 and put the refusal on three screens. The registry is
+still vintage 2026-11-01; nothing under `registry/` moved.
+
 | | |
 |---|---|
 | Specification | ✅ Complete (`nigeria-causal-inference-spec.md`, `PHASES.md`) |
@@ -41,8 +58,7 @@ coefficient tables, intervals, diagnostics and sensitivity bounds.
 | Analytical base | ✅ **Stage 4** — one monthly table, 8,350 rows (25 metrics × 334 months), index-anchored, with the party-by-tenure strata, the Stage 3 quality status and the 37 × 334 state panel carrying both the dose and the outcome |
 | Pre-analysis diagnostics | ✅ **Stage 5** — every design validated before estimation, **re-run at vintage 2026-11-01** after the donor pool was widened from 13 countries to **99 candidates** and the panel grew to nine country-year series. **3 of 36 cards pass their pre-check** — `u5mr`, `mmr` and `unemp` under Design C (15 fail, 9 degraded, 9 not attempted): Family A dropped on the dose *axis* (per capita waits on X-09) with the outcome blocker now cleared, B degraded (annual grain, a 38–99 SD detectable effect), and **C now runs for every outcome the panel carries** — `u5mr` 3 of 4 windows, `mmr` 2 of 3, `unemp` 3 of 4, while `immun_penta3`, `gdp_growth` and `cpi_yoy` fail the gate and `skilled_birth` has no runnable window — under a **declared strict-majority rollup** and the caveat that a 99-donor simplex can fit almost any pre-period |
 | Estimation | ✅ **Stage 6** — 21 specifications across two designs (3 Design A outcomes; Design B\u2019s 9 horizons on each of two outcome families), every one published with its interval and the check that decided its verdict. Verifier recomputes every number to 1e-12 |
-| Robustness | ✅ **Stage 7** — **129 specifications** declared before fitting and all published, with the specification curve drawn and the support counts computed from the fitted rows: Design B 24/24 positive, Design A 60 positive / 21 negative with one majority sign-flip level (2 of the 105 sit inside a declared ±0.02 near-zero band and are counted as such). Verifier re-fits every one of them (worst coefficient gap 6.5e-9) |
-| Within-tenure timing | ✅ **Stage 8b** — the transition event study: **4 in-window transitions** on 324 months of UCDP conflict (1999-01→2025-12, the only monthly outcome), 32 specifications, inference by **exhaustive placebo assignment** over 58 eligible months. **2 of 8 event-outcome cells survive both the placebo and the pre-trend check**, 4 fail the pre-trend, 1 event cannot be checked at all (declared, not scored as a pass), and the party split is published as **description with no test**. Verifier re-fits all 32 and re-enumerates the placebo distribution (worst HAC SE gap 0.002 %) |
+| Robustness | ✅ **Stage 7** — **129 specifications** declared before fitting and all published, with the specification curve drawn and the support counts computed from the fitted rows: Design B 24/24 positive, Design A 60 positive / 21 negative with one majority sign-flip level (2 of the 105 sit inside a declared ±0.02 near-zero band and are counted as such). Verifier re-fits every one of them (worst coefficient gap 6.5e-9) || Within-tenure timing | ✅ **Stage 8b** — the transition event study: **4 in-window transitions** on 324 months of UCDP conflict (1999-01→2025-12, the only monthly outcome), 32 specifications, inference by **exhaustive placebo assignment** over 58 eligible months. **2 of 8 event-outcome cells survive both the placebo and the pre-trend check**, 4 fail the pre-trend, 1 event cannot be checked at all (declared, not scored as a pass), and the party split is published as **description with no test**. Verifier re-fits all 32 and re-enumerates the placebo distribution (worst HAC SE gap 0.002 %) |
 | Retrieval corpus | ✅ **Stage 8c** — **525 chunks from 53 attributed sources** at the registry's vintage: one document per model card (181 parts), the three design results (Design C one block per outcome), the narrative, the data dictionary, the transition events, the tables, the two coverage counts and the scope paragraph. Every chunk records its source's sha256, so a document edited without a rebuild fails the verifier. Measured on `multi-qa-MiniLM-L6-cos-v1`: **recall@5 0.944** (BM25 baseline 0.778), gold coverage 0.403, MRR 0.631; **two embedding refusal gates fail and are published** — reason-bearing refusals 0.5, out-of-scope 0.25, because a forecast about a covered outcome embeds closer than some real questions do; the rule-based intent gate in front of them measures 0.947 out-of-scope refusal on held-out questions. The four RAGAS definitions are implemented in house and measured (`library: false`); the `ragas` **library** run is `not_run`. `docs/rag.md` |
 | Registry / dashboard | ✅ **Stage 8, complete** — **2 of 36 cards carry a published number, 34 carry a reason** (both Design A cards that can: fatalities +0.4678, incidents +0.5278, each with its interval, its `estimated_not_identified` verdict and the Stage 7 grid summary for its own outcome); Design B's nine specifications are published on the index as **channel-level** (`result_is_card_level: false`, because on every B card FAAC is a mediator) and **Design C's nine outcome blocks likewise** (45 windows, 31 estimated, none identified); every card without a number names a reason from a closed set, and `design_not_run` and `no_specification_declared` now carry none. Verifier re-derives the mapping and checks every number against the artifact it names |
 | The app | ✅ **Stage 9** — `app/streamlit_app.py`: pick an outcome, pick one of the three designs, and get the assumption, the digraph-computed adjustment set, the cannot-rule-out list and the Stage 5 pre-check — then the number with the verdict and the failed check behind it, or the reason there is none. Reads `registry/dags/` only: no database, no network, no model, no coefficient typed into the UI. `tests/verify_app.py` renders **all 36 cards** through Streamlit's own harness and compares the page against the card JSON. **The chat tab is built**: a rule-based intent gate refuses out-of-scope questions before retrieval (0.947 on held-out questions), BM25 retrieves lexically, and a post-check (R-04) replaces any answer missing a contract part with the refusal template; it answers **36 of 38 measured questions (0.947)**. The site carries the same layer in JavaScript, and `tests/verify_answer_js.py` requires it to reproduce all 38 measured answers field for field. The framework choice (Streamlit, and what it costs) is a recorded decision, not a default: `docs/decisions.md` UI-01…UI-08 |

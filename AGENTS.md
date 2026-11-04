@@ -40,6 +40,18 @@ the trend table reports president-vs-president contrasts from the published arti
 the plain answer first with one collapsed Technical section. Verifiers: `tests/verify_site.py`,
 `tests/verify_answer_js.py` (which also guards the datalist bug), the usual `scripts/verify.sh` chain.
 
+**The estimate screen is two lines a card** (2026-11-04). A card with a number shows the figure and its
+interval, one sentence saying what is associated with what (built from the artifact's formula, never typed),
+and whether the interval includes zero. A card without one shows its refusal sentence plus a single
+descriptive line: the widest gap from the tenure trend in years, or the observed-year count where the series
+is too sparse. The p-value, the sample, the verdict word and the check that decided it live in the technical
+expander. The design-level results link is a pill in the page footer, centred between Back and Next, not a
+pointer under each card. Visible words across twelve cards: 513.
+
+**The causal refusal is stated on three screens, number-free:** a bullet in Methodology section 4, a
+paragraph under the synthetic-counterfactual intro on the designs page, and a clause in the chart header.
+All three name under-5 mortality, so none can be read as covering an outcome that was never re-fitted.
+
 ## Agent workflow
 
 The process — classify, plan, fan out for independent reads, verify with a different family, escalate the
