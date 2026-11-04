@@ -143,15 +143,15 @@ Does a larger federal allocation per state go with less reported violence? Fit o
 months (3,888 rows), December 2016 onward, the intersection of the FAAC and UCDP series.
 
 $$
-\mathbb{E}\!\left[y_{it}\mid \alpha_i,\gamma_t,x_{it}\right]
-= \exp\!\left(\alpha_i+\gamma_t+\beta\,\log x_{it}\right)
+\mathbb{E}\left[y_{it}\mid \alpha_i,\gamma_t,x_{it}\right]
+= \exp\left(\alpha_i+\gamma_t+\beta\log x_{it}\right)
 $$
 
 $y_{it}$ is monthly conflict fatalities in state $i$; $x_{it}$ is that state's FAAC gross allocation;
 $\alpha_i$ is a state fixed effect and $\gamma_t$ a year-month fixed effect. Estimated by Poisson
 pseudo-maximum-likelihood (`fixest::fepois`), because 80 % of the cells are zeros and 6.2 is the mean: a
 log-OLS would drop or fudge the zeros, and a linear model would let fitted negatives appear. $\beta$ is an
-elasticity, so it reads as *a 1 % larger allocation goes with $\beta$ % more fatalities*. Standard errors are
+elasticity, so it reads as *a 1 % larger allocation goes with β % more fatalities*. Standard errors are
 clustered by state, the level the dose is assigned at, and 36 clusters is few, so the p-values are stated as
 lower bounds on uncertainty rather than exact.
 
@@ -166,8 +166,8 @@ rather than a finding.
 How much of an oil shock reaches the states, and when?
 
 $$
-y_{t+h}-y_{t-1}=\beta_h\,\Delta\log P_t^{\text{Brent}}+\delta_h\,\text{month}_t+\varepsilon_{t,h},
-\qquad h\in\{0,1,2,3,4,5,6,9,12\}
+y_{t+h}-y_{t-1}=\beta_h \Delta\log P_t^{\text{Brent}}+\delta_h \text{month}_t+\varepsilon_{t,h},
+\qquad h\in\lbrace 0,1,2,3,4,5,6,9,12\rbrace
 $$
 
 One OLS per horizon, with month-of-year controls and Newey–West standard errors at 12 lags, because the
@@ -195,7 +195,7 @@ weights are solved as a quadratic program against the pre-treatment outcome path
 beside them as a solver diagnostic. Inference is placebo-based: every donor is treated in turn, and
 
 $$
-p=\frac{1+\#\left\{j:\ \left|\hat\tau^{(j)}\right|\ge\left|\hat\tau\right|\right\}}{1+J},
+p=\frac{1+\mathrm{count}\left(\left|\hat\tau^{(j)}\right|\ge\left|\hat\tau\right|\right)}{1+J},
 $$
 
 a rank among 99 placebos, not a sampling distribution. The gate also requires a pre-fit ratio at or below 0.10
@@ -210,7 +210,7 @@ The pass that replaced the simplex, and then refused:
 $$
 Y_{it}=\alpha_i+\beta_t+L_{it}+e_{it},
 \qquad
-\min_{\alpha,\beta,L}\ \tfrac12\left\lVert P_{\Omega}\!\left(Y-\alpha\mathbf{1}^{\top}-\mathbf{1}\beta^{\top}-L\right)\right\rVert_F^2+\lambda\lVert L\rVert_*
+\min_{\alpha,\beta,L} \tfrac12\left\lVert P_{\Omega}\left(Y-\alpha\mathbf{1}^{\top}-\mathbf{1}\beta^{\top}-L\right)\right\rVert_F^2+\lambda\lVert L\rVert_*
 $$
 
 Penalty chosen by 5-fold cross-validation that holds out whole **countries** across the pre-period, crossed
@@ -254,8 +254,8 @@ A LOESS smoother, degree 1, fitted to the native points and evaluated only where
 $$
 d_t=y_t-\hat m_s(t),
 \qquad
-\Delta_{ab}=\bar d_a^{\,s}-\bar d_b^{\,s},
-\qquad s\in\{0.5,\,0.75,\,1.0\}
+\Delta_{ab}=\bar d_a^{s}-\bar d_b^{s},
+\qquad s\in\lbrace 0.5,0.75,1.0\rbrace
 $$
 
 $d_t$ is how far a point sits from its own trend; $\Delta_{ab}$ compares two tenures' mean deviations. The
