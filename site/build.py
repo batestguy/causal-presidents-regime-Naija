@@ -274,7 +274,19 @@ def build_context(root: Path) -> dict:
                 "first_month": spec.get("first_month", "?"),
                 "last_month": spec.get("last_month", "?"),
             }
-            plain.append(fill_text(guide["results"]["number"], numbers))
+            # The card leads with what is associated with what, in words, because a coefficient and a p-value
+            # answer no question a general reader has. The formula is the artifact's own; the predictor's
+            # plain name is declared in guide.yml, so an unrecognised regressor cannot be silently glossed.
+            regressor = str(spec.get("formula") or "").split("~")[-1].split("|")[0].strip()
+            exposure = (guide["results"].get("predictors") or {}).get(regressor)
+            if exposure and spec.get("coefficient") is not None:
+                coefficient = float(spec["coefficient"])
+                plain.append(fill_text(guide["results"]["association"], {
+                    "exposure": exposure,
+                    "change": f"{abs(coefficient):.2f}",
+                    "direction": "more" if coefficient >= 0 else "fewer",
+                    "outcome": outcome["label"].lower(),
+                }))
             crosses = spec["ci_low"] <= 0 <= spec["ci_high"]
             plain.append(guide["results"]["includes_zero"] if crosses else guide["results"]["excludes_zero"])
             plain.append(fill_text(guide["results"]["sample"], numbers))
@@ -1101,7 +1113,7 @@ def render_estimates(ctx: dict) -> str:
             # The published card leads with the number itself; the interval rides beside it as its
             # qualifier, the sample keeps the footing, and the verdict and the check that decided it
             # carry the honesty layer under the figure, not after it.
-            them = "".join(f"<p>{html.escape(line)}</p>" for line in e["plain"][1:])
+            them = "".join(f"<p>{html.escape(line)}</p>" for line in e["plain"])
             channel = (f'<p class="channel-note">{html.escape(results["channel_note"])}</p>'
                        if e["channel_level"] else "")
             rows = "".join(
@@ -1112,8 +1124,7 @@ def render_estimates(ctx: dict) -> str:
             inner = f"""
   <p class="status-line"><span class="pill {e['tone']}">{html.escape(e['status_word'])}</span></p>
   <p class="num-hero"><span class="figure">{html.escape(n['coefficient'])}</span>
-  <span class="qual">95 % interval from {html.escape(n['ci_low'])} to {html.escape(n['ci_high'])} ·
-  p = {html.escape(n['p_value'])}</span></p>
+  <span class="qual">95 % interval from {html.escape(n['ci_low'])} to {html.escape(n['ci_high'])}</span></p>
   <div class="plain">{them}</div>
   {channel}
   {trend_line}

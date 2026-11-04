@@ -237,8 +237,14 @@ results:
   heading: "The estimate"
   trend_label: "Description, not an estimate: "
   sparse_label: "What we have: "
+  association: "In the same state and month, a 1 % higher {exposure} goes with {change} % {direction} {outcome}."
+  predictors:
+    "log(faac_gross_total_naira)": "federal allocation received by the state"
   designs_link: "design-level results"
-  number: "The estimate is {coefficient}, with a 95 % interval from {ci_low} to {ci_high} and p = {p_value}."
+  # The old `number` template ("The estimate is X, with a 95 % interval ... and p = ...") was retired on
+  # 2026-11-04: the hero carries the figure and its interval, the plain text carries the association, and the
+  # p-value lives in the technical expander, where a reader who wants it knows to look. Leaving the template
+  # in place would have been a second, unused description of the same card.
   includes_zero: "The interval includes zero, so no effect stays possible."
   excludes_zero: "The interval stays on one side of zero."
   sample: "On {n_obs} observations over {n_units} units, {first_month} to {last_month}."
