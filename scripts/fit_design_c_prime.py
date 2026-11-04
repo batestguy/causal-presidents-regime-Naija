@@ -131,33 +131,42 @@ def lambda_max(Y: np.ndarray, observed: np.ndarray) -> float:
     return float(np.linalg.svd(residual, compute_uv=False)[0])
 
 
-def cross_validate(Y, observed, grid, folds, mask_fraction, seeds) -> dict:
-    """K-fold over the observed cells, one mask per seed; the reported lambda minimises held-out MSE."""
-    idx = np.argwhere(observed)
+def cross_validate(Y, observed, grid, folds, seeds, pre_cols, treated) -> dict:
+    """K-fold over **units**, one assignment per seed; the reported lambda minimises held-out MSE.
+
+    Each fold hides a fifth of the countries across every pre-period year, so the criterion answers the
+    question the estimator is used for: can this panel predict a country it has not seen? v1 masked
+    individual cells, which leaves the held-out cell's own row and column in the fit; that rewards
+    interpolation, and it scored against donor post-years the design never declares.
+    """
+    n, _ = Y.shape
     scores = {lam: [] for lam in grid}
     for seed in seeds:
         rng = np.random.default_rng(seed)
-        order = rng.permutation(len(idx))
-        cut = int(round(mask_fraction * len(idx)))
-        held = idx[order[:cut]]
-        for fold in range(folds):
-            fold_held = held[fold::folds]
+        order = rng.permutation(n)
+        for fold_units in np.array_split(order, folds):
             train = observed.copy()
-            train[fold_held[:, 0], fold_held[:, 1]] = False
+            train[fold_units, :] = False
+            truth = Y[np.ix_(fold_units, pre_cols)]
+            keep = ~np.isnan(truth)
             for lam in grid:
-                fit = fit_mc(Y, train, lam)
-                predicted = fit["fitted"][fold_held[:, 0], fold_held[:, 1]]
-                truth = Y[fold_held[:, 0], fold_held[:, 1]]
-                scores[lam].append(float(np.mean((truth - predicted) ** 2)))
+                fitted = fit_mc(Y, train, lam)["fitted"]
+                predicted = fitted[np.ix_(fold_units, pre_cols)][keep]
+                scores[lam].append(float(np.mean((truth[keep] - predicted) ** 2)))
     means = {lam: float(np.mean(v)) for lam, v in scores.items()}
     best = min(means, key=means.get)
-    return {"best": best, "mse": means}
+    return {"best": best, "mse": means, "boundary": best in (grid[0], grid[-1])}
 
 
 # ---------------------------------------------------------------------------------------------
 # One window
 # ---------------------------------------------------------------------------------------------
-def fit_window(units, years, Y, spec, window_id, quick=False) -> dict:
+def prepare_window(units, years, Y, spec, window_id):
+    """Manifest gates, the donor rule and the observed mask, shared by the fit and the placebos.
+
+    Returns either `{"status": "refused", ...}` or a dict of the arrays both passes must use. Sharing it is
+    the point: a placebo fitted on a different donor pool than the estimate it ranks would not be a placebo.
+    """
     manifest = json.loads((INSPECT / "design_c_prime_u5mr_manifest.json").read_text(encoding="utf-8"))
     entry = next((w for w in manifest["windows"] if w["id"] == window_id), None)
     if entry is None:
@@ -186,28 +195,72 @@ def fit_window(units, years, Y, spec, window_id, quick=False) -> dict:
     yrs = [years[i] for i in keep]
     Yw = Y[:, keep]
     treated = units.index("NGA")
-    observed = np.ones_like(Yw, dtype=bool)
-    observed[treated, [j for j, y in enumerate(yrs) if y >= start]] = False
-    if np.isnan(Yw[observed]).any():
-        return {"id": window_id, "status": "refused", "reason": "a donor cell required by the fit is missing"}
+    post = [j for j, y in enumerate(yrs) if y >= start]
+    pre = [j for j, y in enumerate(yrs) if y < start]
 
-    grid = [round(lambda_max(Yw, observed) * f, 6) for f in (0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 0.9)]
+    # The donor rule, applied by the engine: a donor missing any pre-period year is dropped by the rule,
+    # not by preference, and the count is printed. Matrix completion tolerates gaps in the post period, so
+    # the observed mask is the data itself minus the treated unit's held-out post cells.
+    donors = [i for i in range(len(units)) if i != treated]
+    complete = [i for i in donors if not np.isnan(Yw[i, pre]).any()]
+    dropped = len(donors) - len(complete)
+    if len(complete) < spec["input"]["donor_rule"]["minimum_donors"]:
+        return {
+            "id": window_id, "status": "refused",
+            "reason": f"too few complete donors: {len(complete)}, {spec['input']['donor_rule']['minimum_donors']} required",
+            "n_donors": len(complete),
+        }
+    Yw = Yw[complete + [treated]]
+    treated = len(Yw) - 1
+    observed = ~np.isnan(Yw)
+    observed[treated, post] = False
+    if not observed.any():
+        return {"id": window_id, "status": "refused", "reason": "no observed cells"}
+    return {
+        "status": "prepared", "id": window_id, "start": start, "end": end, "years": yrs, "Y": Yw,
+        "observed": observed, "post": post, "pre": pre, "treated": treated, "dropped": dropped,
+    }
+
+
+def fit_window(units, years, Y, spec, window_id, quick=False) -> dict:
+    prepared = prepare_window(units, years, Y, spec, window_id)
+    if prepared["status"] != "prepared":
+        return prepared
+    Yw, observed = prepared["Y"], prepared["observed"]
+    yrs, post, pre, treated = prepared["years"], prepared["post"], prepared["pre"], prepared["treated"]
+    start, end, dropped = prepared["start"], prepared["end"], prepared["dropped"]
+
+    # The declared path: 12 log-spaced penalties ending strictly inside the regularisation path, so a
+    # boundary hit is visible as one rather than hidden by a grid that stops at the edge.
+    top = lambda_max(Yw, observed)
+    grid = [round(top * f, 6) for f in np.geomspace(0.01, 0.9, 12)]
     cv = cross_validate(
         Yw, observed, grid,
         folds=3 if quick else spec["estimators"]["primary"]["cv"]["folds"],
-        mask_fraction=spec["estimators"]["primary"]["cv"]["mask_fraction"],
         seeds=spec["estimators"]["primary"]["cv"]["seeds"][:1] if quick else spec["estimators"]["primary"]["cv"]["seeds"],
+        pre_cols=pre,
+        treated=treated,
     )
     fit = fit_mc(Yw, observed, cv["best"])
     second = refit_admm(Yw, observed, cv["best"])
 
-    post = [j for j, y in enumerate(yrs) if y >= start]
-    pre = [j for j, y in enumerate(yrs) if y < start]
     actual = Yw[treated, post]
     predicted = fit["fitted"][treated, post]
     gap = actual - predicted
     gap_second = actual - second[treated, post]
     spread = float(abs(gap.mean() - gap_second.mean()))
+
+    # The penalty path, reported rather than summarised. A single cross-validated penalty hides the fact
+    # that the counterfactual's magnitude, and on one window its sign, is a function of how much cross-country
+    # structure the model is allowed to carry. Heavier penalties drive L to zero and leave the two-way
+    # fixed-effects extrapolation; lighter ones let the panel's own country structure through. Both are the
+    # declared estimator at a different lambda, so both belong beside the gap.
+    path = {}
+    for fraction in (0.01, 0.02, 0.05, 0.1, 0.2, 0.4, 0.7, 0.9):
+        lam_f = round(top * fraction, 6)
+        fitted = fit_mc(Yw, observed, lam_f)["fitted"]
+        path[f"{fraction:g}"] = float(np.mean(actual - fitted[treated, post]))
+    signs = {np.sign(round(value, 6)) for value in path.values()}
 
     return {
         "id": window_id,
@@ -216,8 +269,11 @@ def fit_window(units, years, Y, spec, window_id, quick=False) -> dict:
         "last_year": end,
         "pre_years": len(pre),
         "post_years": len(post),
-        "n_donors": len(units) - 1,
+        "n_donors": int(len(Yw) - 1),
+        "donors_dropped_incomplete": dropped,
         "lambda": cv["best"],
+        "lambda_max": top,
+        "lambda_boundary": cv["boundary"],
         "rank": fit["rank"],
         "pre_rmse": fit["pre_rmse"],
         "pre_ratio": fit["pre_rmse"] / fit["pre_sd"] if fit["pre_sd"] else None,
@@ -228,6 +284,9 @@ def fit_window(units, years, Y, spec, window_id, quick=False) -> dict:
         "solver_spread": spread,
         "admm_gap": float(np.mean(gap_second)),
         "solver_ok": spread <= max(1e-3, 1e-3 * abs(float(np.mean(gap)))),
+        "penalty_path": path,
+        "penalty_path_sign_changes": len(signs) > 1,
+        "penalty_path_range": float(max(path.values()) - min(path.values())),
     }
 
 
@@ -268,30 +327,38 @@ def placebo_gap(Yw: np.ndarray, observed: np.ndarray, treated_row: int, post: li
 
 
 def run_placebos(row: dict, units, years, Y, spec) -> dict:
-    """In-space and in-time placebos, the rank p, and the placebo interval, exactly as declared."""
-    first = spec["input"]["years"]["first"]
-    start, end = row["first_year"], row["last_year"]
-    keep = [i for i, y in enumerate(years) if first <= y <= end]
-    yrs = [years[i] for i in keep]
-    Yw = Y[:, keep]
-    treated = units.index("NGA")
-    observed = np.ones_like(Yw, dtype=bool)
-    post = [j for j, y in enumerate(yrs) if y >= start]
-    pre = [j for j, y in enumerate(yrs) if y < start]
-    observed[treated, post] = False
+    """In-space, in-time and leave-one-donor-out placebos, the rank p and the interval, as declared."""
+    prepared = prepare_window(units, years, Y, spec, row["id"])
+    if prepared["status"] != "prepared":
+        return {"id": row["id"], "status": "refused", "reason": prepared.get("reason", "window not prepared")}
+    Yw, observed = prepared["Y"], prepared["observed"]
+    yrs, post, pre, treated = prepared["years"], prepared["post"], prepared["pre"], prepared["treated"]
+    start = prepared["start"]
     lam = row["lambda"]
+    labels = [f"D{i:03d}" for i in range(len(Yw))]
 
     gaps = []
-    for unit_row, unit in enumerate(units):
-        if unit == "NGA":
+    for unit_row in range(len(Yw)):
+        if unit_row == treated:
             continue
-        gaps.append((unit, placebo_gap(Yw, observed, unit_row, post, lam)))
+        gaps.append((labels[unit_row], placebo_gap(Yw, observed, unit_row, post, lam)))
 
     values = np.array([g for _, g in gaps])
     treated_gap = float(row["mean_gap"])
     rank_p = float((np.sum(np.abs(values) >= abs(treated_gap)) + 1) / (len(values) + 1))
     low, high = (float(np.percentile(values, 2.5)), float(np.percentile(values, 97.5)))
-    inside = bool(abs(treated_gap) <= np.max(np.abs(values)))
+    inside_interval = bool(low <= treated_gap <= high)
+
+    # Leave one donor out: drop the country from the pool entirely, refit, and record how the gap moves.
+    leave_one_out = []
+    for unit_row in range(len(Yw)):
+        if unit_row == treated:
+            continue
+        mask = observed.copy()
+        mask[unit_row, :] = False
+        fitted = fit_mc(Yw, mask, lam)["fitted"]
+        leave_one_out.append(float(np.mean(Yw[treated, post] - fitted[treated, post])))
+    flips = int(np.sum(np.sign(leave_one_out) != np.sign(treated_gap)))
 
     # In-time placebos: move the window back k years and re-estimate a gap in an untreated period.
     in_time = []
@@ -317,8 +384,17 @@ def run_placebos(row: dict, units, years, Y, spec) -> dict:
         "smallest_attainable_p": 1.0 / (len(values) + 1),
         "interval_low": low,
         "interval_high": high,
-        "treated_inside_placebo_range": inside,
-        "placebo_gaps": {unit: round(g, 6) for unit, g in gaps},
+        # Two different statements, kept apart: the percentile interval is the declared interval, and the
+        # max-absolute test is the weaker one v1 printed under the same word "inside".
+        "treated_inside_interval": inside_interval,
+        "treated_within_max_placebo": bool(abs(treated_gap) <= np.max(np.abs(values))),
+        "leave_one_out": {
+            "n": len(leave_one_out),
+            "min": float(np.min(leave_one_out)),
+            "max": float(np.max(leave_one_out)),
+            "sign_flips": flips,
+        },
+        "placebo_gaps": {label: round(g, 6) for label, g in gaps},
         "in_time": in_time,
     }
 
@@ -348,7 +424,10 @@ def main() -> None:
             print(
                 f"  {window_id:<9} mc gap {row['mean_gap']:+8.3f}  rank {row['rank']:>2}  "
                 f"lambda {row['lambda']:.2f}  pre-ratio {row['pre_ratio']:.4f}  "
-                f"solver spread {row['solver_spread']:.2e}  {'ok' if row['solver_ok'] else 'NOT CONVERGED'}"
+                f"solver spread {row['solver_spread']:.2e}  {'ok' if row['solver_ok'] else 'NOT CONVERGED'}  "
+                f"penalty path range {row['penalty_path_range']:.2f}"
+                f"{' SIGN CHANGES' if row['penalty_path_sign_changes'] else ''}"
+                f"{' (boundary)' if row['lambda_boundary'] else ''}"
             )
         else:
             print(f"  {window_id:<9} refused: {row['reason']}")
@@ -368,19 +447,63 @@ def main() -> None:
             row["placebo"] = {
                 "rank_p": result["rank_p"],
                 "interval": [result["interval_low"], result["interval_high"]],
-                "inside": result["treated_inside_placebo_range"],
+                "inside_interval": result["treated_inside_interval"],
+                "leave_one_out": result["leave_one_out"],
             }
             placebos[row["id"]] = result
             print(
                 f"  {row['id']:<9} gap {result['treated_gap']:+8.3f}  rank p {result['rank_p']:.3f}  "
                 f"placebo 2.5-97.5% [{result['interval_low']:+.2f}, {result['interval_high']:+.2f}]  "
-                f"{'inside' if result['treated_inside_placebo_range'] else 'OUTSIDE'}"
+                f"{'inside' if result['treated_inside_interval'] else 'OUTSIDE'}  "
+                f"leave-one-out sign flips {result['leave_one_out']['sign_flips']}/{result['leave_one_out']['n']}"
             )
+
+    # The gate, evaluated as declared and recorded per window rather than inferred from a status word.
+    if args.placebos and arms_by_id:
+        print("\n  gate")
+        for row in results:
+            if row["status"] != "estimated":
+                continue
+            arm = arms_by_id.get(row["id"], {})
+
+            def gap_of(name):
+                block = arm.get(name) or {}
+                value = block.get("gap")
+                return None if not isinstance(value, (int, float)) else float(value)
+
+            sdid, gsynth = gap_of("sdid"), gap_of("gsynth")
+            failures = []
+            if row["placebo"]["rank_p"] > 0.05:
+                failures.append(f"rank_p {row['placebo']['rank_p']:.3f} > 0.05")
+            runnable = [p for p in placebos[row["id"]]["in_time"] if p["status"] == "run"]
+            too_big = [p for p in runnable if abs(p["gap"]) >= abs(row["mean_gap"])]
+            if too_big:
+                failures.append(
+                    f"in_time placebo at +{too_big[0]['backdate']} yrs moves {too_big[0]['gap']:+.2f}, "
+                    f"at least the estimate"
+                )
+            if gsynth is None:
+                failures.append(f"{[k for k in ('sdid', 'gsynth') if gap_of(k) is None][0]} arm refused, so sign agreement cannot be shown")
+            elif sdid is not None and np.sign(round(sdid, 6)) != np.sign(round(row["mean_gap"], 6)):
+                failures.append(f"sdid sign {sdid:+.2f} against matrix completion")
+            row["gate_failures"] = failures
+            row["gate_status"] = "identified" if not failures else "estimated_not_identified"
+            print(f"  {row['id']:<9} {row['gate_status']}: {'; '.join(failures) if failures else 'all three checks pass'}")
+
+        # Holm across the windows that carry a rank p, printed rather than merely declared.
+        ranked = sorted((r for r in results if r["status"] == "estimated"),
+                        key=lambda r: r["placebo"]["rank_p"])
+        m = len(ranked)
+        for index, row in enumerate(ranked):
+            row["holm_threshold"] = 0.05 / (m - index)
+        print(f"  Holm at 0.05 across {m} windows: " + ", ".join(
+            f"{r['id']} p {r['placebo']['rank_p']:.3f} vs {r['holm_threshold']:.4f}" for r in ranked))
 
     doc = {
         "phase": "P2" + ("+P3" if args.placebos else ""),
         "outcome": args.outcome,
         "spec": str(SPEC.relative_to(ROOT)).replace("\\", "/"),
+        "spec_sha256": __import__("hashlib").sha256(SPEC.read_bytes()).hexdigest(),
         "note": "exploratory; no registry artifact, no published number",
         "windows": results,
         "arms": arms,

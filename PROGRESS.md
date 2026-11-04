@@ -3111,75 +3111,113 @@ repo. A task-set replay would be the honest test, and it has not been run.
 ## 2026-11-04 - the causal first pass: declared, fitted, stopped at its own gate
 
 **What changed.** `docs/causal-phases.md` (the phase workflow and its status board),
-`analysis/specs/design_c_prime.yml` (P0, declared before any fit), `scripts/extract_design_c_prime.py`
-(P1), `scripts/fit_design_c_prime.py` and `analysis/R/12_design_c_prime_arms.R` (P2 and P3). No registry
-artifact, R stage, schema, dbt model or site page was touched; the frozen 2026-11-01 vintage was read only,
-as an input to a year check. Every intermediate lands in `.inspect/`, which is not committed.
+`analysis/specs/design_c_prime.yml` (P0, declared before any fit; amended to v2 the same day, before any
+number was reported), `scripts/extract_design_c_prime.py` (P1), `scripts/fit_design_c_prime.py` and
+`analysis/R/12_design_c_prime_arms.R` (P2 and P3). No registry artifact, R stage, schema, dbt model or site
+page was touched; the frozen 2026-11-01 vintage was read only, as an input to a year check. Every
+intermediate lands in `.inspect/`, which is not committed.
 
-**What the header used to say, and does not now.** The plan said 99 donors make the simplex underdetermined
-and that matrix completion would replace it. It also said the pass would only open `mmr` and `unemp` if the
-clearest case survived. It did not.
+**What the plan said, and what happened.** The plan said 99 donors make the simplex underdetermined and that
+matrix completion would replace it. It also said the pass would only open `mmr` and `unemp` if the clearest
+case survived. It did not.
 
-**The declaration.** `design_c_prime.yml` carries the windows from `design_c.yml` back to
-`diagnostics.yml`, Nigeria from `fact_observation_native` (never the interpolated spine), the donor pool as
-a rule, nuclear-norm matrix completion with cross-validated penalty, SDID and gsynth as comparison arms, the
-placebo schedule, the gate, the wording refusals and the stop rule. The gate is the plan's, transcribed:
-rank p <= 0.05, every runnable in-time placebo smaller than the estimate, and sign agreement across arms.
+**The declaration, and its one amendment.** `design_c_prime.yml` carries the windows from `design_c.yml`
+back to `diagnostics.yml`, Nigeria from `fact_observation_native` (never the interpolated spine), the donor
+pool as a rule, nuclear-norm matrix completion with a cross-validated penalty, SDID and gsynth as comparison
+arms, the placebo schedule, the gate, the wording refusals and the stop rule. v1 declared a penalty grid of
+0.02-0.9 of lambda_max and masked random cells for cross-validation. A review of the first run found that
+cell masking scores against donor post-years the design never declares and rewards interpolation, so v2
+declares unit-blocked cross-validation (whole countries held out across the pre-period, 5 folds, 3 seeds)
+and a 12-point log-spaced grid from 0.01 to 0.9 of lambda_max. The estimator, windows, donors, placebos and
+gate are unchanged. The v1 fits were discarded rather than reported.
 
 **Extraction, reconciled.** 26 native Nigeria years 1999-2024, 2,574 donor rows across 99 countries, 99
 donors complete on every runnable window, and all five derived window years byte-checked against
-`registry/design_c/2026-11-01`. The pilots under `.inspect/` used the spine's annual mean instead of the
-native series; the two agree to within 0.3 per 1,000 across 2005-2024, so the pilot's direction was not an
-artefact of that choice, and the declared pass used the native series anyway.
+`registry/design_c/2026-11-01`. The extractor now also prints the spine-versus-native difference on every
+run: **1.31 per 1,000 at worst across 1999-2024** (worst year 1999), 0.31 across 2005-2024. An earlier
+version of this entry quoted 0.3 from a 2005-onward probe; the wider figure is the correct one and the
+pilot's direction is still unlikely to be an artefact of it.
 
 **The gaps (`u5mr`, per 1,000 live births, mean over each window's post years).**
 
 | Window | Matrix completion | SDID | Design C simplex (published) |
 |---|---|---|---|
-| Yar'Adua 2007-2009 | **-5.22** | -0.72 | +2.11 |
-| Jonathan 2010-2014 | **-2.28** | +1.63 | -11.56 |
-| Buhari 2015-2022 | **+3.77** | +5.81 | +8.59 |
-| Tinubu 2023-2024 | **+4.15** | +1.62 | +18.53 |
+| Yar'Adua 2007-2009 | **-4.38** | -0.72 | +2.11 |
+| Jonathan 2010-2014 | **-2.21** | +1.63 | -11.56 |
+| Buhari 2015-2022 | **+4.03** | +5.80 | +8.59 |
+| Tinubu 2023-2024 | **+6.64** | +1.62 | +18.53 |
 
 gsynth was refused on all four windows under the declared validity rule: on yaradua its CV-selected rank 2
 tracks the pre-period to 0.93 then extrapolates the counterfactual to -211 in 2009; on the other three its
-pre-fit error exceeds 10 % of the pre-period standard deviation. Its CV folds are also unseeded, so the
-seed is now fixed at 20261104; without it the selected rank changed between runs. The arm is published as
-refused with the number that failed, not dropped.
+pre-fit error exceeds 10 % of the pre-period standard deviation. gsynth's CV folds are unseeded, so the seed
+is fixed at 20261104; without it the selected rank changed between runs. SDID's own jackknife returns NA on
+this panel and its placebo-variance fallback is not reproducible either (three runs of the same window gave
+12.01, 12.09 and 14.58 under a fixed seed), so the arm's interval is a leave-one-donor-out jackknife computed
+in the arm script. The gate does not use that interval.
 
-**Inference.** 99 in-space placebos per window, each refitted at the treated fit's own penalty:
+**The penalty path, which is the finding that decides the verdict.** The declared estimator at a different
+penalty is still the declared estimator, so the gap is reported across the whole path. Heavy shrinkage
+drives the low-rank term to zero and leaves the two-way fixed-effects extrapolation; light shrinkage lets
+the panel's own country structure through.
 
-| Window | gap | rank p | placebo 2.5-97.5 % | in-time placebos |
-|---|---|---|---|---|
-| Yar'Adua | -5.22 | 0.43 | -17.45 to +7.58 | none runnable (pre-period too short) |
-| Jonathan | -2.28 | 0.79 | -23.02 to +10.69 | +3 yrs: -6.01 (larger than the estimate) |
-| Buhari | +3.77 | 0.70 | -17.52 to +11.82 | +3/-1.85, +5/-3.09, +7/-5.38 |
-| Tinubu | +4.15 | 0.28 | -27.82 to +8.55 | +3/+5.55, +5/+6.93, +7/+4.97 (all larger) |
+| Window | gap at 0.01 … 0.9 of lambda_max | range | sign change |
+|---|---|---|---|
+| Yar'Adua | -4.38, -5.22, -7.88, -11.12, -12.72, -12.72, -12.72, -12.72 | 8.34 | no |
+| Jonathan | -2.21, -2.28, -3.78, -7.36, -10.49, -10.49, -10.49, -10.49 | 8.29 | no |
+| Buhari | +4.03, +3.77, +3.20, +1.23, **-3.11**, -3.33, -3.33, -3.33 | 7.36 | **yes** |
+| Tinubu | +2.36, +4.15, +6.61, +6.23, +3.47, +3.26, +3.26, +3.26 | 4.25 | no |
 
-The smallest attainable p on 99 placebos is 0.01. Every treated gap sits inside its own placebo
-distribution, and on two windows a backdated placebo is the same size or larger. **No window clears the
-gate**, so each is `estimated_not_identified` for a different reason, and the sign agreement that looked
-like the story in the pilot is the smaller problem: the disagreement is now inside a noise band both arms
-share.
+Cross-validation picks the lightest shrinkage on three windows (a boundary hit at 0.01 of lambda_max,
+reported beside the gap) and 0.05 on tinubu. The sign of Buhari's gap is therefore a property of how much
+cross-country structure the model is allowed to carry, not of the data alone.
 
-**Three defects caught before any number was reported.** A `sum(alpha) = 0` constraint pushed the panel's
-level into `L` and inflated the nuclear norm from 47 to 7,651 on a test panel, so the optimum described the
-constraint rather than the data; the solver cross-check is what exposed it. A window with zero pre years
-(obasanjo) reached the fit before the declared floor was applied. And gsynth's `att.avg` is not the
-post-period gap in 1.4.0 (it returned 113.8 on a window whose gap is about -13), so the gap is now computed
-from `Y.ct`.
+**Inference.** 99 in-space placebos and 99 leave-one-donor-out refits per window, each at the treated fit's
+own penalty:
 
-**The verdict, and what it forbids.** The stop rule asked whether matrix completion reproduces the
-published direction and whether the solver dependence disappears. The second half is answered yes: the
-SCS/ADMM spread is 1e-5 or smaller on every fit, against a simplex that returned different signs from two
-solvers. The first half is answered no in the way that matters: the gaps are indistinguishable from
-treating a random donor. **P5 (`mmr`, `unemp`) does not open, and P6 (a published what-if) has nothing
-stable to publish.** No what-if number may reach the site from this pass.
+| Window | gap | rank p | placebo 2.5-97.5 % | leave-one-out | in-time placebos |
+|---|---|---|---|---|---|
+| Yar'Adua | -4.38 | 0.43 | -15.65 to +6.72 | 0 flips / 99 | none runnable (pre-period too short) |
+| Jonathan | -2.21 | 0.78 | -22.00 to +10.24 | 0 / 99 | +3 yrs: -4.89 (larger than the estimate) |
+| Buhari | +4.03 | 0.55 | -15.62 to +10.23 | 0 / 99 | +3/-1.61, +5/-2.78, +7/-4.53 (the last is larger) |
+| Tinubu | +6.64 | 0.38 | -35.18 to +9.60 | 0 / 99 | +3/+6.57, +5/+6.51, +7/+4.35 (all larger) |
 
-**Verification.** `py_compile` clean on both scripts; `design_c_prime.yml` parses; extraction and fit
-re-run from scratch reproduce every number above; `tests/verify_site.py` green (no site file changed).
-`scripts/verify.sh` was not run: it re-runs the R stages that write the registry, and nothing it checks
-moved.
+The smallest attainable p on 99 placebos is 0.01, and Holm at 0.05 across four windows sets thresholds of
+0.0125 to 0.0500. **No window clears the gate**, and each failure is recorded in the artifact rather than
+inferred from a status word: rank p above 0.05 on all four, an in-time placebo at least as large as the
+estimate on Jonathan and Buhari, and the refused third arm on all four.
+
+**What the review changed.** The first version of this entry reported gaps of -5.22, -2.28, +3.77 and +4.15
+from a cell-masked, narrower-grid fit. Two reviewers (a code reviewer and a statistician) independently
+found that the cross-validation leaked post-period donor years, that the grid was too short to expose a
+boundary, that the SDID variance fallback and the declared leave-one-out sweep were never implemented, that
+the gate's Holm step and per-window failure list were declared but not computed, and that four prose numbers
+did not match their artifacts. All of it was fixed and the pass re-run; the verdict did not change, but the
+reason it holds is now much stronger. Two further defects surfaced only while re-running: the SDID
+placebo-variance fallback is not reproducible even under a fixed seed (12.01, 12.09, 14.58 on the same
+window), so it was replaced with a jackknife computed in the arm script; and the penalty path, once reported
+rather than hidden, showed the sign of Buhari's gap reversing inside the declared range. The statistician's
+own check added one finding this entry had missed: the placebo null is not driven by outliers, and
+studentising by the pre-fit error makes p larger, not smaller (0.43 to 0.62 on yaradua).
+
+**Three defects caught before any number was reported**, all by the solver cross-check or the first run
+itself: a `sum(alpha) = 0` constraint pushed the panel's level into `L` and inflated the nuclear norm from 47
+to 7,651 on a test panel, so the optimum described the constraint; a window with zero pre years (obasanjo)
+reached the fit before the declared floor was applied; and gsynth's `att.avg` is not the post-period gap in
+1.4.0 (it returned 113.8 on a window whose gap is about -13), so the gap is computed from `Y.ct`.
+
+**The verdict, and what it forbids.** The stop rule asked whether matrix completion reproduces the published
+direction and whether the solver dependence disappears. The second half is answered yes: the SCS/ADMM spread
+is 2.6e-4 or smaller on every fit, against a simplex that returned different signs from two solvers. The
+first half is answered no in the way that matters: the gaps sit inside their own placebo distributions, and
+the gap's own sign depends on the penalty on one of four windows. **P5 (`mmr`, `unemp`) does not open, and
+P6 has nothing stable to publish.** No what-if number may reach the site from this pass.
+
+**Verification.** `py_compile` clean on both scripts; `design_c_prime.yml` parses; extraction and the full
+P2+P3 run reproduce every number above from `data/analytics.duckdb`. Determinism is structural rather than
+asserted: matrix completion, the cross-validation and the placebos are seeded or deterministic, gsynth's CV
+is seeded, and the SDID interval is now a leave-one-donor-out jackknife rather than a resampling variance.
+`tests/verify_site.py` green (no site file changed). `scripts/verify.sh` was not run: it re-runs the R stages
+that write the registry, and nothing it checks moved.
 
 **Still open.** The five requester decisions in `counterfactual-recommendation.md` section 9, unchanged and
 now more pointed: if a refusal is worth publishing, it needs a new vintage and a verifier; if not, the

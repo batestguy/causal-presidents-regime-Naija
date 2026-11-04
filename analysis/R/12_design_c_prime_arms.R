@@ -55,15 +55,23 @@ for (i in seq_len(nrow(windows))) {
   N0 <- length(controls)
 
   # --- SDID ----------------------------------------------------------------------------------
+  # The jackknife the package offers returns NA on this panel, and its placebo-variance fallback is not
+  # reproducible: three runs of the same window gave 12.01, 12.09 and 14.58 under a fixed seed. So the
+  # interval here is a leave-one-donor-out jackknife computed in this file, which is deterministic and
+  # auditable, and the package's own variance is not used at all.
   row$sdid <- tryCatch({
     est <- synthdid_estimate(Y, N0, T0)
-    se <- tryCatch(sqrt(vcov(est, method = "jackknife")), error = function(e) NA_real_)
-    ok <- is.finite(se)
-    list(status = "ok", gap = as.numeric(est),
-         se = if (ok) as.numeric(se) else NA_real_,
-         ci_low = if (ok) as.numeric(est) - 1.96 * as.numeric(se) else NA_real_,
-         ci_high = if (ok) as.numeric(est) + 1.96 * as.numeric(se) else NA_real_,
-         variance = if (ok) "jackknife" else "unavailable in synthdid 0.0.9 for this panel")
+    loo <- vapply(controls, function(d) {
+      keep <- c(setdiff(controls, d), "NGA")
+      as.numeric(synthdid_estimate(Y[keep, , drop = FALSE], length(keep) - 1, T0))
+    }, numeric(1))
+    n <- length(loo)
+    se <- sqrt((n - 1) / n * sum((loo - mean(loo))^2))
+    list(status = "ok", gap = as.numeric(est), se = as.numeric(se),
+         ci_low = as.numeric(est) - 1.96 * as.numeric(se),
+         ci_high = as.numeric(est) + 1.96 * as.numeric(se),
+         jackknife_range = c(min = min(loo), max = max(loo)),
+         variance = "leave-one-donor-out jackknife, computed here")
   }, error = function(e) list(status = "refused", reason = conditionMessage(e)))
 
   # --- gsynth --------------------------------------------------------------------------------
@@ -102,7 +110,8 @@ for (i in seq_len(nrow(windows))) {
     if (out_of_range || poor_fit) {
       c(list(status = "refused", reason = paste(why, collapse = "; ")), common)
     } else {
-      c(list(status = "ok", gap = mean(gap), variance = "none (se = FALSE, as declared)"), common)
+      c(list(status = "ok", gap = mean(gap),
+             variance = "none: no interval is computed for this arm, so none is implied"), common)
     }
   }, error = function(e) list(status = "refused", reason = conditionMessage(e)))
 

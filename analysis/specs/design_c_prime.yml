@@ -22,10 +22,16 @@
 # pilot's finding is a disagreement and a disagreement cannot be reported by one estimator. On `u5mr` the
 # simplex and SDID flip sign on Yar'Adua (+2.11 against −0.87) and Jonathan (−11.56 against +1.51, placebo
 # SE ≈ 8.0). Reproducing one arm and calling it the answer is the specific failure this design prevents.
-version: 1
+version: 2
 labelled: "2026-11-04"          # the day the declaration was made, not the data vintage
-stamp: "declared 2026-11-04, before any fit; outcomes, windows, donors, penalties, placebos, gate and stop rule all fixed here"
-stage: "P0"
+stamp: >-
+  declared 2026-11-04, before any fit; amended to v2 the same day, before any number was reported, when the
+  review of the first run found two declaration defects: the penalty grid stopped at 0.9 of its maximum and
+  the cross-validation masked random cells (which include post-period donor years and reward interpolation)
+  rather than held-out donor countries. v2 declares a log-spaced interior grid and unit-blocked
+  cross-validation; the estimator, windows, donors, placebos and gate are unchanged. The v1 fits are kept in
+  the record as the reason for the amendment, not as results.
+stage: "P2"
 engine: "scripts/fit_design_c_prime.py"
 engine_r: "analysis/R/12_design_c_prime_arms.R"
 verifier: "tests/verify_design_c_prime.py"   # written in P6, not before: there is no artifact to verify yet
@@ -42,10 +48,11 @@ input:
   # declares its own provenance per month (`fact_metric.observation_type`): `interpolated` months are the
   # engine's own fill, and a counterfactual fitted to them would be fitted partly to that fill rule.
   #
-  # The exploratory pilots under `.inspect/` used the spine's annual mean; the two series agree to within
-  # 0.3 per 1,000 on u5mr across 2005–2024 (checked 2026-11-04), so the pilot's direction is not an
-  # artefact of that choice. The declared pass uses the native series regardless, because "close" is not
-  # the same as "the declared input".
+  # The exploratory pilots under `.inspect/` used the spine's annual mean instead. The extractor measures the
+  # difference on every run: 1.31 per 1,000 at worst across 1999-2024 (worst year 1999, where the spine's
+  # annual mean and the native July-anchored value differ most), and 0.31 across 2005-2024. So the pilot's
+  # direction is unlikely to be an artefact of that choice, but "close" is not "the declared input", and the
+  # declared pass uses the native series.
   treated_scope: "NGA"
   treated_series: "fact_observation_native where scope = 'NGA', at its native annual grain"
   # A donor is a country, never a hand-picked set. The pool is a rule:
@@ -65,6 +72,10 @@ input:
     on_shortfall: >-
       a window whose pool falls below `minimum_donors` for an arm publishes that arm as refused with the
       count it had, and is never fitted on a smaller hand-chosen set
+    enforcement: >-
+      the rule is applied by the engine and its counts are printed: a donor missing a required year is
+      dropped by the rule rather than by preference, the number dropped is reported beside the fit, and the
+      shortfall refusal is evaluated against `minimum_donors` before anything is fitted
   years:
     first: 1999
     last: 2024
@@ -101,25 +112,31 @@ estimators:
       minimising 0.5 * ||P_obs(Y - alpha - beta - L)||_F^2 + lambda * ||L||_* over the observed cells,
       with the treated unit's post-period cells held out as unobserved.
     penalty: >-
-      lambda chosen by K-fold cross-validation over the observed **pre-period** cells only: entries are
-      masked at random, the model is refit, and the penalty that minimises held-out squared error wins. The
-      treated unit's post-period cells are never touched by the selection.
+      lambda chosen by K-fold cross-validation over the observed pre-period: whole **donor countries** are
+      held out across all pre-period years, so the criterion measures whether the panel can predict a country
+      it has not seen. Masking individual cells was v1 and is withdrawn: a masked cell has its own row and
+      column still in the fit, so cell masking rewards interpolation and scores against donor post-years the
+      design never declares. The treated unit's post-period cells are never touched by the selection.
     cv:
       folds: 5
-      mask_fraction: 0.15
-      seeds: [20261104, 20261105, 20261106]   # three independent maskings; the reported penalty is the mode
-      lambda_grid: "lambda_max * [0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 0.9], lambda_max = largest singular value of the observed residual matrix"
+      hold_out: "donor units, all pre-period years at once"
+      seeds: [20261104, 20261105, 20261106]   # three independent unit assignments; the reported penalty is the mode
+      # v1 drew the grid as 0.02-0.9 of lambda_max and every window chose 0.9, i.e. the edge. A boundary
+      # optimum is a truncated search, not a result, so v2 declares a log-spaced grid whose ends are strictly
+      # inside the path: 0.01 is close to no shrinkage, 0.9 is heavy but not the zero-low-rank solution.
+      lambda_grid: "12 log-spaced points from 0.01 to 0.9 of lambda_max, lambda_max = largest singular value of the observed residual matrix"
+      interior_rule: "a selected penalty at either end of the grid is reported as a boundary hit beside the gap, never as the fitted value alone"
     # Amended 2026-11-04, before any fit ran, after a timing probe on a 100 x 26 panel: CLARABEL took 124 s
     # per solve against SCS's 0.9 s, and the stop rule's solver check does not need an interior-point polish.
-    # The nuclear-norm objective is strictly convex in L on a band of observed cells, so the optimiser has a
-    # unique solution and the simplex's face-of-optima pathology cannot arise by construction; the check
-    # exists to confirm that rather than to fix it. The second opinion is therefore a different **algorithm**
-    # at the same lambda: an alternating soft-impute (singular-value thresholding with the two-way effects
-    # profiled out), not a different interior-point solver on the same programme.
+    # The check exists because the simplex's face of optima made the sign a property of the solver's vertex;
+    # here the observed-cell loss is strictly convex on the band where cells are observed, so the fitted
+    # values there are pinned, and what the second algorithm demonstrates is that the two routes agree on the
+    # held-out cells too. That agreement is measured, not assumed.
     solver: "cvxpy SCS, eps = 1e-6, max_iters = 50000"
     solver_check: >-
-      re-solve the final fit at the same lambda by alternating soft-impute and report the gap spread. A spread
-      above 1e-3 of the gap means the solve is not converged and the fit is rejected rather than reported.
+      re-solve the final fit at the same lambda by ADMM (alternating z-step, singular-value soft threshold,
+      scaled dual) and report the gap spread. A spread above 1e-3 of the gap means the solve is not converged
+      and the fit is rejected rather than reported.
     gap: "mean over post years of (observed - counterfactual), in the outcome's own unit"
     why_this_estimator: >-
       the simplex is underdetermined on this pool and returned a different sign under two solvers; matrix
@@ -130,12 +147,16 @@ estimators:
       name: "synthetic difference-in-differences (Arkhangelsky et al. 2021)"
       engine: "R synthdid 0.0.9, synthdid_estimate()"
       requires: "balanced panel over the window"
-      variance: "jackknife; placebo variance reported when the jackknife is unavailable"
+      variance: >-
+        leave-one-donor-out jackknife, computed in `12_design_c_prime_arms.R`. synthdid's own jackknife
+        returns NA on this panel and its placebo variance is not reproducible run to run (three runs of the
+        same window gave 12.01, 12.09 and 14.58 under a fixed seed), so neither is used. The arm's interval is
+        reported for completeness and is not an input to the gate.
     - id: gsynth
       name: "generalized synthetic control (Xu 2017)"
       engine: "R gsynth 1.4.0, force = 'two-way', CV = TRUE, r = c(0, 5)"
       requires: "balanced panel over the window"
-      variance: "gsynth's own parametric bootstrap, reported as the arm's own interval and never combined with the placebo interval"
+      variance: "none: the arm is refused on every window, so no interval is computed for it, and the artifact says so rather than implying the declared bootstrap ran"
       # Declared after the first diagnostic run (2026-11-04) but before any window was reported: on yaradua the
       # CV-selected rank 2 tracks the pre-period to 0.93 and then extrapolates the treated counterfactual to
       # -211 in the final year. `att.avg` is not the post-period gap in this version, so the gap is computed
@@ -154,13 +175,14 @@ estimators:
 # ---------------------------------------------------------------------------------------------
 placebos:
   in_space:
-    assignment: "every donor is treated in turn on the same window; the counterfactual is refitted from the remaining donors"
+    assignment: "every donor is treated in turn on the same window; the counterfactual is refitted from the remaining donors and the treated unit"
+    penalty: "the treated fit's own lambda, not a per-placebo cross-validation: 99 different penalties would make the distribution incomparable with the point it ranks"
     gaps: "the mean post-period gap for each placebo, in outcome units"
     p_rule: >-
       p = #{placebos with |gap| >= |treated gap|} / (1 + n_placebos). Two-sided on magnitude, because the
       what-if has no prior direction: a transition can sit above or below the matched path. The smallest
       attainable p is 1/(1+n), which is printed rather than left to be inferred.
-    reported: "the full placebo gap distribution, not only the p"
+    reported: "the full placebo gap distribution, not only the p, plus the 2.5th and 97.5th percentiles"
   in_time:
     backdate_years: [3, 5, 7]
     rule: >-
@@ -186,9 +208,17 @@ gate:
   window_is_identified: >-
     all three hold: (1) the in-space rank p at or below 0.05; (2) every in-time placebo that could be run
     returns a mean gap smaller in absolute value than the treated gap; (3) matrix completion, SDID and
-    gsynth agree on the sign of the gap. Otherwise the window is `estimated_not_identified`, with each
-    failed check named.
-  multiplicity: "Holm at 0.05 across the outcomes and windows that carry a rank p"
+    gsynth agree on the sign of the gap. An arm refused by its own validity rule cannot satisfy (3), so a
+    window with a refused arm is `estimated_not_identified` whatever its p. Otherwise the window is
+    `estimated_not_identified`, with each failed check named in the artifact.
+  reporting: >-
+    every fitted window carries `gate_failures`, the list of the three checks it did not meet, so a reader
+    does not have to infer the reason from the status word
+  penalty_path: >-
+    the gap is computed at 0.01, 0.02, 0.05, 0.1, 0.2, 0.4, 0.7 and 0.9 of lambda_max and published beside
+    the cross-validated fit. A sign that changes along the path is reported as a property of the estimator's
+    shrinkage, never resolved by picking the penalty that reads best.
+  multiplicity: "Holm at 0.05 across the outcomes and windows that carry a rank p; the adjusted threshold is computed and printed, not merely declared"
   stability_flag:
     stable: "every arm that ran agrees on the sign"
     unstable: "any two arms disagree on the sign; the range is published and the block says so"
@@ -204,12 +234,18 @@ stop_rule:
     where the simplex and SDID disagreed (yaradua, jonathan), and does the solver dependence that broke the
     simplex disappear?
   passes_if: >-
-    the matrix-completion gap is not explained by the solver (the SCS/CLARABEL spread is small relative to
+    the matrix-completion gap is not explained by the solver (the SCS/ADMM spread is small relative to
     the gap), the in-space rank p is a real rank rather than a saturated one, and the three arms' signs are
     reported with the disagreement if it remains.
   fails_if: >-
-    matrix completion itself flips sign between solvers, or its gap sits inside its own placebo distribution
-    on every window. Then the plan is revised before any further outcome is fitted.
+    matrix completion itself flips sign between solvers, its gap sits inside its own placebo distribution on
+    every window, or its sign changes across the declared penalty path. Then the plan is revised before any
+    further outcome is fitted.
+  path_clause_note: >-
+    the penalty-path clause was added at v2 on 2026-11-04, after an exploratory sweep showed the gap moving
+    by 4 to 8 per 1,000 across the path and Buhari's sign flipping with it. It is recorded as an addition
+    rather than a prediction: it agrees with the gate's verdict on every window, so it did not decide the
+    outcome, and a reader should treat it as a strengthened reason, not an independent test.
   recorded_in: "PROGRESS.md, before P5 is marked open"
 
 # ---------------------------------------------------------------------------------------------

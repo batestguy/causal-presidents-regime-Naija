@@ -9,11 +9,12 @@ decisions only the requester can make), [`causal-ml-options.md`](causal-ml-optio
 The registry stays frozen at vintage 2026-11-01 and nothing in this workflow may edit it.** A published
 what-if is a *new* vintage, and that is P6.
 
-The first pass ran on `u5mr` alone, as the plan said it would. It answered the stop-rule question with a
+The first pass ran on `u5mr` alone, as the plan said it would, and answered the stop-rule question with a
 **no**: matrix completion removes the solver dependence, but its gaps sit inside their own placebo
-distributions on all four windows (rank p 0.28 to 0.79 against a 0.05 gate), so `u5mr` carries no
-publishable what-if. The expensive extension to `mmr` and `unemp` therefore does not open. The numbers and
-the reasoning are in `PROGRESS.md`, 2026-11-04.
+distributions on all four windows (rank p 0.38 to 0.78 against a 0.05 gate), and the gap moves by 4 to 8
+deaths per 1,000 across the declared penalty path with Buhari's sign flipping inside it. No window carries a
+publishable what-if, so the extension to `mmr` and `unemp` does not open. The numbers, the amendment that
+produced them and the review that drove it are in `PROGRESS.md`, 2026-11-04.
 
 This document is the control surface for the causal work. It answers three questions a reader will ask
 next session: what phase are we in, what does that phase have to produce, and what evidence closes it.
@@ -48,8 +49,6 @@ into a card number.
 | **P2** | Fit and compare | `scripts/fit_design_c_prime.py` + `analysis/R/12_design_c_prime_arms.R` → `.inspect/design_c_prime_u5mr_fits.json` | every declared window either carries each arm's gap or a stated refusal; solver dependence measured | `python scripts/fit_design_c_prime.py --outcome u5mr` | **done** |
 | **P3** | Inference | in-space and in-time placebos, rank p, placebo percentiles | every runnable placebo is reported; the count of unrunnable ones is stated; gate evaluated exactly as declared | `python scripts/fit_design_c_prime.py --outcome u5mr --placebos` | **done** |
 | **P4** | Verdict and stop rule | the written answer: does the clearest case hold, and does P5 open? | a yes/no with the numbers that decide it, recorded in `PROGRESS.md` | reading the P2/P3 output against the declared stop rule | **done: stop rule fails** |
-| **P3** | Inference | in-space and in-time placebos, donor jackknife, rank p, placebo percentiles | every runnable placebo is reported; the count of unrunnable ones is stated; gate evaluated exactly as declared | same engine, second pass over the same spec | **not started** |
-| **P4** | Verdict and stop rule | the exploratory finding: does matrix completion reproduce Design C's direction on `u5mr`, and does the solver dependence disappear? | a written yes/no with the numbers that decide it, recorded in `PROGRESS.md` | reading the P2/P3 output against the declared stop rule | **not started** |
 | **P5** | Extend | `mmr` and `unemp` through the same spec | only opens if P4 says the clearest case holds | `python scripts/fit_design_c_prime.py --outcome mmr`, then `unemp` | **blocked by P4** |
 | **P6** | Publish | new registry vintage, `counterfactual.json`, `tests/verify_counterfactual.py`, a what-if block on the site | verifier recomputes the placebo distribution from the artifact; site reads the artifact and types no number | `tests/verify_counterfactual.py` plus `tests/verify_site.py` | **blocked: requester decisions §9** |
 
@@ -73,9 +72,9 @@ seeing a gap.
 One read-only script. Nigeria's path comes from `fact_observation_native` at its native annual grain, never
 from the interpolated monthly spine: the spine's `observation_type` column says which months are modelled,
 and a counterfactual fitted to interpolated months is fitted to the interpolation rule. The exploratory
-pilots under `.inspect/` used the spine's annual mean instead; the two agree to within 0.3 per 1,000 on
-`u5mr` (checked 2005–2024), so the pilot's direction is not an artefact of that choice, but the declared
-pass uses the native series anyway.
+pilots under `.inspect/` used the spine's annual mean instead; the extractor now prints the difference on
+every run (1.31 per 1,000 at worst across 1999–2024, 0.31 across 2005–2024), so the pilot's direction is
+unlikely to be an artefact of that choice while the declared pass still uses the native series.
 
 May not: fit, filter donors by outcome value, or write anything outside `.inspect/`.
 
@@ -89,8 +88,16 @@ Three estimators on the same window and the same 99-donor pool:
 - **SDID** (R `synthdid`, Arkhangelsky et al. 2021): requires a balanced panel over the window.
 - **generalized SC** (R `gsynth`, Xu 2017): interactive fixed effects, cross-validated rank.
 
-Every window gets all three or a stated refusal. The output of this phase is deliberately *not* a verdict:
-it is the disagreement table that P3 then tries to explain.
+Every window gets all three or a stated refusal. The penalty is chosen by cross-validation that holds out
+whole **countries** across the pre-period, because that is the question the estimator is used for; masking
+individual cells leaves the held-out cell's own row and column in the fit and rewards interpolation. The gap
+is also reported across the whole penalty path, since heavy shrinkage drives the low-rank term to zero and
+leaves a two-way fixed-effects extrapolation, and light shrinkage lets the panel's structure through. Those
+are the same declared estimator at different penalties, and the difference between them is a fact about the
+estimator, not a choice to be made after the fact.
+
+The output of this phase is deliberately *not* a verdict: it is the disagreement table, and the penalty
+path, that P3 and P4 then read.
 
 ### P3 — Inference
 
@@ -107,6 +114,10 @@ The plan's own milestone, restated as a stop rule: *on `u5mr`, does matrix compl
 direction of Design C's published gap on the windows where the simplex and SDID disagreed, and does the
 solver dependence that broke the simplex disappear?* If the clearest case says no, the workflow stops
 before P5 and the plan is revised rather than extended.
+
+The clause that fired was added at v2, after an exploratory sweep, and is recorded as an addition rather
+than a prediction: a sign that changes across the declared penalty path counts as the clearest case failing.
+It agrees with the gate on every window, so it strengthened the verdict rather than deciding it.
 
 This phase produces words, not an artifact. It is the phase most likely to be skipped by a future session
 in a hurry, which is why the answer has to be written into `PROGRESS.md` before P5 opens.
@@ -137,9 +148,9 @@ line it printed; the full output lives in `PROGRESS.md`.
 |---|---|---|
 | P0 | 2026-11-04 | `design_c_prime.yml` parses; windows read from `design_c.yml` back to `diagnostics.yml`; gate fixed before any fit |
 | P1 | 2026-11-04 | 26 native Nigeria years, 2,574 donor rows across 99 countries, 99 complete donors on every runnable window; all 5 windows match the frozen artifact's years |
-| P2 | 2026-11-04 | 4 windows fitted; matrix completion and SDID on all four, gsynth refused on all four with its measured reason; solver spread 1e-5 or smaller on every fit |
-| P3 | 2026-11-04 | 99 in-space placebos per window; rank p 0.43 / 0.79 / 0.70 / 0.28; in-time placebos run where the pre-period allows (1, 3, 3) and refused with the count where it does not (3, 2, 1) |
-| P4 | 2026-11-04 | **stop rule fails**: every gap sits inside its placebo distribution, so no window clears the declared gate and P5 does not open |
+| P2 | 2026-11-04 | 4 windows fitted; matrix completion and SDID on all four, gsynth refused on all four with its measured reason, SDID interval from a leave-one-donor-out jackknife computed in the arm script; solver spread 2.6e-4 or smaller on every fit; the penalty path reported beside each gap |
+| P3 | 2026-11-04 | 99 in-space placebos and 99 leave-one-donor-out refits per window; rank p 0.43 / 0.78 / 0.55 / 0.38; leave-one-out sign flips 0/99 on every window; in-time placebos run on 1, 3 and 3 cases and refused with the count where the pre-period is too short |
+| P4 | 2026-11-04 | **stop rule fails**: no window clears the gate (rank p, in-time placebos on two windows, and the refused third arm), and the gap moves 4 to 8 per 1,000 across the penalty path with Buhari's sign flipping, so P5 does not open |
 | P5 | — | blocked by P4: not opened |
 | P6 | — | blocked: there is no stable what-if to publish, and the five requester decisions are unanswered |
 

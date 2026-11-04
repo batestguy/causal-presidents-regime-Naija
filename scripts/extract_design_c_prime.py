@@ -160,6 +160,36 @@ def coverage(panel: list[dict], windows: list[dict], spec: dict) -> list[dict]:
     return report
 
 
+def spine_drift(con: duckdb.DuckDBPyConnection, outcome: str, native: list[tuple[int, float]],
+                first: int, last: int) -> dict:
+    """How far the interpolated monthly spine's annual mean sits from the native series.
+
+    Reported on every run so the pilot's use of the spine can be judged against the declared input rather
+    than taken on trust.
+    """
+    spine = con.execute(
+        """
+        select year(period_month) as year, avg(value) as value
+        from main_analytics.fact_metric
+        where metric_id = ? and value is not null
+        group by 1 order by 1
+        """,
+        [outcome],
+    ).fetchall()
+    native_map = dict(native)
+    common = [(y, s, native_map[y]) for y, s in spine if y in native_map and first <= y <= last]
+    if not common:
+        return {"years": 0}
+    diffs = [abs(s - n) for _, s, n in common]
+    worst = max(common, key=lambda row: abs(row[1] - row[2]))
+    return {
+        "years": len(common),
+        "max_abs_diff": round(max(diffs), 3),
+        "worst_year": worst[0],
+        "source": "fact_metric monthly mean vs fact_observation_native, same outcome",
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--outcome", default="u5mr")
@@ -174,6 +204,8 @@ def main() -> None:
 
     panel, counts = extract(spec, args.outcome, con)
     report = coverage(panel, windows, spec)
+    native = [(r["year"], r["value"]) for r in panel if r["role"] == "treated"]
+    drift = spine_drift(con, args.outcome, native, spec["input"]["years"]["first"], spec["input"]["years"]["last"])
 
     OUT_DIR.mkdir(exist_ok=True)
     panel_path = OUT_DIR / f"design_c_prime_{args.outcome}_panel.csv"
@@ -184,6 +216,10 @@ def main() -> None:
 
     print(f"  Nigeria native rows {counts['native_rows']} ({spec['input']['years']['first']}-{spec['input']['years']['last']})")
     print(f"  donor rows {counts['donor_rows']} across {counts['donor_units']} countries")
+    print(
+        f"  spine vs native: max |diff| {drift['max_abs_diff']} over {drift['years']} years "
+        f"(worst {drift['worst_year']}), so the pilot's spine-based series is not the declared input"
+    )
     print("  window coverage: id / post years / matrix-completion donors / balanced donors")
     for w in report:
         print(
@@ -201,6 +237,7 @@ def main() -> None:
         "treated_series": "fact_observation_native (scope = 'NGA')",
         "donor_rule": spec["input"]["donor_rule"],
         "counts": counts,
+        "spine_vs_native": drift,
         "windows": report,
         "panel": str(panel_path.relative_to(ROOT)).replace("\\", "/"),
     }

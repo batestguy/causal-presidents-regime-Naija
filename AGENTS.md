@@ -7,7 +7,7 @@ closed with its exit criteria measured green (`presidents-completion-state.yml` 
 the completion statement in `PROGRESS.md` — followed by the 2026-11-02 post-freeze presentation record and
 the 2026-11-03/04 site pass — says what the system claims, what it refuses to claim, and the limitations it
 leaves open. The registry was not edited after the freeze; the static site's presentation was revised, and
-the causal-ML work is planning-only.
+the causal-ML first pass has since run outside the registry and stopped at its own gate.
 
 ## Causal ML and discovery (post-freeze, no registry change yet)
 
@@ -19,12 +19,13 @@ Two tracks are documented and waiting, both read via `PROGRESS.md`'s 2026-11-04 
 - **What-if counterfactuals** — `docs/counterfactual-recommendation.md` (full recommendation, presentation
   contract, artifact contract, five open decisions), with the method menu in `docs/causal-ml-options.md`
   and the execution plan in `docs/causal-ml-plan.md`. **The first pass has now run and stopped at its own
-  gate** (2026-11-04): matrix completion on `u5mr` gives gaps of -5.2, -2.3, +3.8 and +4.2 per 1,000, and
-  every one sits inside its own 99-placebo distribution (rank p 0.28 to 0.79 against a 0.05 gate). The
-  solver dependence is gone (cross-check spread 1e-5), the disagreement is not the problem, and the stop
-  rule fired: `mmr` and `unemp` are not fitted and no what-if number is published. The phase workflow,
-  its gates and its live status board are `docs/causal-phases.md`; the numbers are in `PROGRESS.md`,
-  2026-11-04. The frozen registry is still untouched.
+  gate** (2026-11-04): matrix completion on `u5mr` gives gaps of -4.4, -2.2, +4.0 and +6.6 per 1,000, every
+  one sits inside its 99-placebo distribution (rank p 0.38 to 0.78 against a 0.05 gate), and the gap moves by
+  4 to 8 per 1,000 across the declared penalty path with Buhari's sign changing inside it. The solver
+  dependence is gone (cross-check spread 2.6e-4 or smaller), the placebo null is not an outlier artefact,
+  and the stop rule fired: `mmr` and `unemp` are not fitted and no what-if number is published. The phase
+  workflow, its gates and its live status board are `docs/causal-phases.md`; the numbers are in
+  `PROGRESS.md`, 2026-11-04. The frozen registry is still untouched.
 
 The causal work runs in the conda env **`causality-handbook`** (Python 3.11), not `ds-general`:
 `C:\Users\TOSHIBA\miniconda3\envs\causality-handbook\python.exe` carries `duckdb`, `doubleml`,
