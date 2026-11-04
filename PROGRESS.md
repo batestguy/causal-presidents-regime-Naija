@@ -284,11 +284,25 @@ registry moved. Preparation recorded in `docs/causal-discovery.md`: the native-m
 can support PCMCI (oil, NBS CPI, FAAC national, UCDP; 94 common months after differencing, five variables),
 the per-state FAAC/security panel (36 states, about 107 months each) as a second target, and the exclusion of
 the twenty annual-interpolated series whose monthly fills would manufacture edges. Tooling installed in the
-`ds-general` interpreter: `causal-learn` 0.1.4.8 (PC/GES/FCI/LiNGAM) and `tigramite` 5.2.10.1 (PCMCI).
-A smoke run (93 rows, ParCorr, tau_max 3, alpha 0.05) found 15 links, mostly own autocorrelation, which
+`ds-general` interpreter: `causal-learn` 0.1.4.8 (PC/GES/FCI/LiNGAM) and `tigramite` 5.2.10.1 (PCMCI).A smoke run (93 rows, ParCorr, tau_max 3, alpha 0.05) found 15 links, mostly own autocorrelation, which
 proves the pipeline runs and that the sample is thin. The document fixes, in advance, the parameters, the
 block-bootstrap stability rule (80 percent frequency and 80 percent p below 0.01), the FDR level, the
 per-state reporting rule, and what discovery may never produce (a card number or a causal verb).
+
+**Environment moved to the causal env, and the ML plan declared.** The requester pointed at the existing
+causal environment. `causality-handbook` (Python 3.11.14) is now the home for this work: `duckdb` 2.0.0
+(verified read of `data/analytics.duckdb`), `doubleml` 0.11.4, `tigramite` 5.2.10.1, plus the packages it
+already carried (`causallearn`, `econml`, `dowhy`, `causalml`, `linearmodels`, `cvxpy`). R 4.5.2 carries
+`gsynth`, `did`, `synthdid` (installed from GitHub; no CRAN build for this R) and `dagitty`; `synthdid`
+loads. The accidental `causal-learn`/`tigramite` installs were removed from `ds-general`, so the verified
+build environment is back to its previous package set. Upstream warnings are recorded (numba wants numpy
+< 2.4, catboost < 2.0, dowhy cython < 3); PCMCI was verified to run on numpy 2.4.6 with a synthetic graph.
+`docs/causal-ml-plan.md` declares the first pass before any fitting: Design C' with nuclear-norm matrix
+completion on the same windows and donors, SDID and `gsynth` as comparison estimators, in-space and in-time
+placebos, a placebo-based 95 percent bound declared as randomization inference, and a fixed publication gate
+(rank p <= 0.05, every runnable in-time placebo smaller than the estimate, sign agreement across the three
+estimators, Holm across outcomes and windows). First milestone: `u5mr` only, exploratory, to see whether
+matrix completion removes the solver dependence before any other outcome is attempted.
 
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
