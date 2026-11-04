@@ -269,6 +269,12 @@ mechanics and the verifier; the collapse is a build flag (declared `results.summ
 
 **The case for the site, set before "About this study".** The requester asked why a reader should use these estimates over a general model, and pushed back on the first draft ("a chatbot answers from memory"), rightly: with retrieval and the data in front, a model can answer. The fair claim is capability conceded and work emphasised. The cover now carries two lines in the serif italic, before the About expander: *"A model can answer once someone assembles the data and runs the checks. This site did that work, and shows it: the estimate, the assumption, and the failed check."* Declared in `guide.yml` (`cover.why_lines`); styled as a pull quote with the accent rule. `verify_site` green.
 
+**The premise line under the portraits.** Following the requester's note, the cover now opens its argument by
+naming the field: *"Causal inference is how a presidential transition can be tested against national
+outcomes. We did the groundwork: what can, and cannot, be compared statistically."* Set centred, bold,
+italic serif directly under the five portraits, above the earlier lines about the work. Declared in
+`guide.yml` (`cover.premise_lines`), styled `.field-note`. `verify_site` green.
+
 **Session 19 (2026-10-28), in one line:** the last declared design that had never been run — **Design C, a synthetic
 control on under-5 mortality** — was specified, fitted, broken on purpose and published, and its honest verdict
 is **estimated, not identified**: four windows, rank p 0.17–0.50, and a pre-fit gate that turned out not to

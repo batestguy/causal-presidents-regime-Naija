@@ -231,6 +231,21 @@ body.wide-page .topnav { max-width: 1240px; }
 
 .cover-foot { padding-top: 1.4rem; padding-bottom: 3rem; }
 
+/* The premise line under the portraits: the field named plainly, and the groundwork claimed once. */
+.field-note {
+  margin: 2.8rem auto 0;
+  max-width: 52ch;
+  text-align: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(1.35rem, 3vw, 1.8rem);
+  line-height: 1.3;
+  color: var(--ink);
+}
+.field-note p { margin: 0 0 .35em; }
+.field-note p:last-child { margin-bottom: 0; }
+
 /* The one-line case for the site, set in the serif italic so it reads as a statement rather than UI. */
 .why-estimates {
   margin: 2.4rem 0 .4rem;

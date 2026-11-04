@@ -34,6 +34,9 @@ cover:
   methods_line: "Two-way fixed effects, local projections and synthetic control"
   span_line: "{designs} identification designs · {specifications} fitted specifications · {first_year}–{last_year}"
   portrait_credits: "Photograph credits"
+  premise_lines:
+    - "Causal inference is how a presidential transition can be tested against national outcomes."
+    - "We did the groundwork: what can, and cannot, be compared statistically."
   why_lines:
     - "A model can answer once someone assembles the data and runs the checks."
     - "This site did that work, and shows it: the estimate, the assumption, and the failed check."
