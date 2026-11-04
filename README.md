@@ -20,10 +20,14 @@ It is an installable web app, not just a page: open it on a phone and use **Add 
 **Install app** (Chrome), and it opens full-screen and works with the network off. The whole site is about
 5 MB and the service worker precaches every page, figure and JSON file at build time.
 
-<!-- TODO(requester): paste the recorded walkthrough link here, and delete the italic placeholder. -->
-_Walkthrough video: link pending._
+[![Demo video: the site, screen by screen](docs/demo/01_cover.png)](docs/demo/demo.mp4)
 
-The screenshots below are the whole thing: no server, no database, no network call at render time.
+▶ **[Watch the 1:22 demo](docs/demo/demo.mp4)**: every screen in order, from the premise to the Ask box,
+captured on the live site. Music: *Nobody Fails* by Ofege, then *I Am William* by 2Shotz featuring M.I Abaga —
+each taken from 0:19, forty-one seconds each. The stills and the builder are in `docs/demo/` and `tools/`.
+
+The screenshots below are the whole thing, frame by frame: no server, no database, no network call at render
+time.
 
 <table>
   <tr>

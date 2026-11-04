@@ -84,3 +84,12 @@ TOOLING.md
 
 # Browser-pass screenshots taken while reviewing a page (playwright output). Not evidence.
 shots/
+
+# The demo's intermediate per-shot clips. The stills and the finished mp4 are committed; the encodes that
+# assembled them are not, because they rebuild from the stills with `python tools/build_demo.py`.
+docs/demo/build/
+
+# The demo's soundtrack. The finished cut is committed for the README to play; the source recordings are not
+# redistributed, so they stay on the machine that made the video.
+*.m4a
+

@@ -3294,3 +3294,24 @@ Tampering a card with `difference: 99.0` and a fake break date fails with both p
 
 **Verification.** `verify_registry`, `verify_app`, `verify_dags`, `validate_artifacts` and `verify_site` all
 exit 0 after the regeneration; `py_compile` clean on the app and the R script parses.
+
+## 2026-11-04 - the demo video, built the way the Tableau atlas built its own
+
+**What.** `docs/demo/` carries ten stills of the live site at 1600x1000 and `demo.mp4` (1:22, 13 MB, 30 fps,
+AAC stereo). The README embeds a clickable poster, the same shape the Tableau Nigeria MPI Equity Atlas uses:
+a cover still that links to the file, a one-line watch link, and the music credit.
+
+**How it is made.** `tools/build_demo.py` declares the shot list — file, seconds, caption — and does the rest:
+a 5 % push per still so ten screenshots do not read as ten slides, one caption pill bottom-right in the site's
+accent, the shots concatenated, then the soundtrack. The music is *Nobody Fails* by Ofege and *I Am William*
+by 2Shotz featuring M.I Abaga, each entered at 0:19 and run for 41 seconds; the second is fed with
+`-stream_loop -1` so the cut can grow past 82 seconds without the bed running out. The per-shot encodes are
+gitignored (`docs/demo/build/`), and so are the source `.m4a` files: the finished cut is committed for the
+README, the recordings are not redistributed.
+
+**Why stills and not a screen recording.** The Tableau demo is a sequence of stills with captions, and that
+suits a site whose point is what is written on the page rather than what happens when you click. It is also
+reproducible: a screenshot does not drift between runs the way a recording does, so the builder can declare
+durations instead of reading a take log.
+
+**Not done.** No caption track (burned-in only), no 9:16 cut, and no voice-over.
