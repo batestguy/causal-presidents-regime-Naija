@@ -3227,3 +3227,35 @@ that write the registry, and nothing it checks moved.
 now more pointed: if a refusal is worth publishing, it needs a new vintage and a verifier; if not, the
 finding stays in these documents. The discovery track stays closed for the reasons in
 `docs/causal-discovery.md`, now written down with its smoke-run evidence.
+
+## 2026-11-04 - the estimate screen: fewer words, a stated association, and the refusal said once
+
+**What changed.** Site copy and the estimate screen only. No registry artifact, no vintage, no number.
+`guides.yml` / `site/build.py` / `site/assets/style.css`, five commits (`8047192`, `08994e4`, `1a5a8e8`,
+`bd0721a`, `fe13933`).
+
+**The refusal on three screens, number-free.** Methodology section 4 gains a bullet (a 99-country match was
+tried for under-5 mortality and could not separate any tenure from what a random country produces); the
+designs page gains a paragraph between the synthetic-counterfactual intro and its 31 window rows; the chart
+header gains a clause. All three name under-5 mortality, so none can be read as covering outcomes that were
+never re-fitted.
+
+**The estimate screen, cut down.** The heading is "The estimate". A card with a number now shows two lines
+and a figure: the association in words, built from the artifact's own formula (a 1 % higher federal
+allocation received by the state goes with 0.47 % more reported security fatalities), then whether the
+interval includes zero. The sample, the verdict word, the failed check and the p-value moved inside the
+technical disclosure. Cards without a number show the refusal sentence and one descriptive line: the widest
+trend gap in years (8 outcomes), or how many years are observed against the 20 a trend needs (4 outcomes).
+The "design-level results" link left the cards and became a pill in the footer, centred between Back and
+Next, with the outcome count beneath it.
+
+**Measured.** Visible words on the estimate screen, technical disclosures excluded: 1,048 at the start of
+the day's pass, 610 after the earlier shortening, **513 now** across all twelve cards.
+
+**One correction of substance.** The four sparse outcomes (skilled births, youth literacy, primary
+completion, net enrolment) were described as having "no usable series". They have 7 to 9 observed years
+each. The sentence now says "too few observed years", and the card carries the count and the span. The
+counts come from the changepoint artifact, which measures the same density the other layers refuse on.
+
+**Not done.** The card-level description block discussed for the 8 design-C cards (president contrasts and
+break dates) is still not built: it needs a schema field, two verifiers and a regenerated card set.

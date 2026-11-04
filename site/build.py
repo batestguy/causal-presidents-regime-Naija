@@ -1057,9 +1057,7 @@ def widest_trend_sentence(ctx: dict, outcome: dict) -> str | None:
     # same contrast with the same string and two screens must not describe one contrast two ways.
     quantity = (f"{difference:+.2f} in the count" if unit.lower() in {"count", "counts", ""}
                 else f"{difference:+.2f} {unit}")
-    return (f"the widest gap from the trend is between {first[0]}\u2013{first[1]} and "
-            f"{second[0]}\u2013{second[1]}: {quantity} "
-            f"(range {float(low):+.2f} to {float(high):+.2f}).")
+    return (f"{first[0]}\u2013{first[1]} vs {second[0]}\u2013{second[1]}, {quantity}.")
 
 
 def sparse_series_sentence(ctx: dict, outcome: dict, minimum: int) -> str | None:
@@ -1081,8 +1079,8 @@ def sparse_series_sentence(ctx: dict, outcome: dict, minimum: int) -> str | None
         return None
     frequency = str(outcome.get("frequency") or outcome.get("native_frequency") or "").lower()
     unit = "months" if "month" in frequency else "years"
-    return (f"the series is observed in {int(native)} {unit}, "
-            f"{str(span['first'])[:4]} to {str(span['last'])[:4]}, and a trend needs {minimum}.")
+    return (f"{int(native)} observed {unit}, "
+            f"{str(span['first'])[:4]} to {str(span['last'])[:4]} (a trend needs {minimum}).")
 
 
 def render_estimates(ctx: dict) -> str:
@@ -1110,10 +1108,11 @@ def render_estimates(ctx: dict) -> str:
         if e["kind"] == "number":
             spec = e["spec"]
             n = e["numbers"]
-            # The published card leads with the number itself; the interval rides beside it as its
-            # qualifier, the sample keeps the footing, and the verdict and the check that decided it
-            # carry the honesty layer under the figure, not after it.
-            them = "".join(f"<p>{html.escape(line)}</p>" for line in e["plain"])
+            # Two lines, then everything else behind the disclosure. A general reader gets the association
+            # and the one thing that decides whether to trust it; the sample, the verdict word, the failed
+            # check and the p-value are all still there, one click away, for the reader who wants them.
+            visible = "".join(f"<p>{html.escape(line)}</p>" for line in e["plain"][:2])
+            behind = "".join(f"<p>{html.escape(line)}</p>" for line in e["plain"][2:])
             channel = (f'<p class="channel-note">{html.escape(results["channel_note"])}</p>'
                        if e["channel_level"] else "")
             rows = "".join(
@@ -1125,11 +1124,12 @@ def render_estimates(ctx: dict) -> str:
   <p class="status-line"><span class="pill {e['tone']}">{html.escape(e['status_word'])}</span></p>
   <p class="num-hero"><span class="figure">{html.escape(n['coefficient'])}</span>
   <span class="qual">95 % interval from {html.escape(n['ci_low'])} to {html.escape(n['ci_high'])}</span></p>
-  <div class="plain">{them}</div>
-  {channel}
+  <div class="plain">{visible}</div>
   {trend_line}
   <details class="technical">
     <summary>{html.escape(results['expander'])}</summary>
+    {behind}
+    {channel}
     <ul class="spec-list">{rows}</ul>
   </details>"""
         elif e["kind"] == "described":

@@ -122,7 +122,7 @@ status:
 # not being run. The site prints the sentence; the card and the app carry the detail.
 reasons:
   design_estimated_not_identified:
-    sentence: "The design ran, but it cannot isolate an effect from this data, so there is no number here."
+    sentence: "The design ran but cannot isolate an effect, so there is no number."
   outcome_series_absent:
     sentence: "There are too few observed years to estimate on."
   no_specification_declared:
@@ -130,7 +130,7 @@ reasons:
   outcome_not_at_design_grain:
     sentence: "The outcome exists, but not at the grain this design needs: for example only nationally, when the design compares states."
   design_result_is_channel_level:
-    sentence: "This design was run, but its result is about the money channel rather than about this outcome."
+    sentence: "The result is about the money channel, not this outcome."
   design_not_run:
     sentence: "The design was not run for this outcome."
 
@@ -235,7 +235,7 @@ ask:
 
 results:
   heading: "The estimate"
-  trend_label: "Description, not an estimate: "
+  trend_label: "Not an estimate. Widest trend gap: "
   sparse_label: "What we have: "
   association: "In the same state and month, a 1 % higher {exposure} goes with {change} % {direction} {outcome}."
   predictors:
@@ -245,7 +245,7 @@ results:
   # 2026-11-04: the hero carries the figure and its interval, the plain text carries the association, and the
   # p-value lives in the technical expander, where a reader who wants it knows to look. Leaving the template
   # in place would have been a second, unused description of the same card.
-  includes_zero: "The interval includes zero, so no effect stays possible."
+  includes_zero: "The interval includes zero."
   excludes_zero: "The interval stays on one side of zero."
   sample: "On {n_obs} observations over {n_units} units, {first_month} to {last_month}."
   verdict: "Verdict: {verdict}."
