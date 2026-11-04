@@ -22,13 +22,14 @@ It is an installable web app, not just a page: open it on a phone and use **Add 
 
 [![Demo video: the site, screen by screen](docs/demo/01_cover.png)](docs/demo/demo.mp4)
 
-▶ **[Watch the 1:37 demo](https://github.com/batestguy/causal-presidents-regime-Naija/releases/download/demo-2026-11-04/demo.mp4)**
+▶ **[Watch the 1:53 demo](https://github.com/batestguy/causal-presidents-regime-Naija/releases/download/demo-2026-11-04/demo.mp4)**
 ([release page](https://github.com/batestguy/causal-presidents-regime-Naija/releases/tag/demo-2026-11-04)): a
-real walk through the site — the two outcomes ticked on the study screen, the comparison, the graph, the
-refused cards, the chart's grouping switch and tenure table, the published card with its technical section
-opened, the design-level results, and the Ask box answering a question. Captured at 1600×900 on the built site,
-navigation and scrolling included. Music: *Nobody Fails* by Ofege, from 0:19. The recorder and the builder are
-in `tools/`.
+real walk through the site — the home page scrolled to the premise and the credits, the two outcomes ticked on
+the study screen, the comparison, the graph, the refused cards, the chart's grouping switch and tenure table,
+the published card with its technical section opened, the design-level results, and **the Ask box answering
+three questions** (a count, a refusal, and the observed-versus-interpolated figure). Captured at 1600×900 on
+the built site, navigation and scrolling included. Music: *Nobody Fails* by Ofege, from 0:19. The recorder and
+the builder are in `tools/`.
 
 The screenshots below are frame by frame: no server, no database, no network call at render time.
 

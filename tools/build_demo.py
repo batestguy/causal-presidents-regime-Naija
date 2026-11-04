@@ -34,6 +34,8 @@ PILL = "0x1E7A4F"
 # previous caption.
 CAPTIONS = {
     "home": "Nigeria, 1999 to present. Thirty-six model cards.",
+    "home scrolled": "The premise: what can and cannot be compared.",
+    "home about": "About the study, and the photographs' credits.",
     "study": "Two outcomes, ticked. Every card states its coverage.",
     "study chosen": "Two outcomes chosen. Next opens the comparison.",
     "study one": "One outcome: the card that carries a published figure.",
@@ -56,7 +58,9 @@ CAPTIONS = {
     "designs transitions": "What moved at a transition, by month.",
     "methodology": "What it does not claim.",
     "ask": "Ask the corpus a question.",
-    "ask answer": "A gated answer, plain first.",
+    "ask one": "How many cards carry a published number?",
+    "ask two": "Why can't the site compare PDP and APC tenures?",
+    "ask three": "How much of the series is observed, not interpolated?",
     "ask technical": "The technical section, one click away.",
     "end card": None,
 }
@@ -160,6 +164,10 @@ def build_take(take: str) -> int:
         text = CAPTIONS[key]
         start = max(0.0, mark["at"] - trim)
         end = (marks[i + 1]["at"] - trim) if i + 1 < len(marks) else duration
+        # An ask caption ends when the next question starts being typed, not when its answer lands: the
+        # question box otherwise changes a second before the caption does, which reads as a mistake.
+        if mark["label"].startswith("ask ") and i + 1 < len(marks):
+            end = max(start + 0.5, end - 1.3)
         if text is None:
             print(f"  (no caption) {start:6.2f}-{min(end, duration):6.2f}  {mark['label']}")
             continue

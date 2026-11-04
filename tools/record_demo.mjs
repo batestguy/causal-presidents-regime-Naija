@@ -109,7 +109,13 @@ async function expectText(needle, where) {
 // ---------------------------------------------------------------- 1. home
 await go('/');
 await page.hover('.president:nth-child(3)').catch(() => {});
-await cut('home', 'hover a portrait, then Begin', 2600);
+await cut('home', 'hover a portrait', 3200);
+await scrollBy(520, 1100);
+await cut('home scrolled', 'the premise, and the photographs behind it', 3000);
+await scrollBy(360, 1000);
+await cut('home about', 'about this study, and the credits', 2400);
+await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+await page.waitForTimeout(500);
 await page.click('a.primary');            // Begin
 await page.waitForLoadState('domcontentloaded');
 await imagesReady();
@@ -187,14 +193,37 @@ await go('/methodology/');
 await scrollBy(700, 900);
 await cut('methodology', 'what it does not claim', 2800);
 
-// ---------------------------------------------------------------- 10. ask
+// ---------------------------------------------------------------- 10. ask: three questions, three answer shapes
 await go('/ask/');
 await cut('ask', 'ask the corpus', 1800);
-await page.fill('#ask-input', 'Did Buhari cause the recession?');
-await page.waitForTimeout(500);
-await page.click('button.primary[type="submit"]');
-await page.waitForTimeout(2200);
-await cut('ask answer', 'a gated answer, plain first', 3200);
+// Three questions whose answers are right, checked against the deployed layer on 2026-11-04. Two of the
+// datalist's own suggestions answer badly (the oil-shock question returns the fatality interval; the
+// quality-gates one returns a Markdown heading), so they are not used here.
+const questions = [
+  ['ask one', 'How many of the 36 model cards carry a published number?', 3400],
+  ['ask two', "Why can't you tell me whether PDP or APC tenures did better?", 3800],
+  ['ask three', 'How much of the monthly data series is actually observed rather than interpolated?', 3800],
+];
+for (const [label, question, hold] of questions) {
+  const previous = await page.evaluate(
+    () => (document.querySelector('#ask-answer')?.innerText || '').trim(),
+  );
+  await page.fill('#ask-input', question);
+  await page.waitForTimeout(400);
+  await page.click('button.primary[type="submit"]');
+  // Wait for the answer to *change*. The panel keeps the previous answer while the new one resolves, so a
+  // length test alone passes instantly and the cut lands on the old answer.
+  await page.waitForFunction(
+    (prev) => {
+      const text = (document.querySelector('#ask-answer')?.innerText || '').trim();
+      return text.length > 60 && text !== prev;
+    },
+    previous,
+    { timeout: 10000 },
+  ).catch(() => {});
+  await page.waitForTimeout(500);
+  await cut(label, question, hold);
+}
 await page.locator('details:visible summary').first().click().catch(() => {});
 await page.waitForTimeout(600);
 await scrollBy(320, 800);

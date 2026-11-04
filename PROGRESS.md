@@ -3297,28 +3297,36 @@ exit 0 after the regeneration; `py_compile` clean on the app and the R script pa
 
 ## 2026-11-04 - the demo video, recorded rather than assembled
 
-**What.** `docs/demo/demo.mp4`: 1:37, 1600x900, 30 fps, AAC stereo, 8.4 MB. A real walk through the built
-site — pointer, clicks, page changes and scrolling — with one caption pill per shot and one record underneath.
-`docs/demo/01_cover.png` is a frame from the cut, so the README thumbnail matches the film.
+**What.** `docs/demo/demo.mp4`: 1:53, 1600x900, 30 fps, AAC stereo, 9.6 MB, also attached to the
+`demo-2026-11-04` release so it can be shared as a link. `docs/demo/01_cover.png` is a frame from the cut, so
+the README thumbnail matches the film.
 
-**The walk.** Home (hover a portrait) → Begin → study, two outcomes ticked → Next → comparison, scrolled →
-graph, scrolled to the adjustment set → estimates, two refused cards, each with its trend line → chart, the
-changepoint panel, the grouping switch, the tenure table → study again, one outcome → the published card
-(+0.4678, its interval and its trend line) with the technical section opened to show the p-value, sample and
-failed check → design-level results, scrolled through the forest plot, the grid, the synthetic counterfactual
-and the transitions → methodology's limits → Ask, a question typed and answered, technical collapsed → end
-card.
+**The walk.** Home, held and then scrolled to the premise, the portraits and the two disclosure rows → Begin →
+study, two outcomes ticked → Next → comparison, scrolled → graph, scrolled to the adjustment set → estimates,
+two refused cards with their trend lines → chart, the changepoint panel, the grouping switch, the tenure table
+→ study again, one outcome → the published card (+0.4678) with the technical section opened → design-level
+results, scrolled through the forest plot, the grid, the synthetic counterfactual and the transitions →
+methodology's limits → Ask, three questions answered → technical section → end card.
 
 **Why two selection passes.** The estimate screen leads with the cards that carry a number and collapses the
-rest behind one line, so a single selection cannot show both a refusal and a published figure. The take shows
-the study screen twice, which is also the honest demonstration of what the control does.
+rest behind one line, so a single selection cannot show both a refusal and a published figure.
 
-**How it is made.** `tools/record_demo.mjs` drives the site with Playwright and writes a shot log; the mark is
-taken at the instant the frame changes, not after the hold. `tools/build_demo.py --take desktop` trims the
-head from the first mark, turns each mark into a caption window ending at the next mark, burns the pill, and
-lays *Nobody Fails* by Ofege under it from 0:19 with fades. A `--stills` path still assembles the ten stills if
-a browser is unavailable. Three takes were needed: a hidden expander, a hidden radio behind its label, and a
-`#pick-fatalities` checkbox inside a collapsed domain all failed fast once short timeouts were set, and the
-recorder now clicks labels rather than inputs.
+**How it is made.** `tools/record_demo.mjs` drives the site with Playwright; a mark is written at the instant
+the frame changes. `tools/build_demo.py --take desktop` trims the head, turns each mark into a caption window
+ending at the next mark, burns the pill, and lays *Nobody Fails* by Ofege under it from 0:19 with fades. An ask
+caption ends 1.3 s before the next mark, because the question box starts changing before the answer does.
+
+**Three answer-layer defects found while recording, not fixed here.** Two of the Ask screen's own suggested
+questions answer badly, so the demo uses different ones:
+
+1. *"How much of a Brent crude oil shock reaches state governments, and after how long?"* returns the
+   **fatality** estimate's interval (-0.0582 to +0.0550), not the fiscal-channel result (+0.518 at h=2).
+2. *"How many of the landed series did the quality gates flag?"* returns a Markdown heading
+   (`## 4. The quality gates flagged almost half the landed series ## 4.`) instead of the count.
+3. *"Did fatalities change after Buhari was sworn in in 2015…"* returns a raw Markdown table rather than
+   prose.
+
+The demo asks the card count, the tenure refusal and the observed-versus-interpolated figure, all of which
+answer correctly. The three above are logged as the next work on the answer layer, not as a video problem.
 
 **Not done.** No caption sidecar, no 9:16 cut, no voice-over.
