@@ -4,9 +4,36 @@ Freebuff context for this repo: what runs, where things live, and the rules a ch
 
 **Status: the registry is frozen at vintage 2026-11-01.** Every phase of `presidents-completion-plan.md` is
 closed with its exit criteria measured green (`presidents-completion-state.yml` carries the evidence), and
-the completion statement in `PROGRESS.md` — followed by the 2026-11-02 post-freeze presentation record —
-says what the system claims, what it refuses to claim, and the limitations it leaves open. Nothing is
-queued behind the freeze; the site's presentation was revised after it, the registry was not.
+the completion statement in `PROGRESS.md` — followed by the 2026-11-02 post-freeze presentation record and
+the 2026-11-03/04 site pass — says what the system claims, what it refuses to claim, and the limitations it
+leaves open. The registry was not edited after the freeze; the static site's presentation was revised, and
+the causal-ML work is planning-only.
+
+## Causal ML and discovery (post-freeze, no registry change yet)
+
+Two tracks are documented and waiting, both read via `PROGRESS.md`'s 2026-11-04 entries:
+
+- **Discovery** — `docs/causal-discovery.md`. Only `fatalities` and `incidents` have native monthly outcome
+  series; the annual ten are below any discovery floor and their monthly values are interpolations. A
+  PCMCI smoke run exists in `.inspect/discovery_smoke.py`; nothing is published.
+- **What-if counterfactuals** — `docs/counterfactual-recommendation.md` (full recommendation, presentation
+  contract, artifact contract, five open decisions), with the method menu in `docs/causal-ml-options.md`
+  and the execution plan in `docs/causal-ml-plan.md`. Pilot evidence: on `u5mr`, the simplex and SDID gaps
+  flip sign on two of four windows, so any published what-if must show all estimators and the disagreement.
+  **No fitting has started and the frozen registry is untouched.**
+
+The causal work runs in the conda env **`causality-handbook`** (Python 3.11), not `ds-general`:
+`C:\Users\TOSHIBA\miniconda3\envs\causality-handbook\python.exe` carries `duckdb`, `doubleml`,
+`tigramite`, `causallearn`, `econml`, `dowhy`, `causalml`, `linearmodels`, `cvxpy`. R 4.5.2 carries
+`synthdid`, `gsynth`, `did`, `dagitty`. The accidental `causal-learn`/`tigramite` installs were removed from
+`ds-general`, which remains the verified build environment.
+
+Site behaviour worth knowing before touching presentation: page asset URLs carry a build stamp
+(`?v=<vintage>.<timestamp>`) so rebuilds are not served stale; the study screen restores selections from
+`?outcomes=` and every Back link carries it; cards are shaped by kind (number, described, channel, gap);
+the trend table reports president-vs-president contrasts from the published artifact; the Ask screen renders
+the plain answer first with one collapsed Technical section. Verifiers: `tests/verify_site.py`,
+`tests/verify_answer_js.py` (which also guards the datalist bug), the usual `scripts/verify.sh` chain.
 
 ## Quickstart
 

@@ -266,6 +266,14 @@ may not be republished, so the repository ships code, derived aggregates and acq
 
 ## Documentation
 
+- [`docs/causal-discovery.md`](docs/causal-discovery.md) — what causal discovery can and cannot run on here
+  (two native-monthly outcomes), the toolchain, and the stability rule fixed before any edge is declared
+- [`docs/causal-ml-options.md`](docs/causal-ml-options.md) — the defensible modern causal-ML menu for this
+  data, and the map of which blank cards can be polished
+- [`docs/causal-ml-plan.md`](docs/causal-ml-plan.md) — the declared first pass (matrix completion, SDID,
+  gsynth), its placebos, gate and environment
+- [`docs/counterfactual-recommendation.md`](docs/counterfactual-recommendation.md) — the full what-if
+  recommendation: presentation and artifact contracts, pilot evidence, work plan and open decisions
 - [`PHASES.md`](PHASES.md) — the build plan and its stage gates
 - [`nigeria-causal-inference-spec.md`](nigeria-causal-inference-spec.md) — design decisions, including
   which original constraints were deliberately overridden

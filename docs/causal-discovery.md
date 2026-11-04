@@ -1,5 +1,9 @@
 # Causal discovery: readiness
 
+*Related: [`counterfactual-recommendation.md`](counterfactual-recommendation.md) (the what-if proposal),
+[`causal-ml-options.md`](causal-ml-options.md) (method menu), [`causal-ml-plan.md`](causal-ml-plan.md)
+(execution plan).*
+
 **Status: preparation, not a result.** The registry is frozen at vintage 2026-11-01; nothing in this note
 changes it. This page records what a discovery pass could run on, what it could not, and the tooling that is
 now installed. No discovery edge is published anywhere on the site.

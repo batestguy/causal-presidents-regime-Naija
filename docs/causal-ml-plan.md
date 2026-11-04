@@ -1,5 +1,9 @@
 # Causal ML plan: environment and first declared pass
 
+*Related: [`counterfactual-recommendation.md`](counterfactual-recommendation.md) (the full recommendation
+this plan serves), [`causal-ml-options.md`](causal-ml-options.md) (method menu),
+[`causal-discovery.md`](causal-discovery.md) (the other track).*
+
 Status: environment ready; no fitting has started; the registry is untouched. This is the plan to agree
 before anything is run, following the house rule that a design is declared before it is fitted.
 

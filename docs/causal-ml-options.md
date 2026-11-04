@@ -1,5 +1,9 @@
 # Modern causal ML: what is defensible here
 
+*Related: [`counterfactual-recommendation.md`](counterfactual-recommendation.md) (the what-if proposal),
+[`causal-ml-plan.md`](causal-ml-plan.md) (execution plan), [`causal-discovery.md`](causal-discovery.md)
+(hypothesis generation).*
+
 **Decision brief, before any fitting.** Nothing here changes the registry. The question is which ML-based
 causal method can be defended on this project's data, and what it would buy for the 34 cards that carry no
 number.

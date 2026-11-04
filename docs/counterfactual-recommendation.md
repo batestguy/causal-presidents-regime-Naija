@@ -1,5 +1,9 @@
 # What-if comparisons: recommendation, ahead of follow-up
 
+*Related: [`causal-ml-options.md`](causal-ml-options.md) (method menu),
+[`causal-ml-plan.md`](causal-ml-plan.md) (execution plan),
+[`causal-discovery.md`](causal-discovery.md) (the discovery track).*
+
 **Status: recommendation, not a result.** Nothing here changes the frozen registry
 (vintage 2026-11-01). This document records the proposal in full, the evidence gathered so far, the exact
 presentation contract, and the decisions that remain. It is written so a follow-up session can execute

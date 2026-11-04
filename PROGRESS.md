@@ -1,6 +1,27 @@
 # Progress log — causal-presidents-regime-Naija
 
-**Last updated:** 2026-11-03 (post-freeze site pass, continued) — this pass's record is the last section of this file · **Stage:** 9 · **The registry is frozen at vintage 2026-11-01**: every phase of `presidents-completion-plan.md` is closed with its exit criteria measured green, and the completion statement (the section before last) states what the frozen system claims, refuses and leaves open
+**Last updated:** 2026-11-04 (site pass continued, causal-ML plans documented) — this pass's record is the last section of this file · **Stage:** 9 · **The registry is frozen at vintage 2026-11-01**: every phase of `presidents-completion-plan.md` is closed with its exit criteria measured green, and the completion statement (the section before last) states what the frozen system claims, refuses and leaves open
+
+## Start here (next session)
+
+- **Repo state:** `main` is clean and pushed; the frozen registry has not been edited. Re-run
+  `tests/verify_site.py` after any presentation change; the full chain is `scripts/verify.sh`
+  (Git Bash, `PYTHON=/c/Users/TOSHIBA/ds-general/python.exe`).
+- **Causal work is planning-only.** Read, in order: `docs/causal-discovery.md` (what can be discovered and
+  why only two outcomes), `docs/causal-ml-options.md` (the defensible method menu and the polish map),
+  `docs/causal-ml-plan.md` (the declared first pass), and `docs/counterfactual-recommendation.md` (the full
+  what-if recommendation, presentation and artifact contracts, and the five open decisions).
+- **Environment:** causal work runs in the conda env `causality-handbook`
+  (`C:\Users\TOSHIBA\miniconda3\envs\causality-handbook\python.exe`); `ds-general` is back to the verified
+  build set. R 4.5.2 has `synthdid`, `gsynth`, `did`, `dagitty`.
+- **Pilot evidence to carry forward:** on `u5mr`, simplex and SDID gaps flip sign on two of four windows
+  (Yar'Adua +2.11 vs −0.87; Jonathan −11.56 vs +1.51, placebo SE ≈ 8). Any published what-if must show all
+  estimators and the disagreement; no averaging, no causal verbs.
+- **Five decisions waiting** are listed in `docs/counterfactual-recommendation.md` §9: placement, new
+  vintage, scope, the `cpi_yoy` reclassification, and the education refusal wording.
+- **Local site server:** `python -m http.server 8765 --bind 127.0.0.1 --directory site/dist` from the repo
+  root (the verified interpreter is fine for serving). Asset URLs carry a build stamp, so a rebuilt page is
+  not served stale; the HTML itself may need a hard refresh.
 
 **Site pass, 2026-11-03: Screen 2 de-duplicated, then a full-site repetition scan, registry untouched.**
 The requester's ask: the comparisons screen repeats what neighbouring pages say; keep it direct and accessible.
