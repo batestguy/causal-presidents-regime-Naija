@@ -3331,6 +3331,32 @@ answer correctly. The three above are logged as the next work on the answer laye
 
 **Not done.** No caption sidecar, no 9:16 cut, no voice-over.
 
+## 2026-11-05 - the demo video's timeline, rebuilt
+
+**The defect.** The shipped cut gave every track an edit list, and the video track's was inconsistent: it asked
+the presentation to start 66.7 ms into the media and to run for the media's full duration, which is 66.7 ms
+more than the media holds. A player that honours edit lists, the Windows Media Foundation stack among them,
+runs out of media before the edit ends and stops there; forwarding re-syncs the timeline and it plays on.
+Chromium ignores the discrepancy, so the file played cleanly in a browser and stopped in a desktop player.
+
+**The fix.** Both streams were rebuilt on one zero-based timeline with the edit lists dropped: the video is
+selected from the cut point (the two frames the edit was hiding) and encoded with `-bf 0`, so no decoder delay
+forces a negative DTS and the muxer has nothing to shift; the audio is trimmed by the 17 ms AAC priming.
+`-use_editlist 0 -movflags +faststart`. 1:52.88, 1600x900, 30 fps CFR, 11.0 MB (was 9.6).
+
+**Verified.** A box parse reports no `elst`, both streams starting at 0.000, and a container duration equal to
+the audio track's, which is the longest (112.878 s); the video track is 112.790 s. Chromium plays 0 to 112.88
+and fires `ended` with no stalls - the previous file also played there, so that is a regression check, not the
+proof; the proof is that the inconsistency a player was acting on no longer exists. SSIM 0.982 against the
+previous cut (a re-encode of an already lossy 502 kb/s source) and mean volume -16.3 dB in both, so the picture
+and the music are the same film. The `demo-2026-11-04` release asset was re-uploaded: `video/mp4`,
+11,037,510 bytes.
+
+**Not fixed, because it is GitHub's to choose.** The release download URL is served as
+`application/octet-stream`, so a browser downloads it rather than playing it; that header is set by GitHub and
+no upload can change it. A browser-native player would need the file on Pages, which serves `video/mp4` with
+range support - a build change, and a service-worker precache exclusion for an 11 MB asset, not made here.
+
 ## 2026-11-04 - the three answer-layer defects, fixed and measured
 
 **What was wrong.** The three defects logged at the end of the demo section above were in the plain reading,
